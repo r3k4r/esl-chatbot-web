@@ -2,6 +2,7 @@ import { toast } from 'vue-sonner'
 import { useAuthStore } from '~~/stores/auth'
 import { useVoiceChat, type VoiceResult } from '~/composables/useVoiceChat'
 import { useSessions } from '~/composables/useSessions'
+import { stripHtml } from '~/lib/utils'
 import { getLimits } from '~/common/data/plan-limits'
 import type {
   VoiceTurn,
@@ -173,7 +174,9 @@ export function useVoiceLab() {
     turns.value.push({
       id: result.userMessage?.id ?? `turn-${Date.now()}`,
       transcript: result.transcript || result.userMessage?.content || '',
-      reply: result.assistantMessage?.content ?? '',
+      // AI replies are sanitized HTML; the caption and transcript are plain-text
+      // surfaces, so strip tags here (once) — the spoken audio is unaffected.
+      reply: stripHtml(result.assistantMessage?.content ?? ''),
       replyAudioBase64: result.audioBase64 ?? null,
       evaluation: ev ? toEval(ev, result.pronunciationScore ?? null) : null,
       pronunciation: pronunciationAvailable.value ? pron : null,

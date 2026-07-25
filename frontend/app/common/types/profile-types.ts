@@ -1,3 +1,5 @@
+export type ThemePreference = 'light' | 'dark'
+
 export interface MyLearnerProfile {
   id: string
   currentLevel: string | null

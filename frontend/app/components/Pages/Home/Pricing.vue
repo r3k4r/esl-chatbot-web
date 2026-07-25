@@ -1,7 +1,7 @@
 <template>
   <section id="pricing" class="bg-brand-muted/60 py-28 sm:py-32 border-y border-neutral-200/70">
     <div class="container-lg layout-padding-lg">
-      <LayoutsSectionHeader :eyebrow="t.pricing.eyebrow" :title="t.pricing.title" align="center"
+      <LayoutsSectionHeader :eyebrow="t('pricing.eyebrow')" :title="t('pricing.title')" align="center"
         wrapper-class="mb-14" />
 
       <div class="grid md:grid-cols-3 gap-5 items-stretch max-w-7xl mx-auto">
@@ -28,7 +28,7 @@
             </AppText>
             <span v-if="plan.featured"
               class="text-[11px] font-medium text-white flex items-center gap-1.5 bg-white/20 backdrop-blur px-2.5 py-1 rounded-full">
-              <Icon icon="lucide:sparkles" width="11" /> {{ t.pricing.mostPopular }}
+              <Icon icon="lucide:sparkles" width="11" /> {{ t('pricing.mostPopular') }}
             </span>
           </div>
 
@@ -38,7 +38,7 @@
               {{ plan.price }}
             </AppText>
             <AppText size="14" :class="plan.featured ? 'text-white/85' : 'text-brand-sub'">
-              {{ t.pricing.perMonth }}
+              {{ t('pricing.perMonth') }}
             </AppText>
           </div>
 
@@ -74,7 +74,7 @@
       </div>
 
       <AppText size="12" color="brand-sub" class-list="text-center mt-12">
-        {{ t.pricing.footnote }}
+        {{ t('pricing.footnote') }}
       </AppText>
     </div>
   </section>
@@ -85,7 +85,7 @@ import { Icon } from '@iconify/vue'
 import { useAuthStore } from '~~/stores/auth'
 
 const authStore = useAuthStore()
-const { t } = useLocale()
+const { t, ta } = useLocale()
 
 type Plan = {
   id: 'starter' | 'gold' | 'premium'
@@ -138,7 +138,11 @@ const planMeta: Pick<Plan, 'id' | 'planKey' | 'featured'>[] = [
 const plans = computed<Plan[]>(() =>
   planMeta.map((meta) => ({
     ...meta,
-    ...t.value.pricing.plans[meta.id],
+    name:        t(`pricing.plans.${meta.id}.name`),
+    price:       t(`pricing.plans.${meta.id}.price`),
+    description: t(`pricing.plans.${meta.id}.description`),
+    cta:         t(`pricing.plans.${meta.id}.cta`),
+    features:    ta(`pricing.plans.${meta.id}.features`),
   })),
 )
 </script>

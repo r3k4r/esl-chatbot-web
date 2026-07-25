@@ -15,7 +15,12 @@
       "Bash(git push *)",
       "Bash(bunx nuxi *)",
       "Bash(DATABASE_URL=\"postgresql://localhost/dummy\" bunx prisma generate)",
-      "Bash(bun test *)"
+      "Bash(bun test *)",
+      "Bash(rm -f '/c/Users/rekar/Desktop/project/esl-chatbot-web/frontend/app/pages/dashboard/users/[id].vue' && echo \"deleted\" || echo \"failed\")",
+      "Bash(bun add *)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\rekar\\Desktop\\project\\esl-chatbot-web\\frontend\\app\\pages\\dashboard\\users"
     ]
   }
 }

@@ -120,7 +120,8 @@ const handleSubmit = async () => {
 
     <FormAgreementDialog
         :open="showTerms"
-        mode="view"
+        mode="accept"
         @update:open="showTerms = $event"
+        @accept="formData.acceptAgreement = true; showTerms = false"
     />
 </template>

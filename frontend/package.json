@@ -2,9 +2,11 @@
   "name": "frontend",
   "type": "module",
   "private": true,
- "scripts": {
+  "scripts": {
+    "dev": "infisical run --env=dev -- nuxt dev",
+    "dev:env": "nuxt dev",
     "build": "nuxt build",
-    "dev": "nuxt dev",
+    "build:infisical": "infisical run --env=dev -- nuxt build",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
@@ -12,11 +14,13 @@
   "dependencies": {
     "@lucide/vue": "^1.17.0",
     "@nuxt/image": "^2.0.0",
+    "@nuxtjs/i18n": "^10.4.0",
     "@pinia/nuxt": "^0.11.3",
     "@tailwindcss/vite": "^4.2.1",
     "@vueuse/core": "^14.3.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "i18n": "^0.15.3",
     "lucide-vue-next": "^0.577.0",
     "maska": "^3.2.0",
     "nuxt": "^4.1.3",

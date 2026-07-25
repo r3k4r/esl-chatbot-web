@@ -237,7 +237,8 @@
         const ev = ai.evaluation;
 
         // Update scores
-        document.getElementById('reply').textContent = ai.reply;
+        // Reply is server-sanitized lightweight HTML (p/strong/em/ul/ol/li/br) — render it
+        document.getElementById('reply').innerHTML = ai.reply;
         document.getElementById('grammarScore').textContent = `${ev.grammarScore}/100`;
         document.getElementById('vocabScore').textContent = `${ev.vocabularyScore}/100`;
         document.getElementById('fluencyScore').textContent = `${ev.fluencyScore}/100`;

@@ -28,12 +28,19 @@ export async function callOpenAILLM(
   ];
 
   // TODO: add prompt caching for system message (75–90% token discount on repeated calls)
+  // gpt-5-mini is a REASONING model, so the classic chat params don't apply:
+  //   • `temperature`/`top_p` are rejected (400) — omit them entirely.
+  //   • use `max_completion_tokens`, NOT `max_tokens` (400 otherwise).
+  //   • reasoning tokens are spent from that budget BEFORE any visible output, so
+  //     the cap must be generous or the JSON reply comes back empty/truncated.
+  //   • `reasoning_effort: "low"` keeps spend + latency down for this structured
+  //     tutoring task (scoring a sentence and replying needs no deep reasoning).
   const completion = await client.chat.completions.create({
     model: PREMIUM_MODEL,
     messages,
     response_format: { type: "json_object" },
-    temperature: 0.7,
-    max_tokens: 1500,
+    reasoning_effort: "low",
+    max_completion_tokens: 4000,
   });
 
   const raw = completion.choices[0]?.message?.content;

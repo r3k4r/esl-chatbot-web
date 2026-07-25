@@ -17,7 +17,7 @@
                     v-for="item in navLinks"
                     :key="item.link"
                     :to="item.link"
-                    class="group relative text-[13px] font-medium text-neutral-50/70 transition-colors hover:text-brand-primary after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-full after:origin-left after:scale-x-0 after:bg-brand-primary after:transition-transform after:duration-300 hover:after:scale-x-100"
+                    class="group relative text-[13px] font-medium text-neutral-50/70 transition-colors hover:text-brand-primary after:absolute after:inset-x-0 after:-bottom-1 after:h-0.5 after:origin-[left_center] rtl:after:origin-[right_center] after:scale-x-0 after:bg-brand-primary after:transition-transform after:duration-300 hover:after:scale-x-100"
                     :class="activeLink === item.link ? 'text-brand-primary after:scale-x-100' : ''"
                     @click="handleLinkClick(item.link)"
                 >
@@ -28,14 +28,14 @@
             <div class="hidden md-lg:flex items-center gap-3">
                 <LayoutsNavbarLanguageSwitcher />
                 <AppButton to="/signin" variant="brand" size="38" class-list="px-3.5 text-[13px] gap-1.5">
-                    <span>{{ t.nav.getStarted }}</span>
+                    <span>{{ t('nav.getStarted') }}</span>
                     <Icon icon="lucide:arrow-right" width="13" class="rtl:rotate-180" />
                 </AppButton>
             </div>
 
             <div class="md-lg:hidden flex items-center gap-2">
                 <AppButton to="/#cta" variant="brand" size="38" class-list="px-3 sm:px-3.5 text-[13px] gap-1.5">
-                    <span>{{ t.nav.getStarted }}</span>
+                    <span>{{ t('nav.getStarted') }}</span>
                     <Icon icon="lucide:arrow-right" width="13" class="rtl:rotate-180" />
                 </AppButton>
                 <LayoutsNavbarMenu :nav-items="navLinks" :active-link="activeLink" @select="handleLinkClick" />
@@ -58,10 +58,10 @@ let sectionObserver: IntersectionObserver | null = null
 
 // Links are constant (used for scroll-spy); only the labels are localized.
 const navLinks = computed<NavItemTypes[]>(() => [
-    { name: t.value.nav.features, link: '/#features' },
-    { name: t.value.nav.howItWorks, link: '/#how' },
-    { name: t.value.nav.dashboard, link: '/#dashboard' },
-    { name: t.value.nav.pricing, link: '/#pricing' },
+    { name: t('nav.features'), link: '/#features' },
+    { name: t('nav.howItWorks'), link: '/#how' },
+    { name: t('nav.dashboard'), link: '/#dashboard' },
+    { name: t('nav.pricing'), link: '/#pricing' },
 ])
 
 const sectionIds = computed(() => navLinks.value.reduce<string[]>((ids, item) => {

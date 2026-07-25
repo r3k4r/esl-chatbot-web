@@ -1,7 +1,7 @@
 import { prisma } from "../config/database.ts";
 import { logger } from "../config/index.ts";
 import { resend } from "../config/resend.ts";
-import { env } from "../config/env.ts";
+import { env, corsOrigins } from "../config/env.ts";
 import { buildDigestHtml, formatWeekLabel, type SkillSnapshot } from "./weekly-digest.email.ts";
 
 export interface DigestJobOptions {
@@ -81,7 +81,8 @@ export async function runWeeklyDigestJob(opts: DigestJobOptions = {}): Promise<v
   }
 
   const now = new Date();
-  const appUrl = env.FRONTEND_URL ?? env.CORS_ORIGIN;
+  // First CORS origin as fallback — CORS_ORIGIN may be a comma-separated list
+  const appUrl = env.FRONTEND_URL ?? corsOrigins[0] ?? "http://localhost:3001";
 
   // ── 1. Find timezones whose local time is currently Sunday 08:xx ─────────────
   const allTimezones = await prisma.learnerProfile.groupBy({

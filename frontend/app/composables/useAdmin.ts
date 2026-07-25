@@ -6,6 +6,7 @@ import type {
   AssignSubscriptionInput,
   UserRole,
   SubStatus,
+  PlanId,
 } from '~/common/types/admin-types'
 
 interface ApiResponse<T> { success: boolean; message?: string; data: T }
@@ -17,6 +18,9 @@ export interface UserListFilters {
   search: string
   role: UserRole | 'ALL'
   subscriptionStatus: SubStatus | 'ALL'
+  plan?: PlanId | 'ALL'
+  createdAfter?: string
+  createdBefore?: string
 }
 
 export function useAdmin() {
@@ -41,6 +45,9 @@ export function useAdmin() {
     if (filters.search) params.set('search', filters.search)
     if (filters.role !== 'ALL') params.set('role', filters.role)
     if (filters.subscriptionStatus !== 'ALL') params.set('subscriptionStatus', filters.subscriptionStatus)
+    if (filters.plan && filters.plan !== 'ALL') params.set('plan', filters.plan)
+    if (filters.createdAfter) params.set('createdAfter', filters.createdAfter)
+    if (filters.createdBefore) params.set('createdBefore', filters.createdBefore)
 
     return await useHttp<ListResponse<AdminUserItem>>({
       method: 'GET',

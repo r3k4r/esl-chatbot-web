@@ -11,13 +11,14 @@ const emit = defineEmits<{
 }>();
 
 const errors = ref<Record<string, any>>({});
+const hasSubmitted = ref(false);
 
 const formatErorrs = (result: any) => {
   const formattedErrors: any = {};
 
   result.error.issues.forEach((err: any) => {
     const path = err.path;
-    
+
     // Handle simple field errors (path length 1)
     if (path.length === 1) {
       formattedErrors[path[0]] = err.message;
@@ -39,7 +40,7 @@ const formatErorrs = (result: any) => {
       } else {
         // Not last element - need to create nested structure
         const nextKey = path[i + 1];
-        
+
         // Check if next key is a number (array index)
         if (typeof nextKey === 'number') {
           // Create array if it doesn't exist
@@ -75,15 +76,30 @@ const formatErorrs = (result: any) => {
 
   errors.value = formattedErrors;
 }
+
+// Re-validate live after the first submit attempt so stale errors clear as the user fixes fields
+watch(
+  () => props.formData,
+  () => {
+    if (!hasSubmitted.value || !props.schema) return;
+    const result = props.schema.safeParse(props.formData);
+    if (result.success) {
+      errors.value = {};
+    } else {
+      formatErorrs(result);
+    }
+  },
+  { deep: true }
+);
+
 const handleSubmit = () => {
-  // console.log(props.formData);
-  
+  hasSubmitted.value = true;
+
   if (props.schema) {
     const result = props.schema.safeParse(props.formData);
-    // console.log("Validation result: ", result);
-    
-    if (!result.success) {      
-      formatErorrs(result);     
+
+    if (!result.success) {
+      formatErorrs(result);
       return;
     }
     errors.value = {};

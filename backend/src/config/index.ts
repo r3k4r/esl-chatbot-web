@@ -1,4 +1,4 @@
-export { env } from "./env.ts";
+export { env, corsOrigins } from "./env.ts";
 export { Sentry } from "./sentry.ts";
 export { prisma, connectDatabase, disconnectDatabase } from "./database.ts";
 export { connectRedis, disconnectRedis } from "./cache.ts";

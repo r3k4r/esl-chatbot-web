@@ -26,40 +26,40 @@
 
     <div class="relative container-lg layout-padding-lg pt-36 pb-28 sm:pb-36">
       <div class="grid lg:grid-cols-12 gap-14 items-center">
-        <div class="lg:col-span-7 text-center lg:text-left lg:rtl:text-right">
+        <div class="lg:col-span-7 text-center lg:text-start">
           <div class="inline-flex items-center gap-2 rounded-full bg-neutral-50/4 border border-neutral-50/10 ps-2 pe-3.5 py-1 mb-7">
             <div class="inline-flex items-center gap-1 bg-brand-primary/15 text-brand-primary px-2 py-0.5 rounded-full text-[10.5px] font-semibold tracking-wider uppercase">
               <Icon icon="lucide:sparkles" width="10" />
-              {{ t.hero.badgeNew }}
+              {{ t('hero.badgeNew') }}
             </div>
-            <AppText size="12" color="white" class-list="text-neutral-50/80">{{ t.hero.badgeText }}</AppText>
+            <AppText size="12" color="white" class-list="text-neutral-50/80">{{ t('hero.badgeText') }}</AppText>
           </div>
 
           <AppText size="hero-h1" weight="semibold" color="white" class-list="tracking-[-0.035em] leading-[1.02]">
-            {{ t.hero.titleLead }}
+            {{ t('hero.titleLead') }}
             <br class="hidden sm:block" />
-            <span class="bg-linear-to-b from-neutral-50 via-primary-100 to-brand-primary bg-clip-text text-transparent">{{ t.hero.titleAccent }}</span>
-            <span class="text-neutral-50/90">{{ t.hero.titleTrail }}</span>
+            <span class="bg-linear-to-b from-neutral-50 via-primary-100 to-brand-primary bg-clip-text text-transparent">{{ t('hero.titleAccent') }}</span>
+            <span class="text-neutral-50/90">{{ t('hero.titleTrail') }}</span>
           </AppText>
 
           <AppText size="18" color="white-60" class-list="mt-6 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-            {{ t.hero.subtitle }}
+            {{ t('hero.subtitle') }}
           </AppText>
 
           <div class="mt-9 flex flex-col sm:flex-row items-center gap-3 justify-center lg:justify-start">
             <AppButton to="/signin" variant="brand" size="52" radius="12" class-list="text-[14px] gap-2 px-5">
-              <span>{{ t.hero.ctaPrimary }}</span>
+              <span>{{ t('hero.ctaPrimary') }}</span>
               <Icon icon="lucide:arrow-right" width="14" class="rtl:rotate-180" />
             </AppButton>
             <AppButton to="#pricing" variant="dark-ghost" size="52" radius="12" class-list="text-[14px] gap-2 px-5">
               <Icon icon="lucide:dollar-sign" width="14" />
-              <span>{{ t.hero.ctaSecondary }}</span>
+              <span>{{ t('hero.ctaSecondary') }}</span>
             </AppButton>
           </div>
 
           <div class="mt-8 flex flex-wrap items-center gap-5 justify-center lg:justify-start">
             <div
-              v-for="item in t.hero.checks"
+              v-for="item in checks"
               :key="item"
               class="flex items-center gap-1.5 text-[12px] text-neutral-50/40"
             >
@@ -76,7 +76,7 @@
 
       <div class="mt-24 sm:mt-28">
         <AppText size="11" color="white" class-list="text-center uppercase tracking-[0.2em] text-neutral-50/35 mb-6">
-          {{ t.hero.trustedBy }}
+          {{ t('hero.trustedBy') }}
         </AppText>
         <div class="relative overflow-hidden mask-[linear-gradient(90deg,transparent,black_10%,black_90%,transparent)]">
           <NuxtMarquee :auto-fill="true" :pause-on-hover="false" :speed="36" class="py-1">
@@ -98,7 +98,9 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
 
-const { t } = useLocale()
+const { t, ta } = useLocale()
+
+const checks = computed(() => ta('hero.checks'))
 
 const particles = Array.from({ length: 200 }, () => ({
   left:   Math.random() * 100,
@@ -118,5 +120,4 @@ const brands = [
   { name: 'Forum',     icon: 'lucide:message-circle' },
   { name: 'Polyglot',  icon: 'lucide:activity' },
 ]
-
 </script>

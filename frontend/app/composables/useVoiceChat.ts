@@ -94,7 +94,12 @@ export function useVoiceChat() {
 
     sock.on('message:response', (payload: VoiceResult) => {
       if (payload.sessionId !== activeSessionId) return
-      voiceState.value = 'idle'
+      // Turn complete. The mic stream stays open across turns, so if it's still
+      // live we're immediately 'ready' for the next turn; only fall back to
+      // 'idle' when the stream has been released (call ended). Leaving this at
+      // 'idle' while the stream was open is what stalled turn 2 (startRecording
+      // used to require exactly 'ready').
+      voiceState.value = audioStream.value ? 'ready' : 'idle'
       partialTranscript.value = ''
       callbacks.onResult?.(payload)
     })
@@ -146,7 +151,12 @@ export function useVoiceChat() {
   // ── Phase 2: start recording on the already-open stream ───────────────────
 
   async function startRecording(sessionId: string, cb: VoiceChatCallbacks = {}) {
-    if (voiceState.value !== 'ready' || !audioStream.value) return
+    // Gate on the stream, not an exact state: the mic stream stays open across
+    // turns, so a new turn can begin from 'ready' (first turn) OR 'idle' (after
+    // a completed turn). Only refuse when there's no stream or a turn is already
+    // in flight — otherwise turn 2+ would never start (the infinite-listening bug).
+    if (!audioStream.value) return
+    if (voiceState.value === 'recording' || voiceState.value === 'processing') return
     callbacks = cb
     activeSessionId = sessionId
     partialTranscript.value = ''

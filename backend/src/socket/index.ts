@@ -3,7 +3,7 @@ import type { IncomingMessage, ServerResponse } from "http";
 import type { Server as HttpServer } from "http";
 import jwt from "jsonwebtoken";
 import type { Role } from "@prisma/client";
-import { env } from "../config/env.ts";
+import { env, corsOrigins } from "../config/env.ts";
 import type { JwtPayload } from "../modules/auth/auth.types.ts";
 import { initChatHandlers } from "./chat.socket.ts";
 import { initVoiceHandlers } from "./voice.socket.ts";
@@ -54,7 +54,7 @@ export function initializeSocket(
 ): Server {
   const io = new Server(httpServer, {
     cors: {
-      origin: env.CORS_ORIGIN,
+      origin: corsOrigins,
       credentials: true,
     },
   });

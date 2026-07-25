@@ -22,12 +22,19 @@ import { AppError } from "../../utils/AppError.ts";
 
 export const listUsers = asyncHandler(async (req: Request, res: Response) => {
   const query = getUsersQuerySchema.parse(req.query);
+  const plan = req.query.plan as "FREE" | "GOLD" | "PREMIUM" | undefined;
+  const createdAfter = req.query.createdAfter as string | undefined;
+  const createdBefore = req.query.createdBefore as string | undefined;
+
   const { users, total } = await getUsers(
     query.page,
     query.limit,
     query.role,
     query.search,
     query.subscriptionStatus,
+    plan && ["FREE", "GOLD", "PREMIUM"].includes(plan) ? plan : undefined,
+    createdAfter,
+    createdBefore,
   );
   const meta = paginationMeta(total, query.page, query.limit);
 

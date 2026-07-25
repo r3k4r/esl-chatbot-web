@@ -11,6 +11,7 @@ import {
 } from "../sessions/sessions.service.ts";
 import { generateAIResponse, generateTTS, transcribeAudio } from "../ai/ai.service.ts";
 import { uploadToR2, deleteFromR2, audioExtFromMime } from "../../lib/r2-upload.ts";
+import { countAiReplyWords } from "../../utils/aiReplyFormat.ts";
 import type { VoiceMessageResult } from "./messages.types.ts";
 import type { Plan } from "@prisma/client";
 
@@ -140,7 +141,7 @@ export async function sendVoiceMessage(
     // ── 5. TTS — synthesize AI reply ─────────────────────────────────────────
     let ttsBuffer: Buffer;
     try {
-      ttsBuffer = await generateTTS(aiResult.reply, plan);
+      ttsBuffer = await generateTTS(aiResult.reply, plan); // generateTTS strips HTML internally
     } catch (err) {
       console.error("[TTS] Failed, continuing without audio:", err instanceof Error ? err.message : err);
       ttsBuffer = Buffer.alloc(0);
@@ -157,7 +158,8 @@ export async function sendVoiceMessage(
     }
 
     const wordCount = transcript.split(/\s+/).filter(Boolean).length;
-    const aiWordCount = aiResult.reply.split(/\s+/).filter(Boolean).length;
+    // Reply is HTML — count visible words only, never tags/entities
+    const aiWordCount = countAiReplyWords(aiResult.reply);
     const pronunciation = sttResult.pronunciation ?? null;
     const pronScore = pronunciation ? pronunciation.overallScore : null;
     const pronIssues = pronunciation?.issues.length ? pronunciation.issues : null;

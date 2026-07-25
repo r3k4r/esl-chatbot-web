@@ -128,11 +128,38 @@ export async function getClasses(
   return { classes, total };
 }
 
+type MyClassRole = "STUDENT" | "TUTOR" | null;
+
+/**
+ * Look up a user's own class-membership role via a direct membership query.
+ * Deliberately does NOT apply the `isInternal` filter — a user must always be
+ * able to determine their own role in a class, even if they are hidden from
+ * the members list. Returns null when the user is not a member.
+ */
+async function findMyClassRole(
+  classId: string,
+  userId: string,
+): Promise<MyClassRole> {
+  const membership = await prisma.classUser.findUnique({
+    where: { classId_userId: { classId, userId } },
+    select: { role: true },
+  });
+  return membership?.role ?? null;
+}
+
 /**
  * Internal: read class detail with members. No authorization, no refresh.
  * Used by `getClassById` and `createClass` (which has just minted the row).
+ *
+ * `myRole` is the caller's own membership role. It is passed in (rather than
+ * derived from `members`) because the caller may be filtered out of the
+ * members list — an internal/stealth account is invisible there but must still
+ * see its own tutor controls. Defaults to null (e.g. admin, non-member).
  */
-async function readClassDetail(id: string): Promise<ClassDetail> {
+async function readClassDetail(
+  id: string,
+  myRole: MyClassRole = null,
+): Promise<ClassDetail> {
   const cls = await prisma.class.findUnique({
     where: { id },
     select: {
@@ -174,6 +201,7 @@ async function readClassDetail(id: string): Promise<ClassDetail> {
   return {
     ...cls,
     members: cls.users as ClassMember[],
+    myRole,
   };
 }
 
@@ -214,7 +242,9 @@ export async function getClassById(
     await refreshIfExpired(id);
   }
 
-  return readClassDetail(id);
+  // Return the caller's own role so clients can gate tutor-only UI without
+  // finding themselves in `members` (which may exclude internal accounts).
+  return readClassDetail(id, membership?.role ?? null);
 }
 
 // ── Create / update class ──────────────────────────────────
@@ -244,7 +274,7 @@ export async function updateClass(
       throw err;
     });
 
-  return readClassDetail(classId);
+  return readClassDetail(classId, await findMyClassRole(classId, actorUserId));
 }
 
 export interface CreateClassInput {
@@ -297,7 +327,8 @@ export async function createClass(
         });
         return created.id;
       });
-      return await readClassDetail(cls);
+      // The creator was just added as a TUTOR member above.
+      return await readClassDetail(cls, "TUTOR");
     } catch (err) {
       // P2002 = unique constraint violation; only retry on classCode collision.
       const e = err as { code?: string; meta?: { target?: string[] } };
@@ -323,7 +354,7 @@ async function assertTutorOfClass(classId: string, userId: string, userRole: str
   });
   if (!membership) throw new AppError("Class not found", 404);
   if (membership.role !== "TUTOR") {
-    throw new AppError("Only tutors of this class can manage the class code", 403);
+    throw new AppError("Only tutors of this class can perform this action", 403);
   }
 }
 
@@ -369,7 +400,7 @@ export async function setClassArchived(
       throw err;
     });
 
-  return readClassDetail(classId);
+  return readClassDetail(classId, await findMyClassRole(classId, actorUserId));
 }
 
 // ── Code management ────────────────────────────────────────
@@ -850,6 +881,75 @@ export async function removeMember(
       where: { classId_userId: { classId, userId: targetUserId } },
     });
   });
+}
+
+// ── Set member role (assign / demote a class tutor) ───────
+
+export interface MemberRoleResult {
+  classId: string;
+  userId: string;
+  role: "STUDENT" | "TUTOR";
+  user: { id: string; displayName: string; avatarUrl: string | null };
+}
+
+/**
+ * Change an existing member's CLASS-membership role (TUTOR ⇄ STUDENT).
+ *
+ * This is the only way — besides creating a class — to make someone a class-tutor;
+ * joining by code always enters as STUDENT. It changes `ClassUser.role` only, never
+ * the user's global `User.role`.
+ *
+ * Authorization: an admin, or a TUTOR of the class (route also guards TUTOR/ADMIN).
+ *
+ * Guards:
+ *  - Target must be a member of the class (else 404).
+ *  - Internal (stealth) accounts are indistinguishable from nonexistent → 404.
+ *  - Demoting the last remaining tutor to STUDENT is refused (409) — a class must
+ *    always keep at least one tutor.
+ */
+export async function setMemberRole(
+  classId: string,
+  targetUserId: string,
+  newRole: "STUDENT" | "TUTOR",
+  actorUserId: string,
+  actorRole: string,
+): Promise<MemberRoleResult> {
+  await assertTutorOfClass(classId, actorUserId, actorRole);
+
+  // assertTutorOfClass short-circuits for admins without touching the class, so
+  // confirm the class exists to return a clean 404 for a bad id.
+  const cls = await prisma.class.findUnique({ where: { id: classId }, select: { id: true } });
+  if (!cls) throw new AppError("Class not found", 404);
+
+  const target = await prisma.classUser.findUnique({
+    where: { classId_userId: { classId, userId: targetUserId } },
+    select: { role: true, user: { select: { isInternal: true } } },
+  });
+  if (!target || target.user.isInternal) {
+    throw new AppError("Member not found in this class", 404);
+  }
+
+  const updated = await prisma.$transaction(async (tx) => {
+    // A class must never be left without a tutor.
+    if (target.role === "TUTOR" && newRole === "STUDENT") {
+      const tutorCount = await tx.classUser.count({ where: { classId, role: "TUTOR" } });
+      if (tutorCount <= 1) {
+        throw new AppError("Cannot demote the last tutor of a class", 409);
+      }
+    }
+    return tx.classUser.update({
+      where: { classId_userId: { classId, userId: targetUserId } },
+      data: { role: newRole },
+      select: {
+        classId: true,
+        userId: true,
+        role: true,
+        user: { select: { id: true, displayName: true, avatarUrl: true } },
+      },
+    });
+  });
+
+  return updated as MemberRoleResult;
 }
 
 // ── Class analytics (tutor / admin) ───────────────────────

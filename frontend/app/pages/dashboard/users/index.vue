@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useAdmin } from '~/composables/useAdmin'
-import type { AdminUserItem, AssignSubscriptionInput, UserRole, SubStatus } from '~/common/types/admin-types'
+import type { AdminUserItem, AssignSubscriptionInput, UserRole, SubStatus, PlanId } from '~/common/types/admin-types'
 
 definePageMeta({ layout: 'dashboard', requiresAuth: true, requiresAdmin: true })
 
@@ -26,6 +26,9 @@ const page = ref(1)
 const search = ref('')
 const roleFilter = ref<UserRole | 'ALL'>(initialRole)
 const statusFilter = ref<SubStatus | 'ALL'>(initialStatus)
+const planFilter = ref<PlanId | 'ALL'>('ALL')
+const createdAfter = ref('')
+const createdBefore = ref('')
 
 const assignTargetId = ref<string | null>(null)
 const assignOpen = ref(false)
@@ -34,6 +37,10 @@ const assignSaving = ref(false)
 const cancelTarget = ref<AdminUserItem | null>(null)
 const cancelOpen = ref(false)
 const cancelSaving = ref(false)
+
+const roleTarget = ref<AdminUserItem | null>(null)
+const roleOpen = ref(false)
+const roleSaving = ref(false)
 
 // Pagination page numbers to display (max 5 around current)
 const pageNumbers = computed(() => {
@@ -51,7 +58,16 @@ const pageNumbers = computed(() => {
 // ── Fetch ──────────────────────────────────────────────────────────────────
 async function load() {
   loading.value = true
-  const res = await listUsers({ page: page.value, limit: 8, search: search.value, role: roleFilter.value, subscriptionStatus: statusFilter.value })
+  const res = await listUsers({
+    page: page.value,
+    limit: 8,
+    search: search.value,
+    role: roleFilter.value,
+    subscriptionStatus: statusFilter.value,
+    plan: planFilter.value,
+    createdAfter: createdAfter.value,
+    createdBefore: createdBefore.value,
+  })
   if (res.success && res.data) {
     users.value = res.data.data ?? []
     total.value = res.data.meta?.total ?? 0
@@ -69,7 +85,7 @@ watch(search, () => {
   searchTimer = setTimeout(() => { page.value = 1; load() }, 300)
 })
 
-watch([roleFilter, statusFilter, page], load)
+watch([roleFilter, statusFilter, planFilter, createdAfter, createdBefore, page], load)
 
 // ── Actions ────────────────────────────────────────────────────────────────
 const togglingId = ref<string | null>(null)
@@ -82,6 +98,30 @@ async function onToggleStatus(userId: string, isActive: boolean) {
     if (idx !== -1) users.value[idx] = res.data.data
   }
   togglingId.value = null
+}
+
+function onChangeRole(user: AdminUserItem) {
+  roleTarget.value = user
+  roleOpen.value = true
+}
+
+async function onSaveRole(role: UserRole) {
+  if (!roleTarget.value) return
+  const targetId = roleTarget.value.id
+  roleSaving.value = true
+  const res = await patchUser(targetId, { role })
+  roleSaving.value = false
+  // Keep the dialog open on failure (e.g. last-admin 409) so the toast reads
+  // against the row the admin was acting on.
+  if (!res.success) return
+  roleOpen.value = false
+  // A role filter is active: the row may no longer belong in this result set,
+  // so refetch instead of patching it in place.
+  if (roleFilter.value !== 'ALL') { load(); return }
+  if (res.data?.data) {
+    const idx = users.value.findIndex(u => u.id === targetId)
+    if (idx !== -1) users.value[idx] = res.data.data
+  }
 }
 
 function onAssignSubscription(user: AdminUserItem) {
@@ -128,9 +168,15 @@ async function confirmCancel() {
         :search="search"
         :role="roleFilter"
         :subscription-status="statusFilter"
+        :plan="planFilter"
+        :created-after="createdAfter"
+        :created-before="createdBefore"
         @update:search="search = $event"
-        @update:role="roleFilter = $event"
-        @update:subscription-status="statusFilter = $event"
+        @update:role="roleFilter = $event; page = 1"
+        @update:subscription-status="statusFilter = $event; page = 1"
+        @update:plan="planFilter = $event; page = 1"
+        @update:created-after="createdAfter = $event; page = 1"
+        @update:created-before="createdBefore = $event; page = 1"
       />
     </div>
 
@@ -147,6 +193,7 @@ async function confirmCancel() {
               <th class="px-4 py-3 text-left text-[14px] font-semibold font-poppins hidden lg:table-cell" :style="`color:var(--text-muted)`">Subscription Status</th>
               <th class="px-4 py-3 text-left text-[14px] font-semibold font-poppins hidden xl:table-cell" :style="`color:var(--text-muted)`">Status</th>
               <th class="px-4 py-3 text-left text-[14px] font-semibold font-poppins hidden xl:table-cell" :style="`color:var(--text-muted)`">Joined</th>
+              <th class="px-2 py-3 w-10" />
               <th class="px-4 py-3 w-12" />
             </tr>
           </thead>
@@ -154,7 +201,7 @@ async function confirmCancel() {
           <!-- Skeleton -->
           <tbody v-if="loading">
             <tr v-for="n in 8" :key="n" style="border-bottom:1px solid var(--border-inner)">
-              <td class="px-4 py-3" colspan="7">
+              <td class="px-4 py-3" colspan="8">
                 <UiSkeleton class="h-10 rounded-xl" />
               </td>
             </tr>
@@ -163,7 +210,7 @@ async function confirmCancel() {
           <!-- Empty -->
           <tbody v-else-if="!users.length">
             <tr>
-              <td colspan="7" class="py-16">
+              <td colspan="8" class="py-16">
                 <UiEmpty>
                   <UiEmptyMedia>
                     <AppIconsax name="People" color="var(--color-text-subtle)" :size="32" />
@@ -185,6 +232,7 @@ async function confirmCancel() {
               :user="u"
               :toggling="togglingId === u.id"
               @toggle-status="onToggleStatus"
+              @change-role="onChangeRole"
               @assign-subscription="onAssignSubscription"
               @cancel-subscription="onCancelSubscription"
             />
@@ -219,6 +267,15 @@ async function confirmCancel() {
         </div>
       </div>
     </div>
+
+    <!-- Change role modal -->
+    <PagesDashboardUsersChangeRoleDialog
+      :open="roleOpen"
+      :user="roleTarget"
+      :saving="roleSaving"
+      @update:open="roleOpen = $event"
+      @save="onSaveRole"
+    />
 
     <!-- Assign subscription modal -->
     <PagesDashboardUsersAssignSubscriptionModal

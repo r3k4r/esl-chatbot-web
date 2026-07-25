@@ -2,9 +2,9 @@
   <section id="dashboard" class="bg-neutral-50 py-28 sm:py-36 overflow-hidden">
     <div class="container-lg layout-padding-lg">
       <LayoutsSectionHeader
-        :eyebrow="t.dashboardPreview.eyebrow"
-        :title="t.dashboardPreview.title"
-        :description="t.dashboardPreview.description"
+        :eyebrow="t('dashboardPreview.eyebrow')"
+        :title="t('dashboardPreview.title')"
+        :description="t('dashboardPreview.description')"
         align="center"
         wrapper-class="mb-14"
       />

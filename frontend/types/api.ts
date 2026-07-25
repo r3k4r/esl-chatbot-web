@@ -101,6 +101,18 @@ export interface paths {
                         "application/json": components["schemas"]["ErrorResponse"];
                     };
                 };
+                /**
+                 * @description Blocked to prevent lockout — the admin tried to change their own role or
+                 *     deactivate their own account, or the change would remove the last active admin.
+                 */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
                 /** @description Validation error — at least one field required */
                 422: {
                     headers: {
@@ -2140,6 +2152,13 @@ export interface paths {
          *     rotated to a new value before being returned. This means tutors
          *     can simply open the class to get a fresh code — no manual click
          *     required. Student callers do NOT trigger a rotation.
+         *
+         *     The response includes `myRole` — the caller's own class-membership
+         *     role (`TUTOR`, `STUDENT`, or `null` for an admin who isn't a member).
+         *     It is derived from a direct membership lookup, so it is correct even
+         *     when the caller is excluded from the `members` array (internal
+         *     accounts). Clients should gate tutor-only UI on `myRole`, not by
+         *     searching `members` for themselves.
          */
         get: {
             parameters: {
@@ -2152,7 +2171,7 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
-                /** @description Class detail with enrolled members */
+                /** @description Class detail with enrolled members and the caller's own `myRole` */
                 200: {
                     headers: {
                         [name: string]: unknown;
@@ -3023,6 +3042,131 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/classes/{id}/members/{userId}/role": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Set a member's class role (assign or demote a class tutor)
+         * @description Changes an existing member's **class-membership role** (`TUTOR` or `STUDENT`).
+         *     This is the only way — besides creating a class — to make someone a class-tutor;
+         *     joining by code always enters as a STUDENT. Only the per-class role changes; the
+         *     user's global account role (`User.role`) is untouched.
+         *
+         *     **Authorization:** a tutor of the class, or an admin. (A STUDENT-role account is
+         *     rejected at the route guard; a TUTOR-role account that is only a STUDENT member of
+         *     this class is rejected by the service with 403.)
+         *
+         *     **Guard:** the last tutor of a class cannot be demoted to STUDENT — promote another
+         *     member to tutor first.
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Class ID */
+                    id: string;
+                    /** @description ID of the member whose role is being changed */
+                    userId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        /**
+                         * @description New class-membership role for the member
+                         * @enum {string}
+                         */
+                        role: "STUDENT" | "TUTOR";
+                    };
+                };
+            };
+            responses: {
+                /** @description Member role updated */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            success?: boolean;
+                            data?: {
+                                /** Format: uuid */
+                                classId?: string;
+                                /** Format: uuid */
+                                userId?: string;
+                                /** @enum {string} */
+                                role?: "STUDENT" | "TUTOR";
+                                user?: {
+                                    /** Format: uuid */
+                                    id?: string;
+                                    displayName?: string;
+                                    avatarUrl?: string | null;
+                                };
+                            };
+                        };
+                    };
+                };
+                /** @description Missing or invalid token */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Caller is not a tutor of this class or an admin */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Class not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Cannot demote the last tutor of a class */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Validation error */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
     "/dashboard/overview": {
         parameters: {
             query?: never;
@@ -3513,6 +3657,7 @@ export interface paths {
                                 role?: "USER" | "ASSISTANT";
                                 /** @enum {string} */
                                 type?: "TEXT" | "VOICE";
+                                /** @description For ASSISTANT rows this is sanitized lightweight HTML (p/strong/em/ul/ol/li/br only — render with v-html); USER rows are plain text. Rows stored before 2026-07 are plain text. */
                                 content?: string;
                                 wordCount?: number | null;
                                 audioUrl?: string | null;
@@ -3614,6 +3759,7 @@ export interface paths {
                                     role?: string;
                                     /** @enum {string} */
                                     type?: "TEXT" | "VOICE";
+                                    /** @description AI tutor's reply as sanitized lightweight HTML (only p/strong/em/ul/ol/li/br tags */
                                     content?: string;
                                     wordCount?: number;
                                     /** Format: date-time */
@@ -3772,7 +3918,7 @@ export interface paths {
                                     role?: string;
                                     /** @example VOICE */
                                     type?: string;
-                                    /** @description AI tutor's text reply */
+                                    /** @description AI tutor's reply as sanitized lightweight HTML (only p/strong/em/ul/ol/li/br tags */
                                     content?: string;
                                     wordCount?: number | null;
                                     /** @description R2 URL of the TTS MP3. Null if R2 or TTS not configured. */
@@ -6119,6 +6265,12 @@ export interface paths {
                     search?: string;
                     /** @description Filter by subscription status */
                     subscriptionStatus?: "ACTIVE" | "INACTIVE" | "CANCELLED" | "PAST_DUE";
+                    /** @description Filter by subscription plan */
+                    plan?: "FREE" | "GOLD" | "PREMIUM";
+                    /** @description Filter users created after this date (ISO 8601) */
+                    createdAfter?: string;
+                    /** @description Filter users created before this date (ISO 8601) */
+                    createdBefore?: string;
                 };
                 header?: never;
                 path?: never;
@@ -6274,6 +6426,9 @@ export interface paths {
                                     currentPeriodStart?: string | null;
                                     /** Format: date-time */
                                     currentPeriodEnd?: string | null;
+                                    /** @enum {string|null} */
+                                    paymentProvider?: "CASH" | "FIB" | "STRIPE" | null;
+                                    monthlyTtsUsage?: number;
                                 } | null;
                                 metrics?: {
                                     /** Format: uuid */
@@ -6290,6 +6445,11 @@ export interface paths {
                                     fluencySkill?: number;
                                     speakingSkill?: number;
                                 } | null;
+                                /** @enum {string} */
+                                authProvider?: "LOCAL" | "GOOGLE";
+                                emailVerified?: boolean;
+                                /** Format: date-time */
+                                emailVerifiedAt?: string | null;
                                 classUsers?: {
                                     /** Format: uuid */
                                     id?: string;
@@ -6303,6 +6463,129 @@ export interface paths {
                                         /** @enum {string} */
                                         classStatus?: "ACTIVE" | "INACTIVE";
                                     };
+                                }[];
+                                goals?: {
+                                    /** Format: uuid */
+                                    id?: string;
+                                    /** @enum {string} */
+                                    type?: "VOCABULARY" | "SPEAKING" | "GRAMMAR" | "CONVERSATION" | "STUDY_TIME";
+                                    description?: string;
+                                    target?: number;
+                                    /** @enum {string|null} */
+                                    difficulty?: "EASY" | "MEDIUM" | "HARD" | "EXPERT" | null;
+                                    /** @enum {string} */
+                                    status?: "ACTIVE" | "COMPLETED" | "PAUSED" | "CANCELLED";
+                                    progress?: number;
+                                    /** Format: date-time */
+                                    startDate?: string;
+                                    /** Format: date-time */
+                                    targetDate?: string | null;
+                                    /** Format: date-time */
+                                    completedDate?: string | null;
+                                    /** Format: date-time */
+                                    createdAt?: string;
+                                    assignedByTutor?: {
+                                        /** Format: uuid */
+                                        id?: string;
+                                        displayName?: string;
+                                    } | null;
+                                }[];
+                                vocabularies?: {
+                                    /** Format: uuid */
+                                    id?: string;
+                                    word?: string;
+                                    definition?: string;
+                                    partOfSpeech?: string | null;
+                                    masteryLevel?: number;
+                                    /** @enum {string} */
+                                    source?: "MANUAL" | "SESSION" | "ASSIGNED";
+                                    srsInterval?: number;
+                                    /** Format: date-time */
+                                    srsDue?: string | null;
+                                    reviewCount?: number;
+                                    correctCount?: number;
+                                    incorrectCount?: number;
+                                    /** Format: date-time */
+                                    lastPracticed?: string | null;
+                                    /** Format: date-time */
+                                    createdAt?: string;
+                                    assignedByTutor?: {
+                                        /** Format: uuid */
+                                        id?: string;
+                                        displayName?: string;
+                                    } | null;
+                                }[];
+                                sessions?: {
+                                    /** Format: uuid */
+                                    id?: string;
+                                    /** @enum {string} */
+                                    mode?: "TEXT" | "VOICE";
+                                    topic?: string | null;
+                                    /** Format: date-time */
+                                    startedAt?: string;
+                                    /** Format: date-time */
+                                    endedAt?: string | null;
+                                    durationSeconds?: number | null;
+                                    messageCount?: number;
+                                    evaluation?: {
+                                        avgOverallScore?: number;
+                                        avgGrammarScore?: number;
+                                        avgVocabularyScore?: number;
+                                        avgFluencyScore?: number;
+                                        detectedCefrLevel?: string;
+                                        strengths?: string[];
+                                        weaknesses?: string[];
+                                    } | null;
+                                }[];
+                                progress?: {
+                                    /** Format: date-time */
+                                    date?: string;
+                                    sessionsCount?: number;
+                                    studyMinutes?: number;
+                                    messagesCount?: number;
+                                    wordsTyped?: number;
+                                    vocabularyPracticed?: number;
+                                    goalsAdvanced?: number;
+                                }[];
+                                taskSubmissions?: {
+                                    /** Format: uuid */
+                                    id?: string;
+                                    content?: string | null;
+                                    feedback?: string | null;
+                                    /** Format: date-time */
+                                    feedbackAt?: string | null;
+                                    /** Format: date-time */
+                                    createdAt?: string;
+                                    task?: {
+                                        /** Format: uuid */
+                                        id?: string;
+                                        title?: string;
+                                        description?: string;
+                                        /** Format: date-time */
+                                        deadline?: string | null;
+                                        /** @enum {string} */
+                                        status?: "OPEN" | "CLOSED";
+                                        class?: {
+                                            /** Format: uuid */
+                                            id?: string;
+                                            className?: string;
+                                        };
+                                    };
+                                }[];
+                                fibSubscriptions?: {
+                                    /** Format: uuid */
+                                    id?: string;
+                                    /** @enum {string} */
+                                    plan?: "FREE" | "GOLD" | "PREMIUM";
+                                    intervalMonths?: number;
+                                    amountIQD?: number;
+                                    fibStatus?: string;
+                                    /** Format: date-time */
+                                    activatedAt?: string | null;
+                                    /** Format: date-time */
+                                    cancelledAt?: string | null;
+                                    /** Format: date-time */
+                                    createdAt?: string;
                                 }[];
                             };
                         };

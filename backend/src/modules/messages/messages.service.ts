@@ -10,6 +10,7 @@ import {
   DEFAULT_LLM_CONTEXT_MESSAGES,
 } from "../sessions/sessions.service.ts";
 import { generateAIResponse } from "../ai/ai.service.ts";
+import { countAiReplyWords } from "../../utils/aiReplyFormat.ts";
 import type { SendMessageResult } from "./messages.types.ts";
 import type { MessageType, Plan } from "@prisma/client";
 
@@ -112,7 +113,8 @@ export async function sendMessage(
   );
 
   const wordCount = content.split(/\s+/).filter(Boolean).length;
-  const aiWordCount = aiResult.reply.split(/\s+/).filter(Boolean).length;
+  // Reply is HTML — count visible words only, never tags/entities
+  const aiWordCount = countAiReplyWords(aiResult.reply);
 
   // Store user message, AI response, and evaluation in a single transaction
   const result = await prisma.$transaction(async (tx) => {

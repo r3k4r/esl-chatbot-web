@@ -92,6 +92,56 @@ describe("PATCH /api/v1/admin/users/:id", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────
+describe("PATCH /api/v1/admin/users/:id — self-lockout & last-admin guards", () => {
+  it("409 — an admin cannot change their own role (self-demote)", async () => {
+    const admin = await createAdmin();
+    const res = await request(app)
+      .patch(`/api/v1/admin/users/${admin.id}`)
+      .set(auth(admin.token))
+      .send({ role: "STUDENT" });
+    expect(res.status).toBe(409);
+    // Role is unchanged.
+    const still = await prisma.user.findUnique({ where: { id: admin.id }, select: { role: true } });
+    expect(still?.role).toBe("ADMIN");
+  });
+
+  it("409 — an admin cannot deactivate their own account", async () => {
+    const admin = await createAdmin();
+    const res = await request(app)
+      .patch(`/api/v1/admin/users/${admin.id}`)
+      .set(auth(admin.token))
+      .send({ isActive: false });
+    expect(res.status).toBe(409);
+    const still = await prisma.user.findUnique({ where: { id: admin.id }, select: { isActive: true } });
+    expect(still?.isActive).toBe(true);
+  });
+
+  it("200 — an admin CAN demote another admin while other admins remain", async () => {
+    // The acting admin (plus any seed/other admins) keeps the active-admin pool
+    // non-empty, so the last-admin guard permits this demotion.
+    const admin = await createAdmin();
+    const other = await createAdmin();
+    const res = await request(app)
+      .patch(`/api/v1/admin/users/${other.id}`)
+      .set(auth(admin.token))
+      .send({ role: "STUDENT" });
+    expect(res.status).toBe(200);
+    expect(res.body.data.role).toBe("STUDENT");
+  });
+
+  it("200 — an admin CAN deactivate another admin while other admins remain", async () => {
+    const admin = await createAdmin();
+    const other = await createAdmin();
+    const res = await request(app)
+      .patch(`/api/v1/admin/users/${other.id}`)
+      .set(auth(admin.token))
+      .send({ isActive: false });
+    expect(res.status).toBe(200);
+    expect(res.body.data.isActive).toBe(false);
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────
 describe("PUT /api/v1/admin/users/:id/subscription", () => {
   it("200 — assign GOLD with durationMonths → ACTIVE, future period end, CASH default", async () => {
     const admin = await createAdmin();

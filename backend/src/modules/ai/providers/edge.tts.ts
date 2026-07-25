@@ -1,8 +1,9 @@
 import { MsEdgeTTS, OUTPUT_FORMAT } from "msedge-tts";
 
-// Dev-only TTS via Microsoft Edge Read Aloud API (no API key, no billing)
+// TTS via Microsoft Edge Read Aloud API (no API key, no billing)
 // Same Azure Neural voice profiles as production — dev experience matches real voice quality
-// ⚠️ Not for production: unofficial endpoint, no SLA, may be blocked on non-Edge user agents
+// Primary in dev; in prod it is only the LAST-RESORT fallback when no paid TTS key
+// (Azure/OpenAI) is configured — unofficial endpoint, no SLA, may break without notice
 const VOICE = "en-US-JennyNeural";
 
 export async function edgeTTS(text: string): Promise<Buffer> {

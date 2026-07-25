@@ -28,6 +28,9 @@ export async function getUsers(
   role?: Role,
   search?: string,
   subscriptionStatus?: SubStatus,
+  plan?: "FREE" | "GOLD" | "PREMIUM",
+  createdAfter?: string,
+  createdBefore?: string,
 ): Promise<{ users: UserListItem[]; total: number }> {
   const skip = (page - 1) * limit;
 
@@ -35,6 +38,14 @@ export async function getUsers(
   const where: Prisma.UserWhereInput = { isInternal: false };
   if (role) where.role = role;
   if (subscriptionStatus) where.subscription = { status: subscriptionStatus };
+  if (plan) {
+    where.subscription = { ...(where.subscription as any), plan };
+  }
+  if (createdAfter || createdBefore) {
+    where.createdAt = {};
+    if (createdAfter) (where.createdAt as any).gte = new Date(createdAfter);
+    if (createdBefore) (where.createdAt as any).lte = new Date(createdBefore);
+  }
   if (search) {
     where.OR = [
       { username: { contains: search, mode: "insensitive" } },
@@ -64,6 +75,9 @@ export async function getUserById(id: string): Promise<UserDetail> {
       ...USER_LIST_SELECT,
       isInternal: true,
       updatedAt: true,
+      authProvider: true,
+      emailVerified: true,
+      emailVerifiedAt: true,
       learnerProfile: {
         select: {
           id: true,
@@ -75,6 +89,10 @@ export async function getUserById(id: string): Promise<UserDetail> {
           uiLanguage: true,
           theme: true,
           emailDigestEnabled: true,
+          topicsOfInterest: true,
+          aiPersonality: true,
+          voiceSpeed: true,
+          autoSpeak: true,
         },
       },
       subscription: {
@@ -84,6 +102,8 @@ export async function getUserById(id: string): Promise<UserDetail> {
           status: true,
           currentPeriodStart: true,
           currentPeriodEnd: true,
+          paymentProvider: true,
+          monthlyTtsUsage: true,
         },
       },
       metrics: {
@@ -114,6 +134,115 @@ export async function getUserById(id: string): Promise<UserDetail> {
             },
           },
         },
+      },
+      goals: {
+        select: {
+          id: true,
+          type: true,
+          description: true,
+          target: true,
+          difficulty: true,
+          status: true,
+          progress: true,
+          startDate: true,
+          targetDate: true,
+          completedDate: true,
+          createdAt: true,
+          assignedByTutor: { select: { id: true, displayName: true } },
+        },
+        orderBy: { createdAt: "desc" },
+        take: 20,
+      },
+      vocabularies: {
+        select: {
+          id: true,
+          word: true,
+          definition: true,
+          partOfSpeech: true,
+          masteryLevel: true,
+          source: true,
+          srsInterval: true,
+          srsDue: true,
+          reviewCount: true,
+          correctCount: true,
+          incorrectCount: true,
+          lastPracticed: true,
+          createdAt: true,
+          assignedByTutor: { select: { id: true, displayName: true } },
+        },
+        orderBy: { createdAt: "desc" },
+        take: 50,
+      },
+      sessions: {
+        select: {
+          id: true,
+          mode: true,
+          topic: true,
+          startedAt: true,
+          endedAt: true,
+          durationSeconds: true,
+          messageCount: true,
+          evaluation: {
+            select: {
+              avgOverallScore: true,
+              avgGrammarScore: true,
+              avgVocabularyScore: true,
+              avgFluencyScore: true,
+              detectedCefrLevel: true,
+              strengths: true,
+              weaknesses: true,
+            },
+          },
+        },
+        orderBy: { startedAt: "desc" },
+        take: 20,
+      },
+      progress: {
+        select: {
+          date: true,
+          sessionsCount: true,
+          studyMinutes: true,
+          messagesCount: true,
+          wordsTyped: true,
+          vocabularyPracticed: true,
+          goalsAdvanced: true,
+        },
+        orderBy: { date: "desc" },
+        take: 30,
+      },
+      taskSubmissions: {
+        select: {
+          id: true,
+          content: true,
+          feedback: true,
+          feedbackAt: true,
+          createdAt: true,
+          task: {
+            select: {
+              id: true,
+              title: true,
+              description: true,
+              deadline: true,
+              status: true,
+              class: { select: { id: true, className: true } },
+            },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+        take: 20,
+      },
+      fibSubscriptions: {
+        select: {
+          id: true,
+          plan: true,
+          intervalMonths: true,
+          amountIQD: true,
+          fibStatus: true,
+          activatedAt: true,
+          cancelledAt: true,
+          createdAt: true,
+        },
+        orderBy: { createdAt: "desc" },
       },
     },
   });

@@ -229,6 +229,39 @@ describe("GET /api/v1/classes/:id — detail", () => {
     expect(res.status).toBe(200);
   });
 
+  it("myRole — returns the caller's own class role (TUTOR / STUDENT / null)", async () => {
+    const tutor = await createTutor();
+    const student = await createStudent();
+    const admin = await createAdmin();
+    const cls = await makeClass(tutor.id);
+    await addMember(cls.id, student.id, "STUDENT");
+
+    const asTutor = await request(app).get(`/api/v1/classes/${cls.id}`).set(auth(tutor.token));
+    expect(asTutor.body.data.myRole).toBe("TUTOR");
+
+    const asStudent = await request(app).get(`/api/v1/classes/${cls.id}`).set(auth(student.token));
+    expect(asStudent.body.data.myRole).toBe("STUDENT");
+
+    // An admin who is not a member of the class has no class role.
+    const asAdmin = await request(app).get(`/api/v1/classes/${cls.id}`).set(auth(admin.token));
+    expect(asAdmin.body.data.myRole).toBeNull();
+  });
+
+  it("myRole — an internal tutor is hidden from members[] but still gets myRole=TUTOR", async () => {
+    // Regression: an internal/stealth account is excluded from the members list,
+    // so clients cannot find themselves there. myRole must still be returned so
+    // the account can see its own tutor controls (otherwise it can't post).
+    const internalTutor = track(await createTestUser({ role: "TUTOR", isInternal: true }));
+    const cls = await makeClass(internalTutor.id);
+
+    const res = await request(app).get(`/api/v1/classes/${cls.id}`).set(auth(internalTutor.token));
+    expect(res.status).toBe(200);
+    // Hidden from the members list…
+    expect(res.body.data.members.some((m: { user: { id: string } }) => m.user.id === internalTutor.id)).toBe(false);
+    // …but their own role is still reported.
+    expect(res.body.data.myRole).toBe("TUTOR");
+  });
+
   it("404 — a non-member cannot read the class (existence not revealed)", async () => {
     const tutor = await createTutor();
     const outsider = await createStudent();
@@ -532,6 +565,139 @@ describe("DELETE /api/v1/classes/:id/members/:userId — remove member", () => {
       .delete(`/api/v1/classes/${cls.id}/members/${NONEXISTENT_ID}`)
       .set(auth(tutor.token));
     expect(res.status).toBe(404);
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────
+describe("PATCH /api/v1/classes/:id/members/:userId/role — set member class role", () => {
+  const roleUrl = (classId: string, userId: string) =>
+    `/api/v1/classes/${classId}/members/${userId}/role`;
+
+  it("200 — an admin promotes a student member to tutor", async () => {
+    const tutor = await createTutor();
+    const student = await createStudent();
+    const admin = await createAdmin();
+    const cls = await makeClass(tutor.id);
+    await addMember(cls.id, student.id, "STUDENT");
+
+    const res = await request(app)
+      .patch(roleUrl(cls.id, student.id))
+      .set(auth(admin.token))
+      .send({ role: "TUTOR" });
+    expect(res.status).toBe(200);
+    expect(res.body.data.role).toBe("TUTOR");
+    expect(res.body.data.user.id).toBe(student.id);
+
+    const membership = await prisma.classUser.findUnique({
+      where: { classId_userId: { classId: cls.id, userId: student.id } },
+      select: { role: true },
+    });
+    expect(membership?.role).toBe("TUTOR");
+  });
+
+  it("200 — a tutor of the class promotes a student member to tutor", async () => {
+    const tutor = await createTutor();
+    const student = await createStudent();
+    const cls = await makeClass(tutor.id);
+    await addMember(cls.id, student.id, "STUDENT");
+
+    const res = await request(app)
+      .patch(roleUrl(cls.id, student.id))
+      .set(auth(tutor.token))
+      .send({ role: "TUTOR" });
+    expect(res.status).toBe(200);
+    expect(res.body.data.role).toBe("TUTOR");
+  });
+
+  it("200 — demote a tutor to student while another tutor remains", async () => {
+    const tutorA = await createTutor();
+    const tutorB = await createTutor();
+    const cls = await makeClass(tutorA.id);
+    await addMember(cls.id, tutorB.id, "TUTOR");
+
+    const res = await request(app)
+      .patch(roleUrl(cls.id, tutorB.id))
+      .set(auth(tutorA.token))
+      .send({ role: "STUDENT" });
+    expect(res.status).toBe(200);
+    expect(res.body.data.role).toBe("STUDENT");
+  });
+
+  it("409 — cannot demote the last tutor of a class", async () => {
+    const tutor = await createTutor();
+    const cls = await makeClass(tutor.id);
+    const res = await request(app)
+      .patch(roleUrl(cls.id, tutor.id))
+      .set(auth(tutor.token))
+      .send({ role: "STUDENT" });
+    expect(res.status).toBe(409);
+  });
+
+  it("403 — a global-TUTOR who is only a STUDENT member of the class cannot change roles", async () => {
+    // This is the exact real-world bug: account role TUTOR, but class role STUDENT.
+    const owner = await createTutor();
+    const otherTutor = await createTutor(); // global TUTOR
+    const student = await createStudent();
+    const cls = await makeClass(owner.id);
+    await addMember(cls.id, otherTutor.id, "STUDENT"); // joined as a student
+    await addMember(cls.id, student.id, "STUDENT");
+
+    const res = await request(app)
+      .patch(roleUrl(cls.id, student.id))
+      .set(auth(otherTutor.token))
+      .send({ role: "TUTOR" });
+    expect(res.status).toBe(403);
+  });
+
+  it("403 — a STUDENT account role is blocked at the route guard", async () => {
+    const tutor = await createTutor();
+    const student = await createStudent();
+    const other = await createStudent();
+    const cls = await makeClass(tutor.id);
+    await addMember(cls.id, student.id, "STUDENT");
+    await addMember(cls.id, other.id, "STUDENT");
+
+    const res = await request(app)
+      .patch(roleUrl(cls.id, other.id))
+      .set(auth(student.token))
+      .send({ role: "TUTOR" });
+    expect(res.status).toBe(403);
+  });
+
+  it("404 — target is not a member of the class", async () => {
+    const tutor = await createTutor();
+    const cls = await makeClass(tutor.id);
+    const res = await request(app)
+      .patch(roleUrl(cls.id, NONEXISTENT_ID))
+      .set(auth(tutor.token))
+      .send({ role: "TUTOR" });
+    expect(res.status).toBe(404);
+  });
+
+  it("404 — an internal (stealth) member is indistinguishable from nonexistent", async () => {
+    const tutor = await createTutor();
+    const internal = track(await createTestUser({ role: "STUDENT", isInternal: true }));
+    const cls = await makeClass(tutor.id);
+    await addMember(cls.id, internal.id, "STUDENT");
+
+    const res = await request(app)
+      .patch(roleUrl(cls.id, internal.id))
+      .set(auth(tutor.token))
+      .send({ role: "TUTOR" });
+    expect(res.status).toBe(404);
+  });
+
+  it("422 — invalid role value", async () => {
+    const tutor = await createTutor();
+    const student = await createStudent();
+    const cls = await makeClass(tutor.id);
+    await addMember(cls.id, student.id, "STUDENT");
+
+    const res = await request(app)
+      .patch(roleUrl(cls.id, student.id))
+      .set(auth(tutor.token))
+      .send({ role: "ADMIN" });
+    expect(res.status).toBe(422);
   });
 });
 

@@ -12,6 +12,7 @@ interface ApiResponse<T> { success: boolean; message?: string; data: T }
 export function useProfile() {
   const profile = ref<MyProfileData | null>(null)
   const loading = ref(false)
+  const { syncFromProfile } = useTheme()
 
   async function fetchProfile() {
     loading.value = true
@@ -23,6 +24,7 @@ export function useProfile() {
     })
     if (res.success && res.data?.data) {
       profile.value = res.data.data
+      syncFromProfile(res.data.data.learnerProfile?.theme)
     }
     loading.value = false
     return res
@@ -50,8 +52,9 @@ export function useProfile() {
       requireAuth: true,
       showToast: true,
     })
-    if (res.success && res.data?.data && profile.value) {
-      profile.value = { ...profile.value, learnerProfile: res.data.data }
+    if (res.success && res.data?.data) {
+      if (profile.value) profile.value = { ...profile.value, learnerProfile: res.data.data }
+      syncFromProfile(res.data.data.theme)
     }
     return res
   }

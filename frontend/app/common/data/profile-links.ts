@@ -1,5 +1,5 @@
 import { User, ReceiptText, Ticket, History, LogOut, UserPen } from 'lucide-vue-next';
-import type { ProfileLink } from '~~/common/types/profile-links-type';
+import type { ProfileLink } from '~/common/types/profile-links-type';
 
 export const profileLinks: ProfileLink[] = [
     { label: 'Profile', path: '/user/profile', icon: UserPen },

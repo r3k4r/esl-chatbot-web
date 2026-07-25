@@ -53,7 +53,7 @@ const router = Router();
  *                       id: { type: string, format: uuid }
  *                       role: { type: string, enum: [USER, ASSISTANT] }
  *                       type: { type: string, enum: [TEXT, VOICE] }
- *                       content: { type: string }
+ *                       content: { type: string, description: For ASSISTANT rows this is sanitized lightweight HTML (p/strong/em/ul/ol/li/br only — render with v-html); USER rows are plain text. Rows stored before 2026-07 are plain text. }
  *                       wordCount: { type: integer, nullable: true }
  *                       audioUrl: { type: string, nullable: true }
  *                       audioDurationSec: { type: number, nullable: true }
@@ -144,7 +144,7 @@ router.get("/:sessionId/messages", authenticate, listMessagesHandler);
  *                         id: { type: string, format: uuid }
  *                         role: { type: string, example: ASSISTANT }
  *                         type: { type: string, enum: [TEXT, VOICE] }
- *                         content: { type: string }
+ *                         content: { type: string, description: AI tutor's reply as sanitized lightweight HTML (only p/strong/em/ul/ol/li/br tags, no attributes) — render with v-html }
  *                         wordCount: { type: integer }
  *                         createdAt: { type: string, format: date-time }
  *                     evaluation:
@@ -248,7 +248,7 @@ router.post("/:sessionId/messages", authenticate, sendMessageLimiter, sendMessag
  *                         id: { type: string, format: uuid }
  *                         role: { type: string, example: ASSISTANT }
  *                         type: { type: string, example: VOICE }
- *                         content: { type: string, description: AI tutor's text reply }
+ *                         content: { type: string, description: AI tutor's reply as sanitized lightweight HTML (only p/strong/em/ul/ol/li/br tags, no attributes) — render with v-html }
  *                         wordCount: { type: integer, nullable: true }
  *                         audioUrl: { type: string, nullable: true, description: R2 URL of the TTS MP3. Null if R2 or TTS not configured. }
  *                         createdAt: { type: string, format: date-time }

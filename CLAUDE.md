@@ -89,8 +89,8 @@ AI chatbot access is gated by `subscription.status === 'ACTIVE'`. **Verification
 
 | Tier | Sessions/day | Msgs/session (soft+buffer) | Msgs/day hard cap | LLM context | AI model |
 |---|---|---|---|---|---|
-| FREE | 3 | 20 + 10 | 20 | 10 msgs | Gemini 2.5 Flash-Lite |
-| GOLD | 15 | 100 + 10 | — | 20 msgs | Gemini 2.5 Flash |
+| FREE | 3 | 20 + 10 | 20 | 10 msgs | Gemini Flash Lite (`gemini-flash-lite-latest` alias) |
+| GOLD | 15 | 100 + 10 | — | 20 msgs | Gemini Flash (`gemini-flash-latest` alias) |
 | PREMIUM | 50 | 150 + 10 | — | 20 msgs | GPT-5 mini (OpenAI, auto-falls back to Gemini) |
 
 Dev environment always uses `gemini-flash-latest` regardless of plan. Plan limits are enforced in `src/modules/sessions/sessions.service.ts` and `src/modules/messages/messages.service.ts`. Frontend reads them from [frontend/app/common/data/plan-limits.ts](frontend/app/common/data/plan-limits.ts) — keep these two in sync manually when tier limits change.

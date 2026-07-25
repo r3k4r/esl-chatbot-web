@@ -52,7 +52,8 @@ async function toggleEmailDigest(val: boolean) {
   }
 }
 
-// Fetch profile on mount to sync the toggle
+// Fetch profile on mount to sync the toggle + theme (cross-device)
+const { syncFromProfile } = useTheme()
 onMounted(async () => {
   const res = await useHttp({
     method: 'GET',
@@ -62,6 +63,7 @@ onMounted(async () => {
   })
   if (res.success && res.data?.data?.learnerProfile) {
     emailDigestEnabled.value = res.data.data.learnerProfile.emailDigestEnabled ?? true
+    syncFromProfile(res.data.data.learnerProfile.theme)
   }
 })
 

@@ -11,7 +11,7 @@
                     </AppLink>
 
                     <AppText size="13" color="white-50" class-list="mt-5 max-w-xs leading-relaxed">
-                        {{ t.footer.tagline }}
+                        {{ t('footer.tagline') }}
                     </AppText>
 
                     <div class="mt-6 flex items-center gap-2">
@@ -25,7 +25,6 @@
                         </AppLink>
                     </div>
                 </div>
-                <!-- max-w-7xl mx-auto px-5 sm:px-8 -->
 
                 <div v-for="col in cols" :key="col.heading">
                     <AppText
@@ -51,15 +50,15 @@
             </div>
 
             <div class="mt-16 pt-6 border-t border-neutral-50/10 flex flex-col sm:flex-row items-center justify-between gap-3">
-                <AppText size="12" color="white-40">{{ t.footer.rights }}</AppText>
+                <AppText size="12" color="white-40">{{ t('footer.rights') }}</AppText>
                 <div class="flex items-center gap-4 text-[12px] text-neutral-50/40">
                     <div class="flex items-center gap-1.5">
                         <Icon icon="lucide:globe" width="12" />
-                        <AppText size="12" color="white-40">{{ config.nativeName }}</AppText>
+                        <AppText size="12" color="white-40">{{ nativeName }}</AppText>
                     </div>
                     <div class="flex items-center gap-1.5">
                         <span class="size-1.5 rounded-full bg-emerald-400" />
-                        <AppText size="12" color="white-40">{{ t.footer.status }}</AppText>
+                        <AppText size="12" color="white-40">{{ t('footer.status') }}</AppText>
                     </div>
                 </div>
             </div>
@@ -70,14 +69,14 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
 
-const { t, config } = useLocale()
+const { t, ta, nativeName } = useLocale()
 
 // Social handles are brand abbreviations — not translated.
 const socials = ['X', 'in', 'gh', 'yt']
 
 const cols = computed(() => [
-    t.value.footer.columns.product,
-    t.value.footer.columns.resources,
-    t.value.footer.columns.company,
+    { heading: t('footer.columns.product.heading'),   links: ta('footer.columns.product.links') },
+    { heading: t('footer.columns.resources.heading'), links: ta('footer.columns.resources.links') },
+    { heading: t('footer.columns.company.heading'),   links: ta('footer.columns.company.links') },
 ])
 </script>

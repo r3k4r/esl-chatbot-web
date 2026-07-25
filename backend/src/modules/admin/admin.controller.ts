@@ -20,9 +20,10 @@ import {
 import { AppError } from "../../utils/AppError.ts";
 
 export const patchUser = asyncHandler(async (req: Request, res: Response) => {
+  if (!req.user) throw new AppError("Authentication required", 401);
   const { id } = adminUserParamSchema.parse(req.params);
   const body = updateUserBodySchema.parse(req.body);
-  const user = await updateUser(id, body);
+  const user = await updateUser(id, body, req.user.id);
   sendSuccess(res, user, "User updated successfully");
 });
 

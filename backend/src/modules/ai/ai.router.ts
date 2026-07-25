@@ -63,11 +63,11 @@ if (env.NODE_ENV !== "production") {
             ? "openai"
             : "gemini",
         model: isDev
-          ? "gemini-2.5-flash (dev)"
+          ? "gemini-flash-latest (dev)"
           : resolvedPlan === "FREE"
-            ? "gemini-2.5-flash-lite"
+            ? "gemini-flash-lite-latest"
             : resolvedPlan === "GOLD"
-              ? "gemini-2.5-flash"
+              ? "gemini-flash-latest"
               : "gpt-5-mini",
       };
 

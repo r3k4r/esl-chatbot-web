@@ -13,6 +13,7 @@ import {
   setArchivedSchema,
   joinByCodeSchema,
   classMemberParamSchema,
+  setMemberRoleSchema,
 } from "./classes.schema.ts";
 import {
   getClasses,
@@ -28,6 +29,7 @@ import {
   getClassStudents,
   getClassStudentDetail,
   removeMember,
+  setMemberRole,
   getClassAnalytics,
 } from "./classes.service.ts";
 
@@ -156,4 +158,14 @@ export const removeMemberHandler = asyncHandler(async (req: Request, res: Respon
   const { id, userId } = classMemberParamSchema.parse(req.params);
   await removeMember(id, userId, req.user.id, req.user.role);
   sendSuccess(res, null, userId === req.user.id ? "Left class successfully" : "Member removed successfully");
+});
+
+// ── Set member role (tutor in class / admin) ──────────────
+
+export const setMemberRoleHandler = asyncHandler(async (req: Request, res: Response) => {
+  if (!req.user) throw new AppError("Authentication required", 401);
+  const { id, userId } = classMemberParamSchema.parse(req.params);
+  const { role } = setMemberRoleSchema.parse(req.body);
+  const member = await setMemberRole(id, userId, role, req.user.id, req.user.role);
+  sendSuccess(res, member, role === "TUTOR" ? "Member promoted to tutor" : "Member set to student");
 });

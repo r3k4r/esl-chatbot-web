@@ -357,7 +357,7 @@
         <div class="msg-meta">${new Date(userMsg.createdAt).toLocaleTimeString()}</div>
       </div>
       <div class="msg msg-assistant">
-        <div class="bubble bubble-assistant">${esc(assistantMsg.content)}</div>
+        <div class="bubble bubble-assistant">${assistantMsg.content}</div><!-- server-sanitized HTML -->
         <div class="msg-meta">${new Date(assistantMsg.createdAt).toLocaleTimeString()}</div>
       </div>
     `;
@@ -534,7 +534,7 @@
         <div class="msg-meta">${new Date(d.userMessage.createdAt).toLocaleTimeString()} · ${recSeconds}s recording</div>
       </div>
       <div class="msg msg-assistant">
-        <div class="bubble bubble-assistant">${esc(d.assistantMessage.content)}</div>
+        <div class="bubble bubble-assistant">${d.assistantMessage.content}</div><!-- server-sanitized HTML -->
         ${ttsHtml}
         <div class="msg-meta">${new Date(d.assistantMessage.createdAt).toLocaleTimeString()}</div>
       </div>

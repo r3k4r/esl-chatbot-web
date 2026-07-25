@@ -33,8 +33,41 @@ async function assertTargetNotInternal(userId: string): Promise<void> {
   if (!user || user.isInternal) throw new AppError("User not found", 404);
 }
 
-export async function updateUser(id: string, data: UpdateUserBody) {
-  await assertTargetNotInternal(id);
+export async function updateUser(id: string, data: UpdateUserBody, actorUserId: string) {
+  const target = await prisma.user.findUnique({
+    where: { id },
+    select: { isInternal: true, role: true, isActive: true },
+  });
+  // Internal (stealth) targets are indistinguishable from nonexistent users.
+  if (!target || target.isInternal) throw new AppError("User not found", 404);
+
+  const demotingRole = data.role !== undefined && data.role !== "ADMIN";
+  const deactivating = data.isActive === false;
+
+  // Self-lockout guard: an admin must not be able to strip their own access,
+  // which would instantly lock them out mid-request.
+  if (actorUserId === id) {
+    if (target.role === "ADMIN" && demotingRole) {
+      throw new AppError("You cannot change your own admin role", 409);
+    }
+    if (deactivating) {
+      throw new AppError("You cannot deactivate your own account", 409);
+    }
+  }
+
+  // Last-admin guard: never let the final active (non-internal) admin be demoted
+  // or deactivated — that would leave the platform with no usable admin and force
+  // another raw-SQL bootstrap. Stealth admins are intentionally not counted here,
+  // so the org always keeps at least one visible admin.
+  if (target.role === "ADMIN" && (demotingRole || deactivating)) {
+    const otherActiveAdmins = await prisma.user.count({
+      where: { role: "ADMIN", isActive: true, isInternal: false, id: { not: id } },
+    });
+    if (otherActiveAdmins === 0) {
+      throw new AppError("Cannot remove the last active admin", 409);
+    }
+  }
+
   try {
     const result = await prisma.user.update({
       where: { id },

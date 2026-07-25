@@ -1,6 +1,7 @@
 import { env } from "../../config/env.ts";
 import { AppError } from "../../utils/AppError.ts";
 import { Sentry } from "../../config/sentry.ts";
+import { logger } from "../../config/logger.ts";
 import { callGeminiLLM, DEV_FALLBACK_MODEL } from "./providers/gemini.llm.ts";
 import { callOpenAILLM } from "./providers/openai.llm.ts";
 import { edgeTTS } from "./providers/edge.tts.ts";
@@ -8,7 +9,8 @@ import { azureTTS } from "./providers/azure.tts.ts";
 import { openaiTTS } from "./providers/openai.tts.ts";
 import { deepgramSTT } from "./providers/deepgram.stt.ts";
 import { azureSTT } from "./providers/azure.stt.ts";
-import type { AIResponse, ConversationMessage, LearnerContext, STTResult } from "./ai.types.ts";
+import { sanitizeAiReply, htmlToPlainText } from "../../utils/aiReplyFormat.ts";
+import type { AIResponse, ConversationMessage, LearnerContext, MessageEvaluationResult, STTResult } from "./ai.types.ts";
 import type { Plan } from "@prisma/client";
 
 const isDev = env.NODE_ENV === "development";
@@ -44,7 +46,7 @@ function heuristicResponse(userMessage: string): AIResponse {
     avgWordLength >= 7 ? "B2" : avgWordLength >= 5 ? "B1" : avgWordLength >= 4 ? "A2" : "A1";
 
   return {
-    reply: `[AI Placeholder] Your message was received. Set GEMINI_API_KEY to get real tutoring responses.`,
+    reply: `<p>[AI Placeholder] Your message was received. Set GEMINI_API_KEY to get real tutoring responses.</p>`,
     evaluation: {
       grammarScore,
       grammarErrors: hasCapitalStart && hasEndPunctuation
@@ -72,6 +74,54 @@ function heuristicResponse(userMessage: string): AIResponse {
 //   FREE / GOLD production  → Gemini 2.5 Flash-Lite / 2.5 Flash
 //   PREMIUM production      → GPT-5 mini (OpenAI), auto-falls back to Gemini 2.5 Flash on error
 export async function generateAIResponse(
+  userMessage: string,
+  conversationHistory: ConversationMessage[],
+  learner: LearnerContext | null,
+  plan: Plan,
+): Promise<AIResponse> {
+  const result = await generateAIResponseRaw(userMessage, conversationHistory, learner, plan);
+  // The LLM's JSON is unvalidated — sanitize once here so every caller gets it
+  // for free (see sanitizeAiReply for the rationale). The evaluation's text
+  // fields are rendered with escaped interpolation (coach pane, vocab deck), so
+  // any HTML the model bleeds into them must be stripped to plain text.
+  return {
+    ...result,
+    reply: sanitizeAiReply(result.reply),
+    evaluation: cleanEvaluation(result.evaluation),
+  };
+}
+
+// Strip HTML from every model-authored text field of the evaluation. The prompt
+// trains the model to emit tags in `reply`, and that formatting habit bleeds
+// into feedback/corrections; these fields must stay plain text.
+function cleanEvaluation(evaluation: MessageEvaluationResult): MessageEvaluationResult {
+  const text = (v: string): string => (typeof v === "string" ? htmlToPlainText(v) : v);
+  return {
+    ...evaluation,
+    feedback: text(evaluation.feedback ?? ""),
+    grammarErrors: (evaluation.grammarErrors ?? []).map((g) => ({
+      ...g,
+      error: text(g.error),
+      correction: text(g.correction),
+      rule: text(g.rule),
+    })),
+    corrections: (evaluation.corrections ?? []).map((c) => ({
+      ...c,
+      original: text(c.original),
+      corrected: text(c.corrected),
+      explanation: text(c.explanation),
+    })),
+    newWords: (evaluation.newWords ?? []).map((w) => ({
+      ...w,
+      word: text(w.word),
+      definition: text(w.definition),
+      partOfSpeech: w.partOfSpeech ? text(w.partOfSpeech) : w.partOfSpeech,
+      example: w.example ? text(w.example) : w.example,
+    })),
+  };
+}
+
+async function generateAIResponseRaw(
   userMessage: string,
   conversationHistory: ConversationMessage[],
   learner: LearnerContext | null,
@@ -121,9 +171,29 @@ export async function generateAIResponse(
     }
   }
 
-  // Production FREE / GOLD → Gemini
+  // Production FREE / GOLD → Gemini primary, OpenAI as LAST-resort fallback.
+  // Gemini can fail hard from the server's datacenter IP ("User location is not
+  // supported") — a request-origin geo-block that no key change fixes. Rather than
+  // 500 the user, fall back to OpenAI when it's configured. The fallback is logged
+  // LOUDLY (Winston warn + Sentry warning) on purpose: silent fallback would mask
+  // Gemini outages. If you do NOT see a "[AI] Gemini failed" line for a message,
+  // Gemini served it directly.
   if (env.GEMINI_API_KEY) {
-    return callGeminiLLM(userMessage, conversationHistory, learner, plan, false);
+    try {
+      return await callGeminiLLM(userMessage, conversationHistory, learner, plan, false);
+    } catch (err) {
+      if (!env.OPENAI_API_KEY) throw err; // no fallback available — surface the real error
+      const reason = err instanceof Error ? err.message : String(err);
+      logger.warn(`[AI] Gemini failed for ${plan} tier — falling back to OpenAI. Reason: ${reason}`);
+      Sentry.withScope((scope) => {
+        scope.setLevel("warning");
+        scope.setTag("ai.provider", "gemini");
+        scope.setTag("ai.fallback", "openai");
+        scope.setTag("ai.tier", plan);
+        Sentry.captureException(err);
+      });
+      return await callOpenAILLM(userMessage, conversationHistory, learner);
+    }
   }
 
   return heuristicResponse(userMessage);
@@ -135,6 +205,9 @@ export async function generateAIResponse(
 //   PREMIUM prod      → OpenAI TTS-1-HD (OPENAI_API_KEY, same key as LLM); fallback to Azure
 //   No TTS key        → returns empty Buffer (voice message still works, just no playback audio)
 export async function generateTTS(text: string, plan: Plan): Promise<Buffer> {
+  // Replies are stored as HTML — always strip to plain text here (not at call
+  // sites) so no future caller can accidentally make the tutor read tags aloud.
+  text = htmlToPlainText(text);
   if (isDev) {
     try {
       return await edgeTTS(text);
@@ -162,8 +235,19 @@ export async function generateTTS(text: string, plan: Plan): Promise<Buffer> {
 
   if (env.AZURE_SPEECH_KEY) return azureTTS(text);
 
-  // No TTS provider configured — voice message still processes (STT + LLM), just no AI audio
-  return Buffer.alloc(0);
+  // No paid TTS provider configured — fall back to Edge TTS (keyless, unofficial,
+  // no SLA) so the tutor isn't silent. Empty buffer only if that fails too.
+  try {
+    return await edgeTTS(text);
+  } catch (err) {
+    Sentry.withScope((scope) => {
+      scope.setLevel("warning");
+      scope.setTag("ai.provider", "edge-tts");
+      scope.setTag("ai.fallback", "silent");
+      Sentry.captureException(err);
+    });
+    return Buffer.alloc(0);
+  }
 }
 
 // STT routing:

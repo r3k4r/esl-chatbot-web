@@ -5,7 +5,7 @@ import morgan from "morgan";
 import { globalLimiter } from "./middlewares/rateLimits.ts";
 import swaggerUi from "swagger-ui-express";
 
-import { env, swaggerSpec, logger } from "./config/index.ts";
+import { env, corsOrigins, swaggerSpec, logger } from "./config/index.ts";
 import { errorHandler } from "./middlewares/errorHandler.ts";
 import { notFound } from "./middlewares/notFound.ts";
 import v1Router from "./routes/v1/index.ts";
@@ -17,7 +17,7 @@ app.set("trust proxy", 1);
 
 // Security
 app.use(helmet());
-app.use(cors({ origin: env.CORS_ORIGIN, credentials: true }));
+app.use(cors({ origin: corsOrigins, credentials: true }));
 app.use(globalLimiter);
 
 // Body parsing

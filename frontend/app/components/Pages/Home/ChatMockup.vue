@@ -10,13 +10,13 @@
             <div class="w-9 h-9 rounded-full bg-linear-to-br from-brand-primary to-brand-accent flex items-center justify-center text-brand-ink">
               <Icon icon="lucide:sparkles" width="16" />
             </div>
-            <span class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 ring-2 ring-brand-dark" />
+            <span class="absolute -bottom-0.5 -end-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 ring-2 ring-brand-dark" />
           </div>
           <div class="leading-tight">
-            <AppText size="14" weight="semibold" color="white" class-list="text-sm">{{ t.chatMockup.tutorName }}</AppText>
+            <AppText size="14" weight="semibold" color="white" class-list="text-sm">{{ t('chatMockup.tutorName') }}</AppText>
             <div class="text-neutral-50/50 text-[11px] flex items-center gap-1.5">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-              <AppText size="11" color="white" class-list="text-neutral-50/50">{{ t.chatMockup.sessionLabel }}</AppText>
+              <AppText size="11" color="white" class-list="text-neutral-50/50">{{ t('chatMockup.sessionLabel') }}</AppText>
             </div>
           </div>
         </div>
@@ -63,7 +63,7 @@
           <div class="w-6 h-6 rounded-full bg-linear-to-br from-brand-primary to-brand-accent flex items-center justify-center shrink-0">
             <Icon icon="lucide:sparkles" width="11" />
           </div>
-          <div :class="`${aiBubbleClasses} px-3 py-2.5 rounded-[12px] rounded-bl-sm`">
+          <div :class="`${aiBubbleClasses} px-3 py-2.5 rounded-[12px] rounded-bs-sm`">
             <div class="flex gap-1">
               <span class="w-1.5 h-1.5 rounded-full bg-neutral-50/50 animate-bounce" style="animation-delay: 0ms" />
               <span class="w-1.5 h-1.5 rounded-full bg-neutral-50/50 animate-bounce" style="animation-delay: 120ms" />
@@ -86,7 +86,7 @@
             />
           </div>
           <div class="flex-1 text-[13px] text-neutral-50/60">
-            {{ t.chatMockup.listening }}<span class="animate-[blink_1s_steps(1)_infinite]">…</span>
+            {{ t('chatMockup.listening') }}<span class="animate-[blink_1s_steps(1)_infinite]">…</span>
           </div>
           <button class="w-8 h-8 rounded-lg bg-brand-primary text-brand-ink flex items-center justify-center shadow">
             <Icon icon="lucide:send" width="14" />
@@ -95,10 +95,10 @@
         <div class="flex items-center justify-between mt-2 px-1">
           <div class="flex items-center gap-3 text-[10px] text-neutral-50/40">
             <span class="flex items-center gap-1">
-              <Icon icon="lucide:mic" width="10" /> {{ t.chatMockup.voiceMode }}
+              <Icon icon="lucide:mic" width="10" /> {{ t('chatMockup.voiceMode') }}
             </span>
             <span>·</span>
-            <span>{{ t.chatMockup.pronunciation }} <span class="text-emerald-400 font-medium">92%</span></span>
+            <span>{{ t('chatMockup.pronunciation') }} <span class="text-emerald-400 font-medium">92%</span></span>
           </div>
           <span class="text-[10px] text-neutral-50/40 font-mono">Session 14:22</span>
         </div>
@@ -118,7 +118,7 @@ type ConvoMessage = {
   tip?: boolean
 }
 
-const { t } = useLocale()
+const { t, ta } = useLocale()
 
 // Structural metadata (speaker + timestamp) stays here; the message text is
 // pulled from the active locale by index, so the demo translates live.
@@ -129,18 +129,19 @@ const convoMeta: { who: 'ai' | 'user'; t: string }[] = [
   { who: 'user', t: '10:05' },
 ]
 
-const convo = computed<ConvoMessage[]>(() =>
-  convoMeta.map((meta, i) => ({
+const convo = computed<ConvoMessage[]>(() => {
+  const messages = ta('chatMockup.messages')
+  return convoMeta.map((meta, i) => ({
     who: meta.who,
     t: meta.t,
-    text: t.value.chatMockup.messages[i] ?? '',
-  })),
-)
+    text: messages[i] ?? '',
+  }))
+})
 
 const waveBars = [0.3, 0.7, 0.5, 0.9, 0.4, 0.8, 0.5]
 
-const userBubbleClasses = 'bg-linear-to-br from-brand-primary to-brand-accent text-brand-ink rounded-br-sm'
-const aiBubbleClasses = 'bg-neutral-50/4 border border-neutral-50/8 text-neutral-100 rounded-bl-sm'
+const userBubbleClasses = 'bg-linear-to-br from-brand-primary to-brand-accent text-brand-ink rounded-be-sm rounded-es-[12px] rounded-ss-[12px]'
+const aiBubbleClasses = 'bg-neutral-50/4 border border-neutral-50/8 text-neutral-100 rounded-be-sm'
 
 const visible = ref(0)
 const typing  = ref(false)

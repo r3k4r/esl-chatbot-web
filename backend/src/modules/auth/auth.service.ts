@@ -622,7 +622,7 @@ export async function forgotPassword(input: ForgotPasswordInput): Promise<void> 
 
   // Google-only accounts have no password — direct them to Google login
   if (!user.password) {
-    await resend.emails.send({
+    const { error } = await resend.emails.send({
       from: env.EMAIL_FROM ?? "noreply@resend.dev",
       to: input.email,
       subject: "Tutelage — Password reset not available",
@@ -634,6 +634,9 @@ export async function forgotPassword(input: ForgotPasswordInput): Promise<void> 
         <p>— The Tutelage Team</p>
       `,
     });
+    // The Resend SDK returns { data, error } instead of throwing — an unchecked
+    // error here means the user waits for an email that was never accepted.
+    if (error) throw new AppError(`Failed to send email: ${error.message}`, 502);
     return;
   }
 
@@ -647,7 +650,7 @@ export async function forgotPassword(input: ForgotPasswordInput): Promise<void> 
     prisma.passwordResetToken.create({ data: { userId: user.id, otpHash, expiresAt } }),
   ]);
 
-  await resend.emails.send({
+  const { error } = await resend.emails.send({
     from: env.EMAIL_FROM ?? "noreply@resend.dev",
     to: input.email,
     subject: "Tutelage — Your password reset code",
@@ -659,6 +662,7 @@ export async function forgotPassword(input: ForgotPasswordInput): Promise<void> 
       <p>— The Tutelage Team</p>
     `,
   });
+  if (error) throw new AppError(`Failed to send email: ${error.message}`, 502);
 }
 
 // ─── Reset password (verify OTP + set new password) ───────────────────────────
@@ -823,13 +827,13 @@ async function createEmailVerificationOtp(userId: string): Promise<string> {
   throw new AppError("Could not generate a unique verification code. Please try again.", 500);
 }
 
-/** Sends the verification OTP email. Throws 503 if the email service is unconfigured. */
+/** Sends the verification OTP email. Throws 503 if the email service is unconfigured, 502 if Resend rejects the send. */
 async function sendVerificationEmail(email: string, displayName: string, otp: string): Promise<void> {
   if (!resend || !env.RESEND_API_KEY) {
     throw new AppError("Email service is not configured on this server", 503);
   }
 
-  await resend.emails.send({
+  const { error } = await resend.emails.send({
     from: env.EMAIL_FROM ?? "noreply@resend.dev",
     to: email,
     subject: "Tutelage — Verify your email",
@@ -841,13 +845,14 @@ async function sendVerificationEmail(email: string, displayName: string, otp: st
       <p>— The Tutelage Team</p>
     `,
   });
+  if (error) throw new AppError(`Failed to send email: ${error.message}`, 502);
 }
 
-/** Sends the post-verification welcome email. Best-effort — silently skips if unconfigured. */
+/** Sends the post-verification welcome email. Best-effort — silently skips if unconfigured; throws on a rejected send so the caller can log it. */
 async function sendWelcomeEmail(email: string, displayName: string): Promise<void> {
   if (!resend || !env.RESEND_API_KEY) return;
 
-  await resend.emails.send({
+  const { error } = await resend.emails.send({
     from: env.EMAIL_FROM ?? "noreply@resend.dev",
     to: email,
     subject: "Welcome to Tutelage 🎉",
@@ -864,6 +869,7 @@ async function sendWelcomeEmail(email: string, displayName: string): Promise<voi
       <p>Happy learning,<br/>— The Tutelage Team</p>
     `,
   });
+  if (error) throw new AppError(`Failed to send email: ${error.message}`, 502);
 }
 
 /**

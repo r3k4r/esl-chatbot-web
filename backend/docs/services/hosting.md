@@ -63,7 +63,7 @@ Never commit `.env` to git.
 ### Health Check
 The server exposes a health endpoint. Point your hosting platform's health check at:
 ```
-GET /api/v1/health
+GET /health
 ```
 
 ### Database Migrations on Deploy

@@ -48,6 +48,8 @@ const envSchema = z.object({
   R2_BUCKET_NAME: z.string().optional(),
   R2_PUBLIC_URL: z.string().url().optional(),
 
+  // Comma-separated list of allowed browser origins,
+  // e.g. "https://app.example.com,http://localhost:3001"
   CORS_ORIGIN: z.string().default("http://localhost:3000"),
   // Public URL of the frontend app — used in digest emails as the CTA link.
   // Falls back to CORS_ORIGIN if unset (fine for single-origin setups).
@@ -80,3 +82,9 @@ if (
 }
 
 export const env = parsed.data;
+
+// CORS_ORIGIN parsed into an array for the cors middleware and Socket.io.
+// Native mobile apps are unaffected by CORS — this only gates browsers.
+export const corsOrigins = env.CORS_ORIGIN.split(",")
+  .map((o) => o.trim())
+  .filter(Boolean);

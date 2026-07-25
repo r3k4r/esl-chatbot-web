@@ -394,6 +394,24 @@ router.patch("/me/learner-profile", authenticate, updateLearnerProfile);
  *           type: string
  *           enum: [ACTIVE, INACTIVE, CANCELLED, PAST_DUE]
  *         description: Filter by subscription status
+ *       - in: query
+ *         name: plan
+ *         schema:
+ *           type: string
+ *           enum: [FREE, GOLD, PREMIUM]
+ *         description: Filter by subscription plan
+ *       - in: query
+ *         name: createdAfter
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *         description: Filter users created after this date (ISO 8601)
+ *       - in: query
+ *         name: createdBefore
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *         description: Filter users created before this date (ISO 8601)
  *     responses:
  *       200:
  *         description: Paginated list of users
@@ -588,6 +606,12 @@ router.get("/", authenticate, authorize("ADMIN"), listUsers);
  *                           type: string
  *                           format: date-time
  *                           nullable: true
+ *                         paymentProvider:
+ *                           type: string
+ *                           enum: [CASH, FIB, STRIPE]
+ *                           nullable: true
+ *                         monthlyTtsUsage:
+ *                           type: integer
  *                     metrics:
  *                       type: object
  *                       nullable: true
@@ -618,6 +642,15 @@ router.get("/", authenticate, authorize("ADMIN"), listUsers);
  *                           type: number
  *                         speakingSkill:
  *                           type: number
+ *                     authProvider:
+ *                       type: string
+ *                       enum: [LOCAL, GOOGLE]
+ *                     emailVerified:
+ *                       type: boolean
+ *                     emailVerifiedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       nullable: true
  *                     classUsers:
  *                       type: array
  *                       items:
@@ -642,6 +675,123 @@ router.get("/", authenticate, authorize("ADMIN"), listUsers);
  *                               classStatus:
  *                                 type: string
  *                                 enum: [ACTIVE, INACTIVE]
+ *                     goals:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id: { type: string, format: uuid }
+ *                           type: { type: string, enum: [VOCABULARY, SPEAKING, GRAMMAR, CONVERSATION, STUDY_TIME] }
+ *                           description: { type: string }
+ *                           target: { type: integer }
+ *                           difficulty: { type: string, nullable: true, enum: [EASY, MEDIUM, HARD, EXPERT] }
+ *                           status: { type: string, enum: [ACTIVE, COMPLETED, PAUSED, CANCELLED] }
+ *                           progress: { type: integer }
+ *                           startDate: { type: string, format: date-time }
+ *                           targetDate: { type: string, format: date-time, nullable: true }
+ *                           completedDate: { type: string, format: date-time, nullable: true }
+ *                           createdAt: { type: string, format: date-time }
+ *                           assignedByTutor:
+ *                             nullable: true
+ *                             type: object
+ *                             properties:
+ *                               id: { type: string, format: uuid }
+ *                               displayName: { type: string }
+ *                     vocabularies:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id: { type: string, format: uuid }
+ *                           word: { type: string }
+ *                           definition: { type: string }
+ *                           partOfSpeech: { type: string, nullable: true }
+ *                           masteryLevel: { type: integer }
+ *                           source: { type: string, enum: [MANUAL, SESSION, ASSIGNED] }
+ *                           srsInterval: { type: integer }
+ *                           srsDue: { type: string, format: date-time, nullable: true }
+ *                           reviewCount: { type: integer }
+ *                           correctCount: { type: integer }
+ *                           incorrectCount: { type: integer }
+ *                           lastPracticed: { type: string, format: date-time, nullable: true }
+ *                           createdAt: { type: string, format: date-time }
+ *                           assignedByTutor:
+ *                             nullable: true
+ *                             type: object
+ *                             properties:
+ *                               id: { type: string, format: uuid }
+ *                               displayName: { type: string }
+ *                     sessions:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id: { type: string, format: uuid }
+ *                           mode: { type: string, enum: [TEXT, VOICE] }
+ *                           topic: { type: string, nullable: true }
+ *                           startedAt: { type: string, format: date-time }
+ *                           endedAt: { type: string, format: date-time, nullable: true }
+ *                           durationSeconds: { type: integer, nullable: true }
+ *                           messageCount: { type: integer }
+ *                           evaluation:
+ *                             nullable: true
+ *                             type: object
+ *                             properties:
+ *                               avgOverallScore: { type: number }
+ *                               avgGrammarScore: { type: number }
+ *                               avgVocabularyScore: { type: number }
+ *                               avgFluencyScore: { type: number }
+ *                               detectedCefrLevel: { type: string }
+ *                               strengths: { type: array, items: { type: string } }
+ *                               weaknesses: { type: array, items: { type: string } }
+ *                     progress:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           date: { type: string, format: date-time }
+ *                           sessionsCount: { type: integer }
+ *                           studyMinutes: { type: integer }
+ *                           messagesCount: { type: integer }
+ *                           wordsTyped: { type: integer }
+ *                           vocabularyPracticed: { type: integer }
+ *                           goalsAdvanced: { type: integer }
+ *                     taskSubmissions:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id: { type: string, format: uuid }
+ *                           content: { type: string, nullable: true }
+ *                           feedback: { type: string, nullable: true }
+ *                           feedbackAt: { type: string, format: date-time, nullable: true }
+ *                           createdAt: { type: string, format: date-time }
+ *                           task:
+ *                             type: object
+ *                             properties:
+ *                               id: { type: string, format: uuid }
+ *                               title: { type: string }
+ *                               description: { type: string }
+ *                               deadline: { type: string, format: date-time, nullable: true }
+ *                               status: { type: string, enum: [OPEN, CLOSED] }
+ *                               class:
+ *                                 type: object
+ *                                 properties:
+ *                                   id: { type: string, format: uuid }
+ *                                   className: { type: string }
+ *                     fibSubscriptions:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id: { type: string, format: uuid }
+ *                           plan: { type: string, enum: [FREE, GOLD, PREMIUM] }
+ *                           intervalMonths: { type: integer }
+ *                           amountIQD: { type: integer }
+ *                           fibStatus: { type: string }
+ *                           activatedAt: { type: string, format: date-time, nullable: true }
+ *                           cancelledAt: { type: string, format: date-time, nullable: true }
+ *                           createdAt: { type: string, format: date-time }
  *       400:
  *         description: Invalid UUID format
  *         content:

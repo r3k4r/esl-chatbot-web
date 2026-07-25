@@ -2,20 +2,20 @@
   <section id="how" class="bg-brand-muted/60 py-28 sm:py-32 border-y border-neutral-200/70">
     <div class="container-lg layout-padding-lg">
       <LayoutsSectionHeader
-        :eyebrow="t.howItWorks.eyebrow"
-        :title="t.howItWorks.title"
+        :eyebrow="t('howItWorks.eyebrow')"
+        :title="t('howItWorks.title')"
         align="start"
         wrapper-class="mb-14"
       >
         <template #action>
           <AppLink to="#cta" class="text-[13px] font-medium text-brand-ink inline-flex items-center gap-1 hover:text-brand-primary transition-colors">
-            {{ t.howItWorks.seeInAction }} <Icon icon="lucide:arrow-right" width="13" class="rtl:rotate-180" />
+            {{ t('howItWorks.seeInAction') }} <Icon icon="lucide:arrow-right" width="13" class="rtl:rotate-180" />
           </AppLink>
         </template>
       </LayoutsSectionHeader>
 
       <div class="relative grid md:grid-cols-3 gap-6">
-        <div class="hidden md:block absolute top-11.5 left-[12%] right-[12%] h-px bg-[repeating-linear-gradient(90deg,var(--color-neutral-300)_0_6px,transparent_6px_12px)] opacity-70" />
+        <div class="hidden md:block absolute top-11.5 inset-x-[12%] h-px bg-[repeating-linear-gradient(90deg,var(--color-neutral-300)_0_6px,transparent_6px_12px)] opacity-70" />
 
         <div
           v-for="(step, i) in steps"
@@ -29,8 +29,8 @@
             <div class="flex-1 h-px bg-neutral-200" />
             <Icon :icon="step.icon" width="18" class="text-brand-sub" />
           </div>
-          <AppText size="20" weight="semibold" color="brand-ink" class-list="tracking-tight">{{ t.howItWorks.steps[step.key].title }}</AppText>
-          <AppText size="14" color="brand-sub" class-list="mt-2 leading-relaxed">{{ t.howItWorks.steps[step.key].description }}</AppText>
+          <AppText size="20" weight="semibold" color="brand-ink" class-list="tracking-tight">{{ t(`howItWorks.steps.${step.key}.title`) }}</AppText>
+          <AppText size="14" color="brand-sub" class-list="mt-2 leading-relaxed">{{ t(`howItWorks.steps.${step.key}.description`) }}</AppText>
         </div>
       </div>
     </div>

@@ -1,0 +1,193 @@
+{
+  "nav": {
+    "features": "Features",
+    "howItWorks": "How It Works",
+    "dashboard": "Dashboard",
+    "pricing": "Pricing",
+    "getStarted": "Get Started"
+  },
+
+  "hero": {
+    "badgeNew": "New",
+    "badgeText": "AI-Powered Learning, now in beta",
+    "titleLead": "Learn English",
+    "titleAccent": "smarter",
+    "titleTrail": " with AI.",
+    "subtitle": "AI-powered conversations, voice practice, and intelligent progress tracking — all in one platform built for serious learners.",
+    "ctaPrimary": "Get Started",
+    "ctaSecondary": "See Pricing",
+    "checks": ["Free to start", "No credit card", "40+ topics"],
+    "trustedBy": "Trusted by 2,000+ learners worldwide"
+  },
+
+  "chatMockup": {
+    "tutorName": "AI Tutor · Tutelage AI",
+    "sessionLabel": "Session · B2 Intermediate",
+    "listening": "Listening",
+    "voiceMode": "Voice mode",
+    "pronunciation": "Pronunciation:",
+    "messages": [
+      "Hi! I'm your English tutor. What would you like to practice today?",
+      "I want to practice talking about travel.",
+      "Great choice! Tell me about a place you've visited recently.",
+      "I went to Erbil last summer. It was very hot but beautiful."
+    ]
+  },
+
+  "features": {
+    "eyebrow": "Features",
+    "title": "Everything you need to master English.",
+    "description": "A complete toolkit — designed together, not bolted on. Every session feeds your goals, your vocabulary, and your analytics.",
+    "learnMore": "Learn more",
+    "items": {
+      "conversation": {
+        "title": "AI Conversation",
+        "description": "Session-based chat with an AI tutor that adapts to your level, goals, and the topics you care about."
+      },
+      "voice": {
+        "title": "Voice Practice",
+        "description": "Real-time speaking with live pronunciation feedback and natural back-and-forth dialogue."
+      },
+      "vocab": {
+        "title": "Vocabulary SRS",
+        "description": "A spaced repetition system that schedules reviews so new words actually stick long-term."
+      },
+      "pronunciation": {
+        "title": "Pronunciation Score",
+        "description": "AI-powered accuracy scoring on individual phonemes so you know exactly what to work on."
+      },
+      "goals": {
+        "title": "Learning Goals",
+        "description": "Set weekly targets, track milestones, and get nudges when your streak is slipping."
+      },
+      "analytics": {
+        "title": "Progress Analytics",
+        "description": "Clear visual insights into time, vocabulary growth, fluency, and accuracy over time."
+      }
+    }
+  },
+
+  "howItWorks": {
+    "eyebrow": "How it works",
+    "title": "Three steps. Real fluency.",
+    "seeInAction": "See it in action",
+    "steps": {
+      "one": {
+        "title": "Start a Conversation",
+        "description": "Choose a topic — travel, work, interviews — and begin chatting with an AI tuned to your level."
+      },
+      "two": {
+        "title": "Practice Speaking",
+        "description": "Switch on voice mode for real pronunciation practice with instant feedback on what you said."
+      },
+      "three": {
+        "title": "Track & Improve",
+        "description": "Watch your vocabulary, fluency and streak grow with analytics that celebrate real progress."
+      }
+    }
+  },
+
+  "dashboardPreview": {
+    "eyebrow": "Dashboard",
+    "title": "Your learning command center.",
+    "description": "Streaks, vocabulary, minutes and level — all in one calm view, so you always know what to do next.",
+    "mockup": {
+      "greeting": "Good morning",
+      "welcome": "Welcome back, Aram 👋",
+      "newSession": "New session",
+      "dailyGoal": "Daily goal",
+      "statLessons": "Lessons",
+      "statLessonsSub": "+8 this week",
+      "statStudyTime": "Study time",
+      "statStudyTimeSub": "this month",
+      "statStreak": "Streak",
+      "statStreakSub": "days · keep going",
+      "statLevel": "Level",
+      "statLevelSub": "Upper-Intermediate",
+      "wordsLearned": "Words learned",
+      "consistency": "Practice consistency",
+      "recentSession": "Recent session",
+      "minutesAgo": "8 min ago",
+      "turnsAccuracy": "12 turns · 94% accuracy",
+      "continue": "Continue"
+    }
+  },
+
+  "pricing": {
+    "eyebrow": "Pricing",
+    "title": "Real Progress for Pocket Change",
+    "perMonth": "/month",
+    "mostPopular": "Most Popular",
+    "footnote": "Cancel anytime · Team & school plans on request",
+    "plans": {
+      "starter": {
+        "name": "Starter",
+        "price": "Free",
+        "description": "Try the core experience and see how Tutelage fits into your routine.",
+        "cta": "Start Free",
+        "features": [
+          "3 sessions/day",
+          "20 msgs/session",
+          "Gemini Flash-Lite AI",
+          "Basic vocabulary SRS",
+          "Progress tracking"
+        ]
+      },
+      "gold": {
+        "name": "Gold",
+        "price": "25,000 IQD",
+        "description": "Serious learners who want more sessions, smarter AI, and full analytics.",
+        "cta": "Get Gold",
+        "features": [
+          "15 sessions/day",
+          "100 msgs/session",
+          "Gemini 2.5 Flash AI",
+          "Full vocabulary SRS",
+          "Progress analytics"
+        ]
+      },
+      "premium": {
+        "name": "Premium",
+        "price": "45,000 IQD",
+        "description": "Everything you need to go all-in on the full Tutelage experience.",
+        "cta": "Get Premium",
+        "features": [
+          "50 sessions/day",
+          "150 msgs/session",
+          "GPT-5 mini AI",
+          "Priority voice TTS",
+          "Advanced analytics"
+        ]
+      }
+    }
+  },
+
+  "finalCta": {
+    "badge": "Join 2,000+ learners",
+    "titleLead": "Ready to transform ",
+    "titleTrail": "your English learning?",
+    "subtitle": "Your AI tutor, your voice lab, your progress — all in one place. Start your first session in under a minute.",
+    "ctaPrimary": "Get Started Free",
+    "ctaSecondary": "Watch 30s demo"
+  },
+
+  "footer": {
+    "tagline": "An AI-powered English learning platform — conversations, voice, vocabulary and real progress in one place.",
+    "columns": {
+      "product": {
+        "heading": "Product",
+        "links": ["Features", "AI Chat", "Voice Lab", "Vocabulary", "Pricing"]
+      },
+      "resources": {
+        "heading": "Resources",
+        "links": ["Blog", "Guides", "Placement Test", "Changelog", "Status"]
+      },
+      "company": {
+        "heading": "Company",
+        "links": ["About", "Careers", "Press", "Partners", "Contact"]
+      }
+    },
+    "rights": "© 2026 Tutelage AI. All rights reserved.",
+    "status": "All systems normal"
+  }
+}

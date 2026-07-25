@@ -4,19 +4,20 @@ import { buildSystemPrompt } from "./prompt.ts";
 import type { AIResponse, ConversationMessage, LearnerContext } from "../ai.types.ts";
 import type { Plan } from "@prisma/client";
 
-// Dev → "gemini-flash-latest" alias (resolves to gemini-3-flash-preview; direct "gemini-3-flash" ID returns 404)
-// FREE → "gemini-2.5-flash-lite" · GOLD → "gemini-2.5-flash" · PREMIUM fallback → "gemini-flash-latest"
-// Production IDs: verify via ListModels if you get 404; same GEMINI_API_KEY for all tiers
+// All tiers use Google's rolling aliases, not pinned IDs: pinned 2.5 models returned
+// 404 "no longer available to new users" for API keys created after mid-2026 (broke prod
+// 2026-07-17). The aliases track the current lite/standard Flash tier automatically.
+// FREE → "gemini-flash-lite-latest" · GOLD → "gemini-flash-latest" · PREMIUM fallback → "gemini-flash-latest"
 const GEMINI_MODEL_BY_PLAN: Record<Plan, string> = {
-  FREE: "gemini-2.5-flash-lite",   // cheapest stable model — verify via ListModels if 404
-  GOLD: "gemini-2.5-flash",        // mid-tier — verify via ListModels if 404
-  PREMIUM: "gemini-flash-latest",  // fallback only — normally PREMIUM uses OpenAI
+  FREE: "gemini-flash-lite-latest", // cheapest tier alias (currently resolves to gemini-3.1-flash-lite)
+  GOLD: "gemini-flash-latest",      // standard Flash tier alias
+  PREMIUM: "gemini-flash-latest",   // fallback only — normally PREMIUM uses OpenAI
 };
 
-// "gemini-flash-latest" resolves to the latest available Flash model (currently gemini-3-flash-preview).
+// "gemini-flash-latest" resolves to the latest available Flash model.
 // Preview models can hit capacity limits — DEV_FALLBACK_MODEL is used when DEV_MODEL is overloaded.
 const DEV_MODEL = "gemini-flash-latest";
-export const DEV_FALLBACK_MODEL = "gemini-2.5-flash";
+export const DEV_FALLBACK_MODEL = "gemini-flash-lite-latest";
 
 export async function callGeminiLLM(
   userMessage: string,

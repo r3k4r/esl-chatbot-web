@@ -91,6 +91,14 @@ export interface ClassDetail {
   createdAt: Date;
   updatedAt: Date;
   members: ClassMember[];
+  /**
+   * The calling user's own class-membership role, or null if they are not a
+   * member (e.g. an admin reading a class they don't belong to). Derived from
+   * a direct membership lookup, NOT from `members` — so it is still correct
+   * when the caller is filtered out of `members` (internal/stealth accounts).
+   * Lets clients gate tutor-only UI without scanning `members` for themselves.
+   */
+  myRole: "STUDENT" | "TUTOR" | null;
 }
 
 /** Public-facing summary of the join code only — used by code-management endpoints. */

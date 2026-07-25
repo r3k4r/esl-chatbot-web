@@ -13,6 +13,7 @@ import {
   listClassStudentsHandler,
   getClassStudentHandler,
   removeMemberHandler,
+  setMemberRoleHandler,
   getClassAnalyticsHandler,
 } from "./classes.controller.ts";
 import { authenticate } from "../../middlewares/authenticate.ts";
@@ -307,6 +308,13 @@ router.get("/mine", authenticate, listMyClassesHandler);
  *       rotated to a new value before being returned. This means tutors
  *       can simply open the class to get a fresh code — no manual click
  *       required. Student callers do NOT trigger a rotation.
+ *
+ *       The response includes `myRole` — the caller's own class-membership
+ *       role (`TUTOR`, `STUDENT`, or `null` for an admin who isn't a member).
+ *       It is derived from a direct membership lookup, so it is correct even
+ *       when the caller is excluded from the `members` array (internal
+ *       accounts). Clients should gate tutor-only UI on `myRole`, not by
+ *       searching `members` for themselves.
  *     tags: [Classes]
  *     security:
  *       - bearerAuth: []
@@ -317,7 +325,7 @@ router.get("/mine", authenticate, listMyClassesHandler);
  *         schema: { type: string, format: uuid }
  *     responses:
  *       200:
- *         description: Class detail with enrolled members
+ *         description: Class detail with enrolled members and the caller's own `myRole`
  *       400: { description: Invalid UUID, content: { application/json: { schema: { $ref: '#/components/schemas/ErrorResponse' } } } }
  *       401: { description: Missing or invalid token, content: { application/json: { schema: { $ref: '#/components/schemas/ErrorResponse' } } } }
  *       404: { description: Class not found or caller not a member, content: { application/json: { schema: { $ref: '#/components/schemas/ErrorResponse' } } } }
@@ -801,5 +809,85 @@ router.get("/:id/students/:userId", authenticate, getClassStudentHandler);
  *       409: { description: Cannot remove the last tutor, content: { application/json: { schema: { $ref: '#/components/schemas/ErrorResponse' } } } }
  */
 router.delete("/:id/members/:userId", authenticate, removeMemberHandler);
+
+// ─────────────────────────────────────────────────────────
+// SET MEMBER ROLE (assign / demote a class tutor)
+// ─────────────────────────────────────────────────────────
+/**
+ * @swagger
+ * /classes/{id}/members/{userId}/role:
+ *   patch:
+ *     summary: Set a member's class role (assign or demote a class tutor)
+ *     description: |
+ *       Changes an existing member's **class-membership role** (`TUTOR` or `STUDENT`).
+ *       This is the only way — besides creating a class — to make someone a class-tutor;
+ *       joining by code always enters as a STUDENT. Only the per-class role changes; the
+ *       user's global account role (`User.role`) is untouched.
+ *
+ *       **Authorization:** a tutor of the class, or an admin. (A STUDENT-role account is
+ *       rejected at the route guard; a TUTOR-role account that is only a STUDENT member of
+ *       this class is rejected by the service with 403.)
+ *
+ *       **Guard:** the last tutor of a class cannot be demoted to STUDENT — promote another
+ *       member to tutor first.
+ *     tags: [Classes]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *         description: Class ID
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *         description: ID of the member whose role is being changed
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [role]
+ *             properties:
+ *               role:
+ *                 type: string
+ *                 enum: [STUDENT, TUTOR]
+ *                 description: New class-membership role for the member
+ *     responses:
+ *       200:
+ *         description: Member role updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean }
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     classId: { type: string, format: uuid }
+ *                     userId: { type: string, format: uuid }
+ *                     role: { type: string, enum: [STUDENT, TUTOR] }
+ *                     user:
+ *                       type: object
+ *                       properties:
+ *                         id: { type: string, format: uuid }
+ *                         displayName: { type: string }
+ *                         avatarUrl: { type: string, nullable: true }
+ *       401: { description: Missing or invalid token, content: { application/json: { schema: { $ref: '#/components/schemas/ErrorResponse' } } } }
+ *       403: { description: Caller is not a tutor of this class or an admin, content: { application/json: { schema: { $ref: '#/components/schemas/ErrorResponse' } } } }
+ *       404: { description: Class not found, or user is not a member of the class, content: { application/json: { schema: { $ref: '#/components/schemas/ErrorResponse' } } } }
+ *       409: { description: Cannot demote the last tutor of a class, content: { application/json: { schema: { $ref: '#/components/schemas/ErrorResponse' } } } }
+ *       422: { description: Validation error, content: { application/json: { schema: { $ref: '#/components/schemas/ErrorResponse' } } } }
+ */
+router.patch(
+  "/:id/members/:userId/role",
+  authenticate,
+  authorize("TUTOR", "ADMIN"),
+  setMemberRoleHandler,
+);
 
 export default router;

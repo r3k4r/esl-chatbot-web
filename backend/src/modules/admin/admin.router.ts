@@ -109,6 +109,14 @@ router.use(authenticate, authorize("ADMIN"));
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
+ *       409:
+ *         description: |
+ *           Blocked to prevent lockout — the admin tried to change their own role or
+ *           deactivate their own account, or the change would remove the last active admin.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  *       422:
  *         description: Validation error — at least one field required
  *         content:

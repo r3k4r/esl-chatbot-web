@@ -18,7 +18,7 @@
       <div class="grid grid-cols-12 gap-4 p-5 bg-neutral-50">
 
         <!-- Sidebar -->
-        <aside class="col-span-3 hidden md:flex flex-col gap-1 pr-3 border-r border-neutral-100">
+        <aside class="col-span-3 hidden md:flex flex-col gap-1 pe-3 border-e border-neutral-100">
           <div class="flex items-center gap-2 px-2 pb-3">
             <div class="w-7 h-7 rounded-lg bg-brand-ink flex items-center justify-center">
               <Icon icon="lucide:sparkles" width="12" class="text-brand-primary" />
@@ -33,7 +33,7 @@
           >
             <Icon :icon="item.icon" width="14" />
             <span>{{ item.label }}</span>
-            <span v-if="item.active" class="ml-auto w-1.5 h-1.5 rounded-full bg-brand-primary" />
+            <span v-if="item.active" class="ms-auto w-1.5 h-1.5 rounded-full bg-brand-primary" />
           </div>
           <div class="mt-auto pt-4 text-[11px] text-neutral-400 px-2">
             <div class="rounded-lg bg-neutral-50 border border-neutral-100 p-2.5">
@@ -131,16 +131,16 @@
                   <div class="w-5 h-5 rounded-full bg-linear-to-br from-brand-primary to-brand-accent flex items-center justify-center shrink-0">
                     <Icon icon="lucide:sparkles" width="9" class="text-brand-ink" />
                   </div>
-                  <div class="bg-neutral-50 rounded-lg rounded-tl-sm px-2 py-1.5 text-neutral-700">What's a goal you have this month?</div>
+                  <div class="bg-neutral-50 rounded-lg rounded-ss-sm px-2 py-1.5 text-neutral-700">What's a goal you have this month?</div>
                 </div>
                 <div class="flex justify-end">
-                  <div class="bg-brand-ink text-neutral-50 rounded-lg rounded-tr-sm px-2 py-1.5 max-w-[85%]">I want to read two novels in English.</div>
+                  <div class="bg-brand-ink text-neutral-50 rounded-lg rounded-ee-sm px-2 py-1.5 max-w-[85%]">I want to read two novels in English.</div>
                 </div>
                 <div class="flex gap-1.5">
                   <div class="w-5 h-5 rounded-full bg-linear-to-br from-brand-primary to-brand-accent flex items-center justify-center shrink-0">
                     <Icon icon="lucide:sparkles" width="9" class="text-brand-ink" />
                   </div>
-                  <div class="bg-neutral-50 rounded-lg rounded-tl-sm px-2 py-1.5 text-neutral-700">Ambitious — which novels?</div>
+                  <div class="bg-neutral-50 rounded-lg rounded-ss-sm px-2 py-1.5 text-neutral-700">Ambitious — which novels?</div>
                 </div>
               </div>
               <div class="mt-2 pt-2 border-t border-neutral-100 flex items-center justify-between">
@@ -161,8 +161,27 @@
 import { Icon } from '@iconify/vue'
 
 const { t } = useLocale()
-// Shorthand for the mockup's localized labels.
-const m = computed(() => t.value.dashboardPreview.mockup)
+
+const m = computed(() => ({
+  greeting:       t('dashboardPreview.mockup.greeting'),
+  welcome:        t('dashboardPreview.mockup.welcome'),
+  newSession:     t('dashboardPreview.mockup.newSession'),
+  dailyGoal:      t('dashboardPreview.mockup.dailyGoal'),
+  statLessons:    t('dashboardPreview.mockup.statLessons'),
+  statLessonsSub: t('dashboardPreview.mockup.statLessonsSub'),
+  statStudyTime:  t('dashboardPreview.mockup.statStudyTime'),
+  statStudyTimeSub: t('dashboardPreview.mockup.statStudyTimeSub'),
+  statStreak:     t('dashboardPreview.mockup.statStreak'),
+  statStreakSub:  t('dashboardPreview.mockup.statStreakSub'),
+  statLevel:      t('dashboardPreview.mockup.statLevel'),
+  statLevelSub:   t('dashboardPreview.mockup.statLevelSub'),
+  wordsLearned:   t('dashboardPreview.mockup.wordsLearned'),
+  consistency:    t('dashboardPreview.mockup.consistency'),
+  recentSession:  t('dashboardPreview.mockup.recentSession'),
+  minutesAgo:     t('dashboardPreview.mockup.minutesAgo'),
+  turnsAccuracy:  t('dashboardPreview.mockup.turnsAccuracy'),
+  continue:       t('dashboardPreview.mockup.continue'),
+}))
 
 // Sparkline
 const pts = [12, 18, 14, 22, 19, 28, 24, 32, 30, 38, 35, 44, 42, 52]

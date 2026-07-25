@@ -725,7 +725,7 @@
     if (asst?.content) {
       thread.innerHTML += `
         <div class="tmsg tmsg-assistant">
-          <div class="tbubble tbubble-assistant">${esc(asst.content)}</div>
+          <div class="tbubble tbubble-assistant">${asst.content}</div><!-- server-sanitized HTML -->
           <div class="tmsg-meta">${ts()}</div>
         </div>
       `;

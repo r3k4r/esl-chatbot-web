@@ -80,6 +80,10 @@ export const classMemberParamSchema = z.object({
   userId: z.string().uuid("Invalid user ID"),
 });
 
+export const setMemberRoleSchema = z.object({
+  role: z.enum(["STUDENT", "TUTOR"]),
+});
+
 // ── Inferred types ───────────────────────────────────────
 
 export type GetClassesQuery = z.infer<typeof getClassesQuerySchema>;
@@ -89,3 +93,4 @@ export type SetBlockedBody = z.infer<typeof setBlockedSchema>;
 export type SetArchivedBody = z.infer<typeof setArchivedSchema>;
 export type JoinByCodeBody = z.infer<typeof joinByCodeSchema>;
 export type UpdateClassBody = z.infer<typeof updateClassSchema>;
+export type SetMemberRoleBody = z.infer<typeof setMemberRoleSchema>;
