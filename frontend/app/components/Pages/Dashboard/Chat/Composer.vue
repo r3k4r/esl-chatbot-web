@@ -112,7 +112,7 @@ function onKeydown(e: KeyboardEvent) {
     <div class="max-w-3xl mx-auto">
 
       <!-- Suggestion chips (only when no messages yet) -->
-      <div v-if="!hasMessages && subActive && !isSessionEnded" class="flex flex-wrap gap-1.5 mb-3">
+      <div v-if="!hasMessages && subActive && !isSessionEnded" class="hidden xl:flex flex-wrap gap-1.5 mb-3">
         <button v-for="s in suggestions" :key="s.text" type="button"
           class="flex items-center gap-1 px-2.5 py-1 rounded-full border border-black/8 dark:border-white/8 bg-white dark:bg-white/4 hover:border-brand-primary/40 hover:bg-brand-primary/5 text-[11.5px] text-zinc-600 dark:text-zinc-300 font-poppins transition"
           @click="emit('fill-suggestion', s.text)">
