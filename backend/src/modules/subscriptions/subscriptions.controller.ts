@@ -8,6 +8,7 @@ import {
 } from "./subscriptions.schema.ts";
 import {
   initiateFibSubscription,
+  getPendingFibSubscription,
   getFibStatus,
   cancelFibSubscription,
   handleFibWebhook,
@@ -18,6 +19,13 @@ export const initiateFibHandler = asyncHandler(
     const input = initiateFibSchema.parse(req.body);
     const result = await initiateFibSubscription(req.user!.id, input);
     sendSuccess(res, result, "Subscription initiated successfully", 201);
+  },
+);
+
+export const getPendingFibHandler = asyncHandler(
+  async (req: Request, res: Response) => {
+    const result = await getPendingFibSubscription(req.user!.id);
+    sendSuccess(res, result, result ? "Pending payment retrieved" : "No pending payment");
   },
 );
 

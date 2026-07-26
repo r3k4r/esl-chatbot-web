@@ -4966,17 +4966,37 @@ export interface paths {
                                 appLink?: string;
                                 /** Format: date-time */
                                 validUntil?: string;
+                                /** @enum {string} */
+                                plan?: "GOLD" | "PREMIUM";
+                                intervalMonths?: number;
+                                amountIQD?: number;
+                                /** @description True when an existing pending payment was handed back instead of a new one being created (same plan + interval already awaiting payment). */
+                                resumed?: boolean;
                             };
                         };
                     };
                 };
                 401: components["responses"]["Unauthorized"];
-                /** @description Active subscription conflict */
+                /** @description Active subscription conflict, or a pending payment for a DIFFERENT plan/interval exists. In the latter case the body carries `pendingFib` so the client can offer to resume or cancel it. */
                 409: {
                     headers: {
                         [name: string]: unknown;
                     };
-                    content?: never;
+                    content: {
+                        "application/json": {
+                            success?: boolean;
+                            message?: string;
+                            pendingFib?: {
+                                fibSubscriptionId?: string;
+                                /** @enum {string} */
+                                plan?: "GOLD" | "PREMIUM";
+                                intervalMonths?: number;
+                                amountIQD?: number;
+                                /** Format: date-time */
+                                validUntil?: string | null;
+                            } | null;
+                        };
+                    };
                 };
                 422: components["responses"]["ValidationError"];
                 /** @description FIB credentials not configured */
@@ -4988,6 +5008,62 @@ export interface paths {
                 };
             };
         };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/subscriptions/fib/pending": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get the caller's pending (unpaid) FIB payment, if any
+         * @description Recovers an in-progress payment — the QR code, manual code and app link of a DRAFT subscription that is still valid. Lets the client re-show a payment dialog that was closed or navigated away from. Expired DRAFTs are swept and reported as no pending payment. Returns `data: null` when there is nothing to resume.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Pending payment, or null */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            success?: boolean;
+                            data?: {
+                                fibSubscriptionId?: string;
+                                readableCode?: string;
+                                /** @description base64 PNG data URI */
+                                qrCode?: string;
+                                appLink?: string;
+                                /** Format: date-time */
+                                validUntil?: string;
+                                /** @enum {string} */
+                                plan?: "GOLD" | "PREMIUM";
+                                intervalMonths?: number;
+                                amountIQD?: number;
+                                resumed?: boolean;
+                            } | null;
+                        };
+                    };
+                };
+                401: components["responses"]["Unauthorized"];
+            };
+        };
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;

@@ -6,6 +6,7 @@ import { authenticate } from "../../middlewares/authenticate.ts";
 import { env } from "../../config/env.ts";
 import {
   initiateFibHandler,
+  getPendingFibHandler,
   getFibStatusHandler,
   cancelFibHandler,
   fibWebhookHandler,
@@ -60,12 +61,79 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
  *                     qrCode: { type: string, description: base64 PNG data URI }
  *                     appLink: { type: string }
  *                     validUntil: { type: string, format: date-time }
+ *                     plan: { type: string, enum: [GOLD, PREMIUM] }
+ *                     intervalMonths: { type: integer }
+ *                     amountIQD: { type: integer }
+ *                     resumed:
+ *                       type: boolean
+ *                       description: >
+ *                         True when an existing pending payment was handed back instead of a new
+ *                         one being created (same plan + interval already awaiting payment).
  *       401: { $ref: '#/components/responses/Unauthorized' }
- *       409: { description: Active subscription conflict }
+ *       409:
+ *         description: >
+ *           Active subscription conflict, or a pending payment for a DIFFERENT plan/interval
+ *           exists. In the latter case the body carries `pendingFib` so the client can offer
+ *           to resume or cancel it.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean }
+ *                 message: { type: string }
+ *                 pendingFib:
+ *                   type: object
+ *                   nullable: true
+ *                   properties:
+ *                     fibSubscriptionId: { type: string }
+ *                     plan: { type: string, enum: [GOLD, PREMIUM] }
+ *                     intervalMonths: { type: integer }
+ *                     amountIQD: { type: integer }
+ *                     validUntil: { type: string, format: date-time, nullable: true }
  *       422: { $ref: '#/components/responses/ValidationError' }
  *       503: { description: FIB credentials not configured }
  */
 router.post("/initiate-fib", authenticate, initiateFibHandler);
+
+/**
+ * @swagger
+ * /subscriptions/fib/pending:
+ *   get:
+ *     summary: Get the caller's pending (unpaid) FIB payment, if any
+ *     description: >
+ *       Recovers an in-progress payment — the QR code, manual code and app link of a DRAFT
+ *       subscription that is still valid. Lets the client re-show a payment dialog that was
+ *       closed or navigated away from. Expired DRAFTs are swept and reported as no pending
+ *       payment. Returns `data: null` when there is nothing to resume.
+ *     tags: [Subscriptions]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Pending payment, or null
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean }
+ *                 data:
+ *                   type: object
+ *                   nullable: true
+ *                   properties:
+ *                     fibSubscriptionId: { type: string }
+ *                     readableCode: { type: string }
+ *                     qrCode: { type: string, description: base64 PNG data URI }
+ *                     appLink: { type: string }
+ *                     validUntil: { type: string, format: date-time }
+ *                     plan: { type: string, enum: [GOLD, PREMIUM] }
+ *                     intervalMonths: { type: integer }
+ *                     amountIQD: { type: integer }
+ *                     resumed: { type: boolean }
+ *       401: { $ref: '#/components/responses/Unauthorized' }
+ */
+router.get("/fib/pending", authenticate, getPendingFibHandler);
 
 /**
  * @swagger
