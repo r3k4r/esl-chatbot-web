@@ -421,9 +421,8 @@ Found while live-testing FIB on prod. Two of these took real money without grant
 
 ---
 
-## 14. 🔴 Recurring FIB payments are never re-synced — user keeps paying, loses access
-**Not yet fixed. Found 2026-07-26 while designing Task 15. This will bite the first real
-multi-month subscriber.**
+## 14. Recurring FIB payments were never re-synced ✅ DONE (2026-07-26)
+Found while designing Task 15; it would have bitten the first real multi-month subscriber.
 
 FIB subscriptions are **recurring** (`interval: P1M/P3M/...`), so FIB charges again automatically
 each period. But `applyFibStatusChange` early-returns when the status is unchanged
@@ -432,12 +431,19 @@ rows. So when FIB takes month 2's payment, `activeUntil` advances at FIB while o
 `currentPeriodEnd` never moves — and the subscription-expiry cron then downgrades a **paying**
 customer to FREE.
 
-Proposed fix (verify against FIB stage first — does FIB post a callback on each recurring charge?):
-- `applyFibStatusChange`: when status is unchanged but ACTIVE/TRIAL, still refresh
-  `currentPeriodEnd` from `details.activeUntil` if it has moved.
-- `fib-reconcile.job.ts`: also scan ACTIVE/TRIAL rows (cheap — few rows), so renewals are picked up
-  even if no webhook arrives.
-- Add a test that a second `activeUntil` extends `currentPeriodEnd`.
+Fix shipped — deliberately built so it works **whether or not** FIB posts a callback on each
+recurring charge (the cron polls regardless; still worth confirming with FIB):
+- ✅ `applyFibStatusChange`: an unchanged status no longer early-returns. `extendPaidPeriodIfRenewed`
+  refreshes `currentPeriodEnd` from `details.activeUntil` when a live sub's paid period has moved
+  forward. Only ever extends — never pulls the date backwards off a stale read — and skips subs
+  with `cancelAtPeriodEnd` so a cancellation can't be resurrected.
+- ✅ `fib-reconcile.job.ts` now also scans ACTIVE/TRIAL rows, scoped to those whose
+  `currentPeriodEnd` is within 2 days (or past) and not cancelling — so renewals are caught even
+  with no webhook, while the query stays a handful of rows per run instead of every subscriber.
+- ✅ 3 tests: renewal extends the period, a cancelled sub is not extended, a stale earlier
+  `activeUntil` does not shorten it.
+- **Still worth verifying on FIB stage:** whether a recurring charge fires a status callback at
+  all, and that `activeUntil` advances as expected on the second period.
 
 ---
 
@@ -455,8 +461,11 @@ Agreed design:
   `pendingPlan Plan?` column applied by the expiry paths.
 - Relax the `initiate-fib` guards accordingly (they currently 409 on any ACTIVE provider) and add
   the proration helper next to `PLAN_AMOUNTS_IQD`.
-- **Do Task 14 first** — stacking periods on top of a `currentPeriodEnd` that silently goes stale
-  would compound the error.
+- ~~**Do Task 14 first**~~ — done 2026-07-26, so `currentPeriodEnd` is now trustworthy and the
+  stacking logic can safely build on it. `cancelAtPeriodEnd` (Task 13) is also already in place.
+- Remaining unknown to settle before building: whether an upgrade should cancel the old FIB
+  recurring subscription immediately (simplest, chosen design) or let it lapse — confirm no
+  double-charge window exists on FIB's side.
 
 ---
 

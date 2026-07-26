@@ -575,6 +575,89 @@ describe("GET /api/v1/subscriptions/fib/:subscriptionId/status", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+describe("Recurring FIB charges (status unchanged, activeUntil moves)", () => {
+  // FIB subscriptions recur, and a renewal charge extends activeUntil WITHOUT changing
+  // the status. applyFibStatusChange used to early-return on an unchanged status, so
+  // currentPeriodEnd went stale while FIB kept charging — and the expiry sweep then
+  // downgraded a paying customer to FREE.
+  it("200 — ACTIVE→ACTIVE with a later activeUntil extends currentPeriodEnd", async () => {
+    const oldEnd = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000);
+    const u = track(
+      await createTestUser({
+        plan: "GOLD",
+        status: "ACTIVE",
+        paymentProvider: "FIB",
+        currentPeriodEnd: oldEnd,
+      }),
+    );
+    const record = await makeFibRecord(u.id, { fibStatus: "ACTIVE" });
+
+    const renewedUntil = Date.now() + 32 * 24 * 60 * 60 * 1000;
+    getSpy.mockResolvedValue(mockDetails("ACTIVE", renewedUntil));
+
+    const res = await request(app)
+      .get(`/api/v1/subscriptions/fib/${record.fibSubscriptionId}/status`)
+      .set(auth(u.token));
+
+    expect(res.status).toBe(200);
+
+    const sub = await getSubscription(u.id);
+    expect(sub?.plan).toBe("GOLD");
+    expect(sub?.status).toBe("ACTIVE");
+    expect(sub?.currentPeriodEnd?.getTime()).toBe(renewedUntil); // renewal applied
+  });
+
+  it("200 — does not extend a subscription the user has cancelled", async () => {
+    // We already told FIB to stop charging; a stale activeUntil must not resurrect it.
+    const end = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
+    const u = track(
+      await createTestUser({
+        plan: "GOLD",
+        status: "ACTIVE",
+        paymentProvider: "FIB",
+        currentPeriodEnd: end,
+      }),
+    );
+    await prisma.subscription.update({
+      where: { userId: u.id },
+      data: { cancelAtPeriodEnd: true },
+    });
+    const record = await makeFibRecord(u.id, { fibStatus: "ACTIVE" });
+
+    getSpy.mockResolvedValue(mockDetails("ACTIVE", Date.now() + 40 * 24 * 60 * 60 * 1000));
+
+    await request(app)
+      .get(`/api/v1/subscriptions/fib/${record.fibSubscriptionId}/status`)
+      .set(auth(u.token));
+
+    const sub = await getSubscription(u.id);
+    expect(sub?.currentPeriodEnd?.getTime()).toBe(end.getTime()); // unchanged
+  });
+
+  it("200 — never pulls currentPeriodEnd backwards on a stale read", async () => {
+    const end = new Date(Date.now() + 25 * 24 * 60 * 60 * 1000);
+    const u = track(
+      await createTestUser({
+        plan: "GOLD",
+        status: "ACTIVE",
+        paymentProvider: "FIB",
+        currentPeriodEnd: end,
+      }),
+    );
+    const record = await makeFibRecord(u.id, { fibStatus: "ACTIVE" });
+
+    getSpy.mockResolvedValue(mockDetails("ACTIVE", Date.now() + 5 * 24 * 60 * 60 * 1000));
+
+    await request(app)
+      .get(`/api/v1/subscriptions/fib/${record.fibSubscriptionId}/status`)
+      .set(auth(u.token));
+
+    const sub = await getSubscription(u.id);
+    expect(sub?.currentPeriodEnd?.getTime()).toBe(end.getTime()); // not shortened
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
 describe("DELETE /api/v1/subscriptions/fib/:subscriptionId", () => {
   it("200 — cancel ACTIVE sub: FIB cancel called, fibStatus=CANCELLED, plan→FREE", async () => {
     const u = track(

@@ -12,13 +12,31 @@ export async function runFibReconcileJob(): Promise<void> {
 
   const now = new Date();
 
-  // Only DRAFT subscriptions that haven't expired yet — TRIAL/ACTIVE are handled
-  // by the webhook or by the daily expiry job; we focus on the common case of a
-  // user who paid but the webhook missed the DRAFT → ACTIVE transition.
+  // Two cases, both of which cost the user real money if a webhook is missed:
+  //
+  //  1. DRAFT that hasn't expired — the user paid but the DRAFT → ACTIVE callback
+  //     never landed, so they have no plan.
+  //  2. ACTIVE/TRIAL whose paid period is about to lapse — FIB subscriptions RECUR,
+  //     and a renewal charge moves `activeUntil` without changing the status, so no
+  //     webhook fires. Left unchecked, the expiry sweep downgrades a paying customer.
+  //     Scoped to subs near (or past) their period end so this stays a handful of
+  //     rows per run rather than every active subscriber every 15 minutes.
+  const renewalWindow = new Date(now.getTime() + 2 * 24 * 60 * 60 * 1000);
+
   const pending = await prisma.fibSubscription.findMany({
     where: {
-      fibStatus: "DRAFT",
-      validUntil: { gt: now },
+      OR: [
+        { fibStatus: "DRAFT", validUntil: { gt: now } },
+        {
+          fibStatus: { in: ["ACTIVE", "TRIAL"] },
+          user: {
+            subscription: {
+              cancelAtPeriodEnd: false, // cancelled ones are meant to lapse
+              currentPeriodEnd: { lt: renewalWindow },
+            },
+          },
+        },
+      ],
     },
   });
 

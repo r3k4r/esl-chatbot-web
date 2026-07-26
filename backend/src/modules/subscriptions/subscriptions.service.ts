@@ -31,6 +31,50 @@ const INTERVAL_ISO: Record<number, string> = {
   12: "P1Y",
 };
 
+// Push `activeUntil` forward when a recurring FIB charge has extended the paid
+// period. Called on every sync where the FIB status did not change, which is exactly
+// what a renewal looks like from our side (ACTIVE → ACTIVE, later activeUntil).
+async function extendPaidPeriodIfRenewed(
+  record: FibSubscription,
+  details: SubscriptionDetails,
+): Promise<void> {
+  const isLive = details.status === "ACTIVE" || details.status === "TRIAL";
+  if (!isLive || !details.activeUntil) return;
+
+  const paidUntil = new Date(details.activeUntil);
+  const sub = await prisma.subscription.findUnique({
+    where: { userId: record.userId },
+    select: { currentPeriodEnd: true, cancelAtPeriodEnd: true },
+  });
+
+  // The user cancelled, so we already told FIB to stop charging. Don't resurrect the
+  // subscription off a stale activeUntil — the cancellation must stick.
+  if (sub?.cancelAtPeriodEnd) return;
+
+  // Only ever extend. Never pull the end date backwards off a stale read.
+  if (sub?.currentPeriodEnd && paidUntil <= sub.currentPeriodEnd) return;
+
+  const renewalData = {
+    plan: record.plan,
+    status: "ACTIVE" as const,
+    paymentProvider: "FIB" as const,
+    externalSubscriptionId: record.fibSubscriptionId,
+    currentPeriodEnd: paidUntil,
+  };
+  await prisma.subscription.upsert({
+    where: { userId: record.userId },
+    update: renewalData,
+    create: { userId: record.userId, ...renewalData },
+  });
+  await deleteCache(cacheKeys.authUser(record.userId));
+
+  logger.info("[fib] recurring charge extended the paid period", {
+    userId: record.userId,
+    fibSubscriptionId: record.fibSubscriptionId,
+    currentPeriodEnd: paidUntil.toISOString(),
+  });
+}
+
 // ─── Shared status-sync helper ────────────────────────────────────────────────
 // Used by getFibStatus, handleFibWebhook, and the reconciliation cron job to
 // avoid duplicating the status-transition + subscription-update transaction.
@@ -39,7 +83,15 @@ export async function applyFibStatusChange(
   details: SubscriptionDetails,
 ): Promise<void> {
   const incomingStatus = details.status as FibSubStatusType;
-  if (record.fibStatus === incomingStatus) return; // already up to date
+  if (record.fibStatus === incomingStatus) {
+    // Status is unchanged — but FIB subscriptions RECUR (interval P1M/P3M/...), and a
+    // renewal charge moves `activeUntil` forward without ever changing the status.
+    // Returning early here meant our currentPeriodEnd went stale while FIB kept
+    // charging, and the subscription-expiry sweep then downgraded a PAYING customer
+    // to FREE. So always let a live subscription extend its paid period.
+    await extendPaidPeriodIfRenewed(record, details);
+    return;
+  }
 
   const now = new Date();
   const isActivating = incomingStatus === "ACTIVE" || incomingStatus === "TRIAL";
