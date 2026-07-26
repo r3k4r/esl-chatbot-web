@@ -73,6 +73,18 @@ async function cancelPending() {
   const res = await cancelFib(id)
   cancellingPending.value = false
   if (!res.success) {
+    // 409 = the payment landed at FIB between opening the QR and pressing Cancel, so
+    // the backend activated the plan instead of discarding it. That's good news, not
+    // an error — clear the card and refresh so the new plan shows immediately.
+    if ((res as any).status === 409) {
+      pendingPayment.value = null
+      paymentData.value = null
+      paymentModal.value = false
+      toast.success(res.message || 'Your payment went through — your plan is now active.')
+      await authStore.fetchUser()
+      emit('refreshed')
+      return
+    }
     toast.error(res.message || 'Could not cancel the pending payment.')
     return
   }

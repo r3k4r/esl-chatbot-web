@@ -613,24 +613,66 @@ describe("DELETE /api/v1/subscriptions/fib/:subscriptionId", () => {
     expect(cancelSpy).toHaveBeenCalledTimes(1);
   });
 
-  it("200 — cancel DRAFT sub: no FIB call, local cancel only, user plan unchanged", async () => {
-    // DRAFT = not paid yet — calling FIB cancel on a DRAFT is an illegal
-    // status transition (FIB returns 400). We discard locally instead.
+  it("200 — cancel unpaid DRAFT: verifies with FIB, no cancel call, user plan unchanged", async () => {
+    // DRAFT = not paid yet — calling FIB's cancel on a DRAFT is an illegal status
+    // transition (FIB returns 400). We verify with FIB, then discard locally.
     const u = track(await createTestUser({ plan: "FREE", status: "ACTIVE" }));
     const record = await makeFibRecord(u.id, { fibStatus: "DRAFT" });
+    getSpy.mockResolvedValue(mockDetails("DRAFT")); // FIB confirms still unpaid
 
     const res = await request(app)
       .delete(`/api/v1/subscriptions/fib/${record.fibSubscriptionId}`)
       .set(auth(u.token));
 
     expect(res.status).toBe(200);
-    expect(cancelSpy).not.toHaveBeenCalled(); // critical — no FIB network call
+    expect(getSpy).toHaveBeenCalled();          // must confirm it really is unpaid
+    expect(cancelSpy).not.toHaveBeenCalled();   // critical — no illegal FIB cancel
 
     const fibRecord = await prisma.fibSubscription.findUnique({ where: { id: record.id } });
     expect(fibRecord?.fibStatus).toBe("CANCELLED");
 
     const sub = await getSubscription(u.id);
     expect(sub?.plan).toBe("FREE"); // DRAFT never activated plan — unchanged
+  });
+
+  it("409 — cancelling a DRAFT that was paid in the meantime activates it instead of discarding the payment", async () => {
+    // The race that used to eat a real payment: user scans the QR, pays, then hits
+    // Cancel before FIB's callback lands. Discarding locally would leave FIB holding
+    // the money with no plan granted and no DRAFT left for the reconcile job to fix.
+    const u = track(await createTestUser({ plan: "FREE", status: "ACTIVE" }));
+    const record = await makeFibRecord(u.id, { fibStatus: "DRAFT" });
+    const activeUntil = Date.now() + 30 * 24 * 60 * 60 * 1000;
+    getSpy.mockResolvedValue(mockDetails("ACTIVE", activeUntil)); // paid just now
+
+    const res = await request(app)
+      .delete(`/api/v1/subscriptions/fib/${record.fibSubscriptionId}`)
+      .set(auth(u.token));
+
+    expect(res.status).toBe(409);
+    expect(cancelSpy).not.toHaveBeenCalled();
+
+    const fibRecord = await prisma.fibSubscription.findUnique({ where: { id: record.id } });
+    expect(fibRecord?.fibStatus).toBe("ACTIVE"); // activated, NOT cancelled
+
+    const sub = await getSubscription(u.id);
+    expect(sub?.plan).toBe("GOLD");
+    expect(sub?.status).toBe("ACTIVE");
+    expect(sub?.paymentProvider).toBe("FIB");
+  });
+
+  it("503 — refuses to cancel a DRAFT when FIB is unreachable (never discards a possible payment)", async () => {
+    const u = track(await createTestUser({ plan: "FREE", status: "ACTIVE" }));
+    const record = await makeFibRecord(u.id, { fibStatus: "DRAFT" });
+    getSpy.mockRejectedValue(makeFibError("FIB unavailable", 500));
+
+    const res = await request(app)
+      .delete(`/api/v1/subscriptions/fib/${record.fibSubscriptionId}`)
+      .set(auth(u.token));
+
+    expect(res.status).toBe(503);
+
+    const fibRecord = await prisma.fibSubscription.findUnique({ where: { id: record.id } });
+    expect(fibRecord?.fibStatus).toBe("DRAFT"); // untouched — safe to retry
   });
 
   it("409 — already CANCELLED", async () => {
@@ -757,6 +799,34 @@ describe("POST /api/v1/subscriptions/webhook/fib", () => {
     const fibRecord = await prisma.fibSubscription.findUnique({ where: { id: record.id } });
     expect(fibRecord?.fibStatus).toBe("ACTIVE");
     expect(fibRecord?.activatedAt).not.toBeNull();
+  });
+
+  it("202 — activates even when the user has NO Subscription row (payment must never be lost)", async () => {
+    // Regression: applyFibStatusChange used prisma.subscription.update, which throws
+    // P2025 when the row is missing and rolled back the WHOLE transaction — so the
+    // FibSubscription stayed DRAFT while FIB had already taken the money, and the
+    // reconcile cron then failed identically every 15 minutes forever.
+    // A Subscription row is only created at registration, so any gap loses a payment.
+    const u = track(await createTestUser({ plan: "FREE", status: "ACTIVE" }));
+    await prisma.subscription.delete({ where: { userId: u.id } });
+
+    const record = await makeFibRecord(u.id);
+    const activeUntilMs = Date.now() + 30 * 24 * 60 * 60 * 1000;
+    getSpy.mockResolvedValue(mockDetails("ACTIVE", activeUntilMs));
+
+    const res = await request(app)
+      .post("/api/v1/subscriptions/webhook/fib")
+      .send({ subscriptionId: record.fibSubscriptionId, status: "ACTIVE" });
+
+    expect(res.status).toBe(202);
+    await waitForFibStatus(record.id, "ACTIVE");
+
+    // The row is recreated by the upsert, with the paid plan applied
+    const sub = await getSubscription(u.id);
+    expect(sub).not.toBeNull();
+    expect(sub?.plan).toBe("GOLD");
+    expect(sub?.status).toBe("ACTIVE");
+    expect(sub?.paymentProvider).toBe("FIB");
   });
 
   it("202 — DRAFT→CANCELLED: fibStatus updated, user plan stays FREE (was never activated)", async () => {

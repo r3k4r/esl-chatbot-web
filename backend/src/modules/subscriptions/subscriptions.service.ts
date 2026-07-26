@@ -7,6 +7,7 @@ import { fib } from "../../config/fib.ts";
 import { AppError } from "../../utils/AppError.ts";
 import { env } from "../../config/env.ts";
 import { logger } from "../../config/index.ts";
+import { Sentry } from "../../config/sentry.ts";
 import { deleteCache, cacheKeys } from "../../config/cache.ts";
 import type {
   InitiateFibInput,
@@ -44,6 +45,28 @@ export async function applyFibStatusChange(
   const isActivating = incomingStatus === "ACTIVE" || incomingStatus === "TRIAL";
   const isCancelling = incomingStatus === "CANCELLED" || incomingStatus === "REJECTED";
 
+  // NOTE: these MUST be upserts, not updates. `update` throws P2025 when the user
+  // has no Subscription row, which rolls back the whole transaction — leaving the
+  // FibSubscription stuck at DRAFT even though FIB has already taken the money, and
+  // the reconcile cron then fails identically every 15 min forever. A Subscription
+  // row is only ever created at registration, so any gap (manual DB cleanup, a
+  // half-failed signup, a future migration) silently costs a real payment.
+  const activatedData = {
+    plan: record.plan,
+    status: "ACTIVE" as const,
+    paymentProvider: "FIB" as const,
+    externalSubscriptionId: record.fibSubscriptionId,
+    currentPeriodStart: now,
+    currentPeriodEnd: details.activeUntil ? new Date(details.activeUntil) : null,
+  };
+  const cancelledData = {
+    plan: "FREE" as const,
+    status: "ACTIVE" as const,
+    paymentProvider: null,
+    externalSubscriptionId: null,
+    currentPeriodEnd: now,
+  };
+
   await prisma.$transaction([
     prisma.fibSubscription.update({
       where: { id: record.id },
@@ -53,32 +76,23 @@ export async function applyFibStatusChange(
         ...(isCancelling && !record.cancelledAt ? { cancelledAt: now } : {}),
       },
     }),
-    isActivating
-      ? prisma.subscription.update({
-          where: { userId: record.userId },
-          data: {
-            plan: record.plan,
-            status: "ACTIVE",
-            paymentProvider: "FIB",
-            externalSubscriptionId: record.fibSubscriptionId,
-            currentPeriodStart: now,
-            currentPeriodEnd: details.activeUntil
-              ? new Date(details.activeUntil)
-              : null,
-          },
-        })
-      : isCancelling
-        ? prisma.subscription.update({
+    ...(isActivating
+      ? [
+          prisma.subscription.upsert({
             where: { userId: record.userId },
-            data: {
-              plan: "FREE",
-              status: "ACTIVE",
-              paymentProvider: null,
-              externalSubscriptionId: null,
-              currentPeriodEnd: now,
-            },
-          })
-        : prisma.subscription.findUnique({ where: { userId: record.userId } }),
+            update: activatedData,
+            create: { userId: record.userId, ...activatedData },
+          }),
+        ]
+      : isCancelling
+        ? [
+            prisma.subscription.upsert({
+              where: { userId: record.userId },
+              update: cancelledData,
+              create: { userId: record.userId, ...cancelledData },
+            }),
+          ]
+        : []),
   ]);
 
   // Plan/status changed — the auth cache for this user is now stale
@@ -355,11 +369,43 @@ export async function cancelFibSubscription(
 
   const now = new Date();
 
-  // A DRAFT subscription was never paid, so it never activated the user's plan and
-  // FIB has nothing to cancel — calling FIB's cancel on a DRAFT returns
-  // ILLEGAL_SUBSCRIPTION_STATUS_TRANSITION (400). Just discard the local record;
-  // the unpaid DRAFT expires on its own at FIB.
+  // A locally-DRAFT subscription may ALREADY BE PAID: the user can scan the QR, pay,
+  // and hit Cancel before FIB's callback lands (or while the webhook is retrying).
+  // Discarding it blindly — as this used to — throws away a real payment: FIB keeps
+  // the money, we mark it CANCELLED, and the reconcile cron skips it because it is
+  // no longer DRAFT. So always ask FIB what actually happened before cancelling.
   if (record.fibStatus === "DRAFT") {
+    let liveDetails: SubscriptionDetails | null = null;
+    try {
+      liveDetails = await client.getSubscription(fibSubscriptionId);
+    } catch (err) {
+      // Can't reach FIB — refuse rather than risk discarding a paid subscription.
+      // The DRAFT expires on its own at FIB if it really was unpaid.
+      logger.error("[fib] cancel: could not verify DRAFT status with FIB", {
+        fibSubscriptionId,
+        error: err instanceof Error ? err.message : String(err),
+      });
+      throw new AppError(
+        "Could not reach FIB to confirm this payment's status. Please try again in a moment — " +
+          "cancelling now could discard a payment that already went through.",
+        503,
+      );
+    }
+
+    // Paid in the meantime → activate instead of cancelling. The user keeps the plan
+    // they just paid for; they can cancel it afterwards through the ACTIVE path.
+    if (liveDetails.status === "ACTIVE" || liveDetails.status === "TRIAL") {
+      await applyFibStatusChange(record, liveDetails);
+      throw new AppError(
+        "Your payment already went through, so this could not be cancelled — your plan is now active. " +
+          "You can cancel it from your subscription settings.",
+        409,
+      );
+    }
+
+    // Genuinely unpaid → discard locally. FIB has nothing to cancel (cancelling a
+    // real DRAFT returns ILLEGAL_SUBSCRIPTION_STATUS_TRANSITION), and the unpaid
+    // DRAFT expires on its own at FIB.
     await prisma.fibSubscription.update({
       where: { id: record.id },
       data: { fibStatus: "CANCELLED", cancelledAt: now },
@@ -420,6 +466,29 @@ export async function handleFibWebhook(subscriptionId: string): Promise<void> {
     return; // FIB unreachable — skip; will reconcile on next poll or webhook retry
   }
 
-  // applyFibStatusChange is idempotent — it returns early if status is unchanged
-  await applyFibStatusChange(record, details);
+  // applyFibStatusChange is idempotent — it returns early if status is unchanged.
+  // Report failures LOUDLY: the caller (fibWebhookHandler) has already answered FIB
+  // with 202 and swallows anything thrown here, so without this a failed activation
+  // is completely invisible — the user has paid and silently received nothing.
+  try {
+    await applyFibStatusChange(record, details);
+  } catch (err) {
+    logger.error("[fib] webhook: failed to apply status change — user may have paid without activation", {
+      fibSubscriptionId: subscriptionId,
+      userId: record.userId,
+      incomingStatus: details.status,
+      error: err instanceof Error ? err.message : String(err),
+    });
+    Sentry.withScope((scope) => {
+      scope.setLevel("error");
+      scope.setTag("fib.stage", "webhook-apply");
+      scope.setContext("fib", {
+        fibSubscriptionId: subscriptionId,
+        userId: record.userId,
+        incomingStatus: details.status,
+      });
+      Sentry.captureException(err);
+    });
+    throw err;
+  }
 }

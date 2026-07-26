@@ -1,6 +1,7 @@
 import { prisma } from "../config/database.ts";
 import { fib } from "../config/fib.ts";
 import { logger } from "../config/index.ts";
+import { Sentry } from "../config/sentry.ts";
 import { applyFibStatusChange } from "../modules/subscriptions/subscriptions.service.ts";
 
 // Reconcile non-terminal FIB subscriptions against the FIB API.
@@ -32,9 +33,22 @@ export async function runFibReconcileJob(): Promise<void> {
       await applyFibStatusChange(record, details);
       if (details.status !== record.fibStatus) synced++;
     } catch (err) {
+      // This is the last safety net for a paid-but-not-activated subscription. If it
+      // keeps failing, someone's money is gone and they have no plan — so it goes to
+      // Sentry, not just the log, where it would repeat unnoticed every 15 minutes.
       logger.error("[cron:fib-reconcile] Failed to reconcile subscription", {
         fibSubscriptionId: record.fibSubscriptionId,
+        userId: record.userId,
         error: err,
+      });
+      Sentry.withScope((scope) => {
+        scope.setLevel("error");
+        scope.setTag("fib.stage", "reconcile");
+        scope.setContext("fib", {
+          fibSubscriptionId: record.fibSubscriptionId,
+          userId: record.userId,
+        });
+        Sentry.captureException(err);
       });
     }
   }
