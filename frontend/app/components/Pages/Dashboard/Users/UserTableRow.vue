@@ -5,9 +5,16 @@ defineProps<{ user: AdminUserItem; toggling?: boolean }>()
 
 const emit = defineEmits<{
   toggleStatus: [userId: string, isActive: boolean]
+  changeRole: [user: AdminUserItem]
   assignSubscription: [user: AdminUserItem]
   cancelSubscription: [user: AdminUserItem]
 }>()
+
+const ROLE_LABEL: Record<string, string> = {
+  STUDENT: 'Student',
+  TUTOR: 'Tutor',
+  ADMIN: 'Admin',
+}
 
 const PLAN_COLOR: Record<string, string> = {
   FREE:    'bg-surface-raised text-text-muted',
@@ -57,7 +64,7 @@ const STATUS_TEXT: Record<string, string> = {
     <!-- Role -->
     <td class="px-4 py-3 hidden sm:table-cell">
       <span class="text-[14px] font-medium font-poppins" :style="`color:var(--text-muted)`">
-        {{ user.role.charAt(0) + user.role.slice(1).toLowerCase() }}
+        {{ ROLE_LABEL[user.role] ?? user.role }}
       </span>
     </td>
 
@@ -123,13 +130,17 @@ const STATUS_TEXT: Record<string, string> = {
         <UiDropdownMenuContent align="end" class="w-52">
           <NuxtLink :to="`/dashboard/users/${user.id}/profile`">
             <UiDropdownMenuItem class="cursor-pointer gap-2.5">
-              <AppIconsax name="Edit" color="currentColor" :size="14" />
+              <AppIconsax name="Edit" color="currentColor" :size="16" />
               <span class="text-[14px]">Edit profile</span>
             </UiDropdownMenuItem>
           </NuxtLink>
+          <UiDropdownMenuItem class="cursor-pointer gap-2.5" @click="emit('changeRole', user)">
+            <AppIconsax name="Profile" color="currentColor" :size="16" />
+            <span class="text-[14px]">Change role</span>
+          </UiDropdownMenuItem>
           <UiDropdownMenuSeparator />
           <UiDropdownMenuItem class="cursor-pointer gap-2.5" @click="emit('assignSubscription', user)">
-            <AppIconsax name="Crown1" color="currentColor" :size="14" />
+            <AppIconsax name="Crown1" color="currentColor" :size="16" />
             <span class="text-[14px]">Assign subscription</span>
           </UiDropdownMenuItem>
           <UiDropdownMenuItem
@@ -137,7 +148,7 @@ const STATUS_TEXT: Record<string, string> = {
             class="cursor-pointer gap-2.5"
             @click="emit('cancelSubscription', user)"
           >
-            <AppIconsax name="CloseCircle" color="currentColor" :size="14" />
+            <AppIconsax name="CloseCircle" color="currentColor" :size="16" />
             <span class="text-[14px]">Cancel subscription</span>
           </UiDropdownMenuItem>
         </UiDropdownMenuContent>

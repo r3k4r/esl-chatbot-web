@@ -232,7 +232,7 @@ const { isAdmin, isTutor, isStaff } = useRole()   // isStaff = isAdmin || isTuto
 
 - **`isStaff` (admin + tutor)** are teachers/operators, not learners. Personal-subscription and learner-only chrome is hidden from them: Billing nav + the FREE upgrade card (sidebar), the "New session" CTA + Billing/learner entries in the command palette (header), and the plan badge / email-digest toggle / Billing item (user avatar — staff show their role label instead of a plan). The student-only learner nav is AI Chat, Voice Lab, Vocabulary, Goals.
 - **`requiresAdmin: true`** page meta is the route-level half of admin gating; the sidebar link visibility is the UI half. **Add both** when introducing an admin-only page.
-- **This is the account role only.** Class-specific membership roles (`ClassUser.role`, `myRole`, `member.role`) are a *different* concept — keep deriving those from the class members list, not from `useRole`. Note: ADMIN is never a class-membership role (only TUTOR/STUDENT appear in a class).
+- **This is the account role only.** Class-specific membership roles (`ClassUser.role`, `myRole`, `member.role`) are a *different* concept — derive those from the class, not from `useRole`. **Prefer the top-level `myRole` returned by `GET /classes/:id`** (the caller's own class role); only fall back to scanning the `members` list. Do NOT gate tutor UI solely on `members.find(me)?.role` — the members list is `isInternal`-filtered on the backend, so an internal/stealth account is absent from it and would be mis-gated (this caused the "tutor can't post" bug, fixed 2026-07-24 by adding `myRole` to the detail response). Note: ADMIN is never a class-membership role (only TUTOR/STUDENT appear in a class).
 - All of this is **frontend UX**; the backend independently enforces authorization on every endpoint.
 
 ### Auth pages + layout
@@ -304,8 +304,9 @@ All pages use `definePageMeta({ layout: 'dashboard', requiresAuth: true })`.
 | `/dashboard/lessons` | `pages/dashboard/lessons.vue` | Stub — not yet linked in nav (commented out) |
 | `/dashboard/profile` | `pages/dashboard/profile.vue` | Built |
 | `/dashboard/billing` | `pages/dashboard/billing.vue` | Built — subscription + FIB payment panel (student-only; hidden from staff) |
-| `/dashboard/users` | `pages/dashboard/users/index.vue` | Built — **ADMIN only** (`requiresAdmin: true`): user list, role/status toggles, assign/cancel subscription |
-| `/dashboard/users/[id]` | `pages/dashboard/users/[id].vue` | Built — **ADMIN only** (`requiresAdmin: true`): full user detail + admin edit |
+| `/dashboard/users` | `pages/dashboard/users/index.vue` | Built — **ADMIN only** (`requiresAdmin: true`): user list, change role (`ChangeRoleDialog`, row 3-dot menu), active/banned toggle, assign/cancel subscription |
+| `/dashboard/users/[id]` | `pages/dashboard/users/[id]/index.vue` | Built — **ADMIN only** (`requiresAdmin: true`): full user detail, tabs under `Users/Detail/` |
+| `/dashboard/users/[id]/profile` | `pages/dashboard/users/[id]/profile.vue` | Built — **ADMIN only** (`requiresAdmin: true`): admin edit — avatar, basic profile, learner settings, plus **Account role** (`ChangeRoleDialog`) and Account status cards |
 | `/dashboard/classes` | `pages/dashboard/classes/index.vue` | Built — **thin role switch** (like `dashboard/index.vue`): ADMIN→`Classes/Admin/AdminClassesView` (manage-all view, inline), TUTOR→`Classes/Tutor/TutorClassesView` (owned classes only), STUDENT→`Classes/Student/StudentClassesView` (enrolled + join) |
 | `/dashboard/classes/create` | `pages/dashboard/classes/create.vue` | Built (tutor/admin) |
 | `/dashboard/classes/[id]` | `pages/dashboard/classes/[id]/index.vue` | Built — full class detail page. **Archiving:** tutor/admin Archive/Unarchive button (PATCH `/classes/:id/archive`); when `cls.archived` the page is read-only (Edit, code Copy/Rotate, member-remove, announcement compose all hidden) and shows an archived banner with an Unarchive action. Admin & Tutor list views have an Active/Archived toggle. |
@@ -315,7 +316,7 @@ All pages use `definePageMeta({ layout: 'dashboard', requiresAuth: true })`.
 
 All dashboard page sub-components live here. **Never use `components/Dashboard/`** — that path is banned.
 
-Beyond the learner sections shown in the tree below, these role-specific + shared folders also exist (mirroring the role-switch pages): `Dashboard/Admin/` (AdminDashboard), `Dashboard/Tutor/` (TutorDashboard, TutorActivityRow), `Dashboard/Overview/` (UserDashboard for students), `Dashboard/Users/` (admin user-management: UserTableRow, UserFilters, AssignSubscriptionModal), `Dashboard/Settings/` (SubscriptionPanel, FibPaymentModal), `Dashboard/Profile/`, and `Dashboard/Shared/` (DashStatCard, DashDonutChart, DashSparkbar, DashSectionCard, DashBreakdownRow — reused across all three dashboards). Notification chrome lives in `Layouts/Dashboard/` (NotificationBell, NotificationPanel).
+Beyond the learner sections shown in the tree below, these role-specific + shared folders also exist (mirroring the role-switch pages): `Dashboard/Admin/` (AdminDashboard), `Dashboard/Tutor/` (TutorDashboard, TutorActivityRow), `Dashboard/Overview/` (UserDashboard for students), `Dashboard/Users/` (admin user-management: UserTableRow, UserFilters, AssignSubscriptionModal, ChangeRoleDialog, plus `Users/Detail/` tabs), `Dashboard/Settings/` (SubscriptionPanel, FibPaymentModal), `Dashboard/Profile/`, and `Dashboard/Shared/` (DashStatCard, DashDonutChart, DashSparkbar, DashSectionCard, DashBreakdownRow — reused across all three dashboards). Notification chrome lives in `Layouts/Dashboard/` (NotificationBell, NotificationPanel).
 
 ```
 components/Pages/Dashboard/
@@ -338,7 +339,8 @@ components/Pages/Dashboard/
 ├─ Classes/
 │  ├─ ClassCard.vue          # Card for a single class in the list
 │  ├─ ClassForm.vue          # Shared create/edit class form
-│  ├─ ClassMembersTab.vue    # Members list with remove/leave actions
+│  ├─ ClassMembersTab.vue    # Members list; owns remove/leave + set-role state, maps rows
+│  ├─ ClassMemberRow.vue     # One member row: avatar/name/badge + 3-dot menu (Make tutor/student, Remove/Leave)
 │  ├─ ClassStudentsTab.vue   # Student progress list + detail sheet (sheet has "Assign word" → AssignVocabularyModal)
 │  ├─ AssignVocabularyModal.vue # Tutor/admin assigns a vocab word to a student (POST /vocabulary { assignedToUserId })
 │  ├─ ClassAnalyticsTab.vue  # Class-wide skill averages + grammar errors
@@ -396,7 +398,7 @@ Types are split by domain — never define them inline in a composable:
 | `useHttp` | [useHttp.ts](app/composables/useHttp.ts) | Single `useHttp(options)` function — **all API calls must go through this** |
 | `useRole` | [useRole.ts](app/composables/useRole.ts) | `isAdmin`, `isTutor`, `isStaff` — current user's **global account role**. Use for all role-gated UI (see [Roles & Permissions](#roles--permissions-read-before-gating-any-ui)) |
 | `useGlobalSearch` | [useGlobalSearch.ts](app/composables/useGlobalSearch.ts) | `search(q)` → `GET /search?q=` — role-aware global search (users/classes/vocab/goals/sessions). Backend scopes by role; powers the header command palette ([CommandPalette.vue](app/components/Layouts/Dashboard/CommandPalette.vue)) |
-| `useClasses` | [useClasses.ts](app/composables/useClasses.ts) | `listMyClasses` / `listAllClasses` (both accept `{ archived?: boolean }`), `getClass`, `joinClass`, `createClass`, `updateClass`, `refreshCode`, `updateCodeSettings`, `toggleBlock`, `archiveClass`, `getClassStudents`, `getClassStudentDetail`, `getClassAnalytics`, `removeMember`, `listAnnouncements`, `createAnnouncement` |
+| `useClasses` | [useClasses.ts](app/composables/useClasses.ts) | `listMyClasses` / `listAllClasses` (both accept `{ archived?: boolean }`), `getClass`, `joinClass`, `createClass`, `updateClass`, `refreshCode`, `updateCodeSettings`, `toggleBlock`, `archiveClass`, `getClassStudents`, `getClassStudentDetail`, `getClassAnalytics`, `removeMember`, `setMemberRole`, `listAnnouncements`, `createAnnouncement` |
 | `useAdmin` / `useAdminDashboard` | [useAdmin.ts](app/composables/useAdmin.ts) | Admin user/class management + admin dashboard data |
 | `useTutorDashboard` | [useTutorDashboard.ts](app/composables/useTutorDashboard.ts) | Tutor dashboard data |
 | `useDashboardOverview` | [useDashboardOverview.ts](app/composables/useDashboardOverview.ts) | Student overview page data |

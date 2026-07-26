@@ -1,4 +1,5 @@
 import type { FibSubscription } from "@prisma/client";
+
 import { FibSubscribeError } from "../../lib/fib-client.ts";
 import type { SubscriptionDetails } from "../../lib/fib-client.ts";
 import { prisma } from "../../config/database.ts";
@@ -128,19 +129,62 @@ export async function initiateFibSubscription(
     }
   }
 
-  // Guard 2: prevent multiple concurrent DRAFT FIB subscriptions for the same user.
-  // A pending DRAFT means a QR code is already open and awaiting payment. Allowing
-  // multiple DRAFTs would let a user accumulate several open payment requests,
-  // each of which could independently activate and charge them.
-  const pendingFib = await prisma.fibSubscription.findFirst({
-    where: { userId, fibStatus: { notIn: ["CANCELLED", "REJECTED"] } },
+  // Guard 2: never allow two payable FIB subscriptions at once — each could
+  // independently be paid and charge the user. But a pending DRAFT must not turn
+  // into a dead end either: the user has to be able to get their QR back (resume)
+  // or clear it, otherwise they are locked out of paying until it expires.
+  const now = new Date();
+
+  // Sweep expired DRAFTs. An unpaid DRAFT dies at FIB when validUntil passes, so
+  // keeping it "pending" locally would block new attempts for no reason.
+  await prisma.fibSubscription.updateMany({
+    where: { userId, fibStatus: "DRAFT", validUntil: { lte: now } },
+    data: { fibStatus: "CANCELLED", cancelledAt: now },
+  });
+
+  // A paid (ACTIVE/TRIAL) FIB record always blocks. Guard 1 catches this via the
+  // Subscription row; this is the backstop for the window where FIB has activated
+  // but the Subscription row hasn't synced yet.
+  const liveFib = await prisma.fibSubscription.findFirst({
+    where: { userId, fibStatus: { in: ["ACTIVE", "TRIAL"] } },
     select: { id: true },
   });
-  if (pendingFib) {
+  if (liveFib) {
     throw new AppError(
-      "You already have a pending FIB subscription. Cancel it or wait for it to expire before starting a new one.",
+      "You already have an active FIB subscription. Cancel it before starting a new one.",
       409,
     );
+  }
+
+  const draft = await prisma.fibSubscription.findFirst({
+    where: { userId, fibStatus: "DRAFT" },
+    orderBy: { createdAt: "desc" },
+  });
+
+  if (draft) {
+    if (!draft.qrCode) {
+      // Created before the payment artifacts were persisted — its QR can never be
+      // shown again, so it can only ever block. Discard it (it is unpaid; if it is
+      // somehow paid later the webhook still activates the user) and issue a fresh one.
+      await prisma.fibSubscription.update({
+        where: { id: draft.id },
+        data: { fibStatus: "CANCELLED", cancelledAt: now },
+      });
+    } else if (draft.plan === plan && draft.intervalMonths === intervalMonths) {
+      // Same plan + interval → hand back the existing payment instead of creating a
+      // second one at FIB. Makes this endpoint safely idempotent: "Subscribe" pressed
+      // twice re-opens the same QR rather than erroring.
+      return { ...toInitiateResult(draft), resumed: true };
+    } else {
+      // Different plan/interval — resuming would show the wrong amount, and creating
+      // a second payment risks a double charge. Surface the pending one so the UI can
+      // offer "resume it" or "cancel it and start over".
+      throw new AppError(
+        `You have a pending ${draft.plan} payment (${draft.intervalMonths} month${draft.intervalMonths === 1 ? "" : "s"}). Resume it or cancel it before starting a different plan.`,
+        409,
+        { pendingFib: toPendingSummary(draft) },
+      );
+    }
   }
 
   const amountIQD = PLAN_AMOUNTS_IQD[plan]?.[intervalMonths];
@@ -182,6 +226,10 @@ export async function initiateFibSubscription(
       amountIQD,
       fibStatus: "DRAFT",
       validUntil: new Date(fibSub.validUntil),
+      // Persisted so the QR survives a reload / accidental navigation
+      qrCode: fibSub.qrCode,
+      readableCode: fibSub.readableCode,
+      appLink: fibSub.appLink,
     },
   });
 
@@ -191,6 +239,62 @@ export async function initiateFibSubscription(
     qrCode: fibSub.qrCode,
     appLink: fibSub.appLink,
     validUntil: fibSub.validUntil,
+    plan,
+    intervalMonths,
+    amountIQD,
+    resumed: false,
+  };
+}
+
+// ─── Pending payment ──────────────────────────────────────────────────────────
+//
+// Lets the client recover an in-progress payment (page reload, closed dialog,
+// deep link that navigated away). Returns null when there is nothing to resume.
+
+export async function getPendingFibSubscription(
+  userId: string,
+): Promise<InitiateFibResult | null> {
+  const now = new Date();
+
+  // Same expiry sweep as initiate, so a dead DRAFT is never advertised as pending
+  await prisma.fibSubscription.updateMany({
+    where: { userId, fibStatus: "DRAFT", validUntil: { lte: now } },
+    data: { fibStatus: "CANCELLED", cancelledAt: now },
+  });
+
+  const draft = await prisma.fibSubscription.findFirst({
+    where: { userId, fibStatus: "DRAFT", qrCode: { not: null } },
+    orderBy: { createdAt: "desc" },
+  });
+  if (!draft) return null;
+
+  return { ...toInitiateResult(draft), resumed: true };
+}
+
+// Rebuild the initiate payload from a stored row. Only called for rows that
+// passed a `qrCode != null` check, so the non-null assertions are safe.
+function toInitiateResult(
+  record: FibSubscription,
+): Omit<InitiateFibResult, "resumed"> {
+  return {
+    fibSubscriptionId: record.fibSubscriptionId,
+    readableCode: record.readableCode ?? "",
+    qrCode: record.qrCode!,
+    appLink: record.appLink ?? "",
+    validUntil: (record.validUntil ?? new Date()).toISOString(),
+    plan: record.plan as Extract<typeof record.plan, "GOLD" | "PREMIUM">,
+    intervalMonths: record.intervalMonths,
+    amountIQD: record.amountIQD,
+  };
+}
+
+function toPendingSummary(record: FibSubscription) {
+  return {
+    fibSubscriptionId: record.fibSubscriptionId,
+    plan: record.plan,
+    intervalMonths: record.intervalMonths,
+    amountIQD: record.amountIQD,
+    validUntil: record.validUntil?.toISOString() ?? null,
   };
 }
 

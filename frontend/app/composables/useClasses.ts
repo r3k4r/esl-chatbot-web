@@ -147,6 +147,22 @@ export function useClasses() {
     })
   }
 
+  // Change a member's per-class role (TUTOR ⇄ STUDENT). Admin or a class-tutor only.
+  // Backend guards the last-tutor case (409). Never touches the user's global role.
+  async function setMemberRole(classId: string, userId: string, role: 'STUDENT' | 'TUTOR') {
+    return await useHttp<SingleResponse<{
+      classId: string
+      userId: string
+      role: 'STUDENT' | 'TUTOR'
+      user: { id: string; displayName: string; avatarUrl: string | null }
+    }>>({
+      method: 'PATCH',
+      url: `/classes/${classId}/members/${userId}/role`,
+      body: { role },
+      requireAuth: true,
+    })
+  }
+
   async function listAnnouncements(classId: string, params?: { page?: number; limit?: number }) {
     const query = new URLSearchParams()
     if (params?.page) query.set('page', String(params.page))
@@ -183,6 +199,7 @@ export function useClasses() {
     getClassStudentDetail,
     getClassAnalytics,
     removeMember,
+    setMemberRole,
     listAnnouncements,
     createAnnouncement,
   }

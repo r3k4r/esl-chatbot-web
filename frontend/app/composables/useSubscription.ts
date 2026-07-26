@@ -27,6 +27,16 @@ export function useSubscription() {
     })
   }
 
+  // Recovers an in-progress payment (closed dialog, page reload, deep link that
+  // navigated away). `data` is null when there is nothing pending.
+  async function getPendingFib() {
+    return await useHttp<SingleResponse<InitiateFibResult | null>>({
+      method: 'GET',
+      url: '/subscriptions/fib/pending',
+      requireAuth: true,
+    })
+  }
+
   async function getFibStatus(subscriptionId: string) {
     return await useHttp<SingleResponse<FibStatusResult>>({
       method: 'GET',
@@ -43,5 +53,5 @@ export function useSubscription() {
     })
   }
 
-  return { getMySubscription, initiateFib, getFibStatus, cancelFib }
+  return { getMySubscription, initiateFib, getPendingFib, getFibStatus, cancelFib }
 }

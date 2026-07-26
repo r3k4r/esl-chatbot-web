@@ -4,8 +4,12 @@ import type { AdminUserVocab } from '~/common/types/admin-types'
 const props = defineProps<{ vocabularies: AdminUserVocab[] }>()
 
 // masteryLevel: 0=new/gray, 1=seen/blue, 2=learning/yellow, 3=familiar/orange, 4=proficient/teal, 5=mastered/green
+// Named separately so the template can fall back to it without TS treating the
+// indexed lookup as possibly-undefined.
+const MASTERY_NEW = { label: 'New', style: 'background:var(--surface-raised);color:var(--text-muted)' }
+
 const MASTERY_STYLE: Record<number, { label: string; style: string }> = {
-  0: { label: 'New',        style: 'background:var(--surface-raised);color:var(--text-muted)' },
+  0: MASTERY_NEW,
   1: { label: 'Seen',       style: 'background:#dbeafe;color:#1e40af' },
   2: { label: 'Learning',   style: 'background:#fef3c7;color:#92400e' },
   3: { label: 'Familiar',   style: 'background:#ffedd5;color:#c2410c' },
@@ -63,7 +67,7 @@ function fmt(d: string | null | undefined) {
             </td>
             <td class="px-4 py-3">
               <span class="text-[14px] font-semibold px-2.5 py-0.5 rounded-md font-poppins"
-                :style="MASTERY_STYLE[v.masteryLevel]?.style ?? MASTERY_STYLE[0].style">
+                :style="MASTERY_STYLE[v.masteryLevel]?.style ?? MASTERY_NEW.style">
                 {{ MASTERY_STYLE[v.masteryLevel]?.label ?? 'New' }}
               </span>
             </td>

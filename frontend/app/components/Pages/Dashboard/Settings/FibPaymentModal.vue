@@ -56,15 +56,20 @@ function stopPolling() {
   if (pollInterval.value) { clearInterval(pollInterval.value); pollInterval.value = null }
 }
 
-watch(() => props.open, (open) => {
-  if (open && props.payment) {
+// Watches the payment id too: the dialog can be opened before the payment lands
+// (and reused for a different payment), and both cases must restart the poll from
+// a clean status instead of inheriting the previous one.
+watch(
+  [() => props.open, () => props.payment?.fibSubscriptionId],
+  ([open]) => {
+    stopPolling()
+    if (!open || !props.payment) return
     status.value = 'DRAFT'
     pollCount.value = 0
     startPolling()
-  } else {
-    stopPolling()
-  }
-})
+  },
+  { immediate: true },
+)
 
 onUnmounted(stopPolling)
 
@@ -97,6 +102,17 @@ function copyCode() {
   if (!props.payment?.readableCode) return
   useCopyToClipboard(props.payment.readableCode)
   toast.success('Code copied!')
+}
+
+// The FIB app link is an EXTERNAL url/deep link. Binding it to `:to` handed it to
+// vue-router, which resolved it as an in-app path and landed on the 404 page —
+// destroying this dialog (and the QR with it). Open it in a separate tab instead:
+// if the FIB app isn't installed, the user just closes that tab and the QR is
+// still here.
+function openAppLink() {
+  const link = props.payment?.appLink
+  if (!link) return
+  window.open(link, '_blank', 'noopener,noreferrer')
 }
 </script>
 
@@ -166,14 +182,20 @@ function copyCode() {
             </div>
           </div>
 
-          <!-- App deep link -->
-          <AppButton
-            variant="primary" size="40" radius="12"
-            icon="Export" :icon-config="{ color: 'white', size: 14 }"
-            text="Open FIB App"
-            class="w-full justify-center"
-            :to="payment.appLink"
-          />
+          <!-- App deep link — opened in a new tab, never via router navigation
+               (see openAppLink), so this dialog and the QR survive the click. -->
+          <template v-if="payment.appLink">
+            <AppButton
+              variant="primary" size="40" radius="12"
+              icon="Export" :icon-config="{ color: 'white', size: 14 }"
+              text="Open FIB App"
+              class="w-full justify-center"
+              @click="openAppLink"
+            />
+            <AppText size="12" class-list="text-center block -mt-3" :style="`color:var(--text-subtle)`">
+              Nothing opened? The FIB app has to be installed — otherwise scan the QR code above.
+            </AppText>
+          </template>
 
           <!-- Expiry -->
           <AppText size="11" class-list="text-center block" :style="`color:var(--text-subtle)`">

@@ -11,10 +11,12 @@ services:
     runtime: docker
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
-    # TEMP: free during initial setup/testing (no real users yet). Switch to `starter`
-    # before launch — Free spins down after 15 min idle, which drops Socket.io
-    # connections and breaks cron timing. Flip this line + redeploy when ready.
-    plan: free
+    # Starter ($7/mo): dedicated instance — no 15-min spin-down (which used to cost
+    # ~50s cold starts, dropped Socket.io connections and skewed cron timing) and a
+    # stable outbound IP, which also matters for Gemini's caller-IP geo-check.
+    # Keep this in sync with the dashboard: a Blueprint sync re-applies whatever is
+    # written here, so leaving it as `free` would silently undo a dashboard upgrade.
+    plan: starter
     region: frankfurt
     healthCheckPath: /health
     autoDeploy: true

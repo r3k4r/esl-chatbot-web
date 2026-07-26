@@ -127,6 +127,14 @@ function handleMemberRemoved(userId: string) {
   cls.value = { ...cls.value, members: cls.value.members.filter(m => m.user.id !== userId) }
 }
 
+function handleRoleChanged({ userId, role }: { userId: string; role: 'STUDENT' | 'TUTOR' }) {
+  if (!cls.value) return
+  cls.value = {
+    ...cls.value,
+    members: cls.value.members.map(m => (m.user.id === userId ? { ...m, role } : m)),
+  }
+}
+
 function fmtDate(iso: string) {
   return new Date(iso).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })
 }
@@ -311,8 +319,8 @@ onMounted(load)
 
         <div class="p-5">
           <PagesDashboardClassesClassMembersTab v-if="activeTab === 'members'" :class-id="cls.id" :members="cls.members"
-            :is-tutor-or-admin="isTutorOrAdmin && !isArchived" :current-user-id="currentUserId"
-            @removed="handleMemberRemoved" />
+            :is-tutor-or-admin="isTutorOrAdmin && !isArchived" :is-admin="isAdmin && !isArchived" :current-user-id="currentUserId"
+            @removed="handleMemberRemoved" @role-changed="handleRoleChanged" />
           <PagesDashboardClassesClassStudentsTab v-else-if="activeTab === 'students'" :class-id="cls.id" />
           <PagesDashboardClassesClassAnalyticsTab v-else-if="activeTab === 'analytics'" :class-id="cls.id" />
           <PagesDashboardClassesTasksClassTasksTab v-else-if="activeTab === 'tasks'" :class-id="cls.id"

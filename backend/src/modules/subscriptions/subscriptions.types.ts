@@ -18,6 +18,14 @@ export type InitiateFibResult = {
   qrCode: string;
   appLink: string;
   validUntil: string;
+  /** Echoed back so a resumed payment can be rendered with its own plan/price —
+   *  which may differ from whatever the client currently has selected. */
+  plan: Extract<Plan, "GOLD" | "PREMIUM">;
+  intervalMonths: number;
+  amountIQD: number;
+  /** True when this is an existing pending payment being handed back rather than
+   *  a newly created one (repeat "Subscribe" click, or GET /fib/pending). */
+  resumed: boolean;
 };
 
 export type FibStatusResult = {

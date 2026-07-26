@@ -647,6 +647,15 @@ model FibSubscription {
   activatedAt       DateTime?            // set when fibStatus first becomes ACTIVE or TRIAL
   cancelledAt       DateTime?            // set when fibStatus becomes CANCELLED or REJECTED
 
+  // Payment artifacts returned by createSubscription. Persisted because FIB's
+  // GET /subscriptions/:id does NOT return them — without these columns a user
+  // who closes or navigates away from the payment dialog can never see their QR
+  // again, while the DRAFT keeps blocking new attempts. Null on rows created
+  // before this was added (treated as unresumable — see initiateFibSubscription).
+  qrCode            String?              // base64 PNG data URL
+  readableCode      String?              // short code typed manually in the FIB app
+  appLink           String?              // FIB mobile-app deep link
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())

@@ -9,9 +9,13 @@ const PLAN_COLOR: Record<string, string> = {
   PREMIUM: 'bg-violet-500/15 text-violet-500',
 }
 
+// Named separately so the template can fall back to it without TS treating the
+// indexed lookup as possibly-undefined.
+const STATUS_FALLBACK = { bg: 'var(--status-inactive-bg)', text: 'var(--status-inactive-text)' }
+
 const STATUS_COLOR: Record<string, { bg: string; text: string }> = {
   ACTIVE:    { bg: 'var(--status-active-bg)',   text: 'var(--status-active-text)' },
-  INACTIVE:  { bg: 'var(--status-inactive-bg)', text: 'var(--status-inactive-text)' },
+  INACTIVE:  STATUS_FALLBACK,
   CANCELLED: { bg: 'var(--status-expired-bg)',  text: 'var(--status-expired-text)' },
   PAST_DUE:  { bg: 'var(--status-blocked-bg)',  text: 'var(--status-blocked-text)' },
 }
@@ -39,7 +43,7 @@ function fmt(d: string | null | undefined) {
         <div class="p-3.5 rounded-xl" style="background:var(--surface-raised)">
           <p class="text-[14px] font-poppins" :style="`color:var(--text-muted)`">Status</p>
           <span class="mt-1 inline-block text-[15px] font-semibold px-2.5 py-0.5 rounded-md font-poppins"
-            :style="`background:${STATUS_COLOR[user.subscription.status]?.bg ?? STATUS_COLOR.INACTIVE.bg};color:${STATUS_COLOR[user.subscription.status]?.text ?? STATUS_COLOR.INACTIVE.text}`">
+            :style="`background:${STATUS_COLOR[user.subscription.status]?.bg ?? STATUS_FALLBACK.bg};color:${STATUS_COLOR[user.subscription.status]?.text ?? STATUS_FALLBACK.text}`">
             {{ (user.subscription.status ?? 'INACTIVE').charAt(0) + (user.subscription.status ?? 'INACTIVE').slice(1).toLowerCase() }}
           </span>
         </div>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onClickOutside } from '@vueuse/core'
 import { useAdmin } from '~/composables/useAdmin'
-import type { AdminUserItem } from '~/common/types/admin-types'
+import type { AdminUserItem, UserRole } from '~/common/types/admin-types'
 
 definePageMeta({ layout: 'dashboard', requiresAuth: true, requiresAdmin: true })
 
@@ -15,6 +15,10 @@ const loading = ref(false)
 
 // Status toggle
 const toggling = ref(false)
+
+// Role change
+const roleOpen = ref(false)
+const roleSaving = ref(false)
 
 // Profile form
 const displayName = ref('')
@@ -70,6 +74,12 @@ const PERSONALITY_LABEL: Record<string, string> = {
   ENCOURAGING: 'Encouraging', STRICT: 'Strict', PATIENT: 'Patient',
 }
 
+const ROLE_DESCRIPTION: Record<string, string> = {
+  STUDENT: 'Student — learner access only.',
+  TUTOR: 'Tutor — creates classes and manages students.',
+  ADMIN: 'Admin — full platform control.',
+}
+
 const PLAN_COLOR: Record<string, string> = {
   FREE: 'bg-surface-raised text-text-muted',
   GOLD: 'bg-amber-500/15 text-amber-500',
@@ -111,6 +121,19 @@ async function onToggleActive(checked: boolean) {
   const res = await patchUser(user.value.id, { isActive: checked })
   if (res.success && res.data?.data) user.value = { ...user.value, isActive: res.data.data.isActive }
   toggling.value = false
+}
+
+// Role change — instant PATCH
+async function onSaveRole(role: UserRole) {
+  if (!user.value) return
+  roleSaving.value = true
+  const res = await patchUser(user.value.id, { role })
+  roleSaving.value = false
+  // Leave the dialog open on failure (e.g. last-admin 409) so the error toast
+  // stays tied to the action the admin just attempted.
+  if (!res.success) return
+  if (res.data?.data) user.value = { ...user.value, role: res.data.data.role }
+  roleOpen.value = false
 }
 
 // Avatar
@@ -264,6 +287,21 @@ const dailyGoal = computed(() => Math.round(weeklyGoalMinutes.value / 7))
                   'numeric'
               }) }}
             </p>
+          </div>
+
+          <!-- Account role -->
+          <div class="dash-card p-5">
+            <div class="flex items-center justify-between gap-3">
+              <div class="min-w-0">
+                <p class="text-[15px] font-semibold font-poppins" :style="`color:var(--text-heading)`">Account role</p>
+                <p class="text-[14px] font-poppins mt-0.5" :style="`color:var(--text-muted)`">
+                  {{ ROLE_DESCRIPTION[user.role] }}
+                </p>
+              </div>
+              <AppButton variant="secondary" size="36" radius="8" icon="Profile"
+                :icon-config="{ color: 'currentColor', size: 16 }" text="Change" class="shrink-0"
+                @click="roleOpen = true" />
+            </div>
           </div>
 
           <!-- Account status -->
@@ -574,6 +612,15 @@ const dailyGoal = computed(() => Math.round(weeklyGoalMinutes.value / 7))
 
         </div>
       </div>
+
+      <!-- Change role modal -->
+      <PagesDashboardUsersChangeRoleDialog
+        :open="roleOpen"
+        :user="user"
+        :saving="roleSaving"
+        @update:open="roleOpen = $event"
+        @save="onSaveRole"
+      />
     </template>
 
   </div>

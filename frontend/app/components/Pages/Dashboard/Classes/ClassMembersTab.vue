@@ -6,31 +6,30 @@ const props = defineProps<{
   classId: string
   members: ClassMember[]
   isTutorOrAdmin: boolean
+  isAdmin: boolean
   currentUserId: string
 }>()
 
-const emit = defineEmits<{ removed: [userId: string] }>()
+const emit = defineEmits<{
+  removed: [userId: string]
+  roleChanged: [payload: { userId: string; role: 'STUDENT' | 'TUTOR' }]
+}>()
 
-const { removeMember } = useClasses()
+const { removeMember, setMemberRole } = useClasses()
 const removingId = ref<string | null>(null)
+const roleChangingId = ref<string | null>(null)
 const confirmUserId = ref<string | null>(null)
 
 const tutors = computed(() => props.members.filter(m => m.role === 'TUTOR'))
 const students = computed(() => props.members.filter(m => m.role === 'STUDENT'))
 
-// When the user is acting on their own membership it's a "leave", not a "remove".
+// A row is "busy" while its own role change or removal is in flight.
+function isBusy(userId: string) { return removingId.value === userId || roleChangingId.value === userId }
+
+// When the user acts on their own membership it's a "leave", not a "remove".
 const isSelfLeave = computed(() => confirmUserId.value === props.currentUserId)
 
-const roleColorClass: Record<string, string> = {
-  TUTOR: 'bg-brand-primary/10 text-brand-primary',
-  ADMIN: 'bg-red-500/10 text-red-500',
-}
-
-function avatarInitial(name: string) { return name.charAt(0).toUpperCase() }
-
-async function confirmRemove(userId: string) {
-  confirmUserId.value = userId
-}
+function confirmRemove(userId: string) { confirmUserId.value = userId }
 
 async function doRemove() {
   if (!confirmUserId.value) return
@@ -40,6 +39,7 @@ async function doRemove() {
   const res = await removeMember(props.classId, userId)
   removingId.value = null
   if (!res.success) {
+    // Surfaces the backend's inline messages (e.g. 409 "Cannot remove the last tutor").
     toast.error(res.message || 'Could not remove member')
     return
   }
@@ -47,12 +47,26 @@ async function doRemove() {
   toast.success(isSelf ? 'You left the class.' : 'Member removed.')
   emit('removed', userId)
 }
+
+async function setRole(m: ClassMember, role: 'STUDENT' | 'TUTOR') {
+  roleChangingId.value = m.user.id
+  const res = await setMemberRole(props.classId, m.user.id, role)
+  roleChangingId.value = null
+  if (!res.success) {
+    // e.g. 409 "Cannot demote the last tutor of a class"
+    toast.error(res.message || 'Could not change role')
+    return
+  }
+  const name = m.user.displayName || m.user.username
+  toast.success(role === 'TUTOR' ? `${name} is now a tutor.` : `${name} is now a student.`)
+  emit('roleChanged', { userId: m.user.id, role })
+}
 </script>
 
 <template>
   <div class="space-y-6">
 
-    <!-- Confirm dialog -->
+    <!-- Confirm remove / leave dialog -->
     <UiDialog :open="!!confirmUserId" @update:open="v => { if (!v) confirmUserId = null }">
       <UiDialogContent>
         <UiDialogHeader>
@@ -73,36 +87,15 @@ async function doRemove() {
     <!-- Tutors & Admins -->
     <div v-if="tutors.length">
       <AppText size="10" weight="semibold" :uppercase="true" class-list="tracking-[0.18em] block mb-3" :style="`color:var(--text-subtle)`">
-        Tutors & Admins ({{ tutors.length }})
+        Tutors ({{ tutors.length }})
       </AppText>
       <div class="space-y-0.5">
-        <div
+        <PagesDashboardClassesClassMemberRow
           v-for="m in tutors" :key="m.id"
-          class="flex items-center gap-3 p-2.5 rounded-xl group"
-          :onmouseenter="(e: MouseEvent) => (e.currentTarget as HTMLElement).style.background = 'var(--surface-raised)'"
-          :onmouseleave="(e: MouseEvent) => (e.currentTarget as HTMLElement).style.background = ''"
-        >
-          <UiAvatar class="size-10 shrink-0">
-            <UiAvatarImage v-if="m.user.avatarUrl" :src="m.user.avatarUrl" :alt="m.user.displayName" />
-            <UiAvatarFallback class="text-[13px] font-semibold font-poppins" style="background:rgba(245,158,11,0.15);color:var(--color-brand-primary)">
-              {{ avatarInitial(m.user.displayName || m.user.username) }}
-            </UiAvatarFallback>
-          </UiAvatar>
-          <div class="flex-1 min-w-0">
-            <AppText size="14" weight="medium" class-list="truncate block" :style="`color:var(--text-heading)`">{{ m.user.displayName || m.user.username }}</AppText>
-            <AppText size="12" :style="`color:var(--text-muted)`">@{{ m.user.username }}</AppText>
-          </div>
-          <span :class="['text-[11px] font-semibold uppercase tracking-wide px-2.5 py-1 rounded-full font-poppins shrink-0', roleColorClass[m.role] || '']">{{ m.role }}</span>
-          <!-- Self-leave only for tutors, no kick -->
-          <AppButton
-            v-if="m.user.id === currentUserId"
-            variant="secondary" size="28" radius="8"
-            icon="Logout" :icon-config="{ color: '#ef4444', size: 13 }"
-            :loading="removingId === m.user.id"
-            class="opacity-0 group-hover:opacity-100 transition-opacity"
-            @click="confirmRemove(m.user.id)"
-          />
-        </div>
+          :member="m" :is-tutor-or-admin="isTutorOrAdmin" :is-admin="isAdmin"
+          :current-user-id="currentUserId" :tutor-count="tutors.length" :busy="isBusy(m.user.id)"
+          @change-role="(role) => setRole(m, role)" @remove="confirmRemove(m.user.id)"
+        />
       </div>
     </div>
 
@@ -112,32 +105,12 @@ async function doRemove() {
         Students ({{ students.length }})
       </AppText>
       <div class="space-y-0.5">
-        <div
+        <PagesDashboardClassesClassMemberRow
           v-for="m in students" :key="m.id"
-          class="flex items-center gap-3 p-2.5 rounded-xl group"
-          :onmouseenter="(e: MouseEvent) => (e.currentTarget as HTMLElement).style.background = 'var(--surface-raised)'"
-          :onmouseleave="(e: MouseEvent) => (e.currentTarget as HTMLElement).style.background = ''"
-        >
-          <UiAvatar class="size-10 shrink-0">
-            <UiAvatarImage v-if="m.user.avatarUrl" :src="m.user.avatarUrl" :alt="m.user.displayName" />
-            <UiAvatarFallback class="text-[13px] font-semibold font-poppins" style="background:var(--surface-well);color:var(--text-muted)">
-              {{ avatarInitial(m.user.displayName || m.user.username) }}
-            </UiAvatarFallback>
-          </UiAvatar>
-          <div class="flex-1 min-w-0">
-            <AppText size="14" weight="medium" class-list="truncate block" :style="`color:var(--text-heading)`">{{ m.user.displayName || m.user.username }}</AppText>
-            <AppText size="12" :style="`color:var(--text-muted)`">@{{ m.user.username }}</AppText>
-          </div>
-          <span class="text-[11px] font-semibold uppercase tracking-wide px-2.5 py-1 rounded-full font-poppins shrink-0" style="background:var(--surface-well);color:var(--text-muted)">STUDENT</span>
-          <AppButton
-            v-if="isTutorOrAdmin || m.user.id === currentUserId"
-            variant="secondary" size="28" radius="8"
-            :icon="m.user.id === currentUserId ? 'Logout' : 'Trash'"
-            :icon-config="{ color: '#ef4444', size: 13 }"
-            :loading="removingId === m.user.id"
-            @click="confirmRemove(m.user.id)"
-          />
-        </div>
+          :member="m" :is-tutor-or-admin="isTutorOrAdmin" :is-admin="isAdmin"
+          :current-user-id="currentUserId" :tutor-count="tutors.length" :busy="isBusy(m.user.id)"
+          @change-role="(role) => setRole(m, role)" @remove="confirmRemove(m.user.id)"
+        />
       </div>
     </div>
 

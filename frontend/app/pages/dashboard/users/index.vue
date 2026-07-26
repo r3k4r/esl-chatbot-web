@@ -38,6 +38,10 @@ const cancelTarget = ref<AdminUserItem | null>(null)
 const cancelOpen = ref(false)
 const cancelSaving = ref(false)
 
+const roleTarget = ref<AdminUserItem | null>(null)
+const roleOpen = ref(false)
+const roleSaving = ref(false)
+
 // Pagination page numbers to display (max 5 around current)
 const pageNumbers = computed(() => {
   const total = totalPages.value
@@ -94,6 +98,30 @@ async function onToggleStatus(userId: string, isActive: boolean) {
     if (idx !== -1) users.value[idx] = res.data.data
   }
   togglingId.value = null
+}
+
+function onChangeRole(user: AdminUserItem) {
+  roleTarget.value = user
+  roleOpen.value = true
+}
+
+async function onSaveRole(role: UserRole) {
+  if (!roleTarget.value) return
+  const targetId = roleTarget.value.id
+  roleSaving.value = true
+  const res = await patchUser(targetId, { role })
+  roleSaving.value = false
+  // Keep the dialog open on failure (e.g. last-admin 409) so the toast reads
+  // against the row the admin was acting on.
+  if (!res.success) return
+  roleOpen.value = false
+  // A role filter is active: the row may no longer belong in this result set,
+  // so refetch instead of patching it in place.
+  if (roleFilter.value !== 'ALL') { load(); return }
+  if (res.data?.data) {
+    const idx = users.value.findIndex(u => u.id === targetId)
+    if (idx !== -1) users.value[idx] = res.data.data
+  }
 }
 
 function onAssignSubscription(user: AdminUserItem) {
@@ -204,6 +232,7 @@ async function confirmCancel() {
               :user="u"
               :toggling="togglingId === u.id"
               @toggle-status="onToggleStatus"
+              @change-role="onChangeRole"
               @assign-subscription="onAssignSubscription"
               @cancel-subscription="onCancelSubscription"
             />
@@ -238,6 +267,15 @@ async function confirmCancel() {
         </div>
       </div>
     </div>
+
+    <!-- Change role modal -->
+    <PagesDashboardUsersChangeRoleDialog
+      :open="roleOpen"
+      :user="roleTarget"
+      :saving="roleSaving"
+      @update:open="roleOpen = $event"
+      @save="onSaveRole"
+    />
 
     <!-- Assign subscription modal -->
     <PagesDashboardUsersAssignSubscriptionModal

@@ -58,7 +58,7 @@ defineExpose({ scrollEl })
           </template>
         </p>
 
-        <div v-if="subActive" class="mt-5 flex flex-wrap gap-2 justify-center max-w-lg">
+        <div v-if="subActive" class="mt-5 flex flex-wrap gap-2 justify-center">
           <button
             v-for="s in suggestions"
             :key="s.text"

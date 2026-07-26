@@ -70,6 +70,11 @@ async function makeFibRecord(
       amountIQD: 25_000,
       fibStatus: "DRAFT",
       validUntil: new Date(Date.now() + 36 * 60 * 60 * 1000),
+      // Payment artifacts — a DRAFT without these is a pre-migration row and is
+      // treated as unresumable (see the "legacy row" test below)
+      qrCode: MOCK_CREATE_RESULT.qrCode,
+      readableCode: MOCK_CREATE_RESULT.readableCode,
+      appLink: MOCK_CREATE_RESULT.appLink,
       ...overrides,
     },
   });
@@ -183,9 +188,9 @@ describe("POST /api/v1/subscriptions/initiate-fib", () => {
     expect(res.status).toBe(201);
   });
 
-  it("409 — already has a pending (non-cancelled) FIB subscription in DB", async () => {
+  it("409 — pending DRAFT for a DIFFERENT plan: blocked, but returns pendingFib so the UI can resume/cancel it", async () => {
     const u = track(await createTestUser({ plan: "FREE", status: "ACTIVE" }));
-    await makeFibRecord(u.id, { fibStatus: "DRAFT" }); // open QR code still pending
+    const draft = await makeFibRecord(u.id, { fibStatus: "DRAFT" }); // GOLD/1mo pending
 
     const res = await request(app)
       .post("/api/v1/subscriptions/initiate-fib")
@@ -194,6 +199,79 @@ describe("POST /api/v1/subscriptions/initiate-fib", () => {
 
     expect(res.status).toBe(409);
     expect(createSpy).not.toHaveBeenCalled(); // must not reach FIB
+    // Without this the user is dead-ended: the QR is gone and nothing identifies
+    // the payment that is blocking them.
+    expect(res.body.pendingFib).toMatchObject({
+      fibSubscriptionId: draft.fibSubscriptionId,
+      plan: "GOLD",
+      intervalMonths: 1,
+    });
+  });
+
+  it("201 — pending DRAFT for the SAME plan/interval: hands back the existing payment, no second FIB subscription", async () => {
+    const u = track(await createTestUser({ plan: "FREE", status: "ACTIVE" }));
+    const draft = await makeFibRecord(u.id, { fibStatus: "DRAFT" }); // GOLD/1mo
+
+    const res = await request(app)
+      .post("/api/v1/subscriptions/initiate-fib")
+      .set(auth(u.token))
+      .send({ plan: "GOLD", intervalMonths: 1 });
+
+    expect(res.status).toBe(201);
+    expect(createSpy).not.toHaveBeenCalled(); // idempotent — never a 2nd payable subscription
+    expect(res.body.data).toMatchObject({
+      fibSubscriptionId: draft.fibSubscriptionId,
+      qrCode: MOCK_CREATE_RESULT.qrCode,
+      plan: "GOLD",
+      intervalMonths: 1,
+      amountIQD: 25_000,
+      resumed: true,
+    });
+  });
+
+  it("201 — expired DRAFT is swept and a fresh payment is created", async () => {
+    const u = track(await createTestUser({ plan: "FREE", status: "ACTIVE" }));
+    const stale = await makeFibRecord(u.id, {
+      fibStatus: "DRAFT",
+      validUntil: new Date(Date.now() - 60 * 60 * 1000), // died at FIB an hour ago
+    });
+
+    const res = await request(app)
+      .post("/api/v1/subscriptions/initiate-fib")
+      .set(auth(u.token))
+      .send({ plan: "GOLD", intervalMonths: 1 });
+
+    expect(res.status).toBe(201);
+    expect(res.body.data.resumed).toBe(false);
+    expect(createSpy).toHaveBeenCalledTimes(1);
+
+    const swept = await prisma.fibSubscription.findUnique({
+      where: { fibSubscriptionId: stale.fibSubscriptionId },
+    });
+    expect(swept!.fibStatus).toBe("CANCELLED");
+  });
+
+  it("201 — DRAFT with no stored QR (pre-migration row) is discarded, not left blocking forever", async () => {
+    const u = track(await createTestUser({ plan: "FREE", status: "ACTIVE" }));
+    const legacy = await makeFibRecord(u.id, {
+      fibStatus: "DRAFT",
+      qrCode: null,
+      readableCode: null,
+      appLink: null,
+    });
+
+    const res = await request(app)
+      .post("/api/v1/subscriptions/initiate-fib")
+      .set(auth(u.token))
+      .send({ plan: "PREMIUM", intervalMonths: 1 });
+
+    expect(res.status).toBe(201);
+    expect(createSpy).toHaveBeenCalledTimes(1);
+
+    const discarded = await prisma.fibSubscription.findUnique({
+      where: { fibSubscriptionId: legacy.fibSubscriptionId },
+    });
+    expect(discarded!.fibStatus).toBe("CANCELLED");
   });
 
   it("409 — already has ACTIVE FIB subscription", async () => {
@@ -288,6 +366,76 @@ describe("POST /api/v1/subscriptions/initiate-fib", () => {
       .post("/api/v1/subscriptions/initiate-fib")
       .send({ plan: "GOLD", intervalMonths: 1 });
 
+    expect(res.status).toBe(401);
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+describe("GET /api/v1/subscriptions/fib/pending", () => {
+  it("200 — returns the pending payment so a closed QR dialog can be reopened", async () => {
+    const u = track(await createTestUser({ plan: "FREE", status: "ACTIVE" }));
+    const draft = await makeFibRecord(u.id, { fibStatus: "DRAFT" });
+
+    const res = await request(app)
+      .get("/api/v1/subscriptions/fib/pending")
+      .set(auth(u.token));
+
+    expect(res.status).toBe(200);
+    expect(res.body.data).toMatchObject({
+      fibSubscriptionId: draft.fibSubscriptionId,
+      qrCode: MOCK_CREATE_RESULT.qrCode,
+      readableCode: MOCK_CREATE_RESULT.readableCode,
+      plan: "GOLD",
+      resumed: true,
+    });
+  });
+
+  it("200 — null when there is nothing pending", async () => {
+    const u = track(await createTestUser({ plan: "FREE", status: "ACTIVE" }));
+
+    const res = await request(app)
+      .get("/api/v1/subscriptions/fib/pending")
+      .set(auth(u.token));
+
+    expect(res.status).toBe(200);
+    expect(res.body.data).toBeNull();
+  });
+
+  it("200 — an expired DRAFT is swept and reported as nothing pending", async () => {
+    const u = track(await createTestUser({ plan: "FREE", status: "ACTIVE" }));
+    const stale = await makeFibRecord(u.id, {
+      fibStatus: "DRAFT",
+      validUntil: new Date(Date.now() - 60 * 60 * 1000),
+    });
+
+    const res = await request(app)
+      .get("/api/v1/subscriptions/fib/pending")
+      .set(auth(u.token));
+
+    expect(res.status).toBe(200);
+    expect(res.body.data).toBeNull();
+
+    const swept = await prisma.fibSubscription.findUnique({
+      where: { fibSubscriptionId: stale.fibSubscriptionId },
+    });
+    expect(swept!.fibStatus).toBe("CANCELLED");
+  });
+
+  it("200 — never leaks another user's pending payment", async () => {
+    const owner = track(await createTestUser({ plan: "FREE", status: "ACTIVE" }));
+    const other = track(await createTestUser({ plan: "FREE", status: "ACTIVE" }));
+    await makeFibRecord(owner.id, { fibStatus: "DRAFT" });
+
+    const res = await request(app)
+      .get("/api/v1/subscriptions/fib/pending")
+      .set(auth(other.token));
+
+    expect(res.status).toBe(200);
+    expect(res.body.data).toBeNull();
+  });
+
+  it("401 — unauthenticated", async () => {
+    const res = await request(app).get("/api/v1/subscriptions/fib/pending");
     expect(res.status).toBe(401);
   });
 });

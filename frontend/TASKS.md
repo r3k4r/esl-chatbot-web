@@ -8,24 +8,72 @@ When Aland adds a new backend API, he notes it here so Rekar knows what to wire 
 
 ---
 
-### ⚠️ Voice Lab — two bugs found in live prod testing (2026-07-23) — PENDING (Rekar)
-**File:** `app/composables/useVoiceLab.ts` (+ the call caption component under `components/Pages/Dashboard/Voice/`)
-**Confirmed backend-clean:** Aland read `backend/src/socket/voice.socket.ts` — the backend is half-duplex
-and correctly handles every turn (each `voice:start` builds fresh state; `voice:end` runs the
-STT→LLM→TTS pipeline and deletes the per-session state). Both issues are in the client call state machine.
+### ✅ FIB payment — QR no longer lost / "Open FIB App" no longer 404s (2026-07-25, Aland via Claude)
+Hit during the first live stage payment on prod. Both defects are fixed; backend changes are in
+`backend/TASK.md` §12 (new `GET /subscriptions/fib/pending`, resumable initiate, persisted QR).
 
-1. **Infinite listening on the 2nd turn — never gets a reply.** Turn 1 works (listen → AI replies →
-   plays). After the reply, the machine returns to `listening` but never auto-ends turn 2 — so the mic
-   stays open forever and `voice:end` is never emitted, so the backend never processes turn 2. Almost
-   certainly the **VAD / silence-detection (or the recorder stream) is not re-armed** when transitioning
-   `speaking → listening`. Verify turn 2 actually fires `voice:end` (watch the socket); re-initialise the
-   analyser/recorder on every re-entry to `listening`, not just on the first `voice:start`.
+1. **"Open FIB App" navigated to the 404 page — FIXED.** The deep link was bound to
+   `<AppButton :to="payment.appLink">`, so vue-router resolved the external URL as an in-app route
+   and landed on the catch-all 404 — which unmounted the dialog and took the QR with it. Now a
+   `@click` handler calls `window.open(link, '_blank', 'noopener,noreferrer')`, so the dialog
+   survives the click, plus a hint line ("Nothing opened? The FIB app has to be installed —
+   otherwise scan the QR code above").
+2. **The QR was unrecoverable and blocked retrying — FIXED.** Files:
+   `Settings/PendingPaymentCard.vue` (NEW), `SubscriptionPanel.vue`, `FibPaymentModal.vue`,
+   `useSubscription.ts` (new `getPendingFib`), `common/types/subscription-types.ts`.
+   - The billing page now checks `GET /subscriptions/fib/pending` on mount and renders a
+     **"Payment waiting"** card with **Show QR code** + **Cancel payment** whenever an unpaid
+     payment exists — so the QR is always recoverable after a reload/closed dialog, and the user
+     can always clear it to pick a different plan.
+   - Pressing Subscribe again for the same plan re-opens the same payment (backend is idempotent
+     now) instead of erroring; a 409 for a *different* plan refreshes the pending card.
+   - The modal renders the payment's **own** plan/interval/price (`modalPlan`/`modalInterval`/
+     `modalAmount`) — a resumed payment can differ from the currently-selected plan.
+   - The modal's poll watcher now also keys on the payment id, so reopening it for a different
+     payment restarts polling from a clean status instead of inheriting the previous one.
 
-2. **Raw HTML tags show in the live caption.** AI replies are now sanitized HTML (shipped in PR #16).
-   The text-chat bubbles render it via `v-html`, but the voice **call caption / transcript** prints the
-   raw string, so tags leak on screen. For a caption, prefer **stripping HTML to plain text** (a caption
-   shouldn't carry formatting) rather than `v-html`. The spoken audio is already correct — the backend
-   strips HTML before TTS.
+Verified: `nuxi typecheck` clean + production `nuxt build`.
+
+---
+
+### 🐛 `AppButton` sends every `:to` through `router-link` — external links break (found 2026-07-25, NOT fixed)
+**Rekar's call — this is a shared global component, so it was deliberately left alone and fixed at
+the call site instead** (frontend/CLAUDE.md rule #4).
+
+`App/Button.vue` computes a correct `resolvedTag` (`'NuxtLink'` when `to` is set **and** the button
+isn't disabled) — **but the template ignores it** and inlines
+`:is="tag ? tag : to ? 'router-link' : 'button'"`. Two consequences:
+1. Any **external** URL passed to `:to` is resolved as an in-app route → 404 page (this is exactly
+   what broke the FIB deep link above).
+2. `:disabled` does not prevent navigation on link-style buttons, because `router-link` is picked
+   regardless of the disabled state.
+
+Fix is likely a one-liner (`:is="resolvedTag"`), but it changes behaviour for **every** `:to`
+button in the app (7 usages), so it needs a deliberate pass + retest rather than a drive-by change.
+
+---
+
+### ✅ Voice Lab — two prod bugs FIXED (2026-07-24, Aland via Claude)
+**Files:** `app/composables/useVoiceChat.ts`, `app/composables/useVoiceLab.ts`, `app/lib/utils.ts`.
+Backend was confirmed clean (half-duplex, one turn per `voice:end`) — both were client-side.
+
+1. **Infinite listening on the 2nd turn — FIXED.** Real cause was NOT the VAD/analyser (the mic meter
+   runs continuously and re-checks `phase==='listening'` every frame). It was the recorder gate:
+   `useVoiceChat.startRecording` bailed unless `voiceState === 'ready'`, but a completed turn ends at
+   `'idle'` (the `message:response` handler set it there). So turn 2's `startRecording` returned
+   immediately → recorder never started → `endTurn`'s `!== 'recording'` guard also bailed → stuck
+   `listening`, `voice:end` never emitted. **Fix:** (a) `startRecording` now gates on the stream +
+   "not already mid-turn" instead of an exact state (the stream stays open across turns); (b)
+   `message:response` now sets `voiceState` back to `'ready'` when the stream is still open (only
+   `'idle'` once released). Turn 2…N now record and end normally.
+
+2. **Raw HTML tags in caption/transcript — FIXED.** AI replies are sanitized HTML; the caption
+   (`CallStage`) and transcript (`TurnRow`) are plain-text surfaces, so tags leaked on screen. Added a
+   shared SSR-safe `stripHtml()` in `lib/utils.ts` and strip the reply **once** at the source in
+   `useVoiceLab.handleResult` (`turn.reply`), so both surfaces render clean text. Spoken audio was
+   already fine (backend strips before TTS). Chat bubbles keep their `v-html` formatting — unchanged.
+
+Verified: `bunx nuxi typecheck` (no new errors) + full production `nuxt build`.
 
 ---
 
@@ -95,29 +143,50 @@ after a backend-only deploy. Also a sensible consistency fix (field is on `/mine
 
 ---
 
-### Class-tutor assignment endpoint — wire the UI when deployed (2026-07-23) — Rekar
-Separate from the stale-build bug above. Aland shipped `PATCH /classes/:id/members/:userId/role { role }`
-(admin or class-tutor; last-tutor + `isInternal` guards) — commit 0c680dd on `Aland-Branch`, not yet deployed.
-It's the proper way to make an existing member a class-tutor (joining by code always enters as STUDENT; before
-this, only the class creator was a tutor).
+### ✅ Class-tutor assignment UI — DONE (2026-07-24, Aland via Claude)
+Wires `PATCH /classes/:id/members/:userId/role { role }` (deployed) into the class Members tab, so an
+admin or class-tutor can promote/demote members without raw SQL (joining by code always enters as STUDENT).
 
-**Frontend work once deployed (Rekar):**
-1. In `ClassMembersTab.vue`, add an admin/tutor action to set a member's class role (Make tutor / Make student)
-   via the new endpoint — 3-dot `UiDropdownMenu`, not hover buttons.
-2. Keep gating the compose/create UI on the **per-class role** (`myRole==='TUTOR' || isAdmin`), never on
-   `useRole().isTutor`. (Current code already does this — see the confirmed diagnosis above.)
+**What was built:**
+- `useClasses.ts` — new `setMemberRole(classId, userId, role)`.
+- NEW `ClassMemberRow.vue` — one member row (avatar/name/role badge) with a **3-dot `UiDropdownMenu`**
+  (replaces the old hover-opacity buttons, per the design rules). Items are correctly gated:
+  - Make tutor (student rows) / Make student (tutor rows) — shown to any class-tutor or admin, never on
+    your own row; "Make student" is hidden for the **last tutor** (a class must keep one).
+  - Remove from class — tutors/admins can remove students; only an admin can remove another tutor (never
+    the last). Leave class — your own row.
+- `ClassMembersTab.vue` — owns the state + API calls, maps rows, emits `roleChanged`; surfaces backend
+  409s inline via toast ("Cannot demote/remove the last tutor").
+- `classes/[id]/index.vue` — passes `is-admin` (both role props respect the archived read-only rule) and
+  applies role changes to local `cls.members`.
+
+Verified: `nuxi typecheck` (no new errors) + production `nuxt build`. The compose/create gating still
+keys off the per-class role (`myRole==='TUTOR' || isAdmin`), unchanged.
 
 ---
 
-### ⚠️ Admin user role management UI — verify/port into the deployed build (2026-07-23) — Rekar
-Backend has had this all along: `PATCH /api/v1/admin/users/:id` with `{ role: "STUDENT"|"TUTOR"|"ADMIN" }`
-and/or `{ isActive }` (ADMIN-only, tested). This repo's frontend already exposes it at
-`/dashboard/users` + `/dashboard/users/[id]` (role/status toggles). **Action:** confirm the **deployed
-fork** actually surfaces the role dropdown (Aland couldn't change roles from the live UI). If missing, wire
-it to the existing endpoint. No new backend work for this one.
+### ✅ Admin user role management UI — BUILT + verified on prod (2026-07-24, Aland via Claude) — commit `fd9282c`
+The 2026-07-23 note on this task was **wrong**: it assumed the frontend "already exposes role/status
+toggles". Only the **status** toggle existed. `useAdmin().patchUser` was never once called with
+`{ role }` — the role was static text in both the users list (`UserTableRow.vue`) and the admin edit
+page (`users/[id]/profile.vue`). The endpoint worked all along; there was simply no control to send it.
+**Lesson: when an admin capability "doesn't work on the live UI", check whether the frontend ever calls
+the endpoint before suspecting auth.** (Second time this pattern bit us — see the tutor-can't-post entry.)
 
-Heads-up (Aland adding backend guards): the API will soon reject an admin **demoting/deactivating
-themselves** and **removing the last admin** (409). Surface those 409 messages inline, don't crash.
+**Built:** `components/Pages/Dashboard/Users/ChangeRoleDialog.vue` — `UiDialog` with three selectable
+role cards (Student / Tutor / Admin), descriptions, a "Current" chip, and Save disabled when unchanged.
+Wired into (a) the users list row 3-dot menu (`@change-role`) and (b) a new "Account role" card on
+`users/[id]/profile.vue`, above "Account status".
+
+**Backend guards are live and mirrored in the UI** (they shipped in `0c680dd`, already on `origin/main`):
+self-change is disabled client-side with an explanation (only admins reach this screen, so "self" always
+means demoting out of ADMIN → 409), and promote-to-admin / demote-admin each show a warning notice. On a
+server rejection the dialog **stays open** and the backend's 409 message surfaces via the `useHttp` toast,
+so it's never a silent failure. On success the row updates in place — or refetches when a role filter is
+active, since the row may no longer match the filter.
+
+Backend untouched → no `generate:types` needed. Verified: `nuxi typecheck` clean + Aland tested the full
+flow on prod.
 
 ---
 
