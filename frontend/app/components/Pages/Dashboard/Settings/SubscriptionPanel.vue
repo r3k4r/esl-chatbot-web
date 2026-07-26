@@ -16,7 +16,7 @@ const props = defineProps<{
 const emit = defineEmits<{ refreshed: [] }>()
 
 const authStore = useAuthStore()
-const { initiateFib, cancelFib } = useSubscription()
+const { initiateFib, getPendingFib, cancelFib } = useSubscription()
 
 // ─── Derived state ────────────────────────────────────────────────────────────
 
@@ -47,6 +47,41 @@ const showCancelConfirm = ref(false)
 const paymentModal = ref(false)
 const paymentData  = ref<InitiateFibResult | null>(null)
 
+// An unpaid payment the user left behind (closed the dialog, reloaded, followed
+// the FIB app link). Kept visible so the QR is always recoverable and can be
+// cleared — a pending payment blocks starting a different plan.
+const pendingPayment  = ref<InitiateFibResult | null>(null)
+const cancellingPending = ref(false)
+
+async function loadPending() {
+  const res = await getPendingFib()
+  pendingPayment.value = res.success ? ((res.data as any)?.data ?? null) : null
+}
+
+onMounted(loadPending)
+
+function showPending() {
+  if (!pendingPayment.value) return
+  paymentData.value = pendingPayment.value
+  paymentModal.value = true
+}
+
+async function cancelPending() {
+  const id = pendingPayment.value?.fibSubscriptionId
+  if (!id) return
+  cancellingPending.value = true
+  const res = await cancelFib(id)
+  cancellingPending.value = false
+  if (!res.success) {
+    toast.error(res.message || 'Could not cancel the pending payment.')
+    return
+  }
+  pendingPayment.value = null
+  paymentData.value = null
+  paymentModal.value = false
+  toast.success('Pending payment cancelled. You can start a new one.')
+}
+
 const UPGRADEABLE_PLANS: Array<'GOLD' | 'PREMIUM'> = ['GOLD', 'PREMIUM']
 const INTERVALS: IntervalMonths[] = [1, 3, 6, 12]
 
@@ -76,12 +111,21 @@ async function handleSubscribe() {
   initiating.value = false
   if (!res.success) {
     const status = (res as any).status
-    if (status === 409) toast.error(res.message || 'You already have an active subscription.')
+    if (status === 409) {
+      // A payment for a different plan is already waiting — surface it instead of
+      // dead-ending, so the user can resume or clear it.
+      if ((res.data as any)?.pendingFib) await loadPending()
+      toast.error(res.message || 'You already have an active subscription.')
+    }
     else if (status === 503) toast.error('FIB payment is not configured yet. Contact support.')
     else toast.error(res.message || 'Could not initiate payment.')
     return
   }
-  paymentData.value = (res.data as any)?.data ?? (res.data as any)
+  const payment: InitiateFibResult = (res.data as any)?.data ?? (res.data as any)
+  paymentData.value = payment
+  // Same plan pressed twice → the backend hands back the existing payment rather
+  // than opening a second one at FIB.
+  pendingPayment.value = payment
   paymentModal.value = true
 }
 
@@ -106,9 +150,16 @@ async function handleCancel() {
 
 function handleActivated() {
   paymentModal.value = false
+  pendingPayment.value = null // it's paid — no longer something to resume
   authStore.fetchUser()
   emit('refreshed')
 }
+
+// The modal must show the payment's OWN plan/price — a resumed payment can be for
+// a different plan than the one currently selected in the form below.
+const modalPlan     = computed(() => paymentData.value?.plan ?? selectedPlan.value)
+const modalInterval = computed(() => paymentData.value?.intervalMonths ?? selectedInterval.value)
+const modalAmount   = computed(() => paymentData.value?.amountIQD ?? selectedPrice.value)
 
 // ─── Styling ──────────────────────────────────────────────────────────────────
 
@@ -234,6 +285,15 @@ const planBadgeStyle = computed(() => {
       </template>
     </div>
 
+    <!-- ── Unfinished payment ─────────────────────────────────────────────── -->
+    <PagesDashboardSettingsPendingPaymentCard
+      v-if="pendingPayment"
+      :payment="pendingPayment"
+      :cancelling="cancellingPending"
+      @show="showPending"
+      @cancel="cancelPending"
+    />
+
     <!-- ── Upgrade section ────────────────────────────────────────────────── -->
     <template v-if="currentPlan === 'FREE' || !isActive">
       <div class="dash-card p-5 space-y-5">
@@ -350,9 +410,9 @@ const planBadgeStyle = computed(() => {
     <PagesDashboardSettingsFibPaymentModal
       :open="paymentModal"
       :payment="paymentData"
-      :plan="selectedPlan"
-      :interval-months="selectedInterval"
-      :amount-i-q-d="selectedPrice"
+      :plan="modalPlan"
+      :interval-months="modalInterval"
+      :amount-i-q-d="modalAmount"
       @update:open="paymentModal = $event"
       @activated="handleActivated"
     />

@@ -68,6 +68,20 @@ export interface InitiateFibResult {
   qrCode: string       // base64 PNG data URL
   appLink: string      // deep link for FIB mobile app
   validUntil: string   // ISO-8601
+  plan: 'GOLD' | 'PREMIUM'      // the payment's own plan — a resumed payment may
+  intervalMonths: IntervalMonths // differ from what the user currently has selected
+  amountIQD: number
+  resumed: boolean     // true = existing pending payment handed back, not a new one
+}
+
+// Sent by the backend on a 409 from POST /subscriptions/initiate-fib when a
+// payment for a DIFFERENT plan/interval is already awaiting payment.
+export interface PendingFibSummary {
+  fibSubscriptionId: string
+  plan: 'GOLD' | 'PREMIUM'
+  intervalMonths: IntervalMonths
+  amountIQD: number
+  validUntil: string | null
 }
 
 export interface FibStatusResult {
