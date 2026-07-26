@@ -342,6 +342,51 @@ set so the frontend can render bullets/paragraphs/emphasis via `v-html` instead 
 
 ---
 
+## 12. FIB Payment Recovery — QR no longer lost / no longer blocks ✅ DONE (2026-07-25)
+Found in the first live stage test on prod. Two defects, one dead end:
+clicking **Open FIB App** navigated the SPA to the 404 page (the deep link was bound to
+`:to`, so vue-router tried to resolve it as an in-app route), which destroyed the payment
+dialog **and** the QR with it. Retrying then hit *"You already have a pending FIB
+subscription"* — the DRAFT blocked new attempts and its QR existed nowhere, so the user was
+locked out of paying until the DRAFT expired (36h).
+
+- ✅ **Root cause of the vanishing QR:** `createSubscription`'s `qrCode` / `readableCode` /
+  `appLink` were never persisted, and FIB's `GET /subscriptions/:id` does **not** return them —
+  once the dialog closed, the payment was unrecoverable by design.
+- ✅ `FibSubscription` gains `qrCode` / `readableCode` / `appLink` (all nullable) + migration
+  `20260725000000_add_fib_payment_artifacts` (idempotent `ADD COLUMN IF NOT EXISTS`, same
+  pattern as the notification-data catch-up migration)
+- ✅ `initiateFibSubscription` no longer dead-ends on a pending DRAFT:
+  - expired DRAFTs are swept (`validUntil <= now` → CANCELLED) — they are dead at FIB anyway
+  - same plan + interval → **returns the existing payment** (`resumed: true`), so the endpoint
+    is idempotent and a repeat click re-opens the same QR instead of erroring
+  - different plan/interval → still 409 (a second payable subscription risks a double charge),
+    but the body now carries `pendingFib { fibSubscriptionId, plan, intervalMonths, amountIQD,
+    validUntil }` so the UI can offer resume-or-cancel
+  - a DRAFT with no stored QR (pre-migration row) is discarded rather than blocking forever —
+    **this is what unblocks the stuck DRAFT already sitting in the prod DB**
+- ✅ ACTIVE/TRIAL FIB records still hard-block (backstop for the window where FIB has activated
+  but the `Subscription` row hasn't synced)
+- ✅ NEW `GET /subscriptions/fib/pending` — returns the pending payment (QR, manual code, app
+  link, plan, amount) or `null`; sweeps expired DRAFTs on read; never leaks another user's payment
+- ✅ `InitiateFibResult` now echoes `plan` / `intervalMonths` / `amountIQD` so a resumed payment
+  renders with its own price rather than whatever the client currently has selected
+- ✅ Swagger updated on both routes + `bun run generate:types`
+- ✅ Tests: 4 new initiate cases (different-plan 409 + `pendingFib`, same-plan resume with no 2nd
+  FIB call, expired sweep, legacy-row discard) and a new 5-case `GET /fib/pending` block
+  (found, null, expired-swept, cross-user isolation, 401)
+- **Frontend fixes** (see `frontend/TASKS.md`): deep link opens via `window.open` in a new tab
+  instead of router navigation, "Payment waiting" recovery card on the billing page, modal now
+  shows the resumed payment's own plan/price.
+- ⚠️ **Deploy note:** run `prisma migrate deploy` on prod (or the three `ALTER TABLE` statements
+  in the migration) **before** the new code serves traffic — `initiate-fib` selects the new
+  columns and will 500 against an un-migrated DB.
+- ⚠️ **`FIB_ENV=stage` is currently live on prod** — the Billing page's payment flow is a FIB
+  **sandbox** transaction. Fine for testing, but no beta user should be told it's a real
+  purchase until Task 6 lands prod credentials.
+
+---
+
 ## Blocked
 
 ### FIB Payment — Waiting for Deployment

@@ -8,6 +8,51 @@ When Aland adds a new backend API, he notes it here so Rekar knows what to wire 
 
 ---
 
+### ✅ FIB payment — QR no longer lost / "Open FIB App" no longer 404s (2026-07-25, Aland via Claude)
+Hit during the first live stage payment on prod. Both defects are fixed; backend changes are in
+`backend/TASK.md` §12 (new `GET /subscriptions/fib/pending`, resumable initiate, persisted QR).
+
+1. **"Open FIB App" navigated to the 404 page — FIXED.** The deep link was bound to
+   `<AppButton :to="payment.appLink">`, so vue-router resolved the external URL as an in-app route
+   and landed on the catch-all 404 — which unmounted the dialog and took the QR with it. Now a
+   `@click` handler calls `window.open(link, '_blank', 'noopener,noreferrer')`, so the dialog
+   survives the click, plus a hint line ("Nothing opened? The FIB app has to be installed —
+   otherwise scan the QR code above").
+2. **The QR was unrecoverable and blocked retrying — FIXED.** Files:
+   `Settings/PendingPaymentCard.vue` (NEW), `SubscriptionPanel.vue`, `FibPaymentModal.vue`,
+   `useSubscription.ts` (new `getPendingFib`), `common/types/subscription-types.ts`.
+   - The billing page now checks `GET /subscriptions/fib/pending` on mount and renders a
+     **"Payment waiting"** card with **Show QR code** + **Cancel payment** whenever an unpaid
+     payment exists — so the QR is always recoverable after a reload/closed dialog, and the user
+     can always clear it to pick a different plan.
+   - Pressing Subscribe again for the same plan re-opens the same payment (backend is idempotent
+     now) instead of erroring; a 409 for a *different* plan refreshes the pending card.
+   - The modal renders the payment's **own** plan/interval/price (`modalPlan`/`modalInterval`/
+     `modalAmount`) — a resumed payment can differ from the currently-selected plan.
+   - The modal's poll watcher now also keys on the payment id, so reopening it for a different
+     payment restarts polling from a clean status instead of inheriting the previous one.
+
+Verified: `nuxi typecheck` clean + production `nuxt build`.
+
+---
+
+### 🐛 `AppButton` sends every `:to` through `router-link` — external links break (found 2026-07-25, NOT fixed)
+**Rekar's call — this is a shared global component, so it was deliberately left alone and fixed at
+the call site instead** (frontend/CLAUDE.md rule #4).
+
+`App/Button.vue` computes a correct `resolvedTag` (`'NuxtLink'` when `to` is set **and** the button
+isn't disabled) — **but the template ignores it** and inlines
+`:is="tag ? tag : to ? 'router-link' : 'button'"`. Two consequences:
+1. Any **external** URL passed to `:to` is resolved as an in-app route → 404 page (this is exactly
+   what broke the FIB deep link above).
+2. `:disabled` does not prevent navigation on link-style buttons, because `router-link` is picked
+   regardless of the disabled state.
+
+Fix is likely a one-liner (`:is="resolvedTag"`), but it changes behaviour for **every** `:to`
+button in the app (7 usages), so it needs a deliberate pass + retest rather than a drive-by change.
+
+---
+
 ### ✅ Voice Lab — two prod bugs FIXED (2026-07-24, Aland via Claude)
 **Files:** `app/composables/useVoiceChat.ts`, `app/composables/useVoiceLab.ts`, `app/lib/utils.ts`.
 Backend was confirmed clean (half-duplex, one turn per `voice:end`) — both were client-side.
