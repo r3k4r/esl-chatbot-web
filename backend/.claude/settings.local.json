@@ -95,7 +95,8 @@
       "PowerShell(bun *)",
       "Bash(python -c \"import sys,json; print\\(json.load\\(sys.stdin\\)['data']['accessToken']\\)\")",
       "PowerShell($conns = Get-NetTCPConnection -LocalPort 8000 -State Listen -ErrorAction SilentlyContinue; if \\($conns\\) { $pids = $conns.OwningProcess | Select-Object -Unique; foreach \\($p in $pids\\) { try { Stop-Process -Id $p -Force -ErrorAction Stop; Write-Output \"Stopped PID $p\" } catch { Write-Output \"Could not stop PID $p : $_\" } } } else { Write-Output \"No listener on port 8000\" })",
-      "Bash(node -e \"const d = require\\('./node_modules/@deepgram/sdk'\\); console.log\\(Object.keys\\(d\\).filter\\(k => k.toLowerCase\\(\\).includes\\('word'\\)\\)\\)\")"
+      "Bash(node -e \"const d = require\\('./node_modules/@deepgram/sdk'\\); console.log\\(Object.keys\\(d\\).filter\\(k => k.toLowerCase\\(\\).includes\\('word'\\)\\)\\)\")",
+      "Skill(claude-api)"
     ]
   }
 }

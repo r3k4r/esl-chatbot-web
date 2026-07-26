@@ -413,13 +413,26 @@ export async function cancelFibSubscription(
     return;
   }
 
-  // ACTIVE/TRIAL — cancel at FIB, then downgrade the user's plan to FREE ACTIVE.
+  // ACTIVE/TRIAL — stop future charges at FIB, but do NOT strip the plan now.
   try {
     await client.cancelSubscription(fibSubscriptionId);
   } catch (err) {
     if (err instanceof FibSubscribeError) throw new AppError(`FIB error: ${err.message}`, 502);
     throw err instanceof Error ? err : new Error(String(err));
   }
+
+  // Cancellation policy: the user keeps the plan they already paid for until
+  // currentPeriodEnd, then drops to FREE. There are no refunds (FIB's 1% commission
+  // is non-refundable and its API has no refund endpoint), so taking access away the
+  // moment they cancel — as this used to — meant charging for days never delivered.
+  // The downgrade itself is already handled by the subscription-expiry cron and the
+  // lazy check in createSession; here we only stop the renewal and flag the intent.
+  const sub = await prisma.subscription.findUnique({
+    where: { userId },
+    select: { currentPeriodEnd: true },
+  });
+  const keepsAccessUntil =
+    sub?.currentPeriodEnd && sub.currentPeriodEnd > now ? sub.currentPeriodEnd : null;
 
   await prisma.$transaction([
     prisma.fibSubscription.update({
@@ -428,13 +441,23 @@ export async function cancelFibSubscription(
     }),
     prisma.subscription.update({
       where: { userId },
-      data: {
-        plan: "FREE",
-        status: "ACTIVE",
-        paymentProvider: null,
-        externalSubscriptionId: null,
-        currentPeriodEnd: now,
-      },
+      data: keepsAccessUntil
+        ? {
+            // Paid period still running — keep plan + status, just stop renewing.
+            cancelAtPeriodEnd: true,
+            paymentProvider: null,
+            externalSubscriptionId: null,
+          }
+        : {
+            // No paid time left (or unknown end date) — downgrade immediately, else
+            // a null currentPeriodEnd would leave the plan active forever.
+            plan: "FREE",
+            status: "ACTIVE",
+            cancelAtPeriodEnd: false,
+            paymentProvider: null,
+            externalSubscriptionId: null,
+            currentPeriodEnd: now,
+          },
     }),
   ]);
   await deleteCache(cacheKeys.authUser(userId));

@@ -71,6 +71,8 @@ export async function createSession(
         paymentProvider: null,
         externalCustomerId: null,
         externalSubscriptionId: null,
+        // Mirrors subscription-expiry.job.ts — the cancellation has taken effect.
+        cancelAtPeriodEnd: false,
       },
     });
     plan = "FREE";

@@ -6133,6 +6133,8 @@ export interface paths {
                                 currentPeriodEnd?: string | null;
                                 /** @enum {string|null} */
                                 paymentProvider?: "CASH" | "FIB" | "STRIPE" | null;
+                                /** @description True when the user has cancelled but still has paid time left. The plan stays active (and keeps its full limits) until currentPeriodEnd, then drops to FREE. There are no refunds, so clients should show "access until <currentPeriodEnd>" rather than offering to cancel again. */
+                                cancelAtPeriodEnd?: boolean;
                                 /** Format: date-time */
                                 updatedAt?: string;
                             };

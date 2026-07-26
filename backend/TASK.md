@@ -387,6 +387,79 @@ locked out of paying until the DRAFT expired (36h).
 
 ---
 
+## 13. Payment integrity fixes + cancellation policy ✅ DONE (2026-07-26)
+
+Found while live-testing FIB on prod. Two of these took real money without granting a plan.
+
+- ✅ **Activation died when the user had no `Subscription` row.** `applyFibStatusChange` used
+  `prisma.subscription.update`, which throws P2025 on a missing row — and since it runs inside
+  `$transaction`, the rollback also reverted the `FibSubscription` update. FIB kept the money, the
+  record stayed DRAFT, and the reconcile cron re-failed identically every 15 min forever. A
+  `Subscription` row is only created at registration, so any gap loses a payment. Now `upsert`.
+- ✅ **Cancelling a DRAFT discarded payments won by a race.** Pay → hit Cancel before FIB's callback
+  lands → the DRAFT branch marked it CANCELLED locally *without asking FIB*, and the reconcile job
+  then skipped it forever (it only scans DRAFTs). Cancel now re-verifies with FIB: ACTIVE/TRIAL
+  activates the plan and returns 409 explaining it; still-DRAFT discards as before; FIB unreachable
+  → 503 rather than risk discarding a payment.
+- ✅ **Both were invisible** (webhook controller swallows errors after its 202; frontend poll ignores
+  failures). Activation failures now hit **Sentry** from the webhook and the reconcile job.
+- ✅ **Cancellation policy decided (2026-07-26): keep access to period end, NO refunds.** Rationale:
+  FIB's 1% commission is non-refundable, FIB's API has no refund endpoint (every refund would be a
+  manual bank transfer), AI usage is a real marginal cost so prorated refunds invite
+  subscribe-binge-refund, and it matches universal SaaS practice. Discretionary refunds stay a
+  manual admin decision. Implemented via `Subscription.cancelAtPeriodEnd` (migration
+  `20260726000000_add_cancel_at_period_end`): cancelling stops the FIB renewal and keeps
+  plan/status/`currentPeriodEnd` intact; the existing expiry paths (cron + lazy check in
+  `createSession`) do the downgrade and reset the flag. Falls back to an immediate downgrade when
+  there's no paid time left, else a null `currentPeriodEnd` would keep the plan alive forever.
+  Exposed as `cancelAtPeriodEnd` on `GET /users/me/subscription`; the UI shows
+  "Cancelled — active until <date>" instead of the Cancel button.
+  - This also **fixed a live mismatch**: the UI promised "you'll keep access until <date>" while the
+    backend set `plan=FREE, currentPeriodEnd=now` on the spot, taking away days already paid for.
+- ✅ 6 new tests (missing-row activation, paid-during-cancel, unpaid-cancel verification,
+  FIB-unreachable refusal, cancel-keeps-period, cancel-with-no-time-left).
+
+---
+
+## 14. 🔴 Recurring FIB payments are never re-synced — user keeps paying, loses access
+**Not yet fixed. Found 2026-07-26 while designing Task 15. This will bite the first real
+multi-month subscriber.**
+
+FIB subscriptions are **recurring** (`interval: P1M/P3M/...`), so FIB charges again automatically
+each period. But `applyFibStatusChange` early-returns when the status is unchanged
+(`if (record.fibStatus === incomingStatus) return`), and the reconcile cron **only scans DRAFT**
+rows. So when FIB takes month 2's payment, `activeUntil` advances at FIB while our
+`currentPeriodEnd` never moves — and the subscription-expiry cron then downgrades a **paying**
+customer to FREE.
+
+Proposed fix (verify against FIB stage first — does FIB post a callback on each recurring charge?):
+- `applyFibStatusChange`: when status is unchanged but ACTIVE/TRIAL, still refresh
+  `currentPeriodEnd` from `details.activeUntil` if it has moved.
+- `fib-reconcile.job.ts`: also scan ACTIVE/TRIAL rows (cheap — few rows), so renewals are picked up
+  even if no webhook arrives.
+- Add a test that a second `activeUntil` extends `currentPeriodEnd`.
+
+---
+
+## 15. Upgrades, early renewal & downgrades — decided 2026-07-26, NOT yet built
+Today an ACTIVE subscriber is **blocked from buying anything** — we turn away paying customers.
+Agreed design:
+
+- **Early renewal (same plan):** allowed; the new period **stacks onto `currentPeriodEnd`** rather
+  than starting now, so no paid days are lost. (Mostly matters for CASH plans and for re-subscribing
+  after a cancel — live FIB subs auto-renew, see Task 14.)
+- **Upgrade GOLD → PREMIUM:** allowed; cancel the old FIB subscription, start the new one, and
+  convert unused value into bonus days — `remainingDays × oldDailyRate ÷ newDailyRate`
+  (e.g. 15 days of GOLD ≈ 12,500 IQD → ~8 free days of PREMIUM). No refund needed, nothing lost.
+- **Downgrade PREMIUM → GOLD:** don't charge now — schedule it for period end. Needs a
+  `pendingPlan Plan?` column applied by the expiry paths.
+- Relax the `initiate-fib` guards accordingly (they currently 409 on any ACTIVE provider) and add
+  the proration helper next to `PLAN_AMOUNTS_IQD`.
+- **Do Task 14 first** — stacking periods on top of a `currentPeriodEnd` that silently goes stale
+  would compound the error.
+
+---
+
 ## Blocked
 
 ### FIB Payment — Waiting for Deployment

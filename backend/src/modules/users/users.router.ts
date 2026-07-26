@@ -155,6 +155,13 @@ router.get("/me/dashboard", authenticate, getDashboardHandler);
  *                     currentPeriodStart: { type: string, format: date-time, nullable: true }
  *                     currentPeriodEnd: { type: string, format: date-time, nullable: true }
  *                     paymentProvider: { type: string, enum: [CASH, FIB, STRIPE], nullable: true }
+ *                     cancelAtPeriodEnd:
+ *                       type: boolean
+ *                       description: >
+ *                         True when the user has cancelled but still has paid time left. The plan
+ *                         stays active (and keeps its full limits) until currentPeriodEnd, then
+ *                         drops to FREE. There are no refunds, so clients should show
+ *                         "access until <currentPeriodEnd>" rather than offering to cancel again.
  *                     updatedAt: { type: string, format: date-time }
  *       401: { description: Missing or invalid token, content: { application/json: { schema: { $ref: '#/components/schemas/ErrorResponse' } } } }
  *       404: { description: No subscription found, content: { application/json: { schema: { $ref: '#/components/schemas/ErrorResponse' } } } }

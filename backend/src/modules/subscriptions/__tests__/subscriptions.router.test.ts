@@ -675,6 +675,59 @@ describe("DELETE /api/v1/subscriptions/fib/:subscriptionId", () => {
     expect(fibRecord?.fibStatus).toBe("DRAFT"); // untouched — safe to retry
   });
 
+  it("200 — cancelling an ACTIVE plan keeps it until currentPeriodEnd (no refund, no instant downgrade)", async () => {
+    // Policy: cancelling stops future charges but the user keeps what they paid for.
+    // This used to set plan=FREE + currentPeriodEnd=now immediately, silently taking
+    // away days already paid for — and contradicting the UI's "you'll keep access
+    // until <date>" copy.
+    const periodEnd = new Date(Date.now() + 20 * 24 * 60 * 60 * 1000);
+    const u = track(
+      await createTestUser({
+        plan: "GOLD",
+        status: "ACTIVE",
+        paymentProvider: "FIB",
+        currentPeriodEnd: periodEnd,
+      }),
+    );
+    const record = await makeFibRecord(u.id, { fibStatus: "ACTIVE" });
+
+    const res = await request(app)
+      .delete(`/api/v1/subscriptions/fib/${record.fibSubscriptionId}`)
+      .set(auth(u.token));
+
+    expect(res.status).toBe(200);
+    expect(cancelSpy).toHaveBeenCalledTimes(1); // renewal stopped at FIB
+
+    const sub = await getSubscription(u.id);
+    expect(sub?.plan).toBe("GOLD");             // still paid up
+    expect(sub?.status).toBe("ACTIVE");
+    expect(sub?.cancelAtPeriodEnd).toBe(true);  // will drop to FREE at period end
+    expect(sub?.currentPeriodEnd?.getTime()).toBe(periodEnd.getTime()); // not shortened
+  });
+
+  it("200 — cancelling with no paid time left downgrades immediately", async () => {
+    // Guards the null/expired currentPeriodEnd case: without this the plan would stay
+    // ACTIVE forever, since the expiry sweep keys off currentPeriodEnd.
+    const u = track(
+      await createTestUser({
+        plan: "GOLD",
+        status: "ACTIVE",
+        paymentProvider: "FIB",
+        currentPeriodEnd: null,
+      }),
+    );
+    const record = await makeFibRecord(u.id, { fibStatus: "ACTIVE" });
+
+    const res = await request(app)
+      .delete(`/api/v1/subscriptions/fib/${record.fibSubscriptionId}`)
+      .set(auth(u.token));
+
+    expect(res.status).toBe(200);
+    const sub = await getSubscription(u.id);
+    expect(sub?.plan).toBe("FREE");
+    expect(sub?.cancelAtPeriodEnd).toBe(false);
+  });
+
   it("409 — already CANCELLED", async () => {
     const u = track(await createTestUser({ plan: "FREE", status: "ACTIVE" }));
     const record = await makeFibRecord(u.id, {

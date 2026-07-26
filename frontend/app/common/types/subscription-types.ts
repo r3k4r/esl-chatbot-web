@@ -99,4 +99,7 @@ export interface UserSubscriptionDetail {
   currentPeriodEnd: string | null
   paymentProvider: Subscription['paymentProvider']
   externalSubscriptionId: string | null
+  // Cancelled but still inside the paid period: the plan stays fully active until
+  // currentPeriodEnd, then drops to FREE. No refunds, so don't offer Cancel again.
+  cancelAtPeriodEnd?: boolean
 }

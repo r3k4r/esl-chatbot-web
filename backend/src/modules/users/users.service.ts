@@ -419,6 +419,7 @@ export async function getMySubscription(userId: string) {
       currentPeriodStart: true,
       currentPeriodEnd: true,
       paymentProvider: true,
+      cancelAtPeriodEnd: true,
       updatedAt: true,
     },
   });

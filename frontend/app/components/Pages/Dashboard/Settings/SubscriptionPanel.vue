@@ -27,6 +27,8 @@ const isFibProvider = computed(() => props.subscription?.paymentProvider === 'FI
 const isCashProvider= computed(() => props.subscription?.paymentProvider === 'CASH')
 const fibSubId      = computed(() => props.subscription?.externalSubscriptionId ?? null)
 const periodEnd     = computed(() => props.subscription?.currentPeriodEnd ?? null)
+// Cancelled but still paid up — plan keeps working until periodEnd, no refund.
+const isCancelling  = computed(() => props.subscription?.cancelAtPeriodEnd === true)
 
 function fmtDate(iso: string | null) {
   if (!iso) return '—'
@@ -245,8 +247,26 @@ const planBadgeStyle = computed(() => {
           </div>
         </div>
 
+        <!-- Already cancelled, still inside the paid period -->
+        <div
+          v-if="isCancelling"
+          class="flex items-start gap-2 px-4 py-3 rounded-xl"
+          style="background:var(--status-blocked-bg);border:1px solid var(--border-inner)"
+        >
+          <AppIconsax name="InfoCircle" color="var(--status-blocked-text)" :size="16" class="mt-0.5 shrink-0" />
+          <div>
+            <AppText size="13" weight="semibold" class-list="block" :style="`color:var(--status-blocked-text)`">
+              Cancelled — active until {{ fmtDate(periodEnd) }}
+            </AppText>
+            <AppText size="12" class-list="block mt-0.5" :style="`color:var(--text-muted)`">
+              You won't be charged again. You keep every {{ PLAN_META[currentPlan].name }} feature until
+              then, and move to the Free plan afterwards.
+            </AppText>
+          </div>
+        </div>
+
         <!-- Cancel — only for FIB (cash is admin-managed) -->
-        <template v-if="isFibProvider">
+        <template v-else-if="isFibProvider">
           <div v-if="!showCancelConfirm">
             <AppButton
               variant="secondary" size="32" radius="8"

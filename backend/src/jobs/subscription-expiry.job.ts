@@ -19,6 +19,9 @@ export async function runSubscriptionExpiryJob(): Promise<void> {
         paymentProvider: null,
         externalCustomerId: null,
         externalSubscriptionId: null,
+        // The cancellation has now taken effect — clear it so a future re-subscribe
+        // doesn't inherit a stale "cancelling" state.
+        cancelAtPeriodEnd: false,
       },
     });
 

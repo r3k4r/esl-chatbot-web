@@ -268,6 +268,12 @@ model Subscription {
   monthlyTtsUsage    Int             @default(0)
   lastUsageReset     DateTime?
 
+  // Cancellation policy: cancelling stops future charges but the user keeps the plan
+  // they already paid for until currentPeriodEnd — no refunds (FIB's 1% commission is
+  // non-refundable and its API has no refund endpoint). The existing expiry paths
+  // (subscription-expiry cron + lazy check in createSession) do the actual downgrade.
+  cancelAtPeriodEnd  Boolean         @default(false)
+
   // Payment provider tracking (null = admin-activated FREE or unverified)
   paymentProvider       PaymentProvider?
   externalCustomerId    String?          // stripe customerId (Stripe only)
