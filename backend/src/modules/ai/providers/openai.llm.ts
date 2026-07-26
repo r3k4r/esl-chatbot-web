@@ -33,13 +33,15 @@ export async function callOpenAILLM(
   //   • use `max_completion_tokens`, NOT `max_tokens` (400 otherwise).
   //   • reasoning tokens are spent from that budget BEFORE any visible output, so
   //     the cap must be generous or the JSON reply comes back empty/truncated.
-  //   • `reasoning_effort: "low"` keeps spend + latency down for this structured
-  //     tutoring task (scoring a sentence and replying needs no deep reasoning).
+  //   • `reasoning_effort: "minimal"` — this is a latency-sensitive chat turn, and
+  //     scoring a sentence against a fixed rubric needs no deliberation. "minimal"
+  //     spends near-zero reasoning tokens, so the reply starts sooner and costs
+  //     less than "low". Raise it only if reply quality visibly regresses.
   const completion = await client.chat.completions.create({
     model: PREMIUM_MODEL,
     messages,
     response_format: { type: "json_object" },
-    reasoning_effort: "low",
+    reasoning_effort: "minimal",
     max_completion_tokens: 4000,
   });
 
