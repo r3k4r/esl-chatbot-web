@@ -64,6 +64,19 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
  *                     plan: { type: string, enum: [GOLD, PREMIUM] }
  *                     intervalMonths: { type: integer }
  *                     amountIQD: { type: integer }
+ *                     changeType:
+ *                       type: string
+ *                       enum: [NEW, RENEWAL, UPGRADE, DOWNGRADE]
+ *                       description: >
+ *                         What this purchase does relative to the caller's current plan. NEW = no
+ *                         paid plan right now; RENEWAL = same plan again (only offered once the
+ *                         current one is cancelled or lapsing); UPGRADE/DOWNGRADE = switching tier
+ *                         mid-period.
+ *                     carryOverDays:
+ *                       type: integer
+ *                       description: >
+ *                         Unused days on the current plan, converted to this plan's daily rate and
+ *                         added on top when the payment activates. 0 when there is nothing to carry.
  *                     resumed:
  *                       type: boolean
  *                       description: >
@@ -130,6 +143,19 @@ router.post("/initiate-fib", authenticate, initiateFibHandler);
  *                     plan: { type: string, enum: [GOLD, PREMIUM] }
  *                     intervalMonths: { type: integer }
  *                     amountIQD: { type: integer }
+ *                     changeType:
+ *                       type: string
+ *                       enum: [NEW, RENEWAL, UPGRADE, DOWNGRADE]
+ *                       description: >
+ *                         What this purchase does relative to the caller's current plan. NEW = no
+ *                         paid plan right now; RENEWAL = same plan again (only offered once the
+ *                         current one is cancelled or lapsing); UPGRADE/DOWNGRADE = switching tier
+ *                         mid-period.
+ *                     carryOverDays:
+ *                       type: integer
+ *                       description: >
+ *                         Unused days on the current plan, converted to this plan's daily rate and
+ *                         added on top when the payment activates. 0 when there is nothing to carry.
  *                     resumed: { type: boolean }
  *       401: { $ref: '#/components/responses/Unauthorized' }
  */

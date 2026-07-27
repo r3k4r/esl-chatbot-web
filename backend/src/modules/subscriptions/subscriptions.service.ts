@@ -14,6 +14,7 @@ import type {
   InitiateFibResult,
   FibStatusResult,
   FibSubStatusType,
+  PlanChangeType,
 } from "./subscriptions.types.ts";
 
 // ── Pricing table (IQD) — update when business owner confirms amounts ─────────
@@ -23,6 +24,84 @@ const PLAN_AMOUNTS_IQD: Record<string, Record<number, number>> = {
   GOLD:    { 1: 25_000, 3: 70_000,  6: 130_000, 12: 250_000 },
   PREMIUM: { 1: 45_000, 3: 125_000, 6: 230_000, 12: 440_000 },
 };
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+// Value of one day on a plan, derived from its 1-month price. Used to convert unused
+// time on the current plan into days on the new one.
+function dailyRateIQD(plan: string): number {
+  const monthly = PLAN_AMOUNTS_IQD[plan]?.[1];
+  return monthly ? monthly / 30 : 0;
+}
+
+/**
+ * Days to carry over when a paid subscription is replaced by another one.
+ *
+ * One formula covers every case, which is why there is no scheduling machinery
+ * (`pendingPlan`, delayed FIB start) anywhere in this module:
+ *
+ *  • renewal  (GOLD → GOLD)     — same daily rate, so remaining days carry across 1:1
+ *  • upgrade  (GOLD → PREMIUM)  — cheaper days buy fewer expensive ones (15 GOLD days
+ *                                 ≈ 12,500 IQD ≈ 8 PREMIUM days)
+ *  • downgrade (PREMIUM → GOLD) — expensive days buy more cheap ones (15 PREMIUM days
+ *                                 ≈ 22,500 IQD ≈ 27 GOLD days)
+ *
+ * Nobody loses money they already paid, and the new plan simply starts now.
+ */
+export function carryOverDays(
+  currentPlan: string,
+  currentPeriodEnd: Date | null,
+  newPlan: string,
+  now: Date,
+): number {
+  if (!currentPeriodEnd || currentPeriodEnd <= now) return 0;
+
+  const newRate = dailyRateIQD(newPlan);
+  if (newRate <= 0) return 0; // unknown/FREE target — nothing to convert into
+
+  const remainingDays = (currentPeriodEnd.getTime() - now.getTime()) / DAY_MS;
+  const unusedValue = remainingDays * dailyRateIQD(currentPlan);
+  return Math.floor(unusedValue / newRate);
+}
+
+const PLAN_RANK: Record<string, number> = { FREE: 0, GOLD: 1, PREMIUM: 2 };
+
+/**
+ * Classify what buying `newPlan` does for a user, and how much unused time carries
+ * over. Shared by initiate, resume and the pending endpoint so the UI always gets a
+ * consistent answer.
+ */
+function describePlanChange(
+  current: {
+    plan: string;
+    currentPeriodEnd: Date | null;
+    paymentProvider: string | null;
+    status: string;
+  } | null,
+  newPlan: string,
+  now: Date,
+): { changeType: PlanChangeType; carryOverDays: number } {
+  const hasLivePaidPlan =
+    current !== null &&
+    current.status === "ACTIVE" &&
+    current.plan !== "FREE" &&
+    current.currentPeriodEnd !== null &&
+    current.currentPeriodEnd > now &&
+    // CASH/STRIPE are settled off-platform — never treated as carry-over material
+    (current.paymentProvider === "FIB" || current.paymentProvider === null);
+
+  if (!hasLivePaidPlan) return { changeType: "NEW", carryOverDays: 0 };
+
+  const days = carryOverDays(current.plan, current.currentPeriodEnd, newPlan, now);
+  const changeType: PlanChangeType =
+    current.plan === newPlan
+      ? "RENEWAL"
+      : (PLAN_RANK[newPlan] ?? 0) > (PLAN_RANK[current.plan] ?? 0)
+        ? "UPGRADE"
+        : "DOWNGRADE";
+
+  return { changeType, carryOverDays: days };
+}
 
 const INTERVAL_ISO: Record<number, string> = {
   1: "P1M",
@@ -152,25 +231,64 @@ export async function applyFibStatusChange(
   // the reconcile cron then fails identically every 15 min forever. A Subscription
   // row is only ever created at registration, so any gap (manual DB cleanup, a
   // half-failed signup, a future migration) silently costs a real payment.
+  // Read once — the activate branch needs it to carry unused time over, and the
+  // cancel branch needs currentPeriodEnd to apply the cancellation policy.
+  const current = await prisma.subscription.findUnique({
+    where: { userId: record.userId },
+    select: {
+      plan: true,
+      currentPeriodEnd: true,
+      paymentProvider: true,
+      cancelAtPeriodEnd: true,
+    },
+  });
+
+  // Upgrade / downgrade / re-subscribe: whatever the user already paid for and
+  // hasn't used is converted into days on the plan they just bought, so switching
+  // plans mid-period never costs them the remainder. See carryOverDays.
+  //
+  // `paymentProvider === null` is included deliberately: cancelling nulls the
+  // provider while keeping plan + currentPeriodEnd, so that is exactly what a
+  // re-subscribe-after-cancel looks like. CASH/STRIPE are excluded — those are
+  // settled off-platform and Guard 1 in initiate already refuses to stack on them.
+  let periodEnd = details.activeUntil ? new Date(details.activeUntil) : null;
+  let carriedDays = 0;
+  const carryEligible =
+    current !== null &&
+    current.plan !== "FREE" &&
+    (current.paymentProvider === "FIB" || current.paymentProvider === null);
+
+  if (isActivating && periodEnd && carryEligible) {
+    carriedDays = carryOverDays(current.plan, current.currentPeriodEnd, record.plan, now);
+    if (carriedDays > 0) {
+      periodEnd = new Date(periodEnd.getTime() + carriedDays * DAY_MS);
+      logger.info("[fib] carried unused time onto the new plan", {
+        userId: record.userId,
+        from: current.plan,
+        to: record.plan,
+        carriedDays,
+        currentPeriodEnd: periodEnd.toISOString(),
+      });
+    }
+  }
+
   const activatedData = {
     plan: record.plan,
     status: "ACTIVE" as const,
     paymentProvider: "FIB" as const,
     externalSubscriptionId: record.fibSubscriptionId,
     currentPeriodStart: now,
-    currentPeriodEnd: details.activeUntil ? new Date(details.activeUntil) : null,
+    currentPeriodEnd: periodEnd,
+    // A fresh purchase clears any prior cancellation — otherwise the expiry sweep
+    // would drop the plan they just paid for.
+    cancelAtPeriodEnd: false,
   };
   // A FIB-side cancellation (user cancelled in the FIB app) or a REJECTED recurring
   // charge must honour the same policy as our own cancel endpoint — keep the paid
   // time, stop the renewal. Reading currentPeriodEnd first is what makes that possible.
-  let cancelledData: ReturnType<typeof buildCancellationData> | null = null;
-  if (isCancelling) {
-    const current = await prisma.subscription.findUnique({
-      where: { userId: record.userId },
-      select: { currentPeriodEnd: true },
-    });
-    cancelledData = buildCancellationData(current?.currentPeriodEnd ?? null, now);
-  }
+  const cancelledData = isCancelling
+    ? buildCancellationData(current?.currentPeriodEnd ?? null, now)
+    : null;
 
   await prisma.$transaction([
     prisma.fibSubscription.update({
@@ -213,6 +331,59 @@ export async function applyFibStatusChange(
   if (isActivating || isCancelling) {
     await deleteCache(cacheKeys.authUser(record.userId));
   }
+
+  // A plan change leaves the previous recurring subscription live at FIB, which would
+  // keep charging alongside the new one. Retire it now — deliberately AFTER activation,
+  // never before: cancelling up-front would strip a paying user's plan for a payment
+  // that might never be completed.
+  if (isActivating) {
+    await retireSupersededFibSubscriptions(record);
+  }
+}
+
+// Cancel any other live FIB subscription for this user — best effort. A failure here
+// must not undo the activation that just succeeded, but it does mean a possible double
+// charge, so it is reported rather than swallowed.
+async function retireSupersededFibSubscriptions(active: FibSubscription): Promise<void> {
+  const superseded = await prisma.fibSubscription.findMany({
+    where: {
+      userId: active.userId,
+      id: { not: active.id },
+      fibStatus: { in: ["ACTIVE", "TRIAL"] },
+    },
+  });
+  if (superseded.length === 0) return;
+
+  for (const old of superseded) {
+    try {
+      if (fib) await fib.cancelSubscription(old.fibSubscriptionId);
+      await prisma.fibSubscription.update({
+        where: { id: old.id },
+        data: { fibStatus: "CANCELLED", cancelledAt: new Date() },
+      });
+      logger.info("[fib] retired superseded subscription after a plan change", {
+        userId: active.userId,
+        retired: old.fibSubscriptionId,
+        replacedBy: active.fibSubscriptionId,
+      });
+    } catch (err) {
+      logger.error("[fib] FAILED to retire superseded subscription — possible double charge", {
+        userId: active.userId,
+        retired: old.fibSubscriptionId,
+        error: err instanceof Error ? err.message : String(err),
+      });
+      Sentry.withScope((scope) => {
+        scope.setLevel("error");
+        scope.setTag("fib.stage", "retire-superseded");
+        scope.setContext("fib", {
+          userId: active.userId,
+          supersededId: old.fibSubscriptionId,
+          replacedBy: active.fibSubscriptionId,
+        });
+        Sentry.captureException(err);
+      });
+    }
+  }
 }
 
 function requireFib() {
@@ -234,7 +405,8 @@ export async function initiateFibSubscription(
   const client = requireFib();
   const { plan, intervalMonths } = input;
 
-  // Guard 1: cross-provider conflicts — cannot layer FIB on top of another active provider
+  // Guard 1: another provider owns this subscription — those are settled off-platform,
+  // so FIB must not layer on top of them.
   const existing = await prisma.subscription.findUnique({ where: { userId } });
   if (existing?.status === "ACTIVE") {
     if (existing.paymentProvider === "CASH") {
@@ -249,9 +421,19 @@ export async function initiateFibSubscription(
         409,
       );
     }
-    if (existing.paymentProvider === "FIB") {
+    // FIB → FIB is allowed: upgrading, downgrading and re-subscribing after a cancel
+    // are all legitimate. The only thing to refuse is buying the plan they already
+    // have on a live auto-renewing subscription, which would just charge them twice
+    // for the same thing.
+    if (
+      existing.paymentProvider === "FIB" &&
+      existing.plan === plan &&
+      !existing.cancelAtPeriodEnd
+    ) {
       throw new AppError(
-        "You already have an active FIB subscription. Cancel it before starting a new one.",
+        existing.currentPeriodEnd
+          ? `You are already on ${plan} and it renews automatically on ${existing.currentPeriodEnd.toISOString().slice(0, 10)}. There is nothing to pay right now.`
+          : `You are already on ${plan}. There is nothing to pay right now.`,
         409,
       );
     }
@@ -263,6 +445,11 @@ export async function initiateFibSubscription(
   // or clear it, otherwise they are locked out of paying until it expires.
   const now = new Date();
 
+  // What this purchase does for the user, and how much unused time rolls into it.
+  // Computed once here so the DRAFT, the resumed payment and the pending endpoint
+  // all describe the same thing.
+  const planChange = describePlanChange(existing, plan, now);
+
   // Sweep expired DRAFTs. An unpaid DRAFT dies at FIB when validUntil passes, so
   // keeping it "pending" locally would block new attempts for no reason.
   await prisma.fibSubscription.updateMany({
@@ -270,16 +457,18 @@ export async function initiateFibSubscription(
     data: { fibStatus: "CANCELLED", cancelledAt: now },
   });
 
-  // A paid (ACTIVE/TRIAL) FIB record always blocks. Guard 1 catches this via the
-  // Subscription row; this is the backstop for the window where FIB has activated
-  // but the Subscription row hasn't synced yet.
+  // A live FIB record is no longer a hard block — it is exactly what an upgrade or a
+  // re-subscribe looks like. It is only a block when it matches the plan the user is
+  // asking to buy AND their Subscription row hasn't synced yet (so Guard 1 couldn't
+  // see it), which would otherwise let them pay twice for the same plan.
   const liveFib = await prisma.fibSubscription.findFirst({
     where: { userId, fibStatus: { in: ["ACTIVE", "TRIAL"] } },
-    select: { id: true },
+    orderBy: { createdAt: "desc" },
+    select: { id: true, plan: true },
   });
-  if (liveFib) {
+  if (liveFib && liveFib.plan === plan && !existing?.cancelAtPeriodEnd) {
     throw new AppError(
-      "You already have an active FIB subscription. Cancel it before starting a new one.",
+      `You are already on ${plan}. There is nothing to pay right now.`,
       409,
     );
   }
@@ -302,7 +491,7 @@ export async function initiateFibSubscription(
       // Same plan + interval → hand back the existing payment instead of creating a
       // second one at FIB. Makes this endpoint safely idempotent: "Subscribe" pressed
       // twice re-opens the same QR rather than erroring.
-      return { ...toInitiateResult(draft), resumed: true };
+      return { ...toInitiateResult(draft, planChange), resumed: true };
     } else {
       // Different plan/interval — resuming would show the wrong amount, and creating
       // a second payment risks a double charge. Surface the pending one so the UI can
@@ -370,6 +559,8 @@ export async function initiateFibSubscription(
     plan,
     intervalMonths,
     amountIQD,
+    changeType: planChange.changeType,
+    carryOverDays: planChange.carryOverDays,
     resumed: false,
   };
 }
@@ -396,13 +587,20 @@ export async function getPendingFibSubscription(
   });
   if (!draft) return null;
 
-  return { ...toInitiateResult(draft), resumed: true };
+  const current = await prisma.subscription.findUnique({ where: { userId } });
+  const change = describePlanChange(current, draft.plan, now);
+
+  return { ...toInitiateResult(draft, change), resumed: true };
 }
 
 // Rebuild the initiate payload from a stored row. Only called for rows that
 // passed a `qrCode != null` check, so the non-null assertions are safe.
+// The plan-change fields are recomputed by the caller against the *current*
+// subscription rather than stored, so a resumed payment never shows a stale
+// "+8 days" that the passage of time has since changed.
 function toInitiateResult(
   record: FibSubscription,
+  change: { changeType: PlanChangeType; carryOverDays: number },
 ): Omit<InitiateFibResult, "resumed"> {
   return {
     fibSubscriptionId: record.fibSubscriptionId,
@@ -413,6 +611,8 @@ function toInitiateResult(
     plan: record.plan as Extract<typeof record.plan, "GOLD" | "PREMIUM">,
     intervalMonths: record.intervalMonths,
     amountIQD: record.amountIQD,
+    changeType: change.changeType,
+    carryOverDays: change.carryOverDays,
   };
 }
 

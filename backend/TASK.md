@@ -473,7 +473,47 @@ downgrade branch and then our write applied `cancelAtPeriodEnd` to an already-FR
 
 ---
 
-## 15. Upgrades, early renewal & downgrades — decided 2026-07-26, NOT yet built
+## 15. Upgrades, renewal & downgrades ✅ DONE (2026-07-27)
+Shipped with **one simplification vs the original design, and no migration**: instead of
+scheduling downgrades via a `pendingPlan` column (which would have needed FIB to support a
+delayed first charge — unverified), a single carry-over formula covers every case.
+
+**`carryOverDays(currentPlan, currentPeriodEnd, newPlan, now)`** converts unused value on the
+current plan into days on the new one, at the new plan's daily rate:
+- **renewal** GOLD→GOLD — same rate, remaining days carry 1:1
+- **upgrade** GOLD→PREMIUM — 15 GOLD days ≈ 12,500 IQD ≈ **8** PREMIUM days
+- **downgrade** PREMIUM→GOLD — 15 PREMIUM days ≈ 22,500 IQD ≈ **27** GOLD days
+
+Nobody loses paid time, the new plan starts immediately, and there is no scheduling state to
+maintain. A downgrade simply buys GOLD now with a long carry-over instead of waiting.
+
+- ✅ Guards relaxed: FIB→FIB is allowed (upgrade/downgrade/re-subscribe). The only refusal is
+  buying the plan you already have on a live auto-renewing sub (409 "renews automatically on X").
+  CASH/STRIPE still blocked — settled off-platform.
+- ✅ Carry-over is applied at **activation**, computed from the Subscription row before it is
+  overwritten — so no new columns were needed. Includes `paymentProvider === null`, which is the
+  state a cancelled-but-still-paid subscription is in (that's the re-subscribe case).
+- ✅ Activation clears `cancelAtPeriodEnd`, else the expiry sweep would drop a just-bought plan.
+- ✅ `retireSupersededFibSubscriptions()` cancels the old recurring subscription at FIB **after**
+  the new one is paid — never before, so an abandoned payment can't strip a live plan. Failure
+  is Sentry-reported (possible double charge) but never rolls back the activation.
+- ✅ `initiate-fib` + `/fib/pending` now return `changeType` (NEW/RENEWAL/UPGRADE/DOWNGRADE) and
+  `carryOverDays` so the UI can explain the deal before payment.
+- ✅ Frontend: the plan section is no longer hidden from paid users. Title/CTA adapt
+  (Upgrade/Switch/Renew), a notice previews the carried days, and buying your current plan is
+  disabled with "renews automatically on X".
+- ✅ 7 new tests (blocked same-plan, upgrade preview, downgrade preview, re-subscribe after
+  cancel, CASH still blocked, NEW case, and end-to-end activation applying carry-over +
+  retiring the old sub).
+
+**Still worth confirming with FIB** (does not block the feature):
+- Whether cancelling subscription A while B is live has any settlement lag that could allow one
+  extra charge on A. The ordering (cancel only after B is paid) bounds the exposure to at most
+  one old-plan charge, which the carry-over would then under-compensate slightly.
+
+---
+
+## 15b. Original upgrade design (superseded — kept for context)
 Today an ACTIVE subscriber is **blocked from buying anything** — we turn away paying customers.
 Agreed design:
 

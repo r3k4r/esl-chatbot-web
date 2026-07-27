@@ -4970,6 +4970,13 @@ export interface paths {
                                 plan?: "GOLD" | "PREMIUM";
                                 intervalMonths?: number;
                                 amountIQD?: number;
+                                /**
+                                 * @description What this purchase does relative to the caller's current plan. NEW = no paid plan right now; RENEWAL = same plan again (only offered once the current one is cancelled or lapsing); UPGRADE/DOWNGRADE = switching tier mid-period.
+                                 * @enum {string}
+                                 */
+                                changeType?: "NEW" | "RENEWAL" | "UPGRADE" | "DOWNGRADE";
+                                /** @description Unused days on the current plan, converted to this plan's daily rate and added on top when the payment activates. 0 when there is nothing to carry. */
+                                carryOverDays?: number;
                                 /** @description True when an existing pending payment was handed back instead of a new one being created (same plan + interval already awaiting payment). */
                                 resumed?: boolean;
                             };
@@ -5054,6 +5061,13 @@ export interface paths {
                                 plan?: "GOLD" | "PREMIUM";
                                 intervalMonths?: number;
                                 amountIQD?: number;
+                                /**
+                                 * @description What this purchase does relative to the caller's current plan. NEW = no paid plan right now; RENEWAL = same plan again (only offered once the current one is cancelled or lapsing); UPGRADE/DOWNGRADE = switching tier mid-period.
+                                 * @enum {string}
+                                 */
+                                changeType?: "NEW" | "RENEWAL" | "UPGRADE" | "DOWNGRADE";
+                                /** @description Unused days on the current plan, converted to this plan's daily rate and added on top when the payment activates. 0 when there is nothing to carry. */
+                                carryOverDays?: number;
                                 resumed?: boolean;
                             } | null;
                         };

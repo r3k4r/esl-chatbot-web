@@ -84,6 +84,31 @@ async function getSubscription(userId: string) {
   return prisma.subscription.findUnique({ where: { userId } });
 }
 
+// The webhook is fire-and-forget (202 then async work), so assertions have to poll.
+async function waitForFibStatus(
+  recordId: string,
+  expected: string,
+  timeoutMs = 5000,
+): Promise<void> {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    const rec = await prisma.fibSubscription.findUnique({ where: { id: recordId } });
+    if (rec?.fibStatus === expected) return;
+    await new Promise<void>((r) => setTimeout(r, 100));
+  }
+  throw new Error(`waitForFibStatus: timed out waiting for fibStatus=${expected}`);
+}
+
+async function waitForPlan(userId: string, expected: string, timeoutMs = 5000): Promise<void> {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    const sub = await prisma.subscription.findUnique({ where: { userId } });
+    if (sub?.plan === expected) return;
+    await new Promise<void>((r) => setTimeout(r, 100));
+  }
+  throw new Error(`waitForPlan: timed out waiting for plan=${expected}`);
+}
+
 // ── Spy management ────────────────────────────────────────────────────────────
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -575,6 +600,172 @@ describe("GET /api/v1/subscriptions/fib/:subscriptionId/status", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+describe("Plan changes: upgrade, downgrade, re-subscribe (Task 15)", () => {
+  const daysFromNow = (n: number) => new Date(Date.now() + n * 24 * 60 * 60 * 1000);
+
+  it("409 — buying the plan you already have on a live auto-renewing sub", async () => {
+    // Not a dead end, just pointless: FIB already renews it. Blocking prevents paying
+    // twice for the same thing.
+    const u = track(
+      await createTestUser({
+        plan: "GOLD",
+        status: "ACTIVE",
+        paymentProvider: "FIB",
+        currentPeriodEnd: daysFromNow(20),
+      }),
+    );
+
+    const res = await request(app)
+      .post("/api/v1/subscriptions/initiate-fib")
+      .set(auth(u.token))
+      .send({ plan: "GOLD", intervalMonths: 1 });
+
+    expect(res.status).toBe(409);
+    expect(createSpy).not.toHaveBeenCalled();
+  });
+
+  it("201 — UPGRADE GOLD→PREMIUM is allowed and previews the carried-over days", async () => {
+    // 15 days of GOLD left ≈ 15 × (25,000/30) = 12,500 IQD.
+    // PREMIUM costs 45,000/30 = 1,500/day → 12,500/1,500 = 8 bonus days.
+    const u = track(
+      await createTestUser({
+        plan: "GOLD",
+        status: "ACTIVE",
+        paymentProvider: "FIB",
+        currentPeriodEnd: daysFromNow(15),
+      }),
+    );
+
+    const res = await request(app)
+      .post("/api/v1/subscriptions/initiate-fib")
+      .set(auth(u.token))
+      .send({ plan: "PREMIUM", intervalMonths: 1 });
+
+    expect(res.status).toBe(201);
+    expect(res.body.data.changeType).toBe("UPGRADE");
+    expect(res.body.data.carryOverDays).toBe(8);
+    expect(createSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("201 — DOWNGRADE PREMIUM→GOLD is allowed and carries MORE days (higher rate → cheaper days)", async () => {
+    // 15 days of PREMIUM ≈ 15 × 1,500 = 22,500 IQD → 22,500 / (25,000/30) = 27 GOLD days.
+    const u = track(
+      await createTestUser({
+        plan: "PREMIUM",
+        status: "ACTIVE",
+        paymentProvider: "FIB",
+        currentPeriodEnd: daysFromNow(15),
+      }),
+    );
+
+    const res = await request(app)
+      .post("/api/v1/subscriptions/initiate-fib")
+      .set(auth(u.token))
+      .send({ plan: "GOLD", intervalMonths: 1 });
+
+    expect(res.status).toBe(201);
+    expect(res.body.data.changeType).toBe("DOWNGRADE");
+    expect(res.body.data.carryOverDays).toBe(27);
+  });
+
+  it("201 — re-subscribing to the same plan after cancelling is allowed (RENEWAL)", async () => {
+    // Cancelled but still paid up: paymentProvider is null while plan/period survive,
+    // which is exactly the state carry-over has to recognise.
+    const u = track(
+      await createTestUser({
+        plan: "GOLD",
+        status: "ACTIVE",
+        paymentProvider: null,
+        currentPeriodEnd: daysFromNow(10),
+      }),
+    );
+    await prisma.subscription.update({
+      where: { userId: u.id },
+      data: { cancelAtPeriodEnd: true },
+    });
+
+    const res = await request(app)
+      .post("/api/v1/subscriptions/initiate-fib")
+      .set(auth(u.token))
+      .send({ plan: "GOLD", intervalMonths: 1 });
+
+    expect(res.status).toBe(201);
+    expect(res.body.data.changeType).toBe("RENEWAL");
+    expect(res.body.data.carryOverDays).toBe(10); // same rate → 1:1
+  });
+
+  it("409 — still refuses to stack FIB on an admin-managed CASH plan", async () => {
+    const u = track(
+      await createTestUser({
+        plan: "GOLD",
+        status: "ACTIVE",
+        paymentProvider: "CASH",
+        currentPeriodEnd: daysFromNow(20),
+      }),
+    );
+
+    const res = await request(app)
+      .post("/api/v1/subscriptions/initiate-fib")
+      .set(auth(u.token))
+      .send({ plan: "PREMIUM", intervalMonths: 1 });
+
+    expect(res.status).toBe(409);
+    expect(createSpy).not.toHaveBeenCalled();
+  });
+
+  it("201 — NEW when there is no paid plan: nothing to carry over", async () => {
+    const u = track(await createTestUser({ plan: "FREE", status: "ACTIVE" }));
+
+    const res = await request(app)
+      .post("/api/v1/subscriptions/initiate-fib")
+      .set(auth(u.token))
+      .send({ plan: "GOLD", intervalMonths: 1 });
+
+    expect(res.status).toBe(201);
+    expect(res.body.data.changeType).toBe("NEW");
+    expect(res.body.data.carryOverDays).toBe(0);
+  });
+
+  it("202 — activating an upgrade adds the carried days and retires the old FIB sub", async () => {
+    const u = track(
+      await createTestUser({
+        plan: "GOLD",
+        status: "ACTIVE",
+        paymentProvider: "FIB",
+        currentPeriodEnd: daysFromNow(15), // → 8 PREMIUM days
+      }),
+    );
+    const oldSub = await makeFibRecord(u.id, { fibStatus: "ACTIVE", plan: "GOLD" });
+    const newSub = await makeFibRecord(u.id, {
+      fibStatus: "DRAFT",
+      plan: "PREMIUM",
+      amountIQD: 45_000,
+    });
+
+    const fibActiveUntil = Date.now() + 30 * 24 * 60 * 60 * 1000;
+    getSpy.mockResolvedValue(mockDetails("ACTIVE", fibActiveUntil));
+
+    const res = await request(app)
+      .post("/api/v1/subscriptions/webhook/fib")
+      .send({ subscriptionId: newSub.fibSubscriptionId, status: "ACTIVE" });
+
+    expect(res.status).toBe(202);
+    await waitForFibStatus(newSub.id, "ACTIVE");
+
+    const sub = await getSubscription(u.id);
+    expect(sub?.plan).toBe("PREMIUM");
+    expect(sub?.cancelAtPeriodEnd).toBe(false);
+    // FIB's own 30 days + the 8 carried from the unused GOLD time
+    const expectedEnd = fibActiveUntil + 8 * 24 * 60 * 60 * 1000;
+    expect(sub?.currentPeriodEnd?.getTime()).toBe(expectedEnd);
+
+    // The superseded GOLD subscription must be cancelled at FIB, or it keeps charging
+    await waitForFibStatus(oldSub.id, "CANCELLED");
+    expect(cancelSpy).toHaveBeenCalledWith(oldSub.fibSubscriptionId);
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
 describe("Recurring FIB charges (status unchanged, activeUntil moves)", () => {
   it("200 — does not revert a plan an admin has taken over", async () => {
     // An admin assigned CASH PREMIUM on top of a live FIB GOLD sub. A renewal poll
@@ -913,30 +1104,6 @@ describe("POST /api/v1/subscriptions/webhook/fib", () => {
   // Webhook handler: sends 202 immediately, processes async in background.
   // We poll the DB (up to 5s, every 100ms) instead of using a fixed timeout — this
   // handles variable Neon network latency without making the suite artificially slow.
-  async function waitForFibStatus(
-    recordId: string,
-    expected: string,
-    timeoutMs = 5000,
-  ): Promise<void> {
-    const deadline = Date.now() + timeoutMs;
-    while (Date.now() < deadline) {
-      const rec = await prisma.fibSubscription.findUnique({ where: { id: recordId } });
-      if (rec?.fibStatus === expected) return;
-      await new Promise<void>((r) => setTimeout(r, 100));
-    }
-    throw new Error(`waitForFibStatus: timed out waiting for fibStatus=${expected}`);
-  }
-
-  async function waitForPlan(userId: string, expected: string, timeoutMs = 5000): Promise<void> {
-    const deadline = Date.now() + timeoutMs;
-    while (Date.now() < deadline) {
-      const sub = await prisma.subscription.findUnique({ where: { userId } });
-      if (sub?.plan === expected) return;
-      await new Promise<void>((r) => setTimeout(r, 100));
-    }
-    throw new Error(`waitForPlan: timed out waiting for plan=${expected}`);
-  }
-
   // For no-op tests (where nothing should change), a short fixed wait is enough.
   const shortSettle = () => new Promise<void>((r) => setTimeout(r, 200));
 

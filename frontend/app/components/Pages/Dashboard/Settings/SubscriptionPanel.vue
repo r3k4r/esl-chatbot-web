@@ -3,6 +3,7 @@ import { toast } from 'vue-sonner'
 import type {
   InitiateFibResult,
   PlanId,
+  PlanChangeType,
   IntervalMonths,
   UserSubscriptionDetail,
 } from '~/common/types/subscription-types'
@@ -115,6 +116,69 @@ const savings = computed(() => {
 function fmtIQD(n: number) {
   return n.toLocaleString('en-IQ') + ' IQD'
 }
+
+// ─── Plan-change preview ──────────────────────────────────────────────────────
+// Mirrors carryOverDays() in backend/src/modules/subscriptions/subscriptions.service.ts
+// so the user sees what they'll get BEFORE paying. The backend response is the
+// authoritative number (it's what the payment dialog shows); this is the estimate.
+// Keep in sync with PLAN_PRICES_IQD, same as plan-limits.ts.
+const PLAN_RANK: Record<PlanId, number> = { FREE: 0, GOLD: 1, PREMIUM: 2 }
+const dailyRate = (p: PlanId) => (p === 'FREE' ? 0 : PLAN_PRICES_IQD[p][1] / 30)
+
+// Admin-managed (CASH) plans are settled off-platform — those users must contact
+// support rather than stack a FIB payment on top.
+const canBuy = computed(() => !(isActive.value && isCashProvider.value))
+
+const pendingChange = computed<{ changeType: PlanChangeType; carryOverDays: number }>(() => {
+  const end = periodEnd.value ? new Date(periodEnd.value) : null
+  const now = new Date()
+  const hasLivePaidPlan =
+    isActive.value && currentPlan.value !== 'FREE' && !isCashProvider.value && !!end && end > now
+
+  if (!hasLivePaidPlan) return { changeType: 'NEW', carryOverDays: 0 }
+
+  const remainingDays = (end!.getTime() - now.getTime()) / 86_400_000
+  const newRate = dailyRate(selectedPlan.value)
+  const carryOverDays = newRate > 0
+    ? Math.floor((remainingDays * dailyRate(currentPlan.value)) / newRate)
+    : 0
+
+  const changeType: PlanChangeType =
+    currentPlan.value === selectedPlan.value
+      ? 'RENEWAL'
+      : PLAN_RANK[selectedPlan.value] > PLAN_RANK[currentPlan.value]
+        ? 'UPGRADE'
+        : 'DOWNGRADE'
+
+  return { changeType, carryOverDays }
+})
+
+const sectionTitle = computed(() => {
+  switch (pendingChange.value.changeType) {
+    case 'RENEWAL':   return 'Renew your plan'
+    case 'DOWNGRADE': return 'Change your plan'
+    case 'UPGRADE':   return 'Upgrade your plan'
+    default:          return 'Choose your plan'
+  }
+})
+
+// Buying the plan you already have on a live auto-renewing subscription is refused by
+// the backend (409) — disable it here so the user isn't sent into a pointless error.
+const alreadyOnThisPlan = computed(
+  () => pendingChange.value.changeType === 'RENEWAL' && !isCancelling.value,
+)
+
+const ctaText = computed(() => {
+  if (initiating.value) return 'Preparing payment…'
+  const name = PLAN_META[selectedPlan.value].name
+  if (alreadyOnThisPlan.value) return `You're already on ${name}`
+  switch (pendingChange.value.changeType) {
+    case 'UPGRADE':   return `Upgrade to ${name}`
+    case 'DOWNGRADE': return `Switch to ${name}`
+    case 'RENEWAL':   return `Renew ${name}`
+    default:          return `Subscribe to ${name}`
+  }
+})
 
 // ─── Actions ─────────────────────────────────────────────────────────────────
 
@@ -327,11 +391,29 @@ const planBadgeStyle = computed(() => {
     />
 
     <!-- ── Upgrade section ────────────────────────────────────────────────── -->
-    <template v-if="currentPlan === 'FREE' || !isActive">
+    <!-- Also shown to paid users now: switching tier mid-period is allowed, and the
+         unused time carries over. Only hidden for admin-managed CASH plans, which
+         must go through support. -->
+    <template v-if="canBuy">
       <div class="dash-card p-5 space-y-5">
         <AppText size="14" weight="semibold" class-list="block" :style="`color:var(--text-heading)`">
-          Upgrade your plan
+          {{ sectionTitle }}
         </AppText>
+
+        <!-- Carry-over notice: switching mid-period never wastes paid time -->
+        <div
+          v-if="pendingChange.carryOverDays > 0"
+          class="flex items-start gap-2 px-4 py-3 rounded-xl"
+          style="background:var(--surface-raised);border:1px solid var(--border-inner)"
+        >
+          <AppIconsax name="TickCircle" color="var(--color-brand-primary)" :size="16" class="mt-0.5 shrink-0" />
+          <AppText size="13" :style="`color:var(--text-body)`">
+            Your remaining {{ currentPlan === 'FREE' ? '' : PLAN_META[currentPlan].name }} time is not lost —
+            it converts to about <strong>{{ pendingChange.carryOverDays }} extra
+            {{ pendingChange.carryOverDays === 1 ? 'day' : 'days' }}</strong>
+            of {{ PLAN_META[selectedPlan].name }}, added on top when your payment goes through.
+          </AppText>
+        </div>
 
         <!-- Plan selector -->
         <div class="grid grid-cols-2 gap-3">
@@ -426,14 +508,20 @@ const planBadgeStyle = computed(() => {
         <AppButton
           variant="primary" size="40" radius="12"
           icon="Wallet2" :icon-config="{ color: 'white', size: 15 }"
-          :text="initiating ? 'Preparing payment…' : `Subscribe to ${PLAN_META[selectedPlan].name}`"
+          :text="ctaText"
           class="w-full justify-center"
           :loading="initiating"
+          :disabled="alreadyOnThisPlan"
           @click="handleSubscribe"
         />
 
         <AppText size="11" class-list="text-center block" :style="`color:var(--text-subtle)`">
-          Paid securely via FIB Bank · IQD only · Cancel anytime
+          <template v-if="alreadyOnThisPlan">
+            It renews automatically on {{ fmtDate(periodEnd) }} — nothing to pay right now.
+          </template>
+          <template v-else>
+            Paid securely via FIB Bank · IQD only · Cancel anytime
+          </template>
         </AppText>
       </div>
     </template>

@@ -71,8 +71,14 @@ export interface InitiateFibResult {
   plan: 'GOLD' | 'PREMIUM'      // the payment's own plan — a resumed payment may
   intervalMonths: IntervalMonths // differ from what the user currently has selected
   amountIQD: number
+  changeType: PlanChangeType    // what this purchase does to the current plan
+  carryOverDays: number         // unused days rolled onto the new plan on activation
   resumed: boolean     // true = existing pending payment handed back, not a new one
 }
+
+// NEW = no paid plan · RENEWAL = same plan again (offered once the current one is
+// cancelled/lapsing) · UPGRADE/DOWNGRADE = switching tier mid-period.
+export type PlanChangeType = 'NEW' | 'RENEWAL' | 'UPGRADE' | 'DOWNGRADE'
 
 // Sent by the backend on a 409 from POST /subscriptions/initiate-fib when a
 // payment for a DIFFERENT plan/interval is already awaiting payment.
