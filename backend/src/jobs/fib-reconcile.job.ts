@@ -27,6 +27,17 @@ export async function runFibReconcileJob(): Promise<void> {
     where: {
       OR: [
         { fibStatus: "DRAFT", validUntil: { gt: now } },
+        // Cancelled DRAFTs that were never activated, still inside their FIB validity
+        // window. THIS IS THE MONEY-SAFETY CASE: a user can pay and hit Cancel before
+        // FIB has updated its own status, so the pre-cancel check still sees DRAFT and
+        // we discard it. Without re-checking here, that payment is gone forever —
+        // nothing else ever looks at a CANCELLED row. If FIB later reports ACTIVE,
+        // applyFibStatusChange activates the plan and the user gets what they paid for.
+        {
+          fibStatus: "CANCELLED",
+          activatedAt: null,
+          validUntil: { gt: now },
+        },
         {
           fibStatus: { in: ["ACTIVE", "TRIAL"] },
           user: {

@@ -58,14 +58,15 @@ const paymentPoints = [
       <!-- Two-column layout -->
       <div class="grid lg:grid-cols-[1fr_320px] gap-6">
 
-        <!-- Left: subscription panel -->
-        <div class="animate-card-enter" style="--delay:60ms">
+        <!-- Left: subscription panel + payment history -->
+        <div class="space-y-5 animate-card-enter" style="--delay:60ms">
           <UiSkeleton v-if="loading" class="h-96 rounded-2xl" />
           <PagesDashboardSettingsSubscriptionPanel
             v-else
             :subscription="subscription"
             @refreshed="fetchSub"
           />
+          <PagesDashboardSettingsPaymentHistory v-if="!loading" />
         </div>
 
         <!-- Right: plan comparison + payment info -->

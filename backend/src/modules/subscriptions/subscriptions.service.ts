@@ -27,6 +27,15 @@ const PLAN_AMOUNTS_IQD: Record<string, Record<number, number>> = {
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
+// Calendar-correct month addition (31 Jan + 1 month → 28/29 Feb, not 3 March).
+function addMonths(from: Date, months: number): Date {
+  const d = new Date(from);
+  const targetDay = d.getDate();
+  d.setMonth(d.getMonth() + months);
+  if (d.getDate() < targetDay) d.setDate(0); // overflowed — clamp to end of month
+  return d;
+}
+
 // Value of one day on a plan, derived from its 1-month price. Used to convert unused
 // time on the current plan into days on the new one.
 function dailyRateIQD(plan: string): number {
@@ -255,7 +264,14 @@ export async function applyFibStatusChange(
   // provider while keeping plan + currentPeriodEnd, so that is exactly what a
   // re-subscribe-after-cancel looks like. CASH/STRIPE are excluded — those are
   // settled off-platform and Guard 1 in initiate already refuses to stack on them.
-  let periodEnd = details.activeUntil ? new Date(details.activeUntil) : null;
+  // FIB does not always return activeUntil. Falling back to null was quietly
+  // corrosive: a null currentPeriodEnd means carry-over never applies (the user is
+  // charged full price with no credit for unused time), the expiry sweep never
+  // downgrades them, and cancelling reads as "no paid time left" and cuts access
+  // immediately. Derive the period from what they actually bought instead.
+  let periodEnd = details.activeUntil
+    ? new Date(details.activeUntil)
+    : addMonths(now, record.intervalMonths);
   let carriedDays = 0;
   const carryEligible =
     current !== null &&
@@ -425,22 +441,11 @@ export async function initiateFibSubscription(
         409,
       );
     }
-    // FIB → FIB is allowed: upgrading, downgrading and re-subscribing after a cancel
-    // are all legitimate. The only thing to refuse is buying the plan they already
-    // have on a live auto-renewing subscription, which would just charge them twice
-    // for the same thing.
-    if (
-      existing.paymentProvider === "FIB" &&
-      existing.plan === plan &&
-      !existing.cancelAtPeriodEnd
-    ) {
-      throw new AppError(
-        existing.currentPeriodEnd
-          ? `You are already on ${plan} and it renews automatically on ${existing.currentPeriodEnd.toISOString().slice(0, 10)}. There is nothing to pay right now.`
-          : `You are already on ${plan}. There is nothing to pay right now.`,
-        409,
-      );
-    }
+    // FIB → FIB is fully allowed: upgrade, downgrade, re-subscribe after a cancel,
+    // and buying more of the same plan to extend. Blocking the same-plan case was
+    // wrong — a user who has turned auto-renew off has no other way to top up, and
+    // anyone who simply wants to pay ahead should be able to. The extra time is never
+    // lost: carry-over stacks the remaining days onto the new period.
   }
 
   // Guard 2: never allow two payable FIB subscriptions at once — each could
@@ -461,21 +466,10 @@ export async function initiateFibSubscription(
     data: { fibStatus: "CANCELLED", cancelledAt: now },
   });
 
-  // A live FIB record is no longer a hard block — it is exactly what an upgrade or a
-  // re-subscribe looks like. It is only a block when it matches the plan the user is
-  // asking to buy AND their Subscription row hasn't synced yet (so Guard 1 couldn't
-  // see it), which would otherwise let them pay twice for the same plan.
-  const liveFib = await prisma.fibSubscription.findFirst({
-    where: { userId, fibStatus: { in: ["ACTIVE", "TRIAL"] } },
-    orderBy: { createdAt: "desc" },
-    select: { id: true, plan: true },
-  });
-  if (liveFib && liveFib.plan === plan && !existing?.cancelAtPeriodEnd) {
-    throw new AppError(
-      `You are already on ${plan}. There is nothing to pay right now.`,
-      409,
-    );
-  }
+  // A live FIB record is not a block at all any more — upgrading, downgrading,
+  // extending the same plan and re-subscribing are all legitimate. Whatever is live
+  // gets retired at FIB once the new payment lands (retireSupersededFibSubscriptions),
+  // and its unused days carry over, so there is nothing left to protect against here.
 
   const draft = await prisma.fibSubscription.findFirst({
     where: { userId, fibStatus: "DRAFT" },
@@ -669,6 +663,39 @@ export async function getFibStatus(
 
 // ─── Cancel ───────────────────────────────────────────────────────────────────
 
+/**
+ * Cancel whatever FIB subscription the caller currently has, without the client
+ * needing to know its id.
+ *
+ * The id-based variant depends on `Subscription.externalSubscriptionId` being in
+ * sync, and any gap there (an activation that didn't set it, a field cleared by an
+ * earlier cancel) surfaces to the user as "no active subscription found" with no way
+ * out. Resolving the record server-side removes that whole failure mode.
+ */
+export async function cancelMyFibSubscription(userId: string): Promise<void> {
+  // Prefer a live subscription over an unpaid draft — "cancel my subscription" means
+  // the plan they are actually paying for. Two explicit queries rather than an
+  // orderBy on fibStatus, which sorts by the enum's declared order (DRAFT first).
+  const record =
+    (await prisma.fibSubscription.findFirst({
+      where: { userId, fibStatus: { in: ["ACTIVE", "TRIAL"] } },
+      orderBy: { createdAt: "desc" },
+    })) ??
+    (await prisma.fibSubscription.findFirst({
+      where: { userId, fibStatus: "DRAFT" },
+      orderBy: { createdAt: "desc" },
+    }));
+
+  if (!record) {
+    throw new AppError(
+      "You don't have a FIB subscription to cancel. If you just paid, wait a moment and refresh.",
+      404,
+    );
+  }
+
+  return cancelFibSubscription(userId, record.fibSubscriptionId);
+}
+
 export async function cancelFibSubscription(
   userId: string,
   fibSubscriptionId: string,
@@ -762,6 +789,38 @@ export async function cancelFibSubscription(
     }),
   ]);
   await deleteCache(cacheKeys.authUser(userId));
+}
+
+// ─── Payment history ──────────────────────────────────────────────────────────
+//
+// Users could see a plan and a price but had no record of what they had actually
+// been charged — which makes any billing question unanswerable for them and for
+// support. Everything here is already stored; it just was never exposed.
+
+export async function listMyFibPayments(userId: string) {
+  const records = await prisma.fibSubscription.findMany({
+    where: { userId },
+    orderBy: { createdAt: "desc" },
+    take: 50,
+    select: {
+      fibSubscriptionId: true,
+      plan: true,
+      intervalMonths: true,
+      amountIQD: true,
+      fibStatus: true,
+      createdAt: true,
+      activatedAt: true,
+      cancelledAt: true,
+      validUntil: true,
+    },
+  });
+
+  return records.map((r) => ({
+    ...r,
+    // Only an activated subscription ever took money. DRAFT = QR generated but never
+    // paid; CANCELLED without activatedAt = abandoned before payment.
+    wasCharged: r.activatedAt !== null,
+  }));
 }
 
 // ─── Webhook ──────────────────────────────────────────────────────────────────

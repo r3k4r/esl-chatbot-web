@@ -26,7 +26,6 @@ const subStatus     = computed(() => props.subscription?.status ?? 'INACTIVE')
 const isActive      = computed(() => subStatus.value === 'ACTIVE')
 const isFibProvider = computed(() => props.subscription?.paymentProvider === 'FIB')
 const isCashProvider= computed(() => props.subscription?.paymentProvider === 'CASH')
-const fibSubId      = computed(() => props.subscription?.externalSubscriptionId ?? null)
 const periodEnd     = computed(() => props.subscription?.currentPeriodEnd ?? null)
 // Cancelled but still paid up — plan keeps working until periodEnd, no refund.
 const isCancelling  = computed(() => props.subscription?.cancelAtPeriodEnd === true)
@@ -70,10 +69,8 @@ function showPending() {
 }
 
 async function cancelPending() {
-  const id = pendingPayment.value?.fibSubscriptionId
-  if (!id) return
   cancellingPending.value = true
-  const res = await cancelFib(id)
+  const res = await cancelFib()
   cancellingPending.value = false
   if (!res.success) {
     // 409 = the payment landed at FIB between opening the QR and pressing Cancel, so
@@ -163,20 +160,14 @@ const sectionTitle = computed(() => {
   }
 })
 
-// Buying the plan you already have on a live auto-renewing subscription is refused by
-// the backend (409) — disable it here so the user isn't sent into a pointless error.
-const alreadyOnThisPlan = computed(
-  () => pendingChange.value.changeType === 'RENEWAL' && !isCancelling.value,
-)
-
 const ctaText = computed(() => {
   if (initiating.value) return 'Preparing payment…'
   const name = PLAN_META[selectedPlan.value].name
-  if (alreadyOnThisPlan.value) return `You're already on ${name}`
   switch (pendingChange.value.changeType) {
     case 'UPGRADE':   return `Upgrade to ${name}`
     case 'DOWNGRADE': return `Switch to ${name}`
-    case 'RENEWAL':   return `Renew ${name}`
+    // Extending the same plan is allowed — the remaining days stack on top.
+    case 'RENEWAL':   return `Add another ${INTERVAL_LABELS[selectedInterval.value].toLowerCase()}`
     default:          return `Subscribe to ${name}`
   }
 })
@@ -209,12 +200,8 @@ async function handleSubscribe() {
 }
 
 async function handleCancel() {
-  if (!fibSubId.value) {
-    toast.error('No active FIB subscription found.')
-    return
-  }
   cancelling.value = true
-  const res = await cancelFib(fibSubId.value)
+  const res = await cancelFib()
   cancelling.value = false
   showCancelConfirm.value = false
 
@@ -512,17 +499,26 @@ const planBadgeStyle = computed(() => {
           :text="ctaText"
           class="w-full justify-center"
           :loading="initiating"
-          :disabled="alreadyOnThisPlan"
           @click="handleSubscribe"
         />
 
-        <AppText size="11" class-list="text-center block" :style="`color:var(--text-subtle)`">
-          <template v-if="alreadyOnThisPlan">
-            It renews automatically on {{ fmtDate(periodEnd) }} — nothing to pay right now.
-          </template>
-          <template v-else>
-            Paid securely via FIB Bank · IQD only · Cancel anytime
-          </template>
+        <!-- Auto-renewal must be stated before payment, not discovered on the next
+             charge. This is a recurring FIB subscription, not a one-off purchase. -->
+        <div
+          class="flex items-start gap-2 px-4 py-3 rounded-xl"
+          style="background:var(--surface-raised);border:1px solid var(--border-inner)"
+        >
+          <AppIconsax name="Refresh2" color="var(--color-text-muted)" :size="16" class="mt-0.5 shrink-0" />
+          <AppText size="13" :style="`color:var(--text-body)`">
+            This subscription <strong>renews automatically</strong> every
+            {{ INTERVAL_LABELS[selectedInterval].toLowerCase() }} at {{ fmtIQD(selectedPrice) }},
+            until you turn renewal off. You can turn it off at any time from this page — you
+            keep your plan until the period you've paid for ends.
+          </AppText>
+        </div>
+
+        <AppText size="12" class-list="text-center block" :style="`color:var(--text-subtle)`">
+          Paid securely via FIB Bank · IQD only
         </AppText>
       </div>
     </template>

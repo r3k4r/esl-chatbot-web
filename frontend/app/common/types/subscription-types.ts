@@ -99,6 +99,22 @@ export interface FibStatusResult {
   lastPaymentAt: string | null
 }
 
+// One row of FIB payment history. `wasCharged` is the only reliable "did money move"
+// signal — a DRAFT is a QR that was never paid, and a CANCELLED row with no
+// activation was abandoned before payment.
+export interface FibPaymentRecord {
+  fibSubscriptionId: string
+  plan: 'GOLD' | 'PREMIUM'
+  intervalMonths: IntervalMonths
+  amountIQD: number
+  fibStatus: FibSubscription['fibStatus']
+  wasCharged: boolean
+  createdAt: string
+  activatedAt: string | null
+  cancelledAt: string | null
+  validUntil: string | null
+}
+
 export interface UserSubscriptionDetail {
   plan: PlanId
   status: Subscription['status']

@@ -42,10 +42,24 @@ const expiry = computed(() => {
       </div>
     </div>
 
-    <AppText size="13" class-list="block mb-4" :style="`color:var(--text-body)`">
+    <AppText size="13" class-list="block mb-3" :style="`color:var(--text-body)`">
       You started this payment but haven't completed it yet. Reopen it to scan the QR code, or
       cancel it if you'd rather choose a different plan. It expires on {{ expiry }}.
     </AppText>
+
+    <!-- FIB can take a few minutes to report a payment. Cancelling in that window used
+         to be how people lost money, so warn before they do it. -->
+    <div
+      class="flex items-start gap-2 px-4 py-3 rounded-xl mb-4"
+      style="background:var(--status-blocked-bg);border:1px solid var(--border-inner)"
+    >
+      <AppIconsax name="InfoCircle" color="var(--status-blocked-text)" :size="16" class="mt-0.5 shrink-0" />
+      <AppText size="13" :style="`color:var(--text-body)`">
+        <strong>Already paid?</strong> Don't cancel — FIB can take a few minutes to confirm.
+        Wait and refresh; your plan activates on its own. Cancelling is only for a payment you
+        decided <em>not</em> to make.
+      </AppText>
+    </div>
 
     <div class="flex items-center gap-2">
       <AppButton

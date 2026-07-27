@@ -1,6 +1,7 @@
 import type {
   InitiateFibResult,
   FibStatusResult,
+  FibPaymentRecord,
   UserSubscriptionDetail,
   PlanId,
   IntervalMonths,
@@ -45,13 +46,23 @@ export function useSubscription() {
     })
   }
 
-  async function cancelFib(subscriptionId: string) {
+  // No id: the backend resolves the caller's subscription itself, so a stale
+  // externalSubscriptionId can never leave a user unable to cancel.
+  async function cancelFib() {
     return await useHttp({
       method: 'DELETE',
-      url: `/subscriptions/fib/${subscriptionId}`,
+      url: '/subscriptions/fib',
       requireAuth: true,
     })
   }
 
-  return { getMySubscription, initiateFib, getPendingFib, getFibStatus, cancelFib }
+  async function listFibPayments() {
+    return await useHttp<SingleResponse<FibPaymentRecord[]>>({
+      method: 'GET',
+      url: '/subscriptions/fib/payments',
+      requireAuth: true,
+    })
+  }
+
+  return { getMySubscription, initiateFib, getPendingFib, getFibStatus, cancelFib, listFibPayments }
 }

@@ -11,6 +11,8 @@ import {
   getPendingFibSubscription,
   getFibStatus,
   cancelFibSubscription,
+  cancelMyFibSubscription,
+  listMyFibPayments,
   handleFibWebhook,
 } from "./subscriptions.service.ts";
 
@@ -42,6 +44,22 @@ export const cancelFibHandler = asyncHandler(
     const { subscriptionId } = fibSubscriptionIdParamSchema.parse(req.params);
     await cancelFibSubscription(req.user!.id, subscriptionId);
     sendSuccess(res, null, "Subscription cancelled successfully");
+  },
+);
+
+// Cancels whatever the caller currently has — no id needed from the client, so a
+// stale externalSubscriptionId can't leave them unable to cancel.
+export const cancelMyFibHandler = asyncHandler(
+  async (req: Request, res: Response) => {
+    await cancelMyFibSubscription(req.user!.id);
+    sendSuccess(res, null, "Subscription cancelled successfully");
+  },
+);
+
+export const listMyFibPaymentsHandler = asyncHandler(
+  async (req: Request, res: Response) => {
+    const result = await listMyFibPayments(req.user!.id);
+    sendSuccess(res, result, "Payment history retrieved");
   },
 );
 

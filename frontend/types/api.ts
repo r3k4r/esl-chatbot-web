@@ -5084,6 +5084,125 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/subscriptions/fib/payments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * The caller's FIB payment history (most recent 50)
+         * @description Every FIB subscription the user has started, so they can see what they were actually charged. `wasCharged` is true only when the subscription activated — a DRAFT (QR generated, never paid) or a CANCELLED row with no activation never took money.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Payment history */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            success?: boolean;
+                            data?: {
+                                fibSubscriptionId?: string;
+                                /** @enum {string} */
+                                plan?: "GOLD" | "PREMIUM";
+                                intervalMonths?: number;
+                                amountIQD?: number;
+                                /** @enum {string} */
+                                fibStatus?: "DRAFT" | "TRIAL" | "ACTIVE" | "REJECTED" | "CANCELLED";
+                                wasCharged?: boolean;
+                                /** Format: date-time */
+                                createdAt?: string;
+                                /** Format: date-time */
+                                activatedAt?: string | null;
+                                /** Format: date-time */
+                                cancelledAt?: string | null;
+                                /** Format: date-time */
+                                validUntil?: string | null;
+                            }[];
+                        };
+                    };
+                };
+                401: components["responses"]["Unauthorized"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/subscriptions/fib": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Cancel the caller's current FIB subscription (no id required)
+         * @description Resolves the subscription server-side, so a stale `externalSubscriptionId` can never leave a user unable to cancel. Prefers a live ACTIVE/TRIAL subscription over an unpaid DRAFT. Cancelling a paid plan keeps access until `currentPeriodEnd` (no refunds); cancelling an unpaid DRAFT just discards it, and re-checks with FIB first so a payment in flight is never thrown away.
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Cancelled */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                401: components["responses"]["Unauthorized"];
+                /** @description Nothing to cancel */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Already cancelled */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description FIB unreachable — refused rather than risk discarding a payment */
+                503: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/subscriptions/fib/{subscriptionId}/status": {
         parameters: {
             query?: never;

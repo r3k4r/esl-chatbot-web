@@ -612,9 +612,10 @@ describe("GET /api/v1/subscriptions/fib/:subscriptionId/status", () => {
 describe("Plan changes: upgrade, downgrade, re-subscribe (Task 15)", () => {
   const daysFromNow = (n: number) => new Date(Date.now() + n * 24 * 60 * 60 * 1000);
 
-  it("409 — buying the plan you already have on a live auto-renewing sub", async () => {
-    // Not a dead end, just pointless: FIB already renews it. Blocking prevents paying
-    // twice for the same thing.
+  it("201 — buying the plan you already have is allowed and extends it (RENEWAL)", async () => {
+    // Blocking this was wrong: a user with auto-renew turned off has no other way to
+    // top up, and paying ahead is legitimate. The remaining days are not lost — they
+    // stack onto the new period via carry-over.
     const u = track(
       await createTestUser({
         plan: "GOLD",
@@ -629,8 +630,10 @@ describe("Plan changes: upgrade, downgrade, re-subscribe (Task 15)", () => {
       .set(auth(u.token))
       .send({ plan: "GOLD", intervalMonths: 1 });
 
-    expect(res.status).toBe(409);
-    expect(createSpy).not.toHaveBeenCalled();
+    expect(res.status).toBe(201);
+    expect(res.body.data.changeType).toBe("RENEWAL");
+    expect(res.body.data.carryOverDays).toBe(20); // same rate → 1:1
+    expect(createSpy).toHaveBeenCalledTimes(1);
   });
 
   it("201 — UPGRADE GOLD→PREMIUM is allowed and previews the carried-over days", async () => {
@@ -967,6 +970,34 @@ describe("DELETE /api/v1/subscriptions/fib/:subscriptionId", () => {
     expect(sub?.plan).toBe("GOLD");
     expect(sub?.status).toBe("ACTIVE");
     expect(sub?.paymentProvider).toBe("FIB");
+  });
+
+  it("202 — a DRAFT cancelled before FIB caught up still activates when the payment lands", async () => {
+    // The real-world failure: FIB is slow, so the pre-cancel check still sees DRAFT
+    // and we discard the record — then the payment confirms moments later. Nothing
+    // used to revisit a CANCELLED row, so the money was gone. The reconcile job now
+    // watches cancelled-but-never-activated drafts, and any later ACTIVE report
+    // (webhook or poll) activates the plan the user actually paid for.
+    const u = track(await createTestUser({ plan: "FREE", status: "ACTIVE" }));
+    const record = await makeFibRecord(u.id, {
+      fibStatus: "CANCELLED",
+      cancelledAt: new Date(),
+      activatedAt: null,
+    });
+
+    const activeUntilMs = Date.now() + 30 * 24 * 60 * 60 * 1000;
+    getSpy.mockResolvedValue(mockDetails("ACTIVE", activeUntilMs));
+
+    const res = await request(app)
+      .post("/api/v1/subscriptions/webhook/fib")
+      .send({ subscriptionId: record.fibSubscriptionId, status: "ACTIVE" });
+
+    expect(res.status).toBe(202);
+    await waitForFibStatus(record.id, "ACTIVE");
+
+    const sub = await getSubscription(u.id);
+    expect(sub?.plan).toBe("GOLD"); // the payment was honoured, not lost
+    expect(sub?.status).toBe("ACTIVE");
   });
 
   it("503 — refuses to cancel a DRAFT when FIB is unreachable (never discards a possible payment)", async () => {

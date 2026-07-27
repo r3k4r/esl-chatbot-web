@@ -9,6 +9,8 @@ import {
   getPendingFibHandler,
   getFibStatusHandler,
   cancelFibHandler,
+  cancelMyFibHandler,
+  listMyFibPaymentsHandler,
   fibWebhookHandler,
 } from "./subscriptions.controller.ts";
 
@@ -160,6 +162,70 @@ router.post("/initiate-fib", authenticate, initiateFibHandler);
  *       401: { $ref: '#/components/responses/Unauthorized' }
  */
 router.get("/fib/pending", authenticate, getPendingFibHandler);
+
+/**
+ * @swagger
+ * /subscriptions/fib/payments:
+ *   get:
+ *     summary: The caller's FIB payment history (most recent 50)
+ *     description: >
+ *       Every FIB subscription the user has started, so they can see what they were
+ *       actually charged. `wasCharged` is true only when the subscription activated —
+ *       a DRAFT (QR generated, never paid) or a CANCELLED row with no activation never
+ *       took money.
+ *     tags: [Subscriptions]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Payment history
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean }
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       fibSubscriptionId: { type: string }
+ *                       plan: { type: string, enum: [GOLD, PREMIUM] }
+ *                       intervalMonths: { type: integer }
+ *                       amountIQD: { type: integer }
+ *                       fibStatus: { type: string, enum: [DRAFT, TRIAL, ACTIVE, REJECTED, CANCELLED] }
+ *                       wasCharged: { type: boolean }
+ *                       createdAt: { type: string, format: date-time }
+ *                       activatedAt: { type: string, format: date-time, nullable: true }
+ *                       cancelledAt: { type: string, format: date-time, nullable: true }
+ *                       validUntil: { type: string, format: date-time, nullable: true }
+ *       401: { $ref: '#/components/responses/Unauthorized' }
+ */
+router.get("/fib/payments", authenticate, listMyFibPaymentsHandler);
+
+/**
+ * @swagger
+ * /subscriptions/fib:
+ *   delete:
+ *     summary: Cancel the caller's current FIB subscription (no id required)
+ *     description: >
+ *       Resolves the subscription server-side, so a stale `externalSubscriptionId` can
+ *       never leave a user unable to cancel. Prefers a live ACTIVE/TRIAL subscription
+ *       over an unpaid DRAFT. Cancelling a paid plan keeps access until
+ *       `currentPeriodEnd` (no refunds); cancelling an unpaid DRAFT just discards it,
+ *       and re-checks with FIB first so a payment in flight is never thrown away.
+ *     tags: [Subscriptions]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200: { description: Cancelled }
+ *       401: { $ref: '#/components/responses/Unauthorized' }
+ *       404: { description: Nothing to cancel }
+ *       409: { description: Already cancelled, or the payment landed first and the plan was activated instead }
+ *       503: { description: FIB unreachable — refused rather than risk discarding a payment }
+ */
+router.delete("/fib", authenticate, cancelMyFibHandler);
 
 /**
  * @swagger
