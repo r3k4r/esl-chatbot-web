@@ -576,6 +576,32 @@ describe("GET /api/v1/subscriptions/fib/:subscriptionId/status", () => {
 
 // ─────────────────────────────────────────────────────────────────────────────
 describe("Recurring FIB charges (status unchanged, activeUntil moves)", () => {
+  it("200 — does not revert a plan an admin has taken over", async () => {
+    // An admin assigned CASH PREMIUM on top of a live FIB GOLD sub. A renewal poll
+    // used to force plan/provider back to GOLD/FIB, silently undoing that decision.
+    const end = new Date(Date.now() + 10 * 24 * 60 * 60 * 1000);
+    const u = track(
+      await createTestUser({
+        plan: "PREMIUM",
+        status: "ACTIVE",
+        paymentProvider: "CASH",
+        currentPeriodEnd: end,
+      }),
+    );
+    const record = await makeFibRecord(u.id, { fibStatus: "ACTIVE" }); // GOLD at FIB
+
+    getSpy.mockResolvedValue(mockDetails("ACTIVE", Date.now() + 40 * 24 * 60 * 60 * 1000));
+
+    await request(app)
+      .get(`/api/v1/subscriptions/fib/${record.fibSubscriptionId}/status`)
+      .set(auth(u.token));
+
+    const sub = await getSubscription(u.id);
+    expect(sub?.plan).toBe("PREMIUM");            // admin's decision intact
+    expect(sub?.paymentProvider).toBe("CASH");
+    expect(sub?.currentPeriodEnd?.getTime()).toBe(end.getTime());
+  });
+
   // FIB subscriptions recur, and a renewal charge extends activeUntil WITHOUT changing
   // the status. applyFibStatusChange used to early-return on an unchanged status, so
   // currentPeriodEnd went stale while FIB kept charging — and the expiry sweep then
@@ -984,7 +1010,9 @@ describe("POST /api/v1/subscriptions/webhook/fib", () => {
     expect(sub?.plan).toBe("FREE"); // DRAFT never activated it
   });
 
-  it("202 — ACTIVE→CANCELLED: user subscription downgraded to FREE", async () => {
+  it("202 — ACTIVE→CANCELLED with no paid time left: downgraded to FREE immediately", async () => {
+    // No currentPeriodEnd → nothing left to preserve, so the downgrade is immediate.
+    // The complementary case (paid time remaining) is the test below.
     const u = track(
       await createTestUser({ plan: "GOLD", status: "ACTIVE", paymentProvider: "FIB" }),
     );
@@ -1001,6 +1029,39 @@ describe("POST /api/v1/subscriptions/webhook/fib", () => {
     const sub = await getSubscription(u.id);
     expect(sub?.plan).toBe("FREE");
     expect(sub?.paymentProvider).toBeNull();
+    expect(sub?.cancelAtPeriodEnd).toBe(false);
+  });
+
+  it("202 — ACTIVE→CANCELLED with paid time left: keeps the plan until currentPeriodEnd", async () => {
+    // Regression for the P1: the cancellation policy used to live ONLY in
+    // cancelFibSubscription, so a CANCELLED arriving from FIB's side (user cancels in
+    // the FIB app, or a recurring charge is REJECTED) still ran the old immediate
+    // downgrade. The same user action wiped the remaining paid days depending purely
+    // on which button they pressed. Both paths now share buildCancellationData.
+    const periodEnd = new Date(Date.now() + 18 * 24 * 60 * 60 * 1000);
+    const u = track(
+      await createTestUser({
+        plan: "GOLD",
+        status: "ACTIVE",
+        paymentProvider: "FIB",
+        currentPeriodEnd: periodEnd,
+      }),
+    );
+    const record = await makeFibRecord(u.id, { fibStatus: "ACTIVE" });
+    getSpy.mockResolvedValue(mockDetails("CANCELLED"));
+
+    const res = await request(app)
+      .post("/api/v1/subscriptions/webhook/fib")
+      .send({ subscriptionId: record.fibSubscriptionId, status: "CANCELLED" });
+
+    expect(res.status).toBe(202);
+    await waitForFibStatus(record.id, "CANCELLED");
+
+    const sub = await getSubscription(u.id);
+    expect(sub?.plan).toBe("GOLD");             // paid days preserved
+    expect(sub?.status).toBe("ACTIVE");
+    expect(sub?.cancelAtPeriodEnd).toBe(true);
+    expect(sub?.currentPeriodEnd?.getTime()).toBe(periodEnd.getTime());
   });
 
   it("202 — unknown subscriptionId: silent no-op, FIB not queried", async () => {

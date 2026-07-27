@@ -31,6 +31,38 @@ const INTERVAL_ISO: Record<number, string> = {
   12: "P1Y",
 };
 
+// ─── Cancellation policy (single source of truth) ─────────────────────────────
+//
+// No refunds, but the user keeps the plan they already paid for until
+// currentPeriodEnd — then the existing expiry paths (subscription-expiry cron +
+// the lazy check in createSession) drop them to FREE and clear the flag.
+//
+// This MUST be shared by every path that can cancel, because a subscription can be
+// cancelled from three directions: our own DELETE endpoint, a FIB-side cancellation
+// (the user cancels in the FIB app), and a REJECTED recurring charge. When only the
+// endpoint implemented the policy, cancelling in the FIB app instead of our UI
+// silently wiped the remaining paid days.
+function buildCancellationData(currentPeriodEnd: Date | null, now: Date) {
+  const keepsPaidTime = currentPeriodEnd !== null && currentPeriodEnd > now;
+  return keepsPaidTime
+    ? {
+        // Paid period still running — keep plan + status, just stop renewing.
+        cancelAtPeriodEnd: true,
+        paymentProvider: null,
+        externalSubscriptionId: null,
+      }
+    : {
+        // No paid time left (or no known end date) — downgrade now, otherwise a null
+        // currentPeriodEnd would leave the plan active forever.
+        plan: "FREE" as const,
+        status: "ACTIVE" as const,
+        cancelAtPeriodEnd: false,
+        paymentProvider: null,
+        externalSubscriptionId: null,
+        currentPeriodEnd: now,
+      };
+}
+
 // Push `activeUntil` forward when a recurring FIB charge has extended the paid
 // period. Called on every sync where the FIB status did not change, which is exactly
 // what a renewal looks like from our side (ACTIVE → ACTIVE, later activeUntil).
@@ -44,12 +76,29 @@ async function extendPaidPeriodIfRenewed(
   const paidUntil = new Date(details.activeUntil);
   const sub = await prisma.subscription.findUnique({
     where: { userId: record.userId },
-    select: { currentPeriodEnd: true, cancelAtPeriodEnd: true },
+    select: {
+      currentPeriodEnd: true,
+      cancelAtPeriodEnd: true,
+      plan: true,
+      paymentProvider: true,
+    },
   });
 
   // The user cancelled, so we already told FIB to stop charging. Don't resurrect the
   // subscription off a stale activeUntil — the cancellation must stick.
   if (sub?.cancelAtPeriodEnd) return;
+
+  // Someone else owns this subscription now — an admin assigned a CASH/other plan on
+  // top of it. Renewing would silently revert their decision, so leave it alone.
+  if (sub && (sub.paymentProvider !== "FIB" || sub.plan !== record.plan)) {
+    logger.warn("[fib] skipping renewal sync — subscription is no longer FIB-owned", {
+      userId: record.userId,
+      fibPlan: record.plan,
+      currentPlan: sub.plan,
+      currentProvider: sub.paymentProvider,
+    });
+    return;
+  }
 
   // Only ever extend. Never pull the end date backwards off a stale read.
   if (sub?.currentPeriodEnd && paidUntil <= sub.currentPeriodEnd) return;
@@ -111,13 +160,17 @@ export async function applyFibStatusChange(
     currentPeriodStart: now,
     currentPeriodEnd: details.activeUntil ? new Date(details.activeUntil) : null,
   };
-  const cancelledData = {
-    plan: "FREE" as const,
-    status: "ACTIVE" as const,
-    paymentProvider: null,
-    externalSubscriptionId: null,
-    currentPeriodEnd: now,
-  };
+  // A FIB-side cancellation (user cancelled in the FIB app) or a REJECTED recurring
+  // charge must honour the same policy as our own cancel endpoint — keep the paid
+  // time, stop the renewal. Reading currentPeriodEnd first is what makes that possible.
+  let cancelledData: ReturnType<typeof buildCancellationData> | null = null;
+  if (isCancelling) {
+    const current = await prisma.subscription.findUnique({
+      where: { userId: record.userId },
+      select: { currentPeriodEnd: true },
+    });
+    cancelledData = buildCancellationData(current?.currentPeriodEnd ?? null, now);
+  }
 
   await prisma.$transaction([
     prisma.fibSubscription.update({
@@ -136,12 +189,21 @@ export async function applyFibStatusChange(
             create: { userId: record.userId, ...activatedData },
           }),
         ]
-      : isCancelling
+      : isCancelling && cancelledData
         ? [
             prisma.subscription.upsert({
               where: { userId: record.userId },
               update: cancelledData,
-              create: { userId: record.userId, ...cancelledData },
+              // A row can only be missing when there was no paid time to preserve, so
+              // the create is always the plain downgraded state. Spelled out rather
+              // than relying on schema defaults (status defaults to INACTIVE, which
+              // would lock the user out of the FREE tier entirely).
+              create: {
+                userId: record.userId,
+                plan: "FREE",
+                status: "ACTIVE",
+                ...cancelledData,
+              },
             }),
           ]
         : []),
@@ -473,43 +535,26 @@ export async function cancelFibSubscription(
     throw err instanceof Error ? err : new Error(String(err));
   }
 
-  // Cancellation policy: the user keeps the plan they already paid for until
-  // currentPeriodEnd, then drops to FREE. There are no refunds (FIB's 1% commission
-  // is non-refundable and its API has no refund endpoint), so taking access away the
-  // moment they cancel — as this used to — meant charging for days never delivered.
-  // The downgrade itself is already handled by the subscription-expiry cron and the
-  // lazy check in createSession; here we only stop the renewal and flag the intent.
+  // Apply the shared cancellation policy — see buildCancellationData. The downgrade
+  // itself is handled later by the subscription-expiry cron and the lazy check in
+  // createSession; here we only stop the renewal and record the intent.
   const sub = await prisma.subscription.findUnique({
     where: { userId },
     select: { currentPeriodEnd: true },
   });
-  const keepsAccessUntil =
-    sub?.currentPeriodEnd && sub.currentPeriodEnd > now ? sub.currentPeriodEnd : null;
+  const cancellation = buildCancellationData(sub?.currentPeriodEnd ?? null, now);
 
   await prisma.$transaction([
     prisma.fibSubscription.update({
       where: { id: record.id },
       data: { fibStatus: "CANCELLED", cancelledAt: now },
     }),
-    prisma.subscription.update({
+    // upsert for the same reason activation does — a missing row must never make a
+    // cancellation blow up mid-transaction.
+    prisma.subscription.upsert({
       where: { userId },
-      data: keepsAccessUntil
-        ? {
-            // Paid period still running — keep plan + status, just stop renewing.
-            cancelAtPeriodEnd: true,
-            paymentProvider: null,
-            externalSubscriptionId: null,
-          }
-        : {
-            // No paid time left (or unknown end date) — downgrade immediately, else
-            // a null currentPeriodEnd would leave the plan active forever.
-            plan: "FREE",
-            status: "ACTIVE",
-            cancelAtPeriodEnd: false,
-            paymentProvider: null,
-            externalSubscriptionId: null,
-            currentPeriodEnd: now,
-          },
+      update: cancellation,
+      create: { userId, plan: "FREE", status: "ACTIVE", ...cancellation },
     }),
   ]);
   await deleteCache(cacheKeys.authUser(userId));

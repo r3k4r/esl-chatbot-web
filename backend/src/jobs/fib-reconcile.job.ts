@@ -32,7 +32,10 @@ export async function runFibReconcileJob(): Promise<void> {
           user: {
             subscription: {
               cancelAtPeriodEnd: false, // cancelled ones are meant to lapse
-              currentPeriodEnd: { lt: renewalWindow },
+              // NULL must be included explicitly: `lt` never matches NULL in SQL, so
+              // a live sub whose activation returned no activeUntil would otherwise be
+              // invisible here forever — the one case that can't self-heal.
+              OR: [{ currentPeriodEnd: null }, { currentPeriodEnd: { lt: renewalWindow } }],
             },
           },
         },

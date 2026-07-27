@@ -447,6 +447,32 @@ recurring charge (the cron polls regardless; still worth confirming with FIB):
 
 ---
 
+## 14b. Cancellation policy unified across all three cancel paths ✅ DONE (2026-07-26)
+Found in review of Task 13/14. The policy lived **only** in `cancelFibSubscription`, so a
+cancellation arriving from FIB's side still ran the old immediate downgrade:
+
+> User pays for GOLD on 1 Aug (period ends 1 Sep). On 5 Aug they cancel **in the FIB app**
+> instead of the billing page → FIB posts CANCELLED → `plan=FREE, currentPeriodEnd=now`.
+> 27 paid days gone, no refund. Cancelling via our UI the same day kept them until 1 Sep.
+
+There was also a race on our own endpoint: if FIB's callback landed between
+`cancelSubscription()` returning and our transaction committing, the webhook took the old
+downgrade branch and then our write applied `cancelAtPeriodEnd` to an already-FREE row.
+
+- ✅ `buildCancellationData(currentPeriodEnd, now)` is now the single source of truth, shared by
+  `cancelFibSubscription` and the `isCancelling` branch of `applyFibStatusChange`. All three entry
+  points (our endpoint, FIB-side cancellation, REJECTED recurring charge) behave identically.
+- ✅ The cancel transaction now `upsert`s too — same class of bug as the activation P2025.
+- ✅ Renewal sync no longer reverts an admin takeover: if the subscription is no longer FIB-owned
+  (different plan or provider), `extendPaidPeriodIfRenewed` logs and skips instead of forcing
+  plan/provider back to the FIB values.
+- ✅ Reconcile job now matches `currentPeriodEnd IS NULL` explicitly — `lt` never matches NULL in
+  SQL, so a live sub with no known end date was invisible to the one job that could heal it.
+- ✅ 4 tests: FIB-side cancel with paid time left, FIB-side cancel with none, admin-takeover not
+  reverted, plus the pre-existing downgrade test renamed to say which branch it covers.
+
+---
+
 ## 15. Upgrades, early renewal & downgrades — decided 2026-07-26, NOT yet built
 Today an ACTIVE subscriber is **blocked from buying anything** — we turn away paying customers.
 Agreed design:
