@@ -513,6 +513,56 @@ maintain. A downgrade simply buys GOLD now with a long carry-over instead of wai
 
 ---
 
+## 16. Renewal reminder email — NOT built, needed before public launch
+FIB subscriptions recur. A user who buys 1 month and forgets is charged again with **no
+warning**, which is the single most likely source of a chargeback/complaint. Auto-renewal is
+now disclosed *before* payment (Task 15c) and can be turned off, but there is still no
+advance notice of an upcoming charge.
+
+Plan:
+- `Subscription.renewalReminderSentAt DateTime?` (needs a migration + prod SQL) for dedup,
+  mirroring `digestLastSentAt` on LearnerProfile.
+- Cron: daily, find `paymentProvider=FIB, cancelAtPeriodEnd=false, currentPeriodEnd` in ~3 days,
+  not already reminded for this period → send.
+- Email: plan, amount, exact charge date, one-click link to the billing page to turn renewal off.
+- Reuse the Resend setup + `weekly-digest.email.ts` HTML builder pattern.
+
+---
+
+## 17. Open questions for FIB (blocking nothing, but each affects money)
+- Does a **recurring charge** fire a status callback, or only status transitions? (Task 14's
+  fix polls regardless, so this only tells us which path is load-bearing.)
+- Cancelling subscription A while B is live — any settlement lag that could allow one extra
+  charge on A? Ordering bounds it to at most one old-plan charge.
+- **How long after payment does `GET /subscriptions/:id` report ACTIVE?** This is the window
+  in which a user can cancel a payment they already made. Task 15c makes that recoverable, but
+  knowing the real lag would let us set an accurate "wait N minutes" message.
+- Is `trialPeriod` on create usable to delay the first charge? If yes, true "downgrade at
+  period end" becomes possible (see 15b).
+
+---
+
+## 15c. Live-testing fixes ✅ DONE (2026-07-27)
+Found by Aland testing real payments on prod. Two lost money.
+
+- ✅ **A DRAFT cancelled before FIB caught up was gone forever.** The pre-cancel check asks FIB,
+  but FIB lags, so it still answers DRAFT → we discard the record → nothing ever revisits a
+  CANCELLED row. The reconcile job now also watches cancelled-but-never-activated drafts inside
+  their validity window, so a late confirmation still activates the plan.
+- ✅ **`activeUntil` is not always returned by FIB**, and the null fallback was quietly
+  corrosive: carry-over never applied (full price, no credit — this is why an upgrade "didn't
+  consider" the existing GOLD), the expiry sweep never downgraded anyone, and cancelling read as
+  "no paid time left" and cut access instantly. Now derived from the purchased interval.
+- ✅ **Same-plan purchase un-blocked** — with auto-renew off there is no other way to top up.
+- ✅ **Cancel no longer needs an id from the client** (`DELETE /subscriptions/fib`). A stale
+  `externalSubscriptionId` previously left users unable to cancel at all.
+- ✅ **Payment history** (`GET /subscriptions/fib/payments` + card) — users can finally see what
+  they were charged and whether a payment actually went through.
+- ✅ **Auto-renewal disclosed before payment**; pending-payment card warns against cancelling a
+  payment that may already be in flight.
+
+---
+
 ## 15b. Original upgrade design (superseded — kept for context)
 Today an ACTIVE subscriber is **blocked from buying anything** — we turn away paying customers.
 Agreed design:
