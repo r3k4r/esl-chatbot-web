@@ -299,9 +299,17 @@ describe("POST /api/v1/subscriptions/initiate-fib", () => {
     expect(discarded!.fibStatus).toBe("CANCELLED");
   });
 
-  it("409 — already has ACTIVE FIB subscription", async () => {
+  it("201 — an ACTIVE FIB subscriber may switch plans (this used to be blocked)", async () => {
+    // Task 15 deliberately reversed this: an active FIB subscriber asking for a
+    // different tier is an upgrade, not a conflict. Only re-buying the SAME plan on a
+    // live auto-renewing subscription is refused (covered in the Task 15 block below).
     const u = track(
-      await createTestUser({ plan: "GOLD", status: "ACTIVE", paymentProvider: "FIB" }),
+      await createTestUser({
+        plan: "GOLD",
+        status: "ACTIVE",
+        paymentProvider: "FIB",
+        currentPeriodEnd: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000),
+      }),
     );
 
     const res = await request(app)
@@ -309,8 +317,9 @@ describe("POST /api/v1/subscriptions/initiate-fib", () => {
       .set(auth(u.token))
       .send({ plan: "PREMIUM", intervalMonths: 1 });
 
-    expect(res.status).toBe(409);
-    expect(createSpy).not.toHaveBeenCalled();
+    expect(res.status).toBe(201);
+    expect(res.body.data.changeType).toBe("UPGRADE");
+    expect(createSpy).toHaveBeenCalledTimes(1);
   });
 
   it("409 — already has ACTIVE CASH subscription (admin-managed)", async () => {

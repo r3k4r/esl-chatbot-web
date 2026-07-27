@@ -61,7 +61,11 @@ export function carryOverDays(
 
   const remainingDays = (currentPeriodEnd.getTime() - now.getTime()) / DAY_MS;
   const unusedValue = remainingDays * dailyRateIQD(currentPlan);
-  return Math.floor(unusedValue / newRate);
+
+  // Round, don't floor. `remainingDays` is a fraction a hair under the whole number
+  // (a period ending in exactly 15 days is 14.9999… by the time this runs), so
+  // flooring would quietly dock the user a day on every switch.
+  return Math.round(unusedValue / newRate);
 }
 
 const PLAN_RANK: Record<string, number> = { FREE: 0, GOLD: 1, PREMIUM: 2 };

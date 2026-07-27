@@ -139,8 +139,9 @@ const pendingChange = computed<{ changeType: PlanChangeType; carryOverDays: numb
 
   const remainingDays = (end!.getTime() - now.getTime()) / 86_400_000
   const newRate = dailyRate(selectedPlan.value)
+  // Round, not floor — matches the backend (see carryOverDays there for why).
   const carryOverDays = newRate > 0
-    ? Math.floor((remainingDays * dailyRate(currentPlan.value)) / newRate)
+    ? Math.round((remainingDays * dailyRate(currentPlan.value)) / newRate)
     : 0
 
   const changeType: PlanChangeType =
