@@ -513,7 +513,30 @@ maintain. A downgrade simply buys GOLD now with a long carry-over instead of wai
 
 ---
 
-## 16. Renewal reminder email — NOT built, needed before public launch
+## 16. Renewal reminder email ✅ DONE (2026-07-29) — **no migration needed**
+Built with **structural dedup instead of the planned `renewalReminderSentAt` column**, so it
+deployed without waiting on a prod SQL statement.
+
+- ✅ `src/jobs/renewal-reminder.job.ts` — daily at **09:00 UTC**. Selects the 24-hour slice of
+  subscriptions whose `currentPeriodEnd` falls exactly 3 days out, so each subscription enters
+  that window on exactly one daily run. Filters: `status=ACTIVE`, `plan != FREE`,
+  `paymentProvider=FIB` (only FIB auto-charges), `cancelAtPeriodEnd=false` (a cancelled user
+  must never be told they're about to be charged). Skips deactivated and `isInternal` accounts.
+- ✅ `src/jobs/renewal-reminder.email.ts` — plan, exact charge date (**rendered in UTC** so the
+  day never shifts by timezone), amount, and a "Manage your subscription" link to
+  `/dashboard/billing`. Checks Resend's `{ error }` return (the SDK returns rather than throws —
+  the bug that once made the digest count failed sends as successes).
+- ✅ `bun run job:renewal-reminder` for manual runs; 5 DB-free unit tests.
+- ⚠️ **The schedule must stay DAILY.** Dedup is the 24h window, so a more frequent cron would
+  email the same cohort repeatedly. Also assumes ONE instance runs the cron (Render Starter = 1);
+  if the service is ever scaled out, add the column and dedup on it.
+- ⚠️ Trade-off accepted: if the job misses a whole day (container down at 09:00), that cohort is
+  skipped rather than caught up. A missed reminder is a soft failure; a double reminder is what
+  users complain about.
+
+---
+
+## 16b. Original plan (superseded — kept for context)
 FIB subscriptions recur. A user who buys 1 month and forgets is charged again with **no
 warning**, which is the single most likely source of a chargeback/complaint. Auto-renewal is
 now disclosed *before* payment (Task 15c) and can be turned off, but there is still no
@@ -617,10 +640,29 @@ Agreed design:
 
 ---
 
-## Blocked
+## 18. Billing review — findings from the 2026-07-29 full re-read
+Backend logic traced end-to-end against the money paths. **No new correctness bugs found** in
+carry-over, activation, cancellation or retire — including the cases most likely to corrupt
+state: double activation (idempotent — the unchanged-status branch only ever extends), a failed
+`retireSupersededFibSubscriptions` (the old record is skipped by the plan/provider guard in
+`extendPaidPeriodIfRenewed` rather than clobbering the new plan), and a retired record being
+re-read by the reconcile cron (excluded — it has `activatedAt`).
 
-### FIB Payment — Waiting for Deployment
-See task 6 above. Code is complete; only the live URL is missing.
+One **UI defect found and fixed**: the payment dialog stopped polling after 5 minutes but kept
+the animated "Waiting for payment…" running forever, so it looked like it was still checking.
+That is the one state where a user might conclude their payment failed and **pay twice**. It now
+switches to "Still not confirmed" with explicit "if you already paid, don't pay again" guidance,
+and the animation stops.
+
+Known-and-accepted (not bugs):
+- After cancelling, the "Provider" row reads "—" because the policy nulls `paymentProvider`
+  while keeping the plan. Cosmetic; the "Cancelled — active until …" banner carries the meaning.
+- An unpaid draft for plan A still blocks starting plan B with a 409 + the pending card. That is
+  the deliberate double-charge guard, and the card can now cancel itself correctly.
+
+---
+
+## Blocked
 
 ### Stripe Integration — Long-Term Future
 Not started. Add after FIB is live and the business wants a second payment option.

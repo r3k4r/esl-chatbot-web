@@ -23,7 +23,8 @@
     "test": "infisical run --env=dev -- bun test",
     "test:env": "bun test",
     "test:watch": "infisical run --env=dev -- bun test --watch",
-    "job:digest": "infisical run --env=dev -- bun scripts/run-digest.ts"
+    "job:digest": "infisical run --env=dev -- bun scripts/run-digest.ts",
+    "job:renewal-reminder": "infisical run --env=dev -- bun scripts/run-renewal-reminder.ts"
   },
   "devDependencies": {
     "@types/bcryptjs": "^3.0.0",

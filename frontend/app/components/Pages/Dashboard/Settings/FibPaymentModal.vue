@@ -26,13 +26,22 @@ const status = ref<FibStatus>('DRAFT')
 const pollInterval = ref<ReturnType<typeof setInterval> | null>(null)
 const pollCount = ref(0)
 const MAX_POLLS = 60 // 5 minutes at 5s intervals
+// Polling gives up after MAX_POLLS. Without surfacing that, the animated
+// "Waiting for payment…" kept running forever and looked like it was still
+// checking — the one state where a user might assume their payment failed and
+// pay a second time.
+const pollTimedOut = ref(false)
 
 function startPolling() {
   if (pollInterval.value) return
   pollInterval.value = setInterval(async () => {
     if (!props.payment) return
     pollCount.value++
-    if (pollCount.value > MAX_POLLS) { stopPolling(); return }
+    if (pollCount.value > MAX_POLLS) {
+      pollTimedOut.value = true
+      stopPolling()
+      return
+    }
 
     const res = await getFibStatus(props.payment.fibSubscriptionId)
     if (!res.success || !res.data) return
@@ -66,6 +75,7 @@ watch(
     if (!open || !props.payment) return
     status.value = 'DRAFT'
     pollCount.value = 0
+    pollTimedOut.value = false
     startPolling()
   },
   { immediate: true },
@@ -81,7 +91,10 @@ const statusConfig = computed<{ label: string; color: string; bg: string; icon: 
     case 'TRIAL':  return { label: 'Payment confirmed!',  color: 'var(--status-active-text)',   bg: 'var(--status-active-bg)',   icon: 'TickCircle'  }
     case 'REJECTED':
     case 'CANCELLED': return { label: 'Payment cancelled', color: 'var(--status-expired-text)',  bg: 'var(--status-expired-bg)',  icon: 'CloseCircle' }
-    default:       return { label: 'Waiting for payment…', color: 'var(--text-muted)',           bg: 'var(--surface-raised)',     icon: 'Clock'       }
+    default:
+      return pollTimedOut.value
+        ? { label: 'Still not confirmed', color: 'var(--text-muted)', bg: 'var(--surface-raised)', icon: 'Clock' }
+        : { label: 'Waiting for payment…', color: 'var(--text-muted)', bg: 'var(--surface-raised)', icon: 'Clock' }
   }
 })
 
@@ -144,8 +157,9 @@ function openAppLink() {
         >
           <AppIconsax :name="statusConfig.icon" :size="14" :color="statusConfig.color" />
           <AppText size="13" weight="semibold" :style="`color:${statusConfig.color}`">{{ statusConfig.label }}</AppText>
-          <!-- Animated dot when pending -->
-          <span v-if="isPending" class="ml-auto flex gap-0.5">
+          <!-- Animated dot when pending — hidden once polling has given up, so the
+               UI never pretends to be checking when it has stopped. -->
+          <span v-if="isPending && !pollTimedOut" class="ml-auto flex gap-0.5">
             <span v-for="i in 3" :key="i" class="size-1.5 rounded-full bg-current animate-bounce" :style="`color:${statusConfig.color};animation-delay:${(i-1)*150}ms`" />
           </span>
         </div>
@@ -212,6 +226,21 @@ function openAppLink() {
               Nothing opened? The FIB app has to be installed — otherwise scan the QR code above.
             </AppText>
           </template>
+
+          <!-- Polling gave up. Never imply the payment failed — FIB confirms late
+               often enough that "pay again" would be the expensive wrong advice. -->
+          <div
+            v-if="pollTimedOut"
+            class="flex items-start gap-2 px-4 py-3 rounded-xl"
+            style="background:var(--status-blocked-bg);border:1px solid var(--border-inner)"
+          >
+            <AppIconsax name="InfoCircle" color="var(--status-blocked-text)" :size="16" class="mt-0.5 shrink-0" />
+            <AppText size="13" :style="`color:var(--text-body)`">
+              We've stopped checking for now. <strong>If you already paid, don't pay again</strong> —
+              FIB sometimes confirms later. Close this and reopen the billing page in a few
+              minutes and your plan will be active.
+            </AppText>
+          </div>
 
           <!-- Expiry -->
           <AppText size="11" class-list="text-center block" :style="`color:var(--text-subtle)`">

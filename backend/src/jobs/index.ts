@@ -5,6 +5,7 @@ import { runSubscriptionExpiryJob } from "./subscription-expiry.job.ts";
 import { runStaleSessionCleanupJob } from "./stale-session-cleanup.job.ts";
 import { runFibReconcileJob } from "./fib-reconcile.job.ts";
 import { runWeeklyDigestJob } from "./weekly-digest.job.ts";
+import { runRenewalReminderJob } from "./renewal-reminder.job.ts";
 
 const jobs: Cron[] = [];
 
@@ -38,7 +39,12 @@ export function startCronJobs(): void {
   // Hourly — fires digest per-user at their local Sunday 08:00 (timezone-aware)
   jobs.push(new Cron("0 * * * *", { timezone: "UTC" }, safeRun("weekly-digest", () => runWeeklyDigestJob())));
 
-  logger.info("[cron] 5 jobs scheduled (streak-reset@00:00, subscription-expiry@01:00, stale-session-cleanup@02:00 UTC, fib-reconcile@*/15min, weekly-digest@hourly/local-Sun08:00)");
+  // 09:00 UTC — warn users 3 days before a recurring FIB charge. Must stay DAILY:
+  // the job dedups structurally on a 24h window, so a more frequent schedule would
+  // email the same cohort repeatedly (see renewal-reminder.job.ts).
+  jobs.push(new Cron("0 9 * * *", { timezone: "UTC" }, safeRun("renewal-reminder", runRenewalReminderJob)));
+
+  logger.info("[cron] 6 jobs scheduled (streak-reset@00:00, subscription-expiry@01:00, stale-session-cleanup@02:00, fib-reconcile@*/15min, weekly-digest@hourly/local-Sun08:00, renewal-reminder@09:00 UTC)");
 }
 
 export function stopCronJobs(): void {
