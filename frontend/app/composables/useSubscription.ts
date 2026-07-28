@@ -46,12 +46,25 @@ export function useSubscription() {
     })
   }
 
-  // No id: the backend resolves the caller's subscription itself, so a stale
-  // externalSubscriptionId can never leave a user unable to cancel.
+  // No id: the backend resolves the caller's subscription itself (preferring the
+  // LIVE one), so a stale externalSubscriptionId can never leave a user unable to
+  // cancel. Use ONLY for "cancel my current plan".
   async function cancelFib() {
     return await useHttp({
       method: 'DELETE',
       url: '/subscriptions/fib',
+      requireAuth: true,
+    })
+  }
+
+  // Targets one SPECIFIC payment. The pending-payment card MUST use this: the no-id
+  // variant prefers the live subscription, so pressing "Cancel payment" on an unpaid
+  // draft was cancelling the user's active plan instead — and the draft survived,
+  // resurrecting the card on every refresh.
+  async function cancelFibById(subscriptionId: string) {
+    return await useHttp({
+      method: 'DELETE',
+      url: `/subscriptions/fib/${subscriptionId}`,
       requireAuth: true,
     })
   }
@@ -64,5 +77,5 @@ export function useSubscription() {
     })
   }
 
-  return { getMySubscription, initiateFib, getPendingFib, getFibStatus, cancelFib, listFibPayments }
+  return { getMySubscription, initiateFib, getPendingFib, getFibStatus, cancelFib, cancelFibById, listFibPayments }
 }

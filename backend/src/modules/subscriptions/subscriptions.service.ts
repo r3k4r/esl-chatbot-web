@@ -236,7 +236,15 @@ export async function applyFibStatusChange(
 
   const now = new Date();
   const isActivating = incomingStatus === "ACTIVE" || incomingStatus === "TRIAL";
-  const isCancelling = incomingStatus === "CANCELLED" || incomingStatus === "REJECTED";
+  const isClosing = incomingStatus === "CANCELLED" || incomingStatus === "REJECTED";
+
+  // A cancellation only touches the user's PLAN when the record being cancelled was
+  // the one backing that plan (locally ACTIVE/TRIAL). A dying DRAFT — an abandoned
+  // or rejected payment attempt — must never mutate the subscription: without this
+  // guard, a user on live GOLD who abandoned a PREMIUM upgrade QR had their GOLD
+  // renewal silently flagged cancelAtPeriodEnd when the unpaid draft expired at FIB.
+  const recordWasLive = record.fibStatus === "ACTIVE" || record.fibStatus === "TRIAL";
+  const isCancelling = isClosing && recordWasLive;
 
   // NOTE: these MUST be upserts, not updates. `update` throws P2025 when the user
   // has no Subscription row, which rolls back the whole transaction — leaving the
@@ -316,7 +324,9 @@ export async function applyFibStatusChange(
       data: {
         fibStatus: incomingStatus,
         ...(isActivating && !record.activatedAt ? { activatedAt: now } : {}),
-        ...(isCancelling && !record.cancelledAt ? { cancelledAt: now } : {}),
+        // cancelledAt is stamped for ANY closing record (including a dying DRAFT);
+        // only the plan mutation below is restricted to previously-live records.
+        ...(isClosing && !record.cancelledAt ? { cancelledAt: now } : {}),
       },
     }),
     ...(isActivating
@@ -406,6 +416,27 @@ async function retireSupersededFibSubscriptions(active: FibSubscription): Promis
   }
 }
 
+// Live-verify a locally-DRAFT record against FIB and sync any change. Returns the
+// status FIB reports, or null when FIB is unreachable (callers fall back to local
+// state; the reconcile cron catches up later). This is what keeps the UI honest:
+// FIB's status feed lags behind the actual payment by minutes, and every decision
+// made from the stale local DRAFT — showing "payment waiting", resuming a QR,
+// blocking an upgrade — was a lie when the user had in fact already paid.
+async function syncDraftWithFib(record: FibSubscription): Promise<FibSubStatusType | null> {
+  if (!fib) return null;
+  try {
+    const details = await fib.getSubscription(record.fibSubscriptionId);
+    await applyFibStatusChange(record, details);
+    return details.status as FibSubStatusType;
+  } catch (err) {
+    logger.warn("[fib] could not live-verify draft — proceeding on local state", {
+      fibSubscriptionId: record.fibSubscriptionId,
+      error: err instanceof Error ? err.message : String(err),
+    });
+    return null;
+  }
+}
+
 function requireFib() {
   if (!fib) {
     throw new AppError(
@@ -454,11 +485,6 @@ export async function initiateFibSubscription(
   // or clear it, otherwise they are locked out of paying until it expires.
   const now = new Date();
 
-  // What this purchase does for the user, and how much unused time rolls into it.
-  // Computed once here so the DRAFT, the resumed payment and the pending endpoint
-  // all describe the same thing.
-  const planChange = describePlanChange(existing, plan, now);
-
   // Sweep expired DRAFTs. An unpaid DRAFT dies at FIB when validUntil passes, so
   // keeping it "pending" locally would block new attempts for no reason.
   await prisma.fibSubscription.updateMany({
@@ -471,10 +497,38 @@ export async function initiateFibSubscription(
   // gets retired at FIB once the new payment lands (retireSupersededFibSubscriptions),
   // and its unused days carry over, so there is nothing left to protect against here.
 
-  const draft = await prisma.fibSubscription.findFirst({
+  let draft = await prisma.fibSubscription.findFirst({
     where: { userId, fibStatus: "DRAFT" },
     orderBy: { createdAt: "desc" },
   });
+
+  // The local DRAFT may already be PAID — FIB's status lags the payment by minutes.
+  // Every branch below (resume the QR, block a different plan) is wrong for a paid
+  // draft, so ask FIB before deciding anything.
+  if (draft) {
+    const live = await syncDraftWithFib(draft);
+    if (live === "ACTIVE" || live === "TRIAL") {
+      // That payment went through and the plan is now active (synced above).
+      if (draft.plan === plan) {
+        throw new AppError(
+          `Your earlier ${plan} payment was just confirmed — your plan is now active. ` +
+            `Subscribe again only if you want to add more time on top.`,
+          409,
+        );
+      }
+      // Different plan requested → this becomes an upgrade/downgrade from the plan
+      // that just activated; fall through with no pending draft.
+      draft = null;
+    } else if (live === "CANCELLED" || live === "REJECTED") {
+      draft = null; // died at FIB — synced locally, nothing pending any more
+    }
+  }
+
+  // What this purchase does for the user, and how much unused time rolls into it.
+  // Computed AFTER the draft sync — a payment confirmed just above changes the
+  // subscription row this math depends on.
+  const subNow = await prisma.subscription.findUnique({ where: { userId } });
+  const planChange = describePlanChange(subNow, plan, now);
 
   if (draft) {
     if (!draft.qrCode) {
@@ -570,7 +624,7 @@ export async function initiateFibSubscription(
 
 export async function getPendingFibSubscription(
   userId: string,
-): Promise<InitiateFibResult | null> {
+): Promise<{ pending: InitiateFibResult | null; paymentConfirmed: boolean }> {
   const now = new Date();
 
   // Same expiry sweep as initiate, so a dead DRAFT is never advertised as pending
@@ -583,12 +637,24 @@ export async function getPendingFibSubscription(
     where: { userId, fibStatus: "DRAFT", qrCode: { not: null } },
     orderBy: { createdAt: "desc" },
   });
-  if (!draft) return null;
+  if (!draft) return { pending: null, paymentConfirmed: false };
+
+  // Never tell the user "payment waiting" without asking FIB first. Their status
+  // feed lags the payment by minutes, and showing a paid payment as pending is what
+  // led users to cancel money they had already sent. If it turns out paid, the sync
+  // activates the plan right here and the caller reports the good news instead.
+  const live = await syncDraftWithFib(draft);
+  if (live === "ACTIVE" || live === "TRIAL") {
+    return { pending: null, paymentConfirmed: true };
+  }
+  if (live === "CANCELLED" || live === "REJECTED") {
+    return { pending: null, paymentConfirmed: false };
+  }
 
   const current = await prisma.subscription.findUnique({ where: { userId } });
   const change = describePlanChange(current, draft.plan, now);
 
-  return { ...toInitiateResult(draft, change), resumed: true };
+  return { pending: { ...toInitiateResult(draft, change), resumed: true }, paymentConfirmed: false };
 }
 
 // Rebuild the initiate payload from a stored row. Only called for rows that

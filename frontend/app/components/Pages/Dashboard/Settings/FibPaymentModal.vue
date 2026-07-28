@@ -151,6 +151,22 @@ function openAppLink() {
         </div>
 
         <template v-if="payment && !isSuccess && !isFailed">
+          <!-- Carry-over: the user must SEE that their unused time is included, not
+               trust that it happened. This is the payment's own number from the
+               backend, not a client estimate. -->
+          <div
+            v-if="payment.carryOverDays > 0"
+            class="flex items-start gap-2 px-4 py-2.5 rounded-xl"
+            style="background:var(--surface-raised);border:1px solid var(--border-inner)"
+          >
+            <AppIconsax name="TickCircle" color="var(--color-brand-primary)" :size="15" class="mt-0.5 shrink-0" />
+            <AppText size="13" :style="`color:var(--text-body)`">
+              Includes <strong>+{{ payment.carryOverDays }} bonus
+              {{ payment.carryOverDays === 1 ? 'day' : 'days' }}</strong> — the unused time from
+              your current plan, added on top when this payment activates.
+            </AppText>
+          </div>
+
           <!-- QR Code — reserved space prevents layout jump -->
           <div class="flex flex-col items-center gap-3">
             <div class="size-48 rounded-2xl overflow-hidden flex items-center justify-center" style="background:white;border:1px solid var(--border-inner)">

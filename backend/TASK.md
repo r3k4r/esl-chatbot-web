@@ -563,6 +563,38 @@ Found by Aland testing real payments on prod. Two lost money.
 
 ---
 
+## 15d. Second round of live-testing fixes ✅ DONE (2026-07-28)
+Aland's retest surfaced the deepest bug so far, plus three more. Root principle applied
+everywhere: **FIB's status feed lags the actual payment by minutes, so no decision may be
+made from a local DRAFT without asking FIB first** (`syncDraftWithFib`).
+
+- ✅ **"Cancel payment" on the pending card was cancelling the LIVE plan.** The card called the
+  new no-id cancel, which prefers ACTIVE/TRIAL over DRAFT — so it cancelled the user's active
+  subscription, reported success, and left the draft intact, resurrecting the card on every
+  refresh (the exact reported symptom). The card now cancels its own `fibSubscriptionId`; the
+  no-id route remains only for "cancel my current plan".
+- ✅ **`GET /fib/pending` live-verifies before answering.** A paid-but-lagging draft activates
+  during the check and returns `data: null` + "Payment confirmed — your plan is now active"
+  (message prefix is a frontend contract → toast + plan refresh). The card can no longer show
+  "Payment waiting" for money already sent.
+- ✅ **`initiate-fib` live-verifies the draft before deciding.** A paid GOLD draft used to block
+  buying PREMIUM ("pending payment" 409) and the carry-over math never saw the GOLD — the
+  "bought premium but gold was the same" report. Now: paid draft activates, same-plan request →
+  informative 409 ("just confirmed"), different plan → proceeds as UPGRADE with carry-over.
+  Plan-change math moved AFTER the sync so it sees the post-activation row.
+- ✅ **A dying DRAFT no longer mutates the user's plan** (found in review): webhook/reconcile
+  reporting CANCELLED for a never-live draft (abandoned upgrade QR expiring) used to run the
+  cancellation policy against the LIVE subscription — flagging `cancelAtPeriodEnd` on a plan the
+  user never asked to cancel. Plan mutation now requires the record to have been locally
+  ACTIVE/TRIAL; the record itself still gets closed + `cancelledAt` stamped.
+- ✅ The payment dialog now shows the carry-over ("Includes +N bonus days…") so the upgrade math
+  is visible before scanning, not an act of faith.
+- ✅ 4 new tests (paid-pending activates via GET, paid same-plan initiate 409s without a second
+  payment, paid GOLD → PREMIUM upgrade end-to-end with carryOverDays=17, abandoned-draft
+  cancellation leaves the live plan untouched).
+
+---
+
 ## 15b. Original upgrade design (superseded — kept for context)
 Today an ACTIVE subscriber is **blocked from buying anything** — we turn away paying customers.
 Agreed design:

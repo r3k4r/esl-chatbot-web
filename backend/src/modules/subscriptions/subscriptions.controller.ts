@@ -26,8 +26,18 @@ export const initiateFibHandler = asyncHandler(
 
 export const getPendingFibHandler = asyncHandler(
   async (req: Request, res: Response) => {
-    const result = await getPendingFibSubscription(req.user!.id);
-    sendSuccess(res, result, result ? "Pending payment retrieved" : "No pending payment");
+    const { pending, paymentConfirmed } = await getPendingFibSubscription(req.user!.id);
+    // The exact "Payment confirmed" prefix is a contract with the frontend
+    // (SubscriptionPanel.loadPending) — it triggers the success toast + plan refresh.
+    sendSuccess(
+      res,
+      pending,
+      paymentConfirmed
+        ? "Payment confirmed — your plan is now active"
+        : pending
+          ? "Pending payment retrieved"
+          : "No pending payment",
+    );
   },
 );
 

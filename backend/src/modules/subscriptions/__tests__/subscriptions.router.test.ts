@@ -609,6 +609,105 @@ describe("GET /api/v1/subscriptions/fib/:subscriptionId/status", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+describe("Paid-but-lagging DRAFTs: FIB is asked before any decision (live-testing fixes)", () => {
+  const daysFromNow = (n: number) => new Date(Date.now() + n * 24 * 60 * 60 * 1000);
+
+  it("GET /fib/pending — a 'pending' payment that was actually PAID activates and stops being pending", async () => {
+    // The card that kept saying "Payment waiting" for a payment the user had made.
+    const u = track(await createTestUser({ plan: "FREE", status: "ACTIVE" }));
+    const draft = await makeFibRecord(u.id, { fibStatus: "DRAFT" });
+    getSpy.mockResolvedValue(mockDetails("ACTIVE", Date.now() + 30 * 24 * 60 * 60 * 1000));
+
+    const res = await request(app)
+      .get("/api/v1/subscriptions/fib/pending")
+      .set(auth(u.token));
+
+    expect(res.status).toBe(200);
+    expect(res.body.data).toBeNull();                        // nothing pending any more
+    expect(res.body.message).toStartWith("Payment confirmed"); // frontend toast contract
+
+    const sub = await getSubscription(u.id);
+    expect(sub?.plan).toBe("GOLD");                          // activated during the check
+    expect(sub?.status).toBe("ACTIVE");
+
+    const rec = await prisma.fibSubscription.findUnique({ where: { id: draft.id } });
+    expect(rec?.fibStatus).toBe("ACTIVE");
+  });
+
+  it("initiate same plan with a PAID draft — 409 'just confirmed', no second payment created", async () => {
+    const u = track(await createTestUser({ plan: "FREE", status: "ACTIVE" }));
+    await makeFibRecord(u.id, { fibStatus: "DRAFT" }); // GOLD, actually paid
+    getSpy.mockResolvedValue(mockDetails("ACTIVE", Date.now() + 30 * 24 * 60 * 60 * 1000));
+
+    const res = await request(app)
+      .post("/api/v1/subscriptions/initiate-fib")
+      .set(auth(u.token))
+      .send({ plan: "GOLD", intervalMonths: 1 });
+
+    expect(res.status).toBe(409);
+    expect(res.body.message).toContain("just confirmed");
+    expect(createSpy).not.toHaveBeenCalled();
+
+    const sub = await getSubscription(u.id);
+    expect(sub?.plan).toBe("GOLD"); // they got what they paid for
+  });
+
+  it("initiate PREMIUM with a PAID GOLD draft — activates the GOLD, then proceeds as an UPGRADE with carry-over", async () => {
+    // The "bought premium but the gold was the same" report: the paid-but-DRAFT GOLD
+    // used to block the PREMIUM purchase outright with 'pending payment' — and the
+    // carry-over math never saw the GOLD the user had just bought.
+    const u = track(await createTestUser({ plan: "FREE", status: "ACTIVE" }));
+    await makeFibRecord(u.id, { fibStatus: "DRAFT" }); // GOLD, actually paid
+    getSpy.mockResolvedValue(mockDetails("ACTIVE", Date.now() + 30 * 24 * 60 * 60 * 1000));
+
+    const res = await request(app)
+      .post("/api/v1/subscriptions/initiate-fib")
+      .set(auth(u.token))
+      .send({ plan: "PREMIUM", intervalMonths: 1 });
+
+    expect(res.status).toBe(201);
+    expect(res.body.data.changeType).toBe("UPGRADE");
+    // 30 days of GOLD ≈ 25,000 IQD ≈ 17 PREMIUM days at 1,500/day
+    expect(res.body.data.carryOverDays).toBe(17);
+    expect(createSpy).toHaveBeenCalledTimes(1);
+
+    const sub = await getSubscription(u.id);
+    expect(sub?.plan).toBe("GOLD"); // GOLD active NOW; PREMIUM applies once its QR is paid
+  });
+
+  it("webhook CANCELLED for a never-live DRAFT does not touch the user's plan", async () => {
+    // Found in review: a user on live GOLD who abandoned a PREMIUM upgrade QR had
+    // their GOLD renewal flagged cancelAtPeriodEnd when the unpaid draft expired.
+    const periodEnd = daysFromNow(20);
+    const u = track(
+      await createTestUser({
+        plan: "GOLD",
+        status: "ACTIVE",
+        paymentProvider: "FIB",
+        currentPeriodEnd: periodEnd,
+      }),
+    );
+    const abandoned = await makeFibRecord(u.id, { fibStatus: "DRAFT", plan: "PREMIUM" });
+    getSpy.mockResolvedValue(mockDetails("CANCELLED"));
+
+    const res = await request(app)
+      .post("/api/v1/subscriptions/webhook/fib")
+      .send({ subscriptionId: abandoned.fibSubscriptionId, status: "CANCELLED" });
+
+    expect(res.status).toBe(202);
+    await waitForFibStatus(abandoned.id, "CANCELLED");
+
+    const sub = await getSubscription(u.id);
+    expect(sub?.plan).toBe("GOLD");                 // live plan untouched
+    expect(sub?.cancelAtPeriodEnd).toBe(false);     // renewal NOT killed
+    expect(sub?.currentPeriodEnd?.getTime()).toBe(periodEnd.getTime());
+
+    const rec = await prisma.fibSubscription.findUnique({ where: { id: abandoned.id } });
+    expect(rec?.cancelledAt).not.toBeNull();        // the record itself is closed
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
 describe("Plan changes: upgrade, downgrade, re-subscribe (Task 15)", () => {
   const daysFromNow = (n: number) => new Date(Date.now() + n * 24 * 60 * 60 * 1000);
 

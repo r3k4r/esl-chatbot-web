@@ -118,9 +118,11 @@ router.post("/initiate-fib", authenticate, initiateFibHandler);
  *     summary: Get the caller's pending (unpaid) FIB payment, if any
  *     description: >
  *       Recovers an in-progress payment — the QR code, manual code and app link of a DRAFT
- *       subscription that is still valid. Lets the client re-show a payment dialog that was
- *       closed or navigated away from. Expired DRAFTs are swept and reported as no pending
- *       payment. Returns `data: null` when there is nothing to resume.
+ *       subscription that is still valid. The draft is LIVE-VERIFIED against FIB first:
+ *       if it turns out to be paid, the plan is activated on the spot and the response is
+ *       `data: null` with the message "Payment confirmed — your plan is now active" (exact
+ *       prefix is a frontend contract). Expired DRAFTs are swept. Returns `data: null` when
+ *       there is nothing to resume.
  *     tags: [Subscriptions]
  *     security:
  *       - bearerAuth: []

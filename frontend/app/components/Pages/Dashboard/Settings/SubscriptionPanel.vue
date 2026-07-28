@@ -17,7 +17,7 @@ const props = defineProps<{
 const emit = defineEmits<{ refreshed: [] }>()
 
 const authStore = useAuthStore()
-const { initiateFib, getPendingFib, cancelFib } = useSubscription()
+const { initiateFib, getPendingFib, cancelFib, cancelFibById } = useSubscription()
 
 // ─── Derived state ────────────────────────────────────────────────────────────
 
@@ -58,6 +58,14 @@ const cancellingPending = ref(false)
 async function loadPending() {
   const res = await getPendingFib()
   pendingPayment.value = res.success ? ((res.data as any)?.data ?? null) : null
+  // The backend live-checks with FIB before answering: a "pending" payment that was
+  // actually completed activates during this call and comes back null with a
+  // confirmation message (exact prefix is a contract with getPendingFibHandler).
+  if (res.success && !pendingPayment.value && res.message?.startsWith('Payment confirmed')) {
+    toast.success('Your payment was confirmed — your plan is now active.')
+    await authStore.fetchUser()
+    emit('refreshed')
+  }
 }
 
 onMounted(loadPending)
@@ -69,8 +77,12 @@ function showPending() {
 }
 
 async function cancelPending() {
+  // MUST target the draft by id — the no-id cancel prefers the LIVE subscription,
+  // which is precisely the wrong thing to cancel from this card.
+  const id = pendingPayment.value?.fibSubscriptionId
+  if (!id) return
   cancellingPending.value = true
-  const res = await cancelFib()
+  const res = await cancelFibById(id)
   cancellingPending.value = false
   if (!res.success) {
     // 409 = the payment landed at FIB between opening the QR and pressing Cancel, so
@@ -182,6 +194,15 @@ async function handleSubscribe() {
   if (!res.success) {
     const status = (res as any).status
     if (status === 409) {
+      // "just confirmed" = the backend live-checked FIB and found this user's earlier
+      // payment for the SAME plan had gone through — that's good news, not an error.
+      if (res.message?.includes('just confirmed')) {
+        pendingPayment.value = null
+        toast.success(res.message)
+        await authStore.fetchUser()
+        emit('refreshed')
+        return
+      }
       // A payment for a different plan is already waiting — surface it instead of
       // dead-ending, so the user can resume or clear it.
       if ((res.data as any)?.pendingFib) await loadPending()
