@@ -26,7 +26,10 @@ function fmtDate(iso: string | null) {
   })
 }
 
-// What actually happened to the user's money, in their words.
+// What actually happened to the user's money, in their words. Order matters: the
+// "we don't know yet" states must be caught before the definitive ones, because FIB
+// settlement can take one to two days and telling someone their payment failed when
+// it is merely slow is how people end up paying twice.
 function outcome(p: FibPaymentRecord): { label: string; bg: string; color: string } {
   if (p.wasCharged && p.fibStatus === 'CANCELLED') {
     return { label: 'Paid · cancelled', bg: 'var(--status-inactive-bg)', color: 'var(--status-inactive-text)' }
@@ -34,11 +37,19 @@ function outcome(p: FibPaymentRecord): { label: string; bg: string; color: strin
   if (p.wasCharged) {
     return { label: 'Paid', bg: 'var(--status-active-bg)', color: 'var(--status-active-text)' }
   }
-  if (p.fibStatus === 'DRAFT') {
+  if (p.fibStatus === 'DRAFT' && p.awaitingConfirmation) {
     return { label: 'Awaiting payment', bg: 'var(--surface-raised)', color: 'var(--text-muted)' }
   }
-  return { label: 'Not paid', bg: 'var(--status-inactive-bg)', color: 'var(--status-inactive-text)' }
+  // Never activated, but we are still polling FIB about it — genuinely unknown.
+  if (p.awaitingConfirmation) {
+    return { label: 'Checking with FIB', bg: 'var(--status-blocked-bg)', color: 'var(--status-blocked-text)' }
+  }
+  return { label: 'No payment received', bg: 'var(--status-inactive-bg)', color: 'var(--status-inactive-text)' }
 }
+
+// Shown under any row we are still unsure about, so the user knows the system is
+// still working on it and doesn't try to pay again.
+const isUnresolved = (p: FibPaymentRecord) => !p.wasCharged && p.awaitingConfirmation
 </script>
 
 <template>
@@ -97,6 +108,13 @@ function outcome(p: FibPaymentRecord): { label: string; bg: string; color: strin
             Started {{ fmtDate(p.createdAt) }}
             <template v-if="p.activatedAt"> · Activated {{ fmtDate(p.activatedAt) }}</template>
             <template v-if="p.cancelledAt"> · Cancelled {{ fmtDate(p.cancelledAt) }}</template>
+          </AppText>
+          <AppText
+            v-if="isUnresolved(p)"
+            size="12" class-list="block mt-1" :style="`color:var(--text-muted)`"
+          >
+            If you paid this, don't pay again — FIB can take a day or two to confirm, and
+            your plan activates automatically when it does.
           </AppText>
         </div>
         <AppText

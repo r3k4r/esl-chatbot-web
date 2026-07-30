@@ -552,16 +552,64 @@ Plan:
 
 ---
 
+## 19. Late-settlement safety ✅ DONE (2026-07-30) — **no migration**
+FIB answered the confirmation-lag question: settlement can take **one to two days**, and even
+their developers can't predict it. That invalidated a core assumption and exposed a live
+money-loss path.
+
+**The bug:** `expiresIn` is `P1DT12H` (36h), and `validUntil` was used as the cutoff for *every*
+recovery path — the stale-DRAFT sweep AND the reconcile cron (`validUntil > now`). So a payment
+confirmed at hour 40 hit a dead zone: swept to CANCELLED, no longer scanned, recoverable only if
+a webhook happened to land. Almost certainly the mechanism behind the payments lost in testing.
+
+- ✅ **Recovery window decoupled from `validUntil`.** `PAYMENT_RECOVERY_WINDOW_DAYS = 7` (exported
+  from `subscriptions.service.ts` so the job and the UI wording share one source of truth). The
+  reconcile job now selects never-activated records by **`createdAt` within 7 days**, covering
+  DRAFT *and* locally-CANCELLED rows. REJECTED is excluded — that is FIB's definitive "failed".
+- ✅ **Two-tier polling** so the wider net doesn't multiply FIB calls: records younger than 2h are
+  checked every run (15 min — the window that matters for UX); older ones only on the hourly
+  sweep. Cost throttling only; correctness never depends on it.
+- ✅ **Stale-payment alert.** A payment still unconfirmed at 24h fires one Sentry warning. Deduped
+  structurally by a 1-hour band on the hourly sweep, so each stuck payment alerts exactly once.
+- ✅ **Late recoveries are logged explicitly** (`hoursAfterCreation`, `wasLocallyCancelled`) — the
+  audit trail for "your payment did eventually go through".
+- ✅ **`awaitingConfirmation` on `GET /fib/payments`.** "Not activated" is not "not paid": while a
+  record is still being polled, Payment history shows **"Checking with FIB"** with do-not-pay-again
+  guidance instead of the old, wrong **"Not paid"**.
+- ✅ Copy corrected everywhere from "a few minutes" to "up to a day or two" (payment dialog +
+  pending card), matching what FIB actually does.
+- ✅ 4 new tests, including the exact hour-40 loss scenario.
+
+**Deliberately NOT changed — needs FIB's answer first:** raising `expiresIn` from 36h to ~3 days.
+If FIB rejects the larger value, `createSubscription` throws and **every purchase breaks**, so it
+must not be changed blind. It is a one-line edit in `subscriptions.service.ts` once FIB confirms
+their maximum (question 2 in §17). Note the recovery fix above already protects the money
+regardless — extending `expiresIn` only helps the customer who scans the QR late.
+
+---
+
 ## 17. Open questions for FIB (blocking nothing, but each affects money)
+- ✅ **ANSWERED 2026-07-29 — how long until a payment reports ACTIVE?** One to two days is
+  possible; even FIB's developers aren't certain. Drove all of Task 19.
 - Does a **recurring charge** fire a status callback, or only status transitions? (Task 14's
   fix polls regardless, so this only tells us which path is load-bearing.)
 - Cancelling subscription A while B is live — any settlement lag that could allow one extra
   charge on A? Ordering bounds it to at most one old-plan charge.
-- **How long after payment does `GET /subscriptions/:id` report ACTIVE?** This is the window
-  in which a user can cancel a payment they already made. Task 15c makes that recoverable, but
-  knowing the real lag would let us set an accurate "wait N minutes" message.
 - Is `trialPeriod` on create usable to delay the first charge? If yes, true "downgrade at
   period end" becomes possible (see 15b).
+- **Is a payment still honoured if it arrives after `expiresIn` has passed?** Now the most
+  important open one — it decides whether raising `expiresIn` actually protects a customer who
+  scans late.
+- **What is the maximum allowed `expiresIn`?** We send `P1DT12H`; can we send `P7D`?
+- **Do you retry the status callback, and for how long?** Decides whether webhooks can be
+  trusted at all or polling is the only real path.
+- **Any "payment received, settlement pending" state?** Today `GET /subscriptions/:id` only
+  shows DRAFT or ACTIVE, so we cannot distinguish "not paid" from "paid, still processing" —
+  the ambiguity that makes people pay twice.
+- **Does `activeUntil` count from the payment date or the creation date** when settlement is
+  delayed? A 2-day drift compounds across a year of renewals.
+- **Is there a transactions/report endpoint** we could reconcile against for anything both the
+  callback and our polling missed?
 
 ---
 

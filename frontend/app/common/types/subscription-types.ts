@@ -109,6 +109,9 @@ export interface FibPaymentRecord {
   amountIQD: number
   fibStatus: FibSubscription['fibStatus']
   wasCharged: boolean
+  // Never activated, but still being polled against FIB. Settlement can take one to
+  // two days, so this must render as "checking", never as "not paid".
+  awaitingConfirmation: boolean
   createdAt: string
   activatedAt: string | null
   cancelledAt: string | null

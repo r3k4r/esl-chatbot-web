@@ -609,6 +609,91 @@ describe("GET /api/v1/subscriptions/fib/:subscriptionId/status", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+describe("Late settlement: FIB can confirm days after payment", () => {
+  // FIB confirmed (2026-07-29) settlement can take 1-2 days. Our QR validity is only
+  // 36h, so every recovery path used to go blind exactly when it mattered most.
+  const hoursAgo = (h: number) => new Date(Date.now() - h * 60 * 60 * 1000);
+
+  it("GET /fib/payments — an unconfirmed record is 'awaiting confirmation', NOT 'not paid'", async () => {
+    const u = track(await createTestUser({ plan: "FREE", status: "ACTIVE" }));
+    // Past its 36h QR validity and locally cancelled by the expiry sweep, but still
+    // well inside the 7-day reconciliation window — so the outcome is genuinely unknown.
+    await makeFibRecord(u.id, {
+      fibStatus: "CANCELLED",
+      activatedAt: null,
+      cancelledAt: new Date(),
+      createdAt: hoursAgo(40),
+      validUntil: hoursAgo(4),
+    });
+
+    const res = await request(app)
+      .get("/api/v1/subscriptions/fib/payments")
+      .set(auth(u.token));
+
+    expect(res.status).toBe(200);
+    expect(res.body.data[0].wasCharged).toBe(false);
+    expect(res.body.data[0].awaitingConfirmation).toBe(true);
+  });
+
+  it("GET /fib/payments — past the recovery window it is finally reported as unpaid", async () => {
+    const u = track(await createTestUser({ plan: "FREE", status: "ACTIVE" }));
+    await makeFibRecord(u.id, {
+      fibStatus: "CANCELLED",
+      activatedAt: null,
+      createdAt: hoursAgo(24 * 9), // 9 days — nothing is polling it any more
+      validUntil: hoursAgo(24 * 8),
+    });
+
+    const res = await request(app)
+      .get("/api/v1/subscriptions/fib/payments")
+      .set(auth(u.token));
+
+    expect(res.body.data[0].awaitingConfirmation).toBe(false);
+  });
+
+  it("GET /fib/payments — a REJECTED payment is never shown as still being checked", async () => {
+    const u = track(await createTestUser({ plan: "FREE", status: "ACTIVE" }));
+    await makeFibRecord(u.id, {
+      fibStatus: "REJECTED",
+      activatedAt: null,
+      createdAt: hoursAgo(2), // fresh, but FIB has given a definitive answer
+    });
+
+    const res = await request(app)
+      .get("/api/v1/subscriptions/fib/payments")
+      .set(auth(u.token));
+
+    expect(res.body.data[0].awaitingConfirmation).toBe(false);
+  });
+
+  it("webhook — a payment confirmed 40h after creation still activates the plan", async () => {
+    // The exact loss scenario: paid near the end of the 36h window, confirmed after
+    // it. The record was already swept to CANCELLED and used to be invisible to
+    // every recovery path.
+    const u = track(await createTestUser({ plan: "FREE", status: "ACTIVE" }));
+    const record = await makeFibRecord(u.id, {
+      fibStatus: "CANCELLED",
+      activatedAt: null,
+      cancelledAt: new Date(),
+      createdAt: hoursAgo(40),
+      validUntil: hoursAgo(4),
+    });
+    getSpy.mockResolvedValue(mockDetails("ACTIVE", Date.now() + 30 * 24 * 60 * 60 * 1000));
+
+    const res = await request(app)
+      .post("/api/v1/subscriptions/webhook/fib")
+      .send({ subscriptionId: record.fibSubscriptionId, status: "ACTIVE" });
+
+    expect(res.status).toBe(202);
+    await waitForFibStatus(record.id, "ACTIVE");
+
+    const sub = await getSubscription(u.id);
+    expect(sub?.plan).toBe("GOLD");
+    expect(sub?.status).toBe("ACTIVE");
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
 describe("Paid-but-lagging DRAFTs: FIB is asked before any decision (live-testing fixes)", () => {
   const daysFromNow = (n: number) => new Date(Date.now() + n * 24 * 60 * 60 * 1000);
 

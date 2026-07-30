@@ -236,9 +236,10 @@ function openAppLink() {
           >
             <AppIconsax name="InfoCircle" color="var(--status-blocked-text)" :size="16" class="mt-0.5 shrink-0" />
             <AppText size="13" :style="`color:var(--text-body)`">
-              We've stopped checking for now. <strong>If you already paid, don't pay again</strong> —
-              FIB sometimes confirms later. Close this and reopen the billing page in a few
-              minutes and your plan will be active.
+              We've stopped checking for now. <strong>If you already paid, don't pay again.</strong>
+              FIB can take up to a day or two to confirm a payment — we keep checking in the
+              background, and your plan activates by itself the moment they confirm. You can
+              close this safely.
             </AppText>
           </div>
 

@@ -27,6 +27,17 @@ const PLAN_AMOUNTS_IQD: Record<string, Record<number, number>> = {
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
+/**
+ * How long a never-activated payment stays under active reconciliation.
+ *
+ * FIB confirmed (2026-07-29) that settlement can take one to two days and that even
+ * their developers can't predict it, so this deliberately outlives the payment
+ * request itself (`expiresIn` is 36h). Owned here rather than in the cron because
+ * two things depend on it: the reconcile job's query, and whether we tell the user
+ * a payment is still being checked or was never received.
+ */
+export const PAYMENT_RECOVERY_WINDOW_DAYS = 7;
+
 // Calendar-correct month addition (31 Jan + 1 month → 28/29 Feb, not 3 March).
 function addMonths(from: Date, months: number): Date {
   const d = new Date(from);
@@ -881,11 +892,19 @@ export async function listMyFibPayments(userId: string) {
     },
   });
 
+  const recoveryCutoff = new Date(Date.now() - PAYMENT_RECOVERY_WINDOW_DAYS * DAY_MS);
+
   return records.map((r) => ({
     ...r,
-    // Only an activated subscription ever took money. DRAFT = QR generated but never
-    // paid; CANCELLED without activatedAt = abandoned before payment.
+    // Only an activated subscription ever took money.
     wasCharged: r.activatedAt !== null,
+    // ...but "not activated" is NOT the same as "not paid". FIB can take one to two
+    // days to settle, so a record that never activated may still be in flight. While
+    // the reconcile job is still polling it we must not tell the user their money
+    // wasn't taken — we genuinely don't know yet. REJECTED is excluded: that is FIB's
+    // definitive answer that the payment failed.
+    awaitingConfirmation:
+      r.activatedAt === null && r.fibStatus !== "REJECTED" && r.createdAt > recoveryCutoff,
   }));
 }
 

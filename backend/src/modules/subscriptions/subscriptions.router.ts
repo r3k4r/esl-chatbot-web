@@ -172,9 +172,10 @@ router.get("/fib/pending", authenticate, getPendingFibHandler);
  *     summary: The caller's FIB payment history (most recent 50)
  *     description: >
  *       Every FIB subscription the user has started, so they can see what they were
- *       actually charged. `wasCharged` is true only when the subscription activated —
- *       a DRAFT (QR generated, never paid) or a CANCELLED row with no activation never
- *       took money.
+ *       actually charged. `wasCharged` is true only when the subscription activated.
+ *       `awaitingConfirmation` marks a record that never activated but is still being
+ *       polled against FIB — settlement can take one to two days, so "not activated"
+ *       must not be shown to the user as "not paid" until that window has passed.
  *     tags: [Subscriptions]
  *     security:
  *       - bearerAuth: []
@@ -198,6 +199,12 @@ router.get("/fib/pending", authenticate, getPendingFibHandler);
  *                       amountIQD: { type: integer }
  *                       fibStatus: { type: string, enum: [DRAFT, TRIAL, ACTIVE, REJECTED, CANCELLED] }
  *                       wasCharged: { type: boolean }
+ *                       awaitingConfirmation:
+ *                         type: boolean
+ *                         description: >
+ *                           Never activated, but still inside the reconciliation window and
+ *                           therefore still being checked against FIB. Render as "checking",
+ *                           never as "not paid".
  *                       createdAt: { type: string, format: date-time }
  *                       activatedAt: { type: string, format: date-time, nullable: true }
  *                       cancelledAt: { type: string, format: date-time, nullable: true }

@@ -55,9 +55,9 @@ const expiry = computed(() => {
     >
       <AppIconsax name="InfoCircle" color="var(--status-blocked-text)" :size="16" class="mt-0.5 shrink-0" />
       <AppText size="13" :style="`color:var(--text-body)`">
-        <strong>Already paid?</strong> Don't cancel — FIB can take a few minutes to confirm.
-        Wait and refresh; your plan activates on its own. Cancelling is only for a payment you
-        decided <em>not</em> to make.
+        <strong>Already paid?</strong> Don't cancel — FIB can take up to a day or two to
+        confirm. We keep checking in the background and your plan activates on its own.
+        Cancelling is only for a payment you decided <em>not</em> to make.
       </AppText>
     </div>
 

@@ -5093,7 +5093,7 @@ export interface paths {
         };
         /**
          * The caller's FIB payment history (most recent 50)
-         * @description Every FIB subscription the user has started, so they can see what they were actually charged. `wasCharged` is true only when the subscription activated — a DRAFT (QR generated, never paid) or a CANCELLED row with no activation never took money.
+         * @description Every FIB subscription the user has started, so they can see what they were actually charged. `wasCharged` is true only when the subscription activated. `awaitingConfirmation` marks a record that never activated but is still being polled against FIB — settlement can take one to two days, so "not activated" must not be shown to the user as "not paid" until that window has passed.
          */
         get: {
             parameters: {
@@ -5121,6 +5121,8 @@ export interface paths {
                                 /** @enum {string} */
                                 fibStatus?: "DRAFT" | "TRIAL" | "ACTIVE" | "REJECTED" | "CANCELLED";
                                 wasCharged?: boolean;
+                                /** @description Never activated, but still inside the reconciliation window and therefore still being checked against FIB. Render as "checking", never as "not paid". */
+                                awaitingConfirmation?: boolean;
                                 /** Format: date-time */
                                 createdAt?: string;
                                 /** Format: date-time */
