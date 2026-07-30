@@ -588,6 +588,34 @@ regardless — extending `expiresIn` only helps the customer who scans the QR la
 
 ---
 
+## 20. Review of Tasks 16 + 19 (2026-07-30) — 2 findings, both actioned
+Re-read the late-settlement work and the renewal-reminder job hunting for defects.
+**No logic bugs found** in the reconcile query, the two-tier polling, the stale-alert dedup
+band, or `awaitingConfirmation`. Traced and confirmed correct: the tier boundary (a record is
+covered continuously — fresh tier every run until 2h, hourly thereafter), the alert band
+(age 24–25h on the hourly sweep = exactly one alert per payment), and REJECTED exclusion.
+
+Two things worth acting on:
+
+- 🔴 **All payment alerting is conditional on `SENTRY_DSN`.** It is optional in `env.ts` and
+  `sync: false` in `render.yaml`, and `config/sentry.ts` gates on
+  `NODE_ENV === "production" && !!SENTRY_DSN`. **If it is not set on Render, every
+  payment-failure alert added across Tasks 13/15/19 is a silent no-op** — failed activation,
+  failed retire, stale payment, reconcile error. The Winston logs still fire, but nobody reads
+  Render logs proactively. **ACTION: verify `SENTRY_DSN` is set on the Render service.** This is
+  the difference between "we get told when a payment breaks" and "we find out from the user."
+- 🟡 **Late payment on an abandoned QR supersedes a newer live plan.** If a user pays an old QR
+  while a newer subscription is already active, the late payment activates, carries the newer
+  plan's remaining value over, and retires the newer FIB subscription. No money is lost (the
+  carry-over preserves it) but the plan can change under them. Accepted deliberately: ignoring a
+  real payment is worse than honouring it late. Documented in `backend/CLAUDE.md`.
+
+Also fixed: `backend/CLAUDE.md`'s cron list was stale (missing `fib-reconcile` and
+`renewal-reminder`), and the FIB billing rules learned the hard way are now written down there
+rather than living only in commit messages.
+
+---
+
 ## 17. Open questions for FIB (blocking nothing, but each affects money)
 - ✅ **ANSWERED 2026-07-29 — how long until a payment reports ACTIVE?** One to two days is
   possible; even FIB's developers aren't certain. Drove all of Task 19.

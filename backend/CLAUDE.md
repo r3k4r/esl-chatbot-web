@@ -415,6 +415,20 @@ Includes: classes (with full code-lifecycle fields populated) with enrolled user
 - ✅ speakingSkill updated from pronunciationScore (voice sessions only — currently placeholder)
 - Admin dashboard: platform-wide analytics (remaining)
 
+### FIB Billing — the rules that are easy to get wrong
+
+Everything below was learned by losing real money in testing. Read before touching
+`src/modules/subscriptions/` or `src/jobs/fib-reconcile.job.ts`.
+
+- **FIB's status feed lags the actual payment — by minutes, and confirmed by FIB (2026-07-29) sometimes by ONE TO TWO DAYS.** Never make a user-facing decision from a locally-`DRAFT` record without live-verifying via `syncDraftWithFib()` first. Every violation of this either lost money or told the user something false (pending card showing "payment waiting" for money already sent; cancel discarding a paid draft; initiate blocking an upgrade behind a paid draft).
+- **Recovery windows must key off `createdAt`, never `validUntil`.** `expiresIn` is 36h, so a `validUntil`-based cutoff goes blind exactly when late settlement lands. `PAYMENT_RECOVERY_WINDOW_DAYS` (7) in `subscriptions.service.ts` is the single source of truth, shared by the reconcile job and the `awaitingConfirmation` flag on `GET /fib/payments`.
+- **"Not activated" ≠ "not paid".** While a record is inside the recovery window, the honest answer is "still checking" — telling a user their payment failed is how they end up paying twice.
+- **A dying DRAFT must never mutate the Subscription row.** Cancellation only touches the plan when the record was locally `ACTIVE`/`TRIAL` (`recordWasLive` in `applyFibStatusChange`); otherwise an abandoned upgrade QR expiring would flag `cancelAtPeriodEnd` on a plan the user never cancelled.
+- **Cancel endpoints are not interchangeable.** `DELETE /subscriptions/fib` (no id) prefers the LIVE subscription — correct for "cancel my plan", catastrophic for the pending-payment card, which must use `DELETE /subscriptions/fib/:id`. Getting this wrong cancelled users' active plans while leaving the draft alive.
+- **Plan changes never take paid time away.** `carryOverDays()` converts unused value on the old plan into days on the new one at the new plan's daily rate — one formula covers renewal (1:1), upgrade (fewer days) and downgrade (more days). Round, never floor: `remainingDays` is always a hair under the whole number.
+- **The old subscription is retired at FIB only AFTER the new one is paid** (`retireSupersededFibSubscriptions`), never before — cancelling up front would strip a paying user's plan for a payment that may never complete.
+- **Known, accepted behaviour:** if a user pays an old abandoned QR while a newer subscription is already live, the late payment wins — it activates, carries the newer plan's remaining value over, and retires the newer FIB subscription. No money is lost, but the plan can change under them. Honouring a real payment is the lesser evil than ignoring it.
+
 ### Phase 8 — Subscriptions & Billing
 - Plan enforcement middleware (FREE vs PREMIUM limits)
 - TTS usage tracking and monthly reset
@@ -428,7 +442,9 @@ Includes: classes (with full code-lifecycle fields populated) with enrolled user
 - ✅ Email notifications (Resend): welcome, password reset, weekly digest. Weekly digest opt-out via `LearnerProfile.emailDigestEnabled` (default true); `bun run job:digest [-- --force]` for manual runs
 - File upload handling (audio recordings, avatars)
 - ✅ Socket.io real-time chat — `/chat` namespace (text `message:send` + voice `voice:start/chunk/end` pipeline) + `/notifications` namespace (server-push). JWT auth at handshake. See `src/socket/`. Voice: client streams base64 chunks → server buffers + streams to Deepgram live for partial transcripts → on `voice:end` runs batch STT→LLM→TTS via `sendVoiceMessage`. To push a notification from any service: `getIO().of('/notifications').to('user:{userId}').emit('notification:new', data)`
-- ✅ Cron jobs: streak reset (00:00 UTC), subscription expiry (01:00 UTC), stale session cleanup (02:00 UTC), weekly digest (hourly tick — fires per-user at local Sunday 08:00 via `LearnerProfile.timezone`)
+- ✅ Cron jobs (6, all in `src/jobs/`, registered in `jobs/index.ts`): streak reset (00:00 UTC), subscription expiry (01:00 UTC), stale session cleanup (02:00 UTC), **fib-reconcile (every 15 min)**, weekly digest (hourly tick — fires per-user at local Sunday 08:00 via `LearnerProfile.timezone`), **renewal reminder (09:00 UTC daily)**
+  - ⚠️ **`renewal-reminder` must stay DAILY** — it dedups structurally on a 24h window (no `sentAt` column), so a more frequent schedule would re-email the same cohort. Assumes ONE instance runs cron (Render Starter = 1).
+  - ⚠️ **Payment alerting depends on `SENTRY_DSN`.** It is optional (`env.ts`) and `sync: false` in `render.yaml`, and `config/sentry.ts` sets `enabled: NODE_ENV === "production" && !!SENTRY_DSN`. If it is unset in prod, **every** payment-failure alert (failed activation, failed retire, stale payment, reconcile error) is a silent no-op — only the Winston logs remain, and nobody reads those proactively.
 - Comprehensive error logging and monitoring
 - API documentation completion (Swagger)
 - Integration and unit tests
