@@ -87,9 +87,9 @@ onBeforeUnmount(stopAudio)
     </div>
 
     <!-- Bubble -->
-    <div :class="['max-w-[78%]', message.who === 'user' ? 'text-right' : '']">
+    <div :class="['max-w-[86%] sm:max-w-[78%] min-w-0', message.who === 'user' ? 'text-right' : '']">
       <div :class="[
-        'inline-block px-3.5 py-2.5 text-[14px] leading-relaxed rounded-[14px] text-left font-poppins',
+        'inline-block px-3.5 py-2.5 text-[14px] leading-relaxed rounded-[14px] text-left font-poppins break-words',
         message.who === 'user'
           ? 'bg-brand-ink text-white dark:bg-white dark:text-brand-ink rounded-br-sm'
           : 'bg-zinc-100 dark:bg-white/5 text-brand-ink dark:text-white rounded-bl-sm',
@@ -101,14 +101,21 @@ onBeforeUnmount(stopAudio)
 
       <!-- Voice player — on any voice message that has audio (user recording or AI reply) -->
       <div v-if="hasAudio"
-        class="mt-2 flex items-center gap-2.5 px-3 py-2 rounded-2xl bg-surface-raised border border-border-inner w-56 text-left"
+        class="mt-2 flex items-center gap-2.5 px-3 py-2 rounded-2xl bg-surface-raised border border-border-inner w-full max-w-56 text-left"
         :class="message.who === 'user' ? 'ml-auto' : ''">
         <!-- Play / Pause button -->
-        <button class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition"
-          :class="isPlaying ? 'bg-brand-primary' : 'bg-surface-well hover:bg-brand-primary/15'" @click="toggleAudio">
+        <AppButton
+          variant="ghost"
+          size="32"
+          radius="full"
+          aspect="square"
+          :class-list="isPlaying ? 'bg-brand-primary shrink-0' : 'bg-surface-well hover:bg-brand-primary/15 shrink-0'"
+          :aria-label="isPlaying ? 'Pause audio' : 'Play audio'"
+          @click="toggleAudio"
+        >
           <AppIconsax :name="isPlaying ? 'Pause' : 'Play'" :color="isPlaying ? 'white' : 'var(--color-text-body)'"
-            :size="15" />
-        </button>
+            :size="16" />
+        </AppButton>
 
         <!-- Progress bar + timestamps -->
         <div class="flex-1 min-w-0">
@@ -119,8 +126,8 @@ onBeforeUnmount(stopAudio)
           </div>
           <!-- Timestamps -->
           <div class="flex justify-between mt-1">
-            <span class="text-[10px] font-mono text-text-subtle">{{ fmt(elapsed) }}</span>
-            <span class="text-[10px] font-mono text-text-subtle">{{ fmt(duration) }}</span>
+            <span class="text-[11px] font-mono text-text-subtle">{{ fmt(elapsed) }}</span>
+            <span class="text-[11px] font-mono text-text-subtle">{{ fmt(duration) }}</span>
           </div>
         </div>
       </div>
@@ -129,18 +136,20 @@ onBeforeUnmount(stopAudio)
       <div v-if="message.correction"
         class="mt-2 inline-block max-w-full text-left p-3 rounded-xl bg-brand-primary/8 border border-brand-primary/20">
         <div
-          class="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-brand-primary font-semibold mb-1 font-poppins">
-          <AppIconsax name="Candle" color="#f59e0b" :size="10" />
+          class="flex items-center gap-1.5 text-[12px] uppercase tracking-wider text-brand-primary font-semibold mb-1 font-poppins">
+          <AppIconsax name="Candle" color="#f59e0b" :size="12" />
           Phrasing tip
         </div>
-        <p class="text-[11.5px] text-zinc-500 dark:text-zinc-400 line-through font-poppins">{{
-          message.correction.original }}</p>
-        <p class="text-[13px] font-medium text-brand-ink dark:text-white font-poppins">{{ message.correction.suggested
-          }}</p>
-        <p class="text-[11.5px] text-zinc-500 dark:text-zinc-400 mt-1 font-poppins">{{ message.correction.why }}</p>
+        <AppText size="13" color="neutral-400" class-list="line-through">
+          {{ message.correction.original }}
+        </AppText>
+        <AppText size="14" weight="medium">{{ message.correction.suggested }}</AppText>
+        <AppText size="13" color="neutral-400" class-list="mt-1">{{ message.correction.why }}</AppText>
       </div>
 
-      <p class="mt-1 text-[10px] text-zinc-400 font-mono">{{ message.time }}</p>
+      <AppText size="11" color="neutral-400" font-family="mono" class-list="mt-1">
+        {{ message.time }}
+      </AppText>
     </div>
   </div>
 </template>

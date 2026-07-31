@@ -96,7 +96,9 @@ app/
 Pinia stores live at the **workspace root** in `stores/` (imported as `~~/stores/...`), NOT under `app/stores/`. See [useHttp.ts](app/composables/useHttp.ts) importing from `~~/stores/auth`.
 
 **Key rules:**
-- **Audio players** (TTS voice replies): use the `MessageBubble` inline player pattern — `w-8 h-8` circular play/pause button + clickable scrub bar with `requestAnimationFrame` progress tracking + `mm:ss` timestamps. Never use a raw `<audio>` element. Player width is fixed (`w-56`) so it never expands its parent bubble.
+- **Audio players** (TTS voice replies): use the `MessageBubble` inline player pattern — circular play/pause `AppButton` + clickable scrub bar with `requestAnimationFrame` progress tracking + `mm:ss` timestamps. Never use a raw `<audio>` element. Player width is capped (`w-full max-w-56`) so it never expands its parent bubble.
+- **Voice recording UX (chat): one button, one meaning.** The mic **starts** a recording, **Send** ends it and sends it (`send()` in `useChatPage.ts` routes to `stopRecording()` while recording), and **Discard** (in `VoiceRecordingBar`) throws it away via `cancelRecording()`. Never fold "stop" and "send" into one control, and never render a stop/pause glyph for an action that actually sends. `cancelRecording()` deliberately does **not** emit `voice:end` — that event is what runs the paid STT→LLM→TTS pipeline.
+- **Custom breakpoints.** `main.css` overrides Tailwind's defaults: `xs` 370px, `sm` 446px, `md` 768px, `md-lg` 1024px, `lg` **1200px**, `xl` **1440px**. `lg:`/`xl:` are far wider than stock Tailwind — check before reaching for them, or content silently never appears on normal laptops.
 
 - Component folders use **PascalCase** (`App/`, `Block/`, `Form/`, `Pages/`). Package-owned folders (`ui/` for shadcn) stay as the package expects.
 - you can use the models from the Nuxt models if you thing that helps, like swiper or anything usefull to the task you have.
@@ -328,14 +330,18 @@ components/Pages/Dashboard/
 │  ├─ ActivityHeatmap.vue    # 12-week heatmap + recent sessions list
 │  └─ DueWords.vue           # SRS due words + level progress bar
 ├─ Chat/
-│  ├─ SessionsSidebar.vue    # Left sessions list panel
-│  ├─ ThreadHeader.vue       # Chat top bar (topic, cefr, actions)
-│  ├─ MessageThread.vue      # Scrollable messages area + empty state
-│  ├─ MessageBubble.vue      # Single message bubble (user or AI)
+│  ├─ SessionsPanel.vue      # The sessions list itself (no shell) — rendered by BOTH of the next two
+│  ├─ SessionsSidebar.vue    # Desktop-only shell (`hidden md:flex`) around SessionsPanel
+│  ├─ SessionsDrawer.vue     # Mobile shell — UiSheet side="left" around SessionsPanel
+│  ├─ ThreadHeader.vue       # Chat top bar (topic, cefr, timer, mobile sessions button, end-confirm)
+│  ├─ MessageThread.vue      # Scrollable messages area + empty state + suggestion chips
+│  ├─ MessageBubble.vue      # Single message bubble (user or AI) + inline voice player
 │  ├─ ThinkingIndicator.vue  # Animated "Tutelage AI is thinking…" row
-│  ├─ Composer.vue           # Fixed bottom input bar
+│  ├─ Composer.vue           # Fixed bottom input bar (text + mic + send)
+│  ├─ VoiceRecordingBar.vue  # Live recording strip: waveform, timer, interim transcript, Discard
+│  ├─ SessionEndedPanel.vue  # Replaces the composer once a session ends (scores + New session)
 │  ├─ SessionItem.vue        # Single row in the sessions list
-│  └─ CoachPane.vue          # Right live-coaching panel
+│  └─ CoachPane.vue          # Right live-coaching panel (currently commented out of the page)
 ├─ Classes/
 │  ├─ ClassCard.vue          # Card for a single class in the list
 │  ├─ ClassForm.vue          # Shared create/edit class form
@@ -403,7 +409,7 @@ Types are split by domain — never define them inline in a composable:
 | `useTutorDashboard` | [useTutorDashboard.ts](app/composables/useTutorDashboard.ts) | Tutor dashboard data |
 | `useDashboardOverview` | [useDashboardOverview.ts](app/composables/useDashboardOverview.ts) | Student overview page data |
 | `useSubscription` | [useSubscription.ts](app/composables/useSubscription.ts) | `getMySubscription`, `initiateFib`, `getFibStatus`, `cancelFib` |
-| `useChatPage` / `useSessions` | [useChatPage.ts](app/composables/useChatPage.ts) | Chat page state/actions; `useSessions` is the raw session API layer it builds on |
+| `useChatPage` / `useSessions` | [useChatPage.ts](app/composables/useChatPage.ts) | Chat page state/actions; `useSessions` is the raw session API layer it builds on. Voice actions are `startVoice` / `send` (sends the recording when one is live) / `cancelVoice`; `micDisabled` + `canSend` drive the composer |
 | `useVoiceChat` / `useVoiceLab` | [useVoiceChat.ts](app/composables/useVoiceChat.ts) | Voice pipeline state + Voice Lab |
 | `useVocabPage` / `useVocabulary` | [useVocabPage.ts](app/composables/useVocabPage.ts) | Vocab page state; `useVocabulary` is the raw vocab API layer |
 | `useTasks` | [useTasks.ts](app/composables/useTasks.ts) | `listClassTasks`, `getTask`, `createTask`, `updateTask`, `deleteTask`, `submitTask`, `listSubmissions`, `giveFeedback` |

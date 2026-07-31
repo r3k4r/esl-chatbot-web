@@ -4,23 +4,42 @@ defineProps<{ session: ChatSession }>()
 </script>
 
 <template>
-  <button
-    :class="[
-      'w-full flex items-start gap-2.5 px-2.5 py-2 rounded-lg text-left transition-colors',
-      session.active
-        ? 'bg-brand-primary/10 text-brand-ink dark:text-white'
-        : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-white/3',
-    ]"
+  <AppButton
+    variant="ghost"
+    size="auto"
+    radius="8"
+    :active="session.active"
+    active-class-list="bg-brand-primary/10"
+    class-list="w-full items-start gap-2.5 px-2.5 py-2 justify-start h-auto text-left"
   >
-    <div class="w-7 h-7 rounded-lg bg-white dark:bg-white/5 border border-black/5 dark:border-white/5 flex items-center justify-center shrink-0">
-      <AppIconsax name="Messages" color="currentColor" :size="12" />
+    <div
+      class="w-7 h-7 rounded-lg border flex items-center justify-center shrink-0 mt-0.5"
+      style="background:var(--surface-raised);border-color:var(--border-inner)"
+    >
+      <AppIconsax
+        name="Messages"
+        :color="session.active ? 'var(--color-brand-primary)' : 'var(--color-text-muted)'"
+        :size="14"
+      />
     </div>
+
     <div class="flex-1 min-w-0">
       <div class="flex items-center justify-between gap-2">
-        <span class="text-[12.5px] font-medium truncate font-poppins">{{ session.title }}</span>
-        <span class="text-[10px] text-zinc-400 font-mono shrink-0">{{ session.when }}</span>
+        <AppText
+          size="14"
+          weight="medium"
+          :color="session.active ? 'brand-primary' : 'black'"
+          class-list="truncate"
+        >
+          {{ session.title }}
+        </AppText>
+        <AppText size="12" color="neutral-400" font-family="mono" class-list="shrink-0">
+          {{ session.when }}
+        </AppText>
       </div>
-      <span class="text-[10.5px] text-zinc-400 truncate block font-poppins">{{ session.preview }}</span>
+      <AppText size="13" color="neutral-400" class-list="truncate mt-0.5">
+        {{ session.preview }}
+      </AppText>
     </div>
-  </button>
+  </AppButton>
 </template>

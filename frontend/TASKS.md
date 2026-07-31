@@ -8,6 +8,111 @@ When Aland adds a new backend API, he notes it here so Rekar knows what to wire 
 
 ---
 
+### 🔴 Responsive + UX overhaul — TOP PRIORITY (opened 2026-07-31 by Aland)
+The app is feature-complete but **not usable on a phone**, and several settings are effectively
+undiscoverable. Beta users are on prod right now, so this is the highest-value remaining frontend
+work. Per `frontend/CLAUDE.md` rule #1, use `/ui-ux-pro-max` and/or `/impeccable` for this.
+
+**A. Responsiveness — confirmed gaps (audited 2026-07-31, not guesses):**
+1. **Chat is broken below `md`.** `Chat/SessionsSidebar.vue:20` is `hidden md:flex` with a fixed
+   `w-65` — on mobile there is **no way to see, switch, or create a session**. Needs a drawer
+   (`UiSheet side="left"`) opened from `ThreadHeader`, not a hidden panel.
+2. **~40 dashboard components have zero responsive prefixes** — the whole `Chat/`, `Classes/`,
+   `Overview/`, `Settings/` and `Profile/` trees. Worst offenders are un-breakpointed grids that
+   squeeze to unreadable on a phone: `Admin/AdminDashboard.vue:130,163` (`grid-cols-3`),
+   `Classes/Admin/AdminClassesView.vue:122` (`grid-cols-3`), `Settings/SubscriptionPanel.vue:471`
+   (`grid-cols-4`), `Goals/GoalFormModal.vue:128` (`grid-cols-5`), `Vocab/StatsPanel.vue:31`,
+   `Voice/PronunciationCard.vue:119`, `Vocab/Flashcard.vue:120`.
+3. **Admin tables have no horizontal-scroll container** — `users/index.vue`,
+   `Classes/Admin/ClassTableRow.vue` overflow the viewport instead of scrolling inside a wrapper.
+4. Audit method for the rest: a component under `Pages/Dashboard/` with **no** `sm:`/`md:`/`lg:`
+   prefix anywhere is a suspect — walk that list, don't hand-check every file.
+
+**B. UX / discoverability — confirmed gaps:**
+1. **Dark mode is nearly impossible to find.** The only control is a theme card buried inside
+   `Profile/LearnerSettingsModal.vue` (Profile page → open settings modal → scroll). It should be a
+   one-click toggle in `Block/UserAvatar.vue` (next to the email-digest toggle) and/or
+   `Layouts/Dashboard/DashboardHeader.vue`. `useTheme().applyTheme` already exists — the toggle is
+   the missing part, not the plumbing.
+2. **Staff (ADMIN/TUTOR) may have no theme control at all.** `theme` is a `LearnerProfile` field and
+   `useTheme.syncFromProfile` is a deliberate no-op without one. A header/avatar toggle backed by
+   `localStorage` fixes this for staff without touching the backend — do that rather than adding a
+   theme column for staff.
+3. **Settings are scattered** — profile fields, learner settings, email digest and theme live across
+   the Profile page, a modal, and the avatar dropdown. Decide on one home and make the others
+   shortcuts into it.
+4. **Rate-limit 429s show a generic error.** Backend returns `RateLimit-Reset`; auth forms should say
+   "Too many attempts, try again in Ns" (this was raised in the Rate limiting note below and is
+   still unwired).
+
+**C. House rules to fix while in there** (these are our own documented rules being violated):
+- `Chat/SessionsSidebar.vue:20` uses `bg-white dark:bg-[#0e0e10]` + `border-black/6` — raw colours,
+  must be `--surface-*` / `--border-*` tokens.
+- `Profile/LearnerSettingsModal.vue:240` uses a raw `<button>` — must be `<AppButton>`.
+- `Chat/SessionsSidebar.vue:30` uses `text-[12.5px]` on an action — below the 14px desktop minimum.
+- Files over the length rule that this work will touch anyway: `users/[id]/profile.vue` (627),
+  `Settings/SubscriptionPanel.vue` (559), `pages/dashboard/profile.vue` (384),
+  `classes/[id]/index.vue` (368), `LearnerSettingsModal.vue` (338).
+
+**Suggested order:** ~~chat-on-mobile (functional hole)~~ **DONE — see below** → theme toggle
+(one-click win) → grids/tables → settings consolidation → 429 copy → house-rule cleanups as each
+file is touched.
+Verify with `cd frontend && bunx nuxi typecheck` + a production `nuxt build` per batch.
+
+---
+
+### ✅ Chat page rebuild — mobile, voice and end-of-session (2026-07-31, Aland via Claude)
+Step 1 of the overhaul above. **Frontend only — no backend change, no `generate:types`.**
+
+**Functional fixes (all reported from real use):**
+1. **Sessions were unreachable on a portrait phone.** The rail was `hidden md:flex`, so below 768px
+   there was no way to see, switch or create a session. The list is now `SessionsPanel.vue`, rendered
+   inline by `SessionsSidebar.vue` on desktop and inside a new `SessionsDrawer.vue` (`UiSheet
+   side="left"`) on mobile, opened from a new button in `ThreadHeader`. Picking or creating a session
+   closes the drawer; resizing up to `md` closes it too so its overlay can't strand the desktop rail.
+2. **The Send button did nothing for voice, and the "stop" square sent instead.** Stopping and
+   sending were welded to the mic button, whose recording-state icon was a `Stop` square — which
+   reads as pause — while Send was explicitly *disabled* during recording. Now: **mic starts**,
+   **Send sends** (`send()` ends the recording and ships it), and **Discard throws it away**. Three
+   buttons, three meanings.
+3. **There was no way to abandon a recording.** New `cancelRecording()` in `useVoiceChat.ts` stops
+   the recorder without emitting `voice:end` — the event that triggers the paid STT→LLM→TTS pipeline.
+   Server-side the orphaned buffer is dropped by the next `voice:start` for that session (which
+   already tears down and replaces state) or on disconnect, so no backend change was needed.
+4. **The mic worked in sessions that couldn't accept messages.** It was only blocked while
+   `processing`, so recording into an ended / message-capped / unsubscribed session went all the way
+   to the server before failing. It now shares the composer's disabled logic and explains the reason
+   in a toast rather than silently doing nothing. A denied mic permission also used to fail silently.
+5. **"Session ended" looked broken.** It was a greyed-out input with placeholder text, and the
+   scores only ever appeared in a toast that timed out after 6s. New `SessionEndedPanel.vue` replaces
+   the composer with the real result — score, CEFR, message count, up to two strengths and a
+   recommendation — plus a New session CTA. `endCurrent()` now stores the evaluation on the session.
+6. **The session timer kept counting after the session ended** — it now freezes at the final duration.
+7. **End Session had no confirmation** for an irreversible action → now a `UiAlertDialog`.
+8. **Searching with no matches rendered a blank list** (the empty state keyed off the unfiltered
+   count) → now keys off what's actually rendered and says "No matches".
+
+**UI / responsiveness:** every chat component got real breakpoints (`px-3 sm:px-6`, `p-3 sm:p-4`,
+bubbles `max-w-[86%] sm:max-w-[78%]`, labels collapsing to icons on narrow screens). Raw
+`bg-white`/`dark:bg-[#0e0e10]`/`zinc-*` swapped for `--surface-*`/`--border-*` tokens. Every raw
+`<button>`/`<input>`/`<textarea>` replaced with `AppButton`/`FormInput`/`UiTextarea`, and the
+sub-14px text (`10px`–`12.5px` labels, action text, counters) raised to the 14px desktop minimum
+with 12–13px only on genuine metadata. The suggestion chips were duplicated in both the composer and
+the empty state and only appeared above 1440px (`xl` is 90rem here) — kept once, in the empty state.
+The message counter now reads "N left" instead of "3/30 msgs".
+
+**New:** `Chat/SessionsPanel.vue`, `Chat/SessionsDrawer.vue`, `Chat/SessionEndedPanel.vue`,
+`Chat/VoiceRecordingBar.vue` (waveform + timer + interim transcript + Discard, extracted so
+`Composer.vue` stays short).
+**Changed:** `useVoiceChat.ts` (cancel + `recordingSeconds`; error/disconnect now recover to `ready`
+instead of `idle`, which the Voice Lab also benefits from), `useChatPage.ts`, `pages/dashboard/chat.vue`,
+`Chat/{Composer,ThreadHeader,MessageThread,MessageBubble,SessionsSidebar,SessionItem}.vue`.
+
+Verified: `bunx nuxi typecheck` clean + production `nuxt build` clean. **Not yet tested on a real
+device** — worth a pass on an actual phone, especially the mic permission prompt and the drawer.
+
+---
+
 ### ✅ FIB payment — QR no longer lost / "Open FIB App" no longer 404s (2026-07-25, Aland via Claude)
 Hit during the first live stage payment on prod. Both defects are fixed; backend changes are in
 `backend/TASK.md` §12 (new `GET /subscriptions/fib/pending`, resumable initiate, persisted QR).
@@ -50,6 +155,28 @@ isn't disabled) — **but the template ignores it** and inlines
 
 Fix is likely a one-liner (`:is="resolvedTag"`), but it changes behaviour for **every** `:to`
 button in the app (7 usages), so it needs a deliberate pass + retest rather than a drive-by change.
+
+---
+
+### 🐛 `AppButton`'s `disabled` prop is never applied to the element (found 2026-07-31, NOT fixed)
+**Same line as the `:to` bug above, same reasoning for leaving it — Rekar's call.**
+
+`App/Button.vue:2` binds `:disabled="loading"`, not `:disabled="isDisabled"`. Because `disabled` is a
+*declared prop* it is excluded from `useAttrs()`, so `v-bind="attrs"` doesn't carry it either.
+Consequences for every `<AppButton :disabled="…">` in the app:
+1. The button stays **clickable** when it should be disabled — nothing is stopped unless the handler
+   guards internally.
+2. The `disabled:` Tailwind variants in `button-types.ts` never match, so a "disabled" button looks
+   completely normal.
+
+`isDisabled` and the `disabledClasses` styling are both already written — they're just not wired.
+The fix is `:disabled="isDisabled"`, but it would abruptly start disabling buttons across the whole
+app, so it needs a deliberate pass, not a drive-by change.
+
+**Worked around in the chat components** (2026-07-31): every disabled-looking chat button computes
+its own `opacity-50 [pointer-events-none]` class string, and the underlying actions all guard in
+`useChatPage.ts`. See the comment in `Chat/Composer.vue`. Anything else in the app that passes
+`:disabled` to `AppButton` is currently only as safe as its click handler.
 
 ---
 

@@ -35,11 +35,26 @@ export function useVoiceChat() {
   const voiceState = ref<VoiceState>('idle')
   const partialTranscript = ref('')
   const audioStream = ref<MediaStream | null>(null)
+  /** Seconds elapsed in the current recording — drives the composer's timer. */
+  const recordingSeconds = ref(0)
 
   let socket: Socket | null = null
   let recorder: MediaRecorder | null = null
   let activeSessionId: string | null = null
   let callbacks: VoiceChatCallbacks = {}
+  // Set by cancelRecording() so recorder.onstop discards instead of sending.
+  let discardOnStop = false
+  let tickHandle: ReturnType<typeof setInterval> | null = null
+
+  function startTimer() {
+    recordingSeconds.value = 0
+    if (tickHandle) clearInterval(tickHandle)
+    tickHandle = setInterval(() => { recordingSeconds.value++ }, 1000)
+  }
+
+  function stopTimer() {
+    if (tickHandle) { clearInterval(tickHandle); tickHandle = null }
+  }
 
   // ── Socket ────────────────────────────────────────────────────────────────
 
@@ -112,14 +127,19 @@ export function useVoiceChat() {
     sock.on('voice:error', ({ code, message }: { code: string; message: string }) => {
       console.error('[voice:error]', code, message)
       abortRecorder()
-      voiceState.value = 'idle'
+      stopTimer()
+      partialTranscript.value = ''
+      // The mic stream survives an error — stay 'ready' so the user can retry
+      // straight away instead of re-triggering the permission prompt.
+      voiceState.value = audioStream.value ? 'ready' : 'idle'
       callbacks.onError?.(code, message)
     })
 
     sock.on('disconnect', () => {
       if (voiceState.value === 'recording' || voiceState.value === 'processing') {
         abortRecorder()
-        voiceState.value = 'idle'
+        stopTimer()
+        voiceState.value = audioStream.value ? 'ready' : 'idle'
         callbacks.onError?.('DISCONNECT', 'Connection lost')
       }
     })
@@ -133,6 +153,7 @@ export function useVoiceChat() {
       if (recorder.state !== 'inactive') recorder.stop()
       recorder = null
     }
+    discardOnStop = false
   }
 
   // ── Phase 1: acquire mic permission + open stream ─────────────────────────
@@ -160,6 +181,7 @@ export function useVoiceChat() {
     callbacks = cb
     activeSessionId = sessionId
     partialTranscript.value = ''
+    discardOnStop = false
 
     let sock: Socket
     try {
@@ -193,6 +215,18 @@ export function useVoiceChat() {
     }
 
     recorder.onstop = () => {
+      stopTimer()
+      // Discard path: the user pressed Discard, so the buffered audio is simply
+      // never claimed. We deliberately do NOT emit voice:end — that event is what
+      // runs the (paid) STT→LLM→TTS pipeline. The server drops its own buffer on
+      // the next voice:start for this session, or on disconnect.
+      if (discardOnStop) {
+        console.log('[voice] discarded — no voice:end emitted, chunks buffered:', chunkCount)
+        discardOnStop = false
+        partialTranscript.value = ''
+        voiceState.value = audioStream.value ? 'ready' : 'idle'
+        return
+      }
       console.log('[voice] stopped — sending voice:end, chunks sent:', chunkCount)
       if (sock.connected) sock.emit('voice:end', { sessionId })
       voiceState.value = 'processing'
@@ -200,16 +234,27 @@ export function useVoiceChat() {
 
     recorder.onerror = () => {
       abortRecorder()
+      stopTimer()
       voiceState.value = 'ready'
       callbacks.onError?.('RECORDER_ERROR', 'Recording failed. Please try again.')
     }
 
     recorder.start(250)
     voiceState.value = 'recording'
+    startTimer()
   }
 
+  /** Stop recording AND send it for processing (the Send button). */
   function stopRecording() {
     if (voiceState.value !== 'recording' || !recorder) return
+    if (recorder.state !== 'inactive') recorder.stop()
+    recorder = null
+  }
+
+  /** Stop recording and throw the audio away (the Discard button). */
+  function cancelRecording() {
+    if (voiceState.value !== 'recording' || !recorder) return
+    discardOnStop = true
     if (recorder.state !== 'inactive') recorder.stop()
     recorder = null
   }
@@ -218,6 +263,7 @@ export function useVoiceChat() {
 
   function release() {
     abortRecorder()
+    stopTimer()
     if (audioStream.value) {
       audioStream.value.getTracks().forEach((t) => t.stop())
       audioStream.value = null
@@ -226,6 +272,7 @@ export function useVoiceChat() {
     socket = null
     voiceState.value = 'idle'
     partialTranscript.value = ''
+    recordingSeconds.value = 0
   }
 
   onBeforeUnmount(release)
@@ -234,9 +281,11 @@ export function useVoiceChat() {
     voiceState,
     partialTranscript,
     audioStream,
+    recordingSeconds,
     acquireStream,
     startRecording,
     stopRecording,
+    cancelRecording,
     release,
   }
 }

@@ -12,7 +12,16 @@ import { useVoiceChat } from '~/composables/useVoiceChat'
 export function useChatPage() {
   const authStore = useAuthStore()
   const { listSessions, createSession, getSession, sendMessage, endSession } = useSessions()
-  const { voiceState, partialTranscript, audioStream, acquireStream, startRecording, stopRecording } = useVoiceChat()
+  const {
+    voiceState,
+    partialTranscript,
+    audioStream,
+    recordingSeconds,
+    acquireStream,
+    startRecording,
+    stopRecording,
+    cancelRecording,
+  } = useVoiceChat()
   const route = useRoute()
   const router = useRouter()
 
@@ -43,7 +52,11 @@ export function useChatPage() {
   const refreshing = ref(false)
 
   const threadRef = ref<{ scrollEl: HTMLElement | null } | null>(null)
-  const composerRef = ref<{ textareaEl: HTMLTextAreaElement | null } | null>(null)
+  const composerRef = ref<{ focus: () => void } | null>(null)
+
+  function focusComposer() {
+    nextTick(() => composerRef.value?.focus())
+  }
 
   // ─── Derived ─────────────────────────────────────────────────────────────
   const userMessageCount = computed(() => messageEntities.value.filter((m) => m.role === 'USER').length)
@@ -71,6 +84,22 @@ export function useChatPage() {
   const composerDisabled = computed(
     () => sending.value || thinking.value || isSessionEnded.value || hardCapReached.value || !subActive.value,
   )
+  const isRecording = computed(() => voiceState.value === 'recording')
+  const isTranscribing = computed(() => voiceState.value === 'processing')
+  /** The mic is unusable for the same reasons the text box is — plus mid-turn. */
+  const micDisabled = computed(() => composerDisabled.value || isTranscribing.value)
+  /** Send is live for a typed message OR for a recording that's ready to go. */
+  const canSend = computed(() => {
+    if (isRecording.value) return true
+    return !composerDisabled.value && !!input.value.trim()
+  })
+  const recordingClock = computed(() => {
+    const m = Math.floor(recordingSeconds.value / 60)
+    const s = recordingSeconds.value % 60
+    return `${m}:${String(s).padStart(2, '0')}`
+  })
+  /** Populated once a session ends — drives the end-of-session summary panel. */
+  const sessionEvaluation = computed(() => activeSession.value?.evaluation ?? null)
 
   const todaysCount = computed(() => {
     const today = new Date().toDateString()
@@ -108,7 +137,11 @@ export function useChatPage() {
   function fmtTimer() {
     if (!activeSession.value) { sessionTimer.value = '00:00'; return }
     const start = new Date(activeSession.value.startedAt).getTime()
-    const diff = Math.max(0, Math.floor((Date.now() - start) / 1000))
+    // An ended session freezes at its final duration instead of ticking forever.
+    const until = activeSession.value.endedAt
+      ? new Date(activeSession.value.endedAt).getTime()
+      : Date.now()
+    const diff = Math.max(0, Math.floor((until - start) / 1000))
     const m = String(Math.floor(diff / 60)).padStart(2, '0')
     const s = String(diff % 60).padStart(2, '0')
     sessionTimer.value = `${m}:${s}`
@@ -258,9 +291,17 @@ export function useChatPage() {
     messages.value = []
     router.replace({ query: {} })
     await ensureSession()
+    focusComposer()
   }
 
   async function send() {
+    // Send is one button for both modes: while the mic is live it ends the
+    // recording and ships it. Stopping and sending used to be welded onto the
+    // mic button (a "stop" square), which read as pause and left Send dead.
+    if (voiceState.value === 'recording') {
+      stopRecording()
+      return
+    }
     if (!input.value.trim() || composerDisabled.value) return
     const text = input.value.trim()
     input.value = ''
@@ -342,8 +383,13 @@ export function useChatPage() {
     }
     const data = res.data?.data
     if (!data) return
-    if (activeSession.value) activeSession.value.endedAt = data.endedAt ?? new Date().toISOString()
     const e = data.evaluation
+    if (activeSession.value) {
+      activeSession.value.endedAt = data.endedAt ?? new Date().toISOString()
+      // Keep the evaluation on the session so the end-of-session panel can show
+      // the real scores instead of a toast that vanishes after 6 seconds.
+      if (e) activeSession.value.evaluation = e
+    }
     if (e) {
       toast.success(`Session ended · ${Math.round(e.avgOverallScore ?? 0)}/100 · CEFR ${e.detectedCefrLevel}`, { duration: 6000 })
     } else {
@@ -360,19 +406,25 @@ export function useChatPage() {
     toast.success('Refreshed')
   }
 
-  // ── Voice send ────────────────────────────────────────────────────────────
-  // Tap 1 → ask permission if needed, then immediately start recording
-  // Tap 2 → stop, send to backend
-  async function sendVoice() {
-    if (voiceState.value === 'recording') {
-      stopRecording()
+  // ── Voice ─────────────────────────────────────────────────────────────────
+  // Three explicit actions instead of one overloaded toggle:
+  //   mic     → startVoice()   begin recording
+  //   discard → cancelVoice()  throw the audio away
+  //   Send    → send()         stop + ship it (see send() above)
+  async function startVoice() {
+    if (voiceState.value === 'recording' || voiceState.value === 'processing') return
+    if (composerDisabled.value) {
+      if (isSessionEnded.value) toast.message('This session has ended — start a new one to keep talking.')
+      else if (hardCapReached.value) toast.message('This session hit its message limit. Start a new one.')
+      else if (!subActive.value) toast.error('You need an active plan to talk to Tutelage AI.')
       return
     }
 
-    if (voiceState.value === 'processing') return
-
     const granted = await acquireStream()
-    if (!granted) return
+    if (!granted) {
+      toast.error('Microphone blocked. Allow mic access in your browser, then try again.')
+      return
+    }
 
     const sid = await ensureSession()
     if (!sid) return
@@ -422,10 +474,17 @@ export function useChatPage() {
           }
         }
       },
-      onError(_code, message) {
-        toast.error(message || 'Voice message failed.')
+      onError(code, message) {
+        if (code === 'NO_SPEECH') toast.message("I didn't catch that — try again a bit closer to the mic.")
+        else toast.error(message || 'Voice message failed.')
       },
     })
+  }
+
+  function cancelVoice() {
+    if (voiceState.value !== 'recording') return
+    cancelRecording()
+    toast.message('Recording discarded')
   }
 
   async function fillSuggestion(text: string) {
@@ -469,6 +528,7 @@ export function useChatPage() {
     hardCapReached,
     composerDisabled,
     dailyLimitReached,
+    sessionEvaluation,
     todayList,
     earlierList,
     sessionTimer,
@@ -476,11 +536,19 @@ export function useChatPage() {
     newSession,
     openSession,
     send,
-    sendVoice,
+    startVoice,
+    cancelVoice,
     endCurrent,
     refreshCurrent,
     fillSuggestion,
+    focusComposer,
+    // voice state
     voiceState,
+    isRecording,
+    isTranscribing,
+    micDisabled,
+    canSend,
+    recordingClock,
     partialTranscript,
     audioStream,
   }
