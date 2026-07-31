@@ -32,19 +32,25 @@ const {
   todayList,
   earlierList,
   sessionTimer,
+  needsVerification,
   newSession,
   openSession,
   send,
   startVoice,
+  reviewVoice,
+  reRecordVoice,
   cancelVoice,
   endCurrent,
   refreshCurrent,
   fillSuggestion,
   isRecording,
+  isReviewing,
   isTranscribing,
   micDisabled,
   canSend,
   recordingClock,
+  reviewUrl,
+  reviewSeconds,
   partialTranscript,
   audioStream,
 } = useChatPage()
@@ -106,6 +112,7 @@ const sessionsOpen = ref(false)
         :messages="messages"
         :thinking="thinking"
         :sub-active="subActive"
+        :needs-verification="needsVerification"
         :active-session="activeSession"
         :user-initial="userInitial"
         @fill-suggestion="fillSuggestion"
@@ -136,15 +143,21 @@ const sessionsOpen = ref(false)
         :user-message-count="userMessageCount"
         :messages-per-session-hard="limits.messagesPerSessionHard"
         :accuracy-label="accuracyLabel"
+        :needs-verification="needsVerification"
         :is-recording="isRecording"
+        :is-reviewing="isReviewing"
         :is-transcribing="isTranscribing"
         :mic-disabled="micDisabled"
         :can-send="canSend"
         :recording-clock="recordingClock"
+        :review-url="reviewUrl"
+        :review-seconds="reviewSeconds"
         :partial-transcript="partialTranscript"
         :audio-stream="audioStream"
         @send="send"
         @record="startVoice"
+        @stop="reviewVoice"
+        @re-record="reRecordVoice"
         @discard="cancelVoice"
         @attach="toast.message('Attachments — coming soon')"
       />

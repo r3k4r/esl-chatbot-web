@@ -17,9 +17,13 @@ export function useChatPage() {
     partialTranscript,
     audioStream,
     recordingSeconds,
+    reviewUrl,
+    reviewSeconds,
     acquireStream,
     startRecording,
     stopRecording,
+    stopForReview,
+    sendReviewed,
     cancelRecording,
   } = useVoiceChat()
   const route = useRoute()
@@ -33,6 +37,15 @@ export function useChatPage() {
   const plan = computed(() => authStore.getUser?.subscription?.plan ?? 'FREE')
   const limits = computed(() => getLimits(plan.value))
   const subActive = computed(() => authStore.getUser?.subscription?.status === 'ACTIVE')
+
+  // There are two very different reasons a subscription is inactive, and the UI used
+  // to conflate them — sending an unverified FREE user to the billing page as if the
+  // AI tutor were a paid feature. It isn't: verifying your email (or linking Google)
+  // flips FREE from INACTIVE to ACTIVE for free.
+  const needsVerification = computed(
+    () => !subActive.value && authStore.getUser?.emailVerified === false,
+  )
+  const needsBilling = computed(() => !subActive.value && !needsVerification.value)
 
   // ─── State ───────────────────────────────────────────────────────────────
   const rawSessions = ref<SessionListItem[]>([])
@@ -85,12 +98,13 @@ export function useChatPage() {
     () => sending.value || thinking.value || isSessionEnded.value || hardCapReached.value || !subActive.value,
   )
   const isRecording = computed(() => voiceState.value === 'recording')
+  const isReviewing = computed(() => voiceState.value === 'review')
   const isTranscribing = computed(() => voiceState.value === 'processing')
   /** The mic is unusable for the same reasons the text box is — plus mid-turn. */
   const micDisabled = computed(() => composerDisabled.value || isTranscribing.value)
-  /** Send is live for a typed message OR for a recording that's ready to go. */
+  /** Send is live for a typed message, a live recording, or one being reviewed. */
   const canSend = computed(() => {
-    if (isRecording.value) return true
+    if (isRecording.value || isReviewing.value) return true
     return !composerDisabled.value && !!input.value.trim()
   })
   const recordingClock = computed(() => {
@@ -131,28 +145,74 @@ export function useChatPage() {
   })
 
   // ─── Timer ───────────────────────────────────────────────────────────────
-  const sessionTimer = ref('00:00')
+  // This counts ACTIVE time — seconds actually spent on the chat page with the tab
+  // in the foreground. It used to be wall-clock (`now - startedAt`), so leaving for
+  // lunch with a session open reported an hour of "practice" for two minutes of work.
+  // Accumulated per session in sessionStorage so leaving the page and coming back
+  // continues the count instead of resetting to zero.
+  const activeSeconds = ref(0)
   let timerHandle: ReturnType<typeof setInterval> | null = null
 
-  function fmtTimer() {
-    if (!activeSession.value) { sessionTimer.value = '00:00'; return }
-    const start = new Date(activeSession.value.startedAt).getTime()
-    // An ended session freezes at its final duration instead of ticking forever.
-    const until = activeSession.value.endedAt
-      ? new Date(activeSession.value.endedAt).getTime()
-      : Date.now()
-    const diff = Math.max(0, Math.floor((until - start) / 1000))
-    const m = String(Math.floor(diff / 60)).padStart(2, '0')
-    const s = String(diff % 60).padStart(2, '0')
-    sessionTimer.value = `${m}:${s}`
+  const timerKey = (id: string) => `chat-active-seconds:${id}`
+
+  function readStored(id: string): number {
+    if (!import.meta.client) return 0
+    const raw = Number(sessionStorage.getItem(timerKey(id)))
+    return Number.isFinite(raw) && raw > 0 ? raw : 0
   }
 
-  watch(activeSessionId, () => {
-    if (timerHandle) clearInterval(timerHandle)
-    fmtTimer()
-    timerHandle = setInterval(fmtTimer, 1000)
+  function persistSeconds() {
+    if (!import.meta.client || !activeSessionId.value) return
+    try { sessionStorage.setItem(timerKey(activeSessionId.value), String(activeSeconds.value)) }
+    catch { /* storage unavailable (private mode) — the timer just won't survive a page change */ }
+  }
+
+  const sessionTimer = computed(() => {
+    // An ended session shows its final duration from the server, which is the
+    // number the backend actually recorded — not our client-side tally.
+    const total = isSessionEnded.value && activeSession.value?.durationSeconds != null
+      ? activeSession.value.durationSeconds
+      : activeSeconds.value
+    const m = String(Math.floor(total / 60)).padStart(2, '0')
+    const s = String(Math.floor(total % 60)).padStart(2, '0')
+    return `${m}:${s}`
   })
-  onBeforeUnmount(() => { if (timerHandle) clearInterval(timerHandle) })
+
+  function shouldTick() {
+    if (!activeSessionId.value || isSessionEnded.value) return false
+    // Backgrounded tab / another app on mobile = not practising.
+    return !import.meta.client || document.visibilityState === 'visible'
+  }
+
+  function startTicking() {
+    if (timerHandle) return
+    timerHandle = setInterval(() => {
+      if (!shouldTick()) return
+      activeSeconds.value++
+      // Persist every 5s rather than every tick — cheap, and at most 5s is lost.
+      if (activeSeconds.value % 5 === 0) persistSeconds()
+    }, 1000)
+  }
+
+  function stopTicking() {
+    if (timerHandle) { clearInterval(timerHandle); timerHandle = null }
+    persistSeconds()
+  }
+
+  watch(activeSessionId, (id) => {
+    persistSeconds()
+    activeSeconds.value = id ? readStored(id) : 0
+  })
+
+  onMounted(() => {
+    startTicking()
+    document.addEventListener('visibilitychange', persistSeconds)
+  })
+
+  onBeforeUnmount(() => {
+    stopTicking()
+    if (import.meta.client) document.removeEventListener('visibilitychange', persistSeconds)
+  })
 
   // ─── Scroll ──────────────────────────────────────────────────────────────
   function scrollBottom() {
@@ -295,11 +355,16 @@ export function useChatPage() {
   }
 
   async function send() {
-    // Send is one button for both modes: while the mic is live it ends the
-    // recording and ships it. Stopping and sending used to be welded onto the
-    // mic button (a "stop" square), which read as pause and left Send dead.
+    // Send is one button for every mode: it ends a live recording and ships it,
+    // or ships one you've just listened back to. Stopping and sending used to be
+    // welded onto the mic button (a "stop" square), which read as pause and left
+    // Send dead.
     if (voiceState.value === 'recording') {
       stopRecording()
+      return
+    }
+    if (voiceState.value === 'review') {
+      sendReviewed()
       return
     }
     if (!input.value.trim() || composerDisabled.value) return
@@ -407,16 +472,18 @@ export function useChatPage() {
   }
 
   // ── Voice ─────────────────────────────────────────────────────────────────
-  // Three explicit actions instead of one overloaded toggle:
-  //   mic     → startVoice()   begin recording
-  //   discard → cancelVoice()  throw the audio away
-  //   Send    → send()         stop + ship it (see send() above)
+  // Explicit actions instead of one overloaded toggle:
+  //   mic     → startVoice()    begin recording
+  //   stop    → stopForReview() stop, keep it, listen back before deciding
+  //   discard → cancelVoice()   throw the audio away (from recording or review)
+  //   Send    → send()          ship it (see send() above)
   async function startVoice() {
-    if (voiceState.value === 'recording' || voiceState.value === 'processing') return
+    if (voiceState.value === 'recording' || voiceState.value === 'review' || voiceState.value === 'processing') return
     if (composerDisabled.value) {
       if (isSessionEnded.value) toast.message('This session has ended — start a new one to keep talking.')
       else if (hardCapReached.value) toast.message('This session hit its message limit. Start a new one.')
-      else if (!subActive.value) toast.error('You need an active plan to talk to Tutelage AI.')
+      else if (needsVerification.value) toast.message('Verify your email to unlock the AI tutor — it comes free with your account.')
+      else if (!subActive.value) toast.error('Your subscription is not active. Check Billing to reactivate it.')
       return
     }
 
@@ -482,9 +549,22 @@ export function useChatPage() {
   }
 
   function cancelVoice() {
-    if (voiceState.value !== 'recording') return
+    if (voiceState.value !== 'recording' && voiceState.value !== 'review') return
     cancelRecording()
     toast.message('Recording discarded')
+  }
+
+  /** Stop the mic but keep the audio so it can be played back before sending. */
+  function reviewVoice() {
+    if (voiceState.value !== 'recording') return
+    stopForReview()
+  }
+
+  /** Discard the reviewed take and immediately start a fresh one. */
+  async function reRecordVoice() {
+    if (voiceState.value !== 'review') return
+    cancelRecording()
+    await startVoice()
   }
 
   async function fillSuggestion(text: string) {
@@ -494,8 +574,10 @@ export function useChatPage() {
 
   onMounted(async () => {
     await loadSessions(subActive.value)
-    if (!subActive.value) {
-      toast.message('Activate a plan to start chatting with Tutelage AI.')
+    if (needsVerification.value) {
+      toast.message('Verify your email to unlock the AI tutor — it comes free with your account.')
+    } else if (!subActive.value) {
+      toast.message('Your subscription is not active. Check Billing to reactivate it.')
     }
   })
 
@@ -533,10 +615,14 @@ export function useChatPage() {
     earlierList,
     sessionTimer,
     // actions
+    needsVerification,
+    needsBilling,
     newSession,
     openSession,
     send,
     startVoice,
+    reviewVoice,
+    reRecordVoice,
     cancelVoice,
     endCurrent,
     refreshCurrent,
@@ -545,10 +631,13 @@ export function useChatPage() {
     // voice state
     voiceState,
     isRecording,
+    isReviewing,
     isTranscribing,
     micDisabled,
     canSend,
     recordingClock,
+    reviewUrl,
+    reviewSeconds,
     partialTranscript,
     audioStream,
   }

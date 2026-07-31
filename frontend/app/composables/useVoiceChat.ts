@@ -4,8 +4,9 @@ import { useAuthStore } from '~~/stores/auth'
 // idle       — no stream, no recording
 // ready      — stream acquired (permission granted), waiting for user to start
 // recording  — actively capturing audio
+// review     — recording stopped, held locally for playback; nothing sent yet
 // processing — audio sent, waiting for backend response
-export type VoiceState = 'idle' | 'ready' | 'recording' | 'processing'
+export type VoiceState = 'idle' | 'ready' | 'recording' | 'review' | 'processing'
 
 export interface VoiceResult {
   sessionId: string
@@ -37,13 +38,26 @@ export function useVoiceChat() {
   const audioStream = ref<MediaStream | null>(null)
   /** Seconds elapsed in the current recording — drives the composer's timer. */
   const recordingSeconds = ref(0)
+  /** Object URL of the just-stopped recording, for playback before sending. */
+  const reviewUrl = ref<string | null>(null)
+  /** Length of the recording being reviewed, in seconds. */
+  const reviewSeconds = ref(0)
 
   let socket: Socket | null = null
   let recorder: MediaRecorder | null = null
   let activeSessionId: string | null = null
   let callbacks: VoiceChatCallbacks = {}
-  // Set by cancelRecording() so recorder.onstop discards instead of sending.
-  let discardOnStop = false
+  // What recorder.onstop should do. The server buffers chunks as they stream in and
+  // only acts on `voice:end`, so "stop" and "send" are genuinely separate steps.
+  let stopMode: 'send' | 'review' | 'discard' = 'send'
+  // Chunks kept client-side purely so the user can play the recording back. The copy
+  // the server uses is the one it buffered during streaming — this is never uploaded.
+  let localChunks: Blob[] = []
+  let localMime = ''
+  // The exact socket the chunks were streamed over. The server keys its buffer by
+  // socket (a WeakMap in voice.socket.ts), so sending over a *different* socket after
+  // a reconnect would find no audio.
+  let activeSock: Socket | null = null
   let tickHandle: ReturnType<typeof setInterval> | null = null
 
   function startTimer() {
@@ -128,6 +142,7 @@ export function useVoiceChat() {
       console.error('[voice:error]', code, message)
       abortRecorder()
       stopTimer()
+      clearReview()
       partialTranscript.value = ''
       // The mic stream survives an error — stay 'ready' so the user can retry
       // straight away instead of re-triggering the permission prompt.
@@ -136,11 +151,20 @@ export function useVoiceChat() {
     })
 
     sock.on('disconnect', () => {
-      if (voiceState.value === 'recording' || voiceState.value === 'processing') {
+      // A recording held for review is also lost: the server buffers per socket, so
+      // once this one is gone there is nothing left to claim with voice:end.
+      if (voiceState.value === 'recording' || voiceState.value === 'review' || voiceState.value === 'processing') {
+        const wasReviewing = voiceState.value === 'review'
         abortRecorder()
         stopTimer()
+        clearReview()
         voiceState.value = audioStream.value ? 'ready' : 'idle'
-        callbacks.onError?.('DISCONNECT', 'Connection lost')
+        callbacks.onError?.(
+          'DISCONNECT',
+          wasReviewing
+            ? 'Connection dropped — that recording was lost. Please record again.'
+            : 'Connection lost',
+        )
       }
     })
   }
@@ -153,7 +177,15 @@ export function useVoiceChat() {
       if (recorder.state !== 'inactive') recorder.stop()
       recorder = null
     }
-    discardOnStop = false
+    stopMode = 'send'
+  }
+
+  /** Drop the locally held playback copy and free its object URL. */
+  function clearReview() {
+    if (reviewUrl.value) URL.revokeObjectURL(reviewUrl.value)
+    reviewUrl.value = null
+    reviewSeconds.value = 0
+    localChunks = []
   }
 
   // ── Phase 1: acquire mic permission + open stream ─────────────────────────
@@ -177,11 +209,12 @@ export function useVoiceChat() {
     // a completed turn). Only refuse when there's no stream or a turn is already
     // in flight — otherwise turn 2+ would never start (the infinite-listening bug).
     if (!audioStream.value) return
-    if (voiceState.value === 'recording' || voiceState.value === 'processing') return
+    if (voiceState.value === 'recording' || voiceState.value === 'review' || voiceState.value === 'processing') return
     callbacks = cb
     activeSessionId = sessionId
     partialTranscript.value = ''
-    discardOnStop = false
+    stopMode = 'send'
+    clearReview()
 
     let sock: Socket
     try {
@@ -196,13 +229,18 @@ export function useVoiceChat() {
 
     recorder = new MediaRecorder(audioStream.value, mimeType ? { mimeType } : undefined)
     const finalMime = recorder.mimeType || mimeType
+    localMime = finalMime
+    activeSock = sock
 
     console.log('[voice] starting — sessionId:', sessionId, 'mimeType:', finalMime)
     sock.emit('voice:start', { sessionId, mimeType: finalMime })
 
     let chunkCount = 0
     recorder.ondataavailable = (e) => {
-      if (!e.data.size || !sock.connected) return
+      if (!e.data.size) return
+      // Keep a local copy for playback regardless of socket state.
+      localChunks.push(e.data)
+      if (!sock.connected) return
       const reader = new FileReader()
       reader.onloadend = () => {
         const b64 = (reader.result as string).split(',')[1]
@@ -216,19 +254,36 @@ export function useVoiceChat() {
 
     recorder.onstop = () => {
       stopTimer()
-      // Discard path: the user pressed Discard, so the buffered audio is simply
-      // never claimed. We deliberately do NOT emit voice:end — that event is what
-      // runs the (paid) STT→LLM→TTS pipeline. The server drops its own buffer on
-      // the next voice:start for this session, or on disconnect.
-      if (discardOnStop) {
+      const mode = stopMode
+      stopMode = 'send'
+
+      // Discard: the buffered audio is simply never claimed. We deliberately do NOT
+      // emit voice:end — that event is what runs the (paid) STT→LLM→TTS pipeline.
+      // The server drops its own buffer on the next voice:start for this session,
+      // or on disconnect.
+      if (mode === 'discard') {
         console.log('[voice] discarded — no voice:end emitted, chunks buffered:', chunkCount)
-        discardOnStop = false
+        clearReview()
         partialTranscript.value = ''
         voiceState.value = audioStream.value ? 'ready' : 'idle'
         return
       }
+
+      // Review: same as discard in that nothing is sent yet, but the local copy is
+      // kept so the user can listen back and then decide.
+      if (mode === 'review') {
+        console.log('[voice] stopped for review — chunks buffered:', chunkCount)
+        reviewSeconds.value = recordingSeconds.value
+        if (localChunks.length) {
+          reviewUrl.value = URL.createObjectURL(new Blob(localChunks, { type: localMime }))
+        }
+        voiceState.value = 'review'
+        return
+      }
+
       console.log('[voice] stopped — sending voice:end, chunks sent:', chunkCount)
       if (sock.connected) sock.emit('voice:end', { sessionId })
+      clearReview()
       voiceState.value = 'processing'
     }
 
@@ -244,17 +299,52 @@ export function useVoiceChat() {
     startTimer()
   }
 
-  /** Stop recording AND send it for processing (the Send button). */
+  /** Stop recording AND send it straight for processing. */
   function stopRecording() {
     if (voiceState.value !== 'recording' || !recorder) return
+    stopMode = 'send'
     if (recorder.state !== 'inactive') recorder.stop()
     recorder = null
   }
 
-  /** Stop recording and throw the audio away (the Discard button). */
-  function cancelRecording() {
+  /** Stop recording but send nothing — hold it for playback (the Stop button). */
+  function stopForReview() {
     if (voiceState.value !== 'recording' || !recorder) return
-    discardOnStop = true
+    stopMode = 'review'
+    if (recorder.state !== 'inactive') recorder.stop()
+    recorder = null
+  }
+
+  /**
+   * Send a recording that's being reviewed. The audio is already on the server from
+   * the chunk stream, so this only has to claim it — but it must go over the SAME
+   * socket, since the server keys its buffer by socket.
+   */
+  function sendReviewed(): boolean {
+    if (voiceState.value !== 'review') return false
+    if (!activeSessionId || !activeSock?.connected) {
+      clearReview()
+      voiceState.value = audioStream.value ? 'ready' : 'idle'
+      callbacks.onError?.('DISCONNECT', 'Connection dropped — that recording was lost. Please record again.')
+      return false
+    }
+    activeSock.emit('voice:end', { sessionId: activeSessionId })
+    clearReview()
+    partialTranscript.value = ''
+    voiceState.value = 'processing'
+    return true
+  }
+
+  /** Throw the audio away, from either recording or review (the Discard button). */
+  function cancelRecording() {
+    if (voiceState.value === 'review') {
+      clearReview()
+      partialTranscript.value = ''
+      voiceState.value = audioStream.value ? 'ready' : 'idle'
+      return
+    }
+    if (voiceState.value !== 'recording' || !recorder) return
+    stopMode = 'discard'
     if (recorder.state !== 'inactive') recorder.stop()
     recorder = null
   }
@@ -264,12 +354,14 @@ export function useVoiceChat() {
   function release() {
     abortRecorder()
     stopTimer()
+    clearReview()
     if (audioStream.value) {
       audioStream.value.getTracks().forEach((t) => t.stop())
       audioStream.value = null
     }
     socket?.disconnect()
     socket = null
+    activeSock = null
     voiceState.value = 'idle'
     partialTranscript.value = ''
     recordingSeconds.value = 0
@@ -282,9 +374,13 @@ export function useVoiceChat() {
     partialTranscript,
     audioStream,
     recordingSeconds,
+    reviewUrl,
+    reviewSeconds,
     acquireStream,
     startRecording,
     stopRecording,
+    stopForReview,
+    sendReviewed,
     cancelRecording,
     release,
   }

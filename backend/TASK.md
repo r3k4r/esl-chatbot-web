@@ -4,6 +4,41 @@ Tasks are ordered by recommended priority. Work top-to-bottom.
 
 ---
 
+## 21. 🔴 Azure STT is broken for GOLD/PREMIUM on prod — voice fails (found 2026-07-31, live)
+Reported by Aland testing a GOLD account on prod. Voice messages fail with:
+
+```
+Azure STT canceled: TypeError: undefined is not an object (evaluating 'this.binaryBody.byteLength')
+```
+
+**Impact: all GOLD + PREMIUM voice is dead.** `ai.service.ts` routes GOLD/PREMIUM STT to Azure
+(FREE/dev go to Deepgram), and per the 2026-07-23 note there is **no fallback once
+`AZURE_SPEECH_KEY` is set** — so this is a hard failure, not a degradation. FREE users are
+unaffected, which is why it wasn't caught earlier.
+
+Not yet diagnosed. Leads, in order of suspicion — all in
+`src/modules/ai/providers/azure.stt.ts`:
+
+1. **Missing GStreamer in the production container.** The file's own header comment says
+   *"Linux deployment requires GStreamer for compressed audio decoding"*, and every browser
+   recording we send is compressed (`WEBM_OPUS`/`OGG_OPUS`). The `Dockerfile` almost certainly
+   doesn't install it. This best explains a prod-only failure that never appears locally.
+2. **Bun vs the Azure Speech SDK.** `binaryBody` belongs to the SDK's internal HTTP layer;
+   `undefined.byteLength` reads like its request shim getting an empty/undefined body under
+   Bun's `fetch`/`XMLHttpRequest` rather than Node's. The SDK is not officially Bun-tested.
+3. **Empty or unsupported audio reaching `pushStream.write()`** (azure.stt.ts:43-48). Safari
+   records `audio/mp4`, which the header comment says this SDK version does NOT support and
+   which `getAudioFormat()` silently falls through to `WEBM_OPUS` for — worth confirming which
+   browser Aland tested on, since that would make it a client-format bug, not an infra one.
+
+**Suggested first move:** reproduce with a GOLD account, log `mimeType` + `audioBuffer.length`
+at the top of `azureSTT()`. If the buffer is sane, it's (1) or (2), and the cheap mitigation is
+to fall back to Deepgram on ANY Azure failure — mirroring the Gemini→OpenAI fallback shipped for
+the geo-block — so paid tiers degrade to working voice instead of no voice. GOLD/PREMIUM lose
+pronunciation scoring on the fallback path, which is far better than a dead feature.
+
+---
+
 ## 1. Teacher Task System ✅ DONE (2026-06-11)
 Tutors assign homework/tasks with deadlines. Students submit their work. Tutor gives feedback.
 

@@ -14,12 +14,16 @@ const props = defineProps<{
   userMessageCount: number
   messagesPerSessionHard: number
   accuracyLabel: string
+  needsVerification: boolean
   // voice
   isRecording: boolean
+  isReviewing: boolean
   isTranscribing: boolean
   micDisabled: boolean
   canSend: boolean
   recordingClock: string
+  reviewUrl: string | null
+  reviewSeconds: number
   partialTranscript: string
   audioStream: MediaStream | null
 }>()
@@ -28,20 +32,26 @@ const emit = defineEmits<{
   'update:modelValue': [val: string]
   'send': []
   'record': []
+  'stop': []
+  're-record': []
   'discard': []
   'attach': []
 }>()
 
 const placeholder = computed(() => {
-  if (!props.subActive) return 'Subscribe to chat with Tutelage AI…'
+  // "Subscribe" was wrong for the most common case: an unverified FREE account,
+  // which unlocks the tutor by verifying an email, not by paying.
+  if (props.needsVerification) return 'Verify your email to unlock the AI tutor — it’s free.'
+  if (!props.subActive) return 'Your subscription is not active — check Billing.'
   if (props.isSessionEnded) return 'Session ended — start a new one.'
   if (props.hardCapReached) return 'Session message limit reached.'
+  if (props.isReviewing) return 'Listen back, then Send — or redo it.'
   if (!props.activeSessionId) return 'Type a message to start chatting with Tutelage AI…'
   return 'Ask anything in English, or just say hi.'
 })
 
 const inputDisabled = computed(
-  () => props.composerDisabled || props.isRecording || props.isTranscribing,
+  () => props.composerDisabled || props.isRecording || props.isReviewing || props.isTranscribing,
 )
 
 // Messages remaining, so the counter reads as a budget rather than a raw tally.
@@ -90,6 +100,14 @@ function onKeydown(e: KeyboardEvent) {
         @discard="emit('discard')"
       />
 
+      <PagesDashboardChatVoiceReviewBar
+        v-else-if="isReviewing"
+        :url="reviewUrl"
+        :seconds="reviewSeconds"
+        @discard="emit('discard')"
+        @re-record="emit('re-record')"
+      />
+
       <div
         v-else-if="isTranscribing"
         class="mb-2 flex items-center gap-2 px-3 py-2 rounded-xl border bg-surface-raised border-border-inner"
@@ -123,8 +141,22 @@ function onKeydown(e: KeyboardEvent) {
           @keydown="onKeydown"
         />
 
+        <!-- Stop genuinely stops: it holds the take for playback, it does not send -->
         <AppButton
-          v-if="!isRecording"
+          v-if="isRecording"
+          variant="ghost"
+          size="36"
+          radius="8"
+          aspect="square"
+          icon="Stop"
+          :icon-config="{ color: '#ef4444', size: 18 }"
+          class-list="shrink-0"
+          aria-label="Stop recording and listen back"
+          @click="emit('stop')"
+        />
+
+        <AppButton
+          v-else-if="!isReviewing"
           variant="ghost"
           size="36"
           radius="8"

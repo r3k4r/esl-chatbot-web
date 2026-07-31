@@ -7,6 +7,8 @@ defineProps<{
   messages: ChatMessage[]
   thinking: boolean
   subActive: boolean
+  /** Inactive because the email isn't verified yet — free to fix, no payment. */
+  needsVerification: boolean
   activeSession: { topic?: string | null } | null
   userInitial: string
 }>()
@@ -52,8 +54,12 @@ defineExpose({ scrollEl })
           Hi{{ getUser?.displayName ? `, ${getUser.displayName.split(' ')[0]}` : '' }}! I'm Tutelage AI 👋
         </AppText>
         <AppText size="14" color="neutral-400" class-list="max-w-sm">
-          <template v-if="!subActive">
-            You need an active plan to chat. Choose one to get started.
+          <template v-if="needsVerification">
+            One step left — verify your email and the AI tutor unlocks on your free plan.
+            No payment needed.
+          </template>
+          <template v-else-if="!subActive">
+            Your subscription isn't active right now. Check Billing to get chatting again.
           </template>
           <template v-else-if="activeSession">
             Say anything in English — I'll reply naturally and correct you as we go.
@@ -80,12 +86,24 @@ defineExpose({ scrollEl })
         </div>
 
         <AppButton
-          v-if="!subActive"
+          v-if="needsVerification"
+          to="/verify-email"
+          variant="primary"
+          size="40"
+          radius="8"
+          text="Verify my email"
+          icon="ArrowRight"
+          :icon-config="{ color: 'white' }"
+          icon-position="end"
+          class-list="mt-5 text-[14px]"
+        />
+        <AppButton
+          v-else-if="!subActive"
           to="/dashboard/billing"
           variant="primary"
           size="40"
           radius="8"
-          text="Choose a plan"
+          text="Go to Billing"
           icon="ArrowRight"
           :icon-config="{ color: 'white' }"
           icon-position="end"
