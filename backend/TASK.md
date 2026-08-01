@@ -4,6 +4,40 @@ Tasks are ordered by recommended priority. Work top-to-bottom.
 
 ---
 
+## 22. 🟡 Nothing ever heals a stuck INACTIVE subscription (found 2026-07-31)
+Found while diagnosing real prod users showing `Subscription Status: Inactive` despite being
+verified and able to log in.
+
+**There is no bug that deactivates anyone.** `INACTIVE` is written in exactly one place —
+`auth.service.ts:322`, the LOCAL registration transaction — and all four activation paths are
+correct (verify-email OTP, link-google, Google-merge-onto-local, new-Google-account).
+
+**The gap is that activation only ever happens at those four moments.** Nothing re-checks
+afterwards, so a user who ends up verified-but-INACTIVE for *any* historical reason is stuck
+there permanently:
+- `POST /auth/login` checks `emailVerified` (403 if false) but never looks at the subscription.
+- `googleAuth` **Case A** (existing Google user, direct login, `auth.service.ts:370-374`) returns
+  the user untouched — unlike Case B (merge), which does `updateMany({status:'INACTIVE'} → ACTIVE)`.
+  So a Google account that is somehow INACTIVE can log in forever and never activate.
+- `GET /auth/me` re-reads the row but doesn't repair it.
+
+Any account predating one of those activation paths — the earliest beta users, accounts promoted
+to TUTOR/ADMIN by raw SQL, anything hand-made during the July prod bring-up — is permanently
+locked out of the AI tutor with no self-service fix and no admin UI to correct it.
+
+**Proposed fix (small, and it makes the invariant self-enforcing):** on `POST /auth/login` and
+`googleAuth` Case A, run the same `updateMany({ userId, status: 'INACTIVE' } → ACTIVE)` that Case B
+already uses, guarded on `emailVerified === true`. It is idempotent, costs one indexed write only
+when the row is actually wrong, and cannot affect CANCELLED/PAST_DUE or paid plans. The invariant
+"verified email ⇒ FREE tier active" then holds continuously instead of only at the moment of
+verification.
+
+Until then the state has to be repaired with SQL, and admins have no UI for it (see the related
+`frontend/TASKS.md` entry — `PUT /admin/users/:id/subscription` requires a plan **and** a
+duration/endDate, which is awkward for "just switch this FREE tier back on").
+
+---
+
 ## 21. 🔴 Azure STT is broken for GOLD/PREMIUM on prod — voice fails (found 2026-07-31, live)
 Reported by Aland testing a GOLD account on prod. Voice messages fail with:
 

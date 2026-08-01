@@ -40,9 +40,14 @@ const STATUS_TEXT: Record<string, string> = {
 <template>
   <tr class="transition-colors hover:bg-surface-raised" style="border-bottom:1px solid var(--border-inner)">
 
-    <!-- Avatar + name -->
+    <!-- Avatar + name — the whole block is the link to the user's detail page.
+         Clicking a person's face or name is the first thing anyone tries. -->
     <td class="px-4 py-3">
-      <div class="flex items-center gap-3">
+      <AppLink
+        :to="`/dashboard/users/${user.id}`"
+        class="flex items-center gap-3 group/user rounded-lg -m-1 p-1 transition-colors hover:bg-surface-well"
+        :aria-label="`Open ${user.displayName || user.username}'s profile`"
+      >
         <UiAvatar class="w-9 h-9 rounded-xl shrink-0">
           <UiAvatarImage v-if="user.avatarUrl" :src="user.avatarUrl" :alt="user.displayName" class="object-cover" />
           <UiAvatarFallback
@@ -53,12 +58,16 @@ const STATUS_TEXT: Record<string, string> = {
           </UiAvatarFallback>
         </UiAvatar>
         <div class="min-w-0">
-          <p class="text-[14px] font-semibold font-poppins truncate" :style="`color:var(--text-heading)`">
+          <!-- token class, not an inline style: an inline `color` would beat the
+               hover class and the name would never highlight -->
+          <p
+            class="text-[14px] font-semibold font-poppins truncate text-text-heading group-hover/user:text-brand-primary transition-colors"
+          >
             {{ user.displayName || user.username }}
           </p>
           <p class="text-[14px] font-poppins truncate" :style="`color:var(--text-muted)`">{{ user.email }}</p>
         </div>
-      </div>
+      </AppLink>
     </td>
 
     <!-- Role -->
@@ -75,8 +84,10 @@ const STATUS_TEXT: Record<string, string> = {
       </span>
     </td>
 
-    <!-- Subscription status -->
-    <td class="px-4 py-3 hidden lg:table-cell">
+    <!-- Subscription status — breakpoints match the header in users/index.vue.
+         These were lg:/xl:, which in this project are 1200px/1440px, so the ban
+         toggle and join date vanished on an ordinary laptop. -->
+    <td class="px-4 py-3 hidden md-lg:table-cell">
       <span
         class="text-[14px] font-semibold px-2.5 py-0.5 rounded-md font-poppins"
         :style="`background:${STATUS_COLOR[user.subscription?.status ?? 'INACTIVE']};color:${STATUS_TEXT[user.subscription?.status ?? 'INACTIVE']}`"
@@ -85,8 +96,8 @@ const STATUS_TEXT: Record<string, string> = {
       </span>
     </td>
 
-    <!-- isActive switch -->
-    <td class="px-4 py-3 hidden xl:table-cell">
+    <!-- isActive switch — the real ban control -->
+    <td class="px-4 py-3 hidden md-lg:table-cell">
       <div class="flex items-center gap-2">
         <UiSwitch
           :model-value="user.isActive"
@@ -103,13 +114,14 @@ const STATUS_TEXT: Record<string, string> = {
     </td>
 
     <!-- Joined -->
-    <td class="px-4 py-3 hidden xl:table-cell">
+    <td class="px-4 py-3 hidden lg:table-cell">
       <p class="text-[14px] font-mono" :style="`color:var(--text-subtle)`">
         {{ new Date(user.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) }}
       </p>
     </td>
 
-    <!-- Detail button -->
+    <!-- Detail button — same destination as the name, kept for the columns that
+         are hidden on narrow screens. Was unlabelled: an anonymous (!) icon. -->
     <td class="px-2 py-3">
       <AppButton
         variant="secondary"
@@ -118,6 +130,8 @@ const STATUS_TEXT: Record<string, string> = {
         aspect="square"
         icon="InfoCircle"
         :to="`/dashboard/users/${user.id}`"
+        title="View details"
+        aria-label="View user details"
       />
     </td>
 

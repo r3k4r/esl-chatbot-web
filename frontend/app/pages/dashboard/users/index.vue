@@ -23,6 +23,11 @@ const initialStatus = STATUSES.includes(route.query.subscriptionStatus as SubSta
   : 'ALL'
 
 const page = ref(1)
+// Admins asked to control density. Backend caps `limit` at 100 (see API conventions
+// in backend/CLAUDE.md), so 100 is the highest option we can offer.
+const PAGE_SIZES = [10, 25, 50, 100]
+const LIMIT_KEY = 'admin-users-page-size'
+const limit = ref(25)
 const search = ref('')
 const roleFilter = ref<UserRole | 'ALL'>(initialRole)
 const statusFilter = ref<SubStatus | 'ALL'>(initialStatus)
@@ -42,25 +47,12 @@ const roleTarget = ref<AdminUserItem | null>(null)
 const roleOpen = ref(false)
 const roleSaving = ref(false)
 
-// Pagination page numbers to display (max 5 around current)
-const pageNumbers = computed(() => {
-  const total = totalPages.value
-  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1)
-  const cur = page.value
-  const pages: (number | '…')[] = [1]
-  if (cur > 3) pages.push('…')
-  for (let i = Math.max(2, cur - 1); i <= Math.min(total - 1, cur + 1); i++) pages.push(i)
-  if (cur < total - 2) pages.push('…')
-  pages.push(total)
-  return pages
-})
-
 // ── Fetch ──────────────────────────────────────────────────────────────────
 async function load() {
   loading.value = true
   const res = await listUsers({
     page: page.value,
-    limit: 8,
+    limit: limit.value,
     search: search.value,
     role: roleFilter.value,
     subscriptionStatus: statusFilter.value,
@@ -72,11 +64,30 @@ async function load() {
     users.value = res.data.data ?? []
     total.value = res.data.meta?.total ?? 0
     totalPages.value = res.data.meta?.totalPages ?? 1
+
+    // Landing past the end (deleted rows, a narrower filter, a bigger page size)
+    // used to leave an empty table with no way to tell why. Snap back and refetch.
+    // max(1, …) also covers a zero-result response, where totalPages is 0.
+    const maxPage = Math.max(1, totalPages.value)
+    if (page.value > maxPage) {
+      page.value = maxPage   // triggers the page watcher → load() runs again
+      return
+    }
   }
   loading.value = false
 }
 
-onMounted(load)
+onMounted(() => {
+  const stored = Number(localStorage.getItem(LIMIT_KEY))
+  if (PAGE_SIZES.includes(stored)) limit.value = stored
+  load()
+})
+
+function onLimitChange(next: number) {
+  limit.value = next
+  page.value = 1
+  try { localStorage.setItem(LIMIT_KEY, String(next)) } catch { /* private mode */ }
+}
 
 // Debounced search
 let searchTimer: ReturnType<typeof setTimeout>
@@ -85,7 +96,7 @@ watch(search, () => {
   searchTimer = setTimeout(() => { page.value = 1; load() }, 300)
 })
 
-watch([roleFilter, statusFilter, planFilter, createdAfter, createdBefore, page], load)
+watch([roleFilter, statusFilter, planFilter, createdAfter, createdBefore, page, limit], load)
 
 // ── Actions ────────────────────────────────────────────────────────────────
 const togglingId = ref<string | null>(null)
@@ -190,9 +201,14 @@ async function confirmCancel() {
               <th class="px-4 py-3 text-left text-[14px] font-semibold font-poppins" :style="`color:var(--text-muted)`">User</th>
               <th class="px-4 py-3 text-left text-[14px] font-semibold font-poppins hidden sm:table-cell" :style="`color:var(--text-muted)`">Role</th>
               <th class="px-4 py-3 text-left text-[14px] font-semibold font-poppins hidden md:table-cell" :style="`color:var(--text-muted)`">Plan</th>
-              <th class="px-4 py-3 text-left text-[14px] font-semibold font-poppins hidden lg:table-cell" :style="`color:var(--text-muted)`">Subscription Status</th>
-              <th class="px-4 py-3 text-left text-[14px] font-semibold font-poppins hidden xl:table-cell" :style="`color:var(--text-muted)`">Status</th>
-              <th class="px-4 py-3 text-left text-[14px] font-semibold font-poppins hidden xl:table-cell" :style="`color:var(--text-muted)`">Joined</th>
+              <!-- Breakpoints here are the project's custom ones (main.css): md-lg=1024,
+                   lg=1200, xl=1440. These were xl:, so the ban toggle and Joined date
+                   were invisible on any laptop under 1440px. -->
+              <th class="px-4 py-3 text-left text-[14px] font-semibold font-poppins hidden md-lg:table-cell" :style="`color:var(--text-muted)`">Subscription</th>
+              <!-- "Account" not "Status": this is the isActive ban switch, and two
+                   columns both called Status is how an admin bans the wrong person. -->
+              <th class="px-4 py-3 text-left text-[14px] font-semibold font-poppins hidden md-lg:table-cell" :style="`color:var(--text-muted)`">Account</th>
+              <th class="px-4 py-3 text-left text-[14px] font-semibold font-poppins hidden lg:table-cell" :style="`color:var(--text-muted)`">Joined</th>
               <th class="px-2 py-3 w-10" />
               <th class="px-4 py-3 w-12" />
             </tr>
@@ -200,7 +216,7 @@ async function confirmCancel() {
 
           <!-- Skeleton -->
           <tbody v-if="loading">
-            <tr v-for="n in 8" :key="n" style="border-bottom:1px solid var(--border-inner)">
+            <tr v-for="n in Math.min(limit, 10)" :key="n" style="border-bottom:1px solid var(--border-inner)">
               <td class="px-4 py-3" colspan="8">
                 <UiSkeleton class="h-10 rounded-xl" />
               </td>
@@ -240,32 +256,17 @@ async function confirmCancel() {
         </table>
       </div>
 
-      <!-- Pagination -->
-      <div v-if="totalPages > 1" class="flex items-center justify-between px-4 py-3 flex-wrap gap-2" style="border-top:1px solid var(--border-inner)">
-        <p class="text-[14px] font-poppins" :style="`color:var(--text-muted)`">
-          {{ total }} users · page {{ page }} of {{ totalPages }}
-        </p>
-        <div class="flex items-center gap-1">
-          <AppButton variant="secondary" size="32" radius="8" icon="ArrowLeft" :disabled="page <= 1" @click="page--" />
-          <template v-for="p in pageNumbers" :key="String(p)">
-            <span
-              v-if="p === '…'"
-              class="w-8 text-center text-[14px] font-poppins select-none"
-              :style="`color:var(--text-subtle)`"
-            >…</span>
-            <button
-              v-else
-              class="w-8 h-8 rounded-lg text-[14px] font-semibold font-poppins transition-colors cursor-pointer"
-              :style="p === page
-                ? 'background:var(--color-brand-primary);color:white'
-                : 'color:var(--text-muted)'"
-              :class="p !== page ? 'hover:bg-surface-raised' : ''"
-              @click="page = p as number"
-            >{{ p }}</button>
-          </template>
-          <AppButton variant="secondary" size="32" radius="8" icon="ArrowRight" :disabled="page >= totalPages" @click="page++" />
-        </div>
-      </div>
+      <!-- Pagination — always shown, so the count and page size stay reachable
+           even when everything fits on one page -->
+      <PagesDashboardUsersUsersPagination
+        :page="page"
+        :total-pages="totalPages"
+        :total="total"
+        :limit="limit"
+        :page-sizes="PAGE_SIZES"
+        @update:page="page = $event"
+        @update:limit="onLimitChange"
+      />
     </div>
 
     <!-- Change role modal -->

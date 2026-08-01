@@ -61,6 +61,71 @@ Verify with `cd frontend && bunx nuxi typecheck` + a production `nuxt build` per
 
 ---
 
+### 🟡 Admin Users list — round 1 done 2026-07-31, rest still open
+
+**Done in round 1 (Aland via Claude):**
+- ✅ **Paging past the end is fixed.** Root cause was the app-wide `AppButton :disabled` bug — the
+  prev/next arrows were never actually disabled, so Next kept incrementing into empty pages. All
+  navigation now goes through `goTo()` in the new `Users/UsersPagination.vue`, which clamps to
+  `[1, totalPages]`; `load()` also snaps back if a refetch lands past the end (deleted rows, a
+  narrower filter, a larger page size).
+- ✅ **Rows-per-page selector** — 10 / 25 / 50 / 100 (backend caps `limit` at 100), default 25,
+  remembered per browser in `localStorage`. Was hardcoded to 8.
+- ✅ **Avatar + name are now a link** to `/dashboard/users/:id`, with a hover highlight.
+- ✅ **The footer is always visible**, so the total count and page size stay reachable on one page.
+  It now reads "1–25 of 13 users" instead of "13 users · page 1 of 2".
+- ✅ **"Status" → "Account"** on the isActive column (see item 2 below).
+- ✅ **Column breakpoints fixed** — Subscription/Account were `xl:` and Joined `xl:`/`lg:`, which in
+  this project are **1440px/1200px**, so the ban toggle and join date were invisible on an ordinary
+  laptop. Now `md-lg:` (1024) / `lg:` (1200).
+- ✅ The unlabelled `(!)` row button got a `title` + `aria-label`.
+
+**Still open:**
+
+---
+
+### 🟡 Admin Users list — remaining items (opened 2026-07-31)
+Split out of the responsive overhaul because it has a specific, concrete problem list. Route:
+`pages/dashboard/users/index.vue` + `Users/UserTableRow.vue` + `Users/UserFilters.vue`.
+**ADMIN only — `requiresAdmin: true` must stay on the route.**
+
+**1. The list can't show why a subscription is inactive — this actively cost debugging time.**
+`USER_LIST_SELECT` in the backend's `users.service.ts` returns `subscription {plan, status,
+currentPeriodEnd}` but **not `emailVerified`**, even though the detail endpoint has it. So an admin
+looking at "Subscription Status: Inactive" cannot tell whether the user never verified their email
+(expected, they just need to verify) or is genuinely stuck (a real fault). On 2026-07-31 this meant
+a screenshot plus a full backend read to answer a question the table should have answered.
+→ Needs `emailVerified` added to `USER_LIST_SELECT` (backend, one line + `generate:types`) and a
+verified/unverified indicator in the row, ideally right next to Subscription Status.
+
+**2. ✅ DONE — two columns were both called some flavour of "Status".** "Subscription Status"
+(billing/AI access) vs "Status" (the `isActive` ban toggle). Renamed to **Subscription** and
+**Account** — an admin mixing these up either bans someone by accident or thinks they've banned
+someone when they haven't.
+
+**3. No way to switch a FREE tier back on.** `PUT /admin/users/:id/subscription` needs a plan **and**
+a `durationMonths`/`endDate`, which doesn't fit "this FREE user should be ACTIVE" — so today the only
+repair is raw SQL in Neon. Add a lightweight **Activate free tier** action to the row menu.
+See `backend/TASK.md` §22 for the underlying gap.
+
+**4. Do NOT add a "block subscription" button for moderation.** Suspicious/illegal accounts are
+handled by `isActive = false` (the existing Status toggle), which blocks login outright with a 403.
+Setting a subscription INACTIVE only removes AI access — the account can still log in, join classes
+and use everything else — and it corrupts billing state with a moderation meaning, which will later
+be indistinguishable from "never verified". Keep moderation on `isActive`, keep subscription status
+for billing. **BE CAREFUL WITH ROLES/PERMISSIONS.**
+
+**5. Leftovers from the round-1 pass:**
+- `pages/dashboard/users/index.vue` is still **313 lines** — the template is ~155, marginally over
+  the house limit. The table (header + skeleton + empty + rows) should move to
+  `Users/UsersTable.vue`, leaving the page as glue. Deliberately not done in round 1: it's a
+  mechanical extraction on a screen that was being actively used, and there was no way to verify
+  it visually at the time.
+- The row still uses raw `<p>`/`<span>` rather than `<AppText>` throughout.
+- A denser row height would be welcome now that 100 rows per page is possible.
+
+---
+
 ### ✅ Chat page rebuild — mobile, voice and end-of-session (2026-07-31, Aland via Claude)
 Step 1 of the overhaul above. **Frontend only — no backend change, no `generate:types`.**
 
