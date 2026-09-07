@@ -1,0 +1,7 @@
+{
+  "provider": "mock",
+  "parallel": 1,
+  "maxAttempts": 2,
+  "writeBack": "auto",
+  "baseBranch": "main"
+}
