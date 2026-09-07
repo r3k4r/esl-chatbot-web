@@ -1,4 +1,4 @@
-make the language button to have the same high as the button #done
+make the language button to have the same high as the button
 
 make the input label and placeholder text to support dark/light mode
 
