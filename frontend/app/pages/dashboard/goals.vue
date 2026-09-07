@@ -111,7 +111,7 @@ const emptyMessage = computed(() =>
           size="28"
           radius="8"
           :text="f.label"
-          :class-list="filterStatus !== f.value ? 'border-0! shadow-none! bg-transparent! text-[12px]!' : 'text-[12px]!'"
+          :class-list="filterStatus !== f.value ? 'border-0! shadow-none! dark:text-white bg-transparent! text-[12px]!' : 'text-[12px]!'"
           @click="filterStatus = f.value"
         />
       </div>

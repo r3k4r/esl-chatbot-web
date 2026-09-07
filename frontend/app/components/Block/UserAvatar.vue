@@ -77,7 +77,7 @@ async function handleSignOut() {
   <UiDropdownMenu>
     <UiDropdownMenuTrigger as-child>
       <button
-        class="flex items-center gap-2 pl-2 border-l border-black/6 dark:border-white/6 outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/50 rounded-lg ml-1.5"
+        class="flex items-center gap-2 pl-2 outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/50 rounded-lg ml-1.5"
         aria-label="User menu">
         <!-- Avatar circle -->
         <div
