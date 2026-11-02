@@ -1,0 +1,14 @@
+[    1253ms] [LOG] ✨ %cNuxt DevTools %c Press Shift + Alt + D to open DevTools color: black; border-radius: 3px 0 0 3px; padding: 2px 2px 1px 10px; background: #00DC82 border-radius: 0 3px 3px 0; padding: 2px 10px 1px 2px; background: #00DC8220  @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@nuxt/devtools/dist/runtime/plugins/devtools.client.js?v=8e4b80aa:51
+[    1255ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Server Error) @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/i18n/locales/en.json?import:0
+[    1256ms] [WARNING] Failed to load messages for locale "en" Error: Failed loading locale (en): Failed to fetch dynamically imported module: http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/i18n/locales/en.json?import
+    at getLocaleMessages (http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@nuxtjs/i18n/dist/runtime/shared/messages.js?v=8e4b80aa:30:11)
+    at async http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@nuxtjs/i18n/dist/runtime/shared/messages.js?v=8e4b80aa:48:33
+    at async Promise.all (index 0)
+    at async getLocaleMessagesMergedCached (http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@nuxtjs/i18n/dist/runtime/shared/messages.js?v=8e4b80aa:46:20)
+    at async loadMessagesFromClient (http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@nuxtjs/i18n/dist/runtime/context.js?v=8e4b80aa:51:19)
+    at async Object.loadMessages (http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@nuxtjs/i18n/dist/runtime/context.js?v=8e4b80aa:124:50)
+    at async loadAndSetLocale (http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@nuxtjs/i18n/dist/runtime/utils.js?v=8e4b80aa:162:3)
+    at async setup (http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@nuxtjs/i18n/dist/runtime/plugins/route-locale-detect.js?v=8e4b80aa:27:9)
+    at async applyPlugin (http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/nuxt/dist/app/nuxt.js?v=8e4b80aa:138:25)
+    at async executePlugin (http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/nuxt/dist/app/nuxt.js?v=8e4b80aa:179:9) @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@nuxtjs/i18n/dist/runtime/context.js?v=8e4b80aa:125
+[    1268ms] [INFO] <Suspense> is an experimental feature and its API will likely change. @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=8e4b80aa:7188

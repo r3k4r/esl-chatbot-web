@@ -1,0 +1,174 @@
+- generic [active] [ref=f25e1]:
+  - generic [ref=f25e502]:
+    - complementary [ref=f25e503]:
+      - button "Collapse sidebar" [ref=f25e504] [cursor=pointer]
+      - link "LEO Institute Logo LEO INSTITUTE" [ref=f25e508] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f25e509]:
+          - img "LEO Institute Logo" [ref=f25e511]
+          - generic [ref=f25e513]:
+            - generic [ref=f25e514]: LEO
+            - generic [ref=f25e515]: INSTITUTE
+      - navigation [ref=f25e516]:
+        - generic [ref=f25e517]: LEO AI Speaking Coach
+        - link "Overview" [ref=f25e518] [cursor=pointer]:
+          - /url: /dashboard
+        - link "Users & Staff" [ref=f25e523] [cursor=pointer]:
+          - /url: /dashboard/users
+        - link "Classes & Cohorts" [ref=f25e527] [cursor=pointer]:
+          - /url: /dashboard/classes
+      - generic [ref=f25e532]:
+        - generic [ref=f25e533]:
+          - generic [ref=f25e534]: Teacher Portal Sync
+          - generic [ref=f25e537]: LIVE
+        - generic [ref=f25e538]:
+          - generic [ref=f25e539]:
+            - generic [ref=f25e540]: Pronunciation Accuracy
+            - generic [ref=f25e541]: 94.8%
+          - generic [ref=f25e544]:
+            - generic [ref=f25e545]:
+              - text: "CEFR Level:"
+              - strong [ref=f25e546]: B2 Upper
+            - generic [ref=f25e547]: Mamostayan Campus
+      - generic [ref=f25e548]:
+        - generic [ref=f25e549]: پەیمانگای لیۆ
+        - generic [ref=f25e550]: 0770 736 2000
+    - generic [ref=f25e551]:
+      - banner [ref=f25e552]:
+        - navigation "breadcrumb" [ref=f25e554]:
+          - list [ref=f25e555]:
+            - listitem [ref=f25e556]:
+              - generic [ref=f25e557]: leo-institute
+            - listitem [aria-hidden] [ref=f25e560]
+            - listitem [ref=f25e563]:
+              - link "leo overview" [disabled] [ref=f25e564]
+        - button "Search users, classes, words… ⌘K" [ref=f25e566] [cursor=pointer]:
+          - generic [ref=f25e569]: Search users, classes, words…
+          - generic [ref=f25e570]: ⌘K
+        - generic [ref=f25e571]:
+          - generic [ref=f25e572]: Mamostayan Campus
+          - button "Notifications" [ref=f25e575] [cursor=pointer]
+          - button "User menu" [ref=f25e580] [cursor=pointer]:
+            - generic [ref=f25e581]: P
+            - generic [ref=f25e583]:
+              - generic [ref=f25e584]: admin_main
+              - generic [ref=f25e585]: Admin
+      - main [ref=f25e586]:
+        - generic [ref=f25e587]:
+          - generic [ref=f25e588]:
+            - generic [ref=f25e589]:
+              - generic [ref=f25e590]:
+                - img "Leo" [ref=f25e591]
+                - generic [ref=f25e592]: Leo Institute Administration · سلێمانی
+              - paragraph [ref=f25e593]: Campus Operations & AI Analytics
+              - paragraph [ref=f25e594]: Monday, Nov 2
+            - generic [ref=f25e595]:
+              - button "Users" [ref=f25e596] [cursor=pointer]
+              - button "Classes" [ref=f25e600] [cursor=pointer]
+          - generic [ref=f25e605]:
+            - generic [ref=f25e610]:
+              - paragraph [ref=f25e611]: Total users
+              - paragraph [ref=f25e612]: "6"
+              - paragraph [ref=f25e613]: 4 students · 1 tutors
+            - generic [ref=f25e618]:
+              - paragraph [ref=f25e619]: Paid subscribers
+              - paragraph [ref=f25e620]: "0"
+              - paragraph [ref=f25e621]: 0 Gold · 0 Premium
+            - generic [ref=f25e627]:
+              - paragraph [ref=f25e628]: Active today
+              - paragraph [ref=f25e629]: "1"
+              - paragraph [ref=f25e630]: 17% active this week
+            - generic [ref=f25e636]:
+              - paragraph [ref=f25e637]: Sessions today
+              - paragraph [ref=f25e638]: "3"
+              - paragraph [ref=f25e639]: Across all users
+          - generic [ref=f25e640]:
+            - generic [ref=f25e641]:
+              - paragraph [ref=f25e646]: Subscription breakdown
+              - generic [ref=f25e648]:
+                - generic [ref=f25e649]:
+                  - generic:
+                    - paragraph: 100%
+                    - paragraph: Free
+                - generic [ref=f25e655]:
+                  - generic [ref=f25e656]:
+                    - generic [ref=f25e657]: Free
+                    - generic [ref=f25e660]: "6"
+                  - generic [ref=f25e661]:
+                    - generic [ref=f25e662]: Gold
+                    - generic [ref=f25e665]: "0"
+                  - generic [ref=f25e666]:
+                    - generic [ref=f25e667]: Premium
+                    - generic [ref=f25e670]: "0"
+              - link "View active subscribers" [ref=f25e671] [cursor=pointer]:
+                - /url: /dashboard/users?subscriptionStatus=ACTIVE
+            - generic [ref=f25e676]:
+              - paragraph [ref=f25e681]: Users by role
+              - generic [ref=f25e682]:
+                - generic [ref=f25e683]:
+                  - generic [ref=f25e684]:
+                    - generic:
+                      - paragraph: 67%
+                      - paragraph: Students
+                  - generic [ref=f25e690]:
+                    - generic [ref=f25e691]:
+                      - generic [ref=f25e692]: Students
+                      - generic [ref=f25e695]: "4"
+                    - generic [ref=f25e696]:
+                      - generic [ref=f25e697]: Tutors
+                      - generic [ref=f25e700]: "1"
+                    - generic [ref=f25e701]:
+                      - generic [ref=f25e702]: Admins
+                      - generic [ref=f25e705]: "1"
+                - generic [ref=f25e706]:
+                  - link "4 Students" [ref=f25e707] [cursor=pointer]:
+                    - /url: /dashboard/users?role=STUDENT
+                    - generic [ref=f25e708]: "4"
+                    - generic [ref=f25e709]: Students
+                  - link "1 Tutors" [ref=f25e710] [cursor=pointer]:
+                    - /url: /dashboard/users?role=TUTOR
+                    - generic [ref=f25e711]: "1"
+                    - generic [ref=f25e712]: Tutors
+                  - link "1 Admins" [ref=f25e713] [cursor=pointer]:
+                    - /url: /dashboard/users?role=ADMIN
+                    - generic [ref=f25e714]: "1"
+                    - generic [ref=f25e715]: Admins
+          - generic [ref=f25e716]:
+            - generic [ref=f25e718]:
+              - paragraph [ref=f25e724]: Platform engagement
+              - generic [ref=f25e725]:
+                - generic [ref=f25e726]:
+                  - generic [ref=f25e727]: Active today
+                  - generic [ref=f25e732]: Active this week
+                - generic [ref=f25e737]:
+                  - generic [ref=f25e738]:
+                    - paragraph [ref=f25e739]: "1"
+                    - paragraph [ref=f25e740]: Active today
+                  - generic [ref=f25e741]:
+                    - paragraph [ref=f25e742]: "1"
+                    - paragraph [ref=f25e743]: This week
+                  - generic [ref=f25e744]:
+                    - paragraph [ref=f25e745]: "5"
+                    - paragraph [ref=f25e746]: Inactive
+            - generic [ref=f25e747]:
+              - paragraph [ref=f25e753]: Paid by provider
+              - generic [ref=f25e757]:
+                - generic [ref=f25e758]: No paid subscriptions
+                - paragraph [ref=f25e759]: Assign a plan to a user to track payment providers.
+        - region "Notifications alt+T":
+          - list
+  - generic:
+    - generic:
+      - generic:
+        - button "Go to parent" [disabled]
+        - button "Open in editor"
+        - button "Close"
+  - generic:
+    - generic:
+      - generic:
+        - generic:
+          - button "Toggle Nuxt DevTools"
+          - generic "Page load time":
+            - generic: "67"
+            - generic: ms
+          - button "Toggle Component Inspector"

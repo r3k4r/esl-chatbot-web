@@ -31,9 +31,15 @@ const showCoaching = computed(() => inCall.value || turns.value.length > 0)
   <div class="h-full overflow-y-auto p-5 sm:p-7">
     <!-- Header -->
     <div class="animate-card-enter" style="--delay:0ms">
-      <h1 class="font-poppins text-[28px] font-semibold tracking-[-0.02em] text-text-heading">Voice Lab</h1>
+      <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#B91C1C]/10 border border-[#B91C1C]/20 mb-2">
+        <img src="/leo-logo.jpg" alt="Leo" class="size-3.5 rounded-full object-cover" />
+        <span class="text-[10px] font-semibold text-[#B91C1C] dark:text-red-400 uppercase tracking-widest font-poppins">
+          LEO Live Speaking Lab · پەیمانگای لیۆ
+        </span>
+      </div>
+      <h1 class="font-poppins text-[28px] font-semibold tracking-[-0.02em] text-text-heading">Voice Lab &amp; Live Pronunciation Coach</h1>
       <p class="mt-1 font-poppins text-[14px] text-text-muted">
-        A live speaking call with Tutelage AI. Talk hands-free, get scored on how you sound.
+        A live speaking call with LEO AI Speaking Coach. Talk hands-free, get scored on how you sound.
       </p>
     </div>
 
@@ -49,7 +55,7 @@ const showCoaching = computed(() => inCall.value || turns.value.length > 0)
           Activate your plan to start calling
         </AppText>
         <AppText size="13" color="neutral-400" class-list="font-poppins">
-          Verify your email or link Google to unlock spoken practice with Tutelage AI.
+          Verify your email or link Google to unlock spoken practice with LEO AI Speaking Coach.
         </AppText>
       </div>
       <AppButton to="/dashboard/billing" variant="primary" size="36" radius="8" text="View plans" :icon-config="{ color: 'white' }" />

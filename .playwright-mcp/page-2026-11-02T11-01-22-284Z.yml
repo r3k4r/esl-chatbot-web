@@ -1,0 +1,55 @@
+- generic [ref=e4]:
+  - button "Go back" [ref=e5]: Back
+  - main [ref=e7]:
+    - generic [ref=e8]:
+      - link "LEO Institute home" [ref=e9] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e10]:
+          - img "LEO Institute Logo" [ref=e12]
+          - generic [ref=e13]:
+            - generic [ref=e14]: LEO INSTITUTE
+            - generic [ref=e15]: پەیمانگای لیۆ·Learn · Enjoy · Stay
+      - generic [ref=e16]:
+        - generic [ref=e17]:
+          - generic [ref=e18]: Welcome back
+          - generic [ref=e19]: Sign in to continue your English learning journey.
+        - generic [ref=e21]:
+          - generic [ref=e22]:
+            - generic [ref=e23]: Username *
+            - textbox "Username *" [ref=e25]:
+              - /placeholder: Enter your username
+          - generic [ref=e26]:
+            - generic [ref=e27]: Password *
+            - generic [ref=e28]:
+              - textbox "Password *" [ref=e29]:
+                - /placeholder: Enter your password
+              - button "Toggle Password Visibility" [ref=e30]
+          - link "Forgot password?" [ref=e36] [cursor=pointer]:
+            - /url: /forgot-password
+          - button "Sign in" [ref=e37]
+        - generic [ref=e38]:
+          - generic [ref=e39]: or
+          - generic [aria-hidden] [ref=e42]: Continue with Google
+        - paragraph [ref=e48]:
+          - text: Don't have an account?
+          - link "Create one" [ref=e49] [cursor=pointer]:
+            - /url: /signup
+  - complementary [ref=e50]:
+    - generic [ref=e51]:
+      - generic [ref=e52]:
+        - generic [ref=e53]: LEO AI
+        - generic [ref=e54]: Sulaymaniyah — Opposite Azadi Park
+      - generic [ref=e55]:
+        - generic [ref=e56]: Master English with guaranteed fluency.
+        - generic [ref=e57]: کۆرسەکانمان بەشێوەی ئۆنڵاین و ڕووبەڕوو بە گەرەنتی فێربوون بەردەستە! Dedicated in-person classes and Kurdistan's first 24/7 AI Speaking Coach.
+        - generic [ref=e58]:
+          - generic [ref=e59]:
+            - generic [ref=e60]: 1,500+
+            - generic [ref=e61]: Annual Students
+          - generic [ref=e62]:
+            - generic [ref=e63]: 100%
+            - generic [ref=e64]: Guaranteed
+          - generic [ref=e65]:
+            - generic [ref=e66]: 24/7
+            - generic [ref=e67]: LEO AI Coach
+      - generic [ref=e68]: © 2026 LEO Institute (پەیمانگای لیۆ). All rights reserved.

@@ -1,5 +1,5 @@
 <template>
-  <section id="features" class="bg-neutral-50 py-28 sm:py-32">
+  <section id="features" class="bg-neutral-50 py-24 sm:py-32">
     <div class="container-lg layout-padding-lg">
       <LayoutsSectionHeader
         :eyebrow="t('features.eyebrow')"
@@ -9,20 +9,24 @@
         description-class="max-w-xl"
       />
 
-      <div class="mt-14 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="mt-14 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
         <div
           v-for="(feature, i) in features"
           :key="i"
-          class="group relative rounded-[14px] bg-brand-muted border border-neutral-200/60 p-6 overflow-hidden transform-gpu will-change-transform transition-transform duration-200 ease-out hover:-translate-y-1 hover:shadow-[0_20px_48px_-20px_rgba(17,17,17,0.18)]"
+          class="group relative rounded-2xl bg-white border border-slate-200/80 p-7 overflow-hidden transform-gpu will-change-transform transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl hover:border-[#B91C1C]/30"
         >
-          <div class="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-brand-primary/30 to-transparent opacity-0 group-hover:opacity-100 transition" />
-          <div class="w-11 h-11 rounded-xl bg-neutral-50 border border-neutral-200/70 flex items-center justify-center shadow-soft mb-5 text-brand-ink group-hover:text-brand-primary group-hover:border-brand-primary/30 transition">
-            <Icon :icon="feature.icon" width="20" />
+          <div class="absolute top-0 inset-x-0 h-1 bg-linear-to-r from-transparent via-[#B91C1C] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <div class="w-12 h-12 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-center shadow-xs mb-5 text-[#1B365D] group-hover:text-[#B91C1C] group-hover:bg-red-50/50 group-hover:border-red-200 transition-all duration-200">
+            <Icon :icon="feature.icon" width="22" />
           </div>
-          <AppText size="17" weight="semibold" color="brand-ink" class-list="tracking-tight">{{ t(`features.items.${feature.key}.title`) }}</AppText>
-          <AppText size="14" color="brand-sub" class-list="mt-2 leading-relaxed">{{ t(`features.items.${feature.key}.description`) }}</AppText>
-          <div class="mt-5 flex items-center gap-1.5 text-[12px] font-medium text-brand-primary opacity-0 group-hover:opacity-100 transition">
-            <AppText class-list="cursor-pointer" size="12" color="brand-primary">{{ t('features.learnMore') }}</AppText>
+          <AppText size="17" weight="semibold" color="brand-ink" class-list="tracking-tight text-slate-900 group-hover:text-[#B91C1C] transition-colors">
+            {{ t(`features.items.${feature.key}.title`) }}
+          </AppText>
+          <AppText size="14" color="brand-sub" class-list="mt-2.5 leading-relaxed text-slate-600">
+            {{ t(`features.items.${feature.key}.description`) }}
+          </AppText>
+          <div class="mt-6 flex items-center gap-1.5 text-[12px] font-semibold text-[#B91C1C] group-hover:translate-x-1 transition-transform">
+            <span>{{ t('features.learnMore') }}</span>
             <Icon icon="lucide:arrow-right" width="12" class="rtl:rotate-180" />
           </div>
         </div>
@@ -36,13 +40,12 @@ import { Icon } from '@iconify/vue'
 
 const { t } = useLocale()
 
-// Icons are structural; the `key` maps to the localized title/description.
 const features = [
-  { icon: 'lucide:message-circle', key: 'conversation' },
-  { icon: 'lucide:mic',            key: 'voice' },
-  { icon: 'lucide:brain',          key: 'vocab' },
-  { icon: 'lucide:activity',       key: 'pronunciation' },
-  { icon: 'lucide:target',         key: 'goals' },
-  { icon: 'lucide:bar-chart-2',    key: 'analytics' },
+  { icon: 'lucide:message-square', key: 'conversation' },
+  { icon: 'lucide:bot',            key: 'voice' },
+  { icon: 'lucide:smile',          key: 'vocab' },
+  { icon: 'lucide:graduation-cap', key: 'pronunciation' },
+  { icon: 'lucide:coffee',         key: 'goals' },
+  { icon: 'lucide:line-chart',     key: 'analytics' },
 ] as const
 </script>

@@ -46,7 +46,7 @@ const placeholder = computed(() => {
   if (props.isSessionEnded) return 'Session ended — start a new one.'
   if (props.hardCapReached) return 'Session message limit reached.'
   if (props.isReviewing) return 'Listen back, then Send — or redo it.'
-  if (!props.activeSessionId) return 'Type a message to start chatting with Tutelage AI…'
+  if (!props.activeSessionId) return 'Type a message to start speaking with LEO AI…'
   return 'Ask anything in English, or just say hi.'
 })
 

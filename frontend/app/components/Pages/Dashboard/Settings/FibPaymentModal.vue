@@ -136,8 +136,8 @@ function openAppLink() {
       <!-- Header -->
       <UiDialogHeader class="p-6 pb-5" style="border-bottom:1px solid var(--border-inner)">
         <div class="flex items-center gap-3">
-          <div class="size-10 rounded-xl flex items-center justify-center shrink-0" style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2)">
-            <AppIconsax name="Wallet2" color="var(--color-brand-primary)" :size="18" />
+          <div class="size-10 rounded-xl flex items-center justify-center shrink-0" style="background:rgba(185,28,28,0.1);border:1px solid rgba(185,28,28,0.2)">
+            <AppIconsax name="Wallet2" color="#B91C1C" :size="18" />
           </div>
           <div>
             <UiDialogTitle class="text-[16px] font-semibold" :style="`color:var(--text-heading)`">FIB Payment</UiDialogTitle>

@@ -1,0 +1,84 @@
+- generic [ref=f4e4]:
+  - complementary [ref=f4e5]:
+    - generic [ref=f4e6]:
+      - link "LEO Institute Logo LEO INSTITUTE" [ref=f4e7] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f4e8]:
+          - img "LEO Institute Logo" [ref=f4e10]
+          - generic [ref=f4e11]: LEO INSTITUTE
+      - button "Close sidebar" [ref=f4e13]
+    - navigation [ref=f4e16]:
+      - generic [ref=f4e17]: LEO AI Speaking Coach
+      - link "Overview" [ref=f4e18] [cursor=pointer]:
+        - /url: /dashboard
+      - link "Classes & Cohorts" [ref=f4e21] [cursor=pointer]:
+        - /url: /dashboard/classes
+      - link "LEO AI Coach" [ref=f4e25] [cursor=pointer]:
+        - /url: /dashboard/chat
+      - link "Voice Lab" [ref=f4e29] [cursor=pointer]:
+        - /url: /dashboard/voice
+      - link "Curriculum & Lessons" [ref=f4e33] [cursor=pointer]:
+        - /url: /dashboard/lessons
+      - link "Vocabulary & SRS" [ref=f4e37] [cursor=pointer]:
+        - /url: /dashboard/vocab
+      - link "Learning Goals" [ref=f4e40] [cursor=pointer]:
+        - /url: /dashboard/goals
+      - link "Billing & Plans" [ref=f4e43] [cursor=pointer]:
+        - /url: /dashboard/billing
+    - generic [ref=f4e47]:
+      - generic [ref=f4e48]:
+        - generic [ref=f4e49]: Teacher Portal Sync
+        - text: LIVE
+      - generic [ref=f4e50]:
+        - generic [ref=f4e51]: Pronunciation Accuracy94.8%
+        - generic [ref=f4e52]:
+          - generic [ref=f4e53]:
+            - text: "CEFR Level:"
+            - strong [ref=f4e54]: B2 Upper
+          - text: Mamostayan Campus
+    - generic [ref=f4e55]: پەیمانگای لیۆ0770 736 2000
+  - button [ref=f4e56]
+  - generic [ref=f4e59]:
+    - banner [ref=f4e60]:
+      - generic [ref=f4e61]:
+        - button "Open sidebar" [ref=f4e62]
+        - navigation "breadcrumb" [ref=f4e65]:
+          - list [ref=f4e66]:
+            - listitem [ref=f4e67]:
+              - generic [ref=f4e68]: leo-institute
+            - listitem [aria-hidden] [ref=f4e69]
+            - listitem [ref=f4e72]:
+              - link "voice lab" [disabled] [ref=f4e73]
+      - button "Search users, classes, words… ⌘K" [ref=f4e75]
+      - generic [ref=f4e78]:
+        - generic [ref=f4e79]: Mamostayan Campus
+        - button "Notifications" [ref=f4e80]
+        - link [ref=f4e85] [cursor=pointer]:
+          - /url: /dashboard/chat
+          - button "Start AI Coach" [ref=f4e86]
+        - button "User menu" [ref=f4e90]:
+          - generic [ref=f4e91]: A
+          - generic [ref=f4e92]:
+            - generic [ref=f4e93]: student_ali
+            - generic [ref=f4e94]: Free
+    - main [ref=f4e95]:
+      - generic [ref=f4e96]:
+        - generic [ref=f4e97]:
+          - generic [ref=f4e98]:
+            - img "Leo" [ref=f4e99]
+            - text: LEO Live Speaking Lab · پەیمانگای لیۆ
+          - heading "Voice Lab & Live Pronunciation Coach" [level=1] [ref=f4e100]
+          - paragraph [ref=f4e101]: A live speaking call with LEO AI Speaking Coach. Talk hands-free, get scored on how you sound.
+        - generic [ref=f4e102]:
+          - generic [ref=f4e106]:
+            - heading "Call LEO AI Speaking Coach" [level=2] [ref=f4e110]
+            - generic [ref=f4e111]: A hands-free speaking call. Talk naturally, get spoken replies, and see how you sound.
+            - button "Start call" [ref=f4e112]
+            - generic [ref=f4e115]:
+              - generic [ref=f4e116]: Just talk — it listens and replies on its own, like a phone call.
+              - generic [ref=f4e122]: Pause when you finish a sentence; the AI takes its turn automatically.
+              - generic [ref=f4e127]: Every turn is scored on grammar, vocabulary, and fluency.
+          - generic [ref=f4e133]:
+            - generic [ref=f4e134]: Live scoring
+            - generic [ref=f4e138]: Start a call and your grammar, vocabulary, and fluency scores update here after every turn you speak.
+            - generic [ref=f4e139]: Word-level pronunciation scoring is a GOLD feature.

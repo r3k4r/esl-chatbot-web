@@ -21,13 +21,13 @@ const tips = [
 
     <div class="relative flex flex-col items-center">
       <!-- idle orb -->
-      <div class="relative grid size-36 place-content-center rounded-full bg-linear-to-br from-brand-primary to-brand-accent shadow-[0_20px_60px_-15px_rgba(245,158,11,0.55)]">
+      <div class="relative grid size-36 place-content-center rounded-full bg-linear-to-br from-[#1B365D] to-[#B91C1C] shadow-[0_20px_60px_-15px_rgba(185,28,28,0.45)]">
         <div class="absolute inset-2 rounded-full bg-white/5" />
-        <AppIconsax name="Candle" color="#000" :size="52" class="relative" />
+        <AppIconsax name="Microphone" color="#ffffff" :size="52" class="relative" />
       </div>
 
       <h2 class="mt-7 font-poppins text-[24px] font-semibold tracking-tight text-text-heading">
-        Call Tutelage AI
+        Call LEO AI Speaking Coach
       </h2>
       <AppText size="15" color="neutral-400" class-list="mt-1.5 max-w-md font-poppins">
         A hands-free speaking call. Talk naturally, get spoken replies, and see how you sound.

@@ -1,0 +1,84 @@
+- generic [ref=f28e4]:
+  - complementary [ref=f28e5]:
+    - button "Collapse sidebar" [ref=f28e6] [cursor=pointer]
+    - link "LEO Institute Logo LEO INSTITUTE" [ref=f28e10] [cursor=pointer]:
+      - /url: /
+      - generic [ref=f28e11]:
+        - img "LEO Institute Logo" [ref=f28e13]
+        - generic [ref=f28e15]:
+          - generic [ref=f28e16]: LEO
+          - generic [ref=f28e17]: INSTITUTE
+    - navigation [ref=f28e18]:
+      - generic [ref=f28e19]: LEO AI Speaking Coach
+      - link "Overview" [ref=f28e20] [cursor=pointer]:
+        - /url: /dashboard
+      - link "Users & Staff" [ref=f28e24] [cursor=pointer]:
+        - /url: /dashboard/users
+      - link "Classes & Cohorts" [ref=f28e28] [cursor=pointer]:
+        - /url: /dashboard/classes
+    - generic [ref=f28e34]:
+      - generic [ref=f28e35]:
+        - generic [ref=f28e36]: Teacher Portal Sync
+        - generic [ref=f28e39]: LIVE
+      - generic [ref=f28e40]:
+        - generic [ref=f28e41]:
+          - generic [ref=f28e42]: Pronunciation Accuracy
+          - generic [ref=f28e43]: 94.8%
+        - generic [ref=f28e46]:
+          - generic [ref=f28e47]:
+            - text: "CEFR Level:"
+            - strong [ref=f28e48]: B2 Upper
+          - generic [ref=f28e49]: Mamostayan Campus
+    - generic [ref=f28e50]:
+      - generic [ref=f28e51]: پەیمانگای لیۆ
+      - generic [ref=f28e52]: 0770 736 2000
+  - generic [ref=f28e53]:
+    - banner [ref=f28e54]:
+      - navigation "breadcrumb" [ref=f28e56]:
+        - list [ref=f28e57]:
+          - listitem [ref=f28e58]:
+            - generic [ref=f28e59]: leo-institute
+          - listitem [aria-hidden] [ref=f28e62]
+          - listitem [ref=f28e65]:
+            - link "classes & cohorts" [disabled] [ref=f28e66]
+      - button "Search users, classes, words… ⌘K" [ref=f28e68] [cursor=pointer]:
+        - generic [ref=f28e71]: Search users, classes, words…
+        - generic [ref=f28e72]: ⌘K
+      - generic [ref=f28e73]:
+        - generic [ref=f28e74]: Mamostayan Campus
+        - button "Notifications" [ref=f28e77] [cursor=pointer]
+        - button "User menu" [ref=f28e82] [cursor=pointer]:
+          - generic [ref=f28e83]: P
+          - generic [ref=f28e85]:
+            - generic [ref=f28e86]: admin_main
+            - generic [ref=f28e87]: Admin
+    - main [ref=f28e88]:
+      - generic [ref=f28e89]:
+        - generic [ref=f28e90]:
+          - generic [ref=f28e91]:
+            - generic [ref=f28e92]: All Classes
+            - generic [ref=f28e93]: Admin overview · 0 total
+          - generic [ref=f28e94]:
+            - link "New class" [ref=f28e95] [cursor=pointer]:
+              - /url: /dashboard/classes/create
+            - button "Grid" [ref=f28e99] [cursor=pointer]
+            - button "Table" [ref=f28e103] [cursor=pointer]
+        - generic [ref=f28e107]:
+          - generic [ref=f28e114]:
+            - generic [ref=f28e115]: Total
+            - generic [ref=f28e116]: "0"
+          - generic [ref=f28e122]:
+            - generic [ref=f28e123]: Active
+            - generic [ref=f28e124]: "0"
+          - generic [ref=f28e129]:
+            - generic [ref=f28e130]: Inactive
+            - generic [ref=f28e131]: "0"
+        - generic [ref=f28e132]:
+          - textbox "Search by name, code, or category…" [ref=f28e138]
+          - generic [ref=f28e139]:
+            - button "All" [ref=f28e140] [cursor=pointer]
+            - button "Active" [ref=f28e142] [cursor=pointer]
+            - button "Inactive" [ref=f28e144] [cursor=pointer]
+          - generic [ref=f28e146]:
+            - button "Current" [ref=f28e147] [cursor=pointer]
+            - button "Archived" [ref=f28e149] [cursor=pointer]

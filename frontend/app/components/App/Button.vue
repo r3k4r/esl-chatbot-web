@@ -4,7 +4,7 @@
     <Icon v-if="loading" mode="mask" icon="svg-spinners:180-ring-with-bg" class="text-2xl mx-auto" />
     <template v-else>
       <slot name="before" />
-      <Iconsax v-if="icon" :name="icon" :color="props.iconConfig?.color" :size="iconSize"
+      <Iconsax v-if="icon" :name="icon" :color="iconColor" :size="iconSize"
         :type="props.iconConfig?.type" :class="iconMergedClasses"/>
       <span v-if="text" :class="textClassList">{{ text }}</span>
       <slot />
@@ -91,6 +91,14 @@ const iconSize = computed(() => {
     default:
       return 20;
   }
+})
+
+const iconColor = computed(() => {
+  if (props.iconConfig?.color) return props.iconConfig.color;
+  if (props.variant === 'primary' || props.variant === 'brand' || props.variant === 'navy' || props.variant === 'danger' || props.variant === 'ink') {
+    return '#ffffff';
+  }
+  return 'currentColor';
 })
 
 const iconMergedClasses = computed(() => {

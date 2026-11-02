@@ -28,6 +28,14 @@ export default defineNuxtConfig({
     port: 3001,
   },
 
+  routeRules: {
+    '/**': {
+      headers: {
+        'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
+      },
+    },
+  },
+
   vite: {
     plugins: [
       tailwindcss()

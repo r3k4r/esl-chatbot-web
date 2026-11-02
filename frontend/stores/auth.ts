@@ -85,9 +85,16 @@ export const useAuthStore = defineStore("useAuthStore", {
 
       const token = this.accessToken;
 
+      if (!token) {
+        this.isCheckedUser = true;
+        this.user = null;
+        this.isAuthenticated = false;
+        return;
+      }
+
       const { data, status } = await useFetch<any>("/auth/me", {
         method: "GET",
-        baseURL: config.BASE_URL,
+        baseURL: (config.public.baseUrl as string) || (config.BASE_URL as string) || "http://localhost:8000/api/v1",
         // Stable key: avoids a stale "user-account-null" cache entry from SSR
         key: "user-account",
         cache: "no-cache",

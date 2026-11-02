@@ -1,18 +1,18 @@
 <template>
-  <section id="pricing" class="bg-brand-muted/60 py-28 sm:py-32 border-y border-neutral-200/70">
+  <section id="pricing" class="bg-slate-50/70 py-24 sm:py-32 border-y border-slate-200/80">
     <div class="container-lg layout-padding-lg">
       <LayoutsSectionHeader :eyebrow="t('pricing.eyebrow')" :title="t('pricing.title')" align="center"
         wrapper-class="mb-14" />
 
-      <div class="grid md:grid-cols-3 gap-5 items-stretch max-w-7xl mx-auto">
+      <div class="grid md:grid-cols-3 gap-6 items-stretch max-w-7xl mx-auto">
         <div v-for="plan in plans" :key="plan.id" :class="[
-          'relative rounded-[22px] overflow-hidden p-7 flex flex-col transition-transform duration-250 h-140 hover:-translate-y-0.5',
+          'relative rounded-[22px] overflow-hidden p-7 flex flex-col transition-all duration-300 h-140 hover:-translate-y-1',
           plan.featured
-            ? 'bg-linear-to-t from-white via-primary-200/60 to-primary-300 shadow-card shadow-brand-primary/20'
-            : 'bg-neutral-50 border border-neutral-200/70 shadow-soft',
+            ? 'bg-linear-to-b from-[#1B365D] via-[#162B4D] to-[#0F172A] text-white border border-white/15 shadow-2xl shadow-slate-900/25'
+            : 'bg-white border border-slate-200/90 shadow-sm',
         ]">
           <div v-if="plan.featured" class="premium-stars" aria-hidden="true">
-            <Icon v-for="star in premiumStars" :key="star.id" icon="mdi:star" class="premium-star" :width="star.size"
+            <Icon v-for="star in premiumStars" :key="star.id" icon="mdi:star" class="premium-star text-amber-400" :width="star.size"
               :style="{
                 left: `${star.x}%`,
                 top: `${star.y}%`,
@@ -22,28 +22,28 @@
           </div>
 
           <div class="relative flex items-center justify-between">
-            <AppText size="15" weight="semibold" class-list="tracking-tight"
-              :class="plan.featured ? 'text-white' : 'text-brand-primary'">
+            <AppText size="15" weight="semibold" class-list="tracking-tight font-bold"
+              :class="plan.featured ? 'text-amber-300' : 'text-[#B91C1C]'">
               {{ plan.name }}
             </AppText>
             <span v-if="plan.featured"
-              class="text-[11px] font-medium text-white flex items-center gap-1.5 bg-white/20 backdrop-blur px-2.5 py-1 rounded-full">
-              <Icon icon="lucide:sparkles" width="11" /> {{ t('pricing.mostPopular') }}
+              class="text-[11px] font-semibold text-white flex items-center gap-1.5 bg-[#B91C1C] px-3 py-1 rounded-full shadow-xs">
+              <Icon icon="lucide:sparkles" width="11" class="text-amber-300" /> {{ t('pricing.mostPopular') }}
             </span>
           </div>
 
-          <div class="relative mt-4 flex items-baseline gap-1">
-            <AppText size="price" weight="semibold" class-list="tracking-[-0.04em]"
-              :class="plan.featured ? 'text-white' : 'text-brand-ink'">
+          <div class="relative mt-4 flex items-baseline gap-1.5">
+            <AppText size="price" weight="semibold" class-list="tracking-[-0.04em] font-extrabold text-2xl sm:text-3xl"
+              :class="plan.featured ? 'text-white' : 'text-slate-900'">
               {{ plan.price }}
             </AppText>
-            <AppText size="14" :class="plan.featured ? 'text-white/85' : 'text-brand-sub'">
+            <AppText size="14" :class="plan.featured ? 'text-slate-300' : 'text-slate-500'">
               {{ t('pricing.perMonth') }}
             </AppText>
           </div>
 
-          <AppText size="13" class-list="mt-3 leading-relaxed relative flex-1"
-            :class="plan.featured ? 'text-white/90' : 'text-brand-sub'">
+          <AppText size="13" class-list="mt-3 leading-relaxed relative flex-1 text-xs sm:text-sm"
+            :class="plan.featured ? 'text-slate-200' : 'text-slate-600'">
             {{ plan.description }}
           </AppText>
 
@@ -51,19 +51,21 @@
             <ul class="space-y-3">
               <li v-for="item in plan.features" :key="item" class="flex items-center gap-3">
                 <span
-                  class="w-4.5 h-4.5 rounded-full flex items-center justify-center shrink-0 bg-brand-primary text-white">
-                  <Icon icon="lucide:check" width="11" stroke-width="3" />
+                  class="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
+                  :class="plan.featured ? 'bg-[#B91C1C] text-white' : 'bg-red-50 text-[#B91C1C] border border-red-200'"
+                >
+                  <Icon icon="lucide:check" width="12" stroke-width="3" />
                 </span>
-                <AppText size="13" class="text-brand-ink">
+                <AppText size="13" :class="plan.featured ? 'text-slate-200' : 'text-slate-700'" class-list="text-xs sm:text-sm font-medium">
                   {{ item }}
                 </AppText>
               </li>
             </ul>
             <div class="mt-8">
-              <AppButton :to="ctaHref(plan)" :variant="plan.featured ? 'primary' : 'ghost'" size="44" radius="full"
+              <AppButton :to="ctaHref(plan)" :variant="plan.featured ? 'brand' : 'ghost'" size="44" radius="full"
                 :class-list="plan.featured
-                    ? 'gap-2 text-[13px] px-5 bg-brand-ink! hover:bg-neutral-900!'
-                    : 'gap-2 text-[13px] px-5 bg-neutral-100! border-neutral-200/70! text-brand-ink!'
+                    ? 'gap-2 text-[13px] px-5 w-full shadow-lg shadow-red-950/40'
+                    : 'gap-2 text-[13px] px-5 w-full bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-800'
                   ">
                 <span>{{ plan.cta }}</span>
                 <Icon icon="lucide:arrow-right" width="14" class="rtl:rotate-180" />
@@ -73,7 +75,7 @@
         </div>
       </div>
 
-      <AppText size="12" color="brand-sub" class-list="text-center mt-12">
+      <AppText size="12" color="brand-sub" class-list="text-center mt-12 text-slate-500">
         {{ t('pricing.footnote') }}
       </AppText>
     </div>
@@ -99,10 +101,9 @@ type Plan = {
 }
 
 function ctaHref(plan: Plan) {
-  if (!plan.planKey) return '/signup'
-  return authStore.getIsAuthenticated
-    ? `/dashboard/billing?plan=${plan.planKey}`
-    : `/signup?redirect=/dashboard/billing?plan=${plan.planKey}`
+  if (plan.id === 'starter') return '/#cta'
+  if (plan.id === 'gold') return '/#cta'
+  return '/dashboard/chat'
 }
 
 type PremiumStar = {
@@ -118,33 +119,39 @@ const premiumStars: PremiumStar[] = [
   { id: 's1', x: 10, y: 10, size: 12, opacity: 0.95, rotate: -10 },
   { id: 's2', x: 24, y: 16, size: 18, opacity: 0.92, rotate: 8 },
   { id: 's3', x: 38, y: 8, size: 10, opacity: 0.8, rotate: -6 },
-  { id: 's4', x: 54, y: 13, size: 20, opacity: 0.95, rotate: 12 },
-  { id: 's5', x: 68, y: 9, size: 12, opacity: 0.82, rotate: -14 },
-  { id: 's6', x: 83, y: 18, size: 16, opacity: 0.9, rotate: 5 },
-  { id: 's7', x: 92, y: 10, size: 11, opacity: 0.78, rotate: -8 },
-  { id: 's8', x: 16, y: 29, size: 13, opacity: 0.8, rotate: 10 },
-  { id: 's9', x: 47, y: 27, size: 17, opacity: 0.86, rotate: -5 },
-  { id: 's10', x: 74, y: 33, size: 12, opacity: 0.8, rotate: 7 },
+  { id: 's4', x: 75, y: 14, size: 14, opacity: 0.9, rotate: 12 },
+  { id: 's5', x: 88, y: 9, size: 10, opacity: 0.75, rotate: -15 },
 ]
 
-// Structural plan data (id / billing key / featured flag) lives here; all
-// copy (name, price, description, cta, features) comes from the active locale.
-const planMeta: Pick<Plan, 'id' | 'planKey' | 'featured'>[] = [
-  { id: 'starter' },
-  { id: 'gold', planKey: 'GOLD', featured: true },
-  { id: 'premium', planKey: 'PREMIUM' },
-]
-
-const plans = computed<Plan[]>(() =>
-  planMeta.map((meta) => ({
-    ...meta,
-    name:        t(`pricing.plans.${meta.id}.name`),
-    price:       t(`pricing.plans.${meta.id}.price`),
-    description: t(`pricing.plans.${meta.id}.description`),
-    cta:         t(`pricing.plans.${meta.id}.cta`),
-    features:    ta(`pricing.plans.${meta.id}.features`),
-  })),
-)
+const plans = computed<Plan[]>(() => [
+  {
+    id: 'starter',
+    name: t('pricing.plans.starter.name'),
+    price: t('pricing.plans.starter.price'),
+    description: t('pricing.plans.starter.description'),
+    features: ta('pricing.plans.starter.features'),
+    cta: t('pricing.plans.starter.cta'),
+  },
+  {
+    id: 'gold',
+    name: t('pricing.plans.gold.name'),
+    price: t('pricing.plans.gold.price'),
+    description: t('pricing.plans.gold.description'),
+    features: ta('pricing.plans.gold.features'),
+    cta: t('pricing.plans.gold.cta'),
+    planKey: 'GOLD',
+    featured: true,
+  },
+  {
+    id: 'premium',
+    name: t('pricing.plans.premium.name'),
+    price: t('pricing.plans.premium.price'),
+    description: t('pricing.plans.premium.description'),
+    features: ta('pricing.plans.premium.features'),
+    cta: t('pricing.plans.premium.cta'),
+    planKey: 'PREMIUM',
+  },
+])
 </script>
 
 <style scoped>
@@ -157,7 +164,6 @@ const plans = computed<Plan[]>(() =>
 
 .premium-star {
   position: absolute;
-  color: rgba(255, 255, 255, 0.95);
-  filter: drop-shadow(0 2px 4px rgba(8, 20, 46, 0.18));
+  filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.45));
 }
 </style>

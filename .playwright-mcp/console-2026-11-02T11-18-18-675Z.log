@@ -1,0 +1,262 @@
+[    1346ms] [INFO] <Suspense> is an experimental feature and its API will likely change. @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:7188
+[    1423ms] [LOG] ✨ %cNuxt DevTools %c Press Shift + Alt + D to open DevTools color: black; border-radius: 3px 0 0 3px; padding: 2px 2px 1px 10px; background: #00DC82 border-radius: 0 3px 3px 0; padding: 2px 10px 1px 2px; background: #00DC8220  @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@nuxt/devtools/dist/runtime/plugins/devtools.client.js?v=208a0da6:51
+[    1668ms] [WARNING] [Vue warn]: Hydration node mismatch:
+- rendered on server: JSHandle@node  
+- expected on client: button 
+  at <LayoutsDashboardSidebar collapsed=false mobile-open=false onToggle=fn  ... > 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[    1668ms] [ERROR] Hydration completed but contains mismatches. @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:1872
+[    1670ms] [WARNING] [Vue warn]: Hydration node mismatch:
+- rendered on server: JSHandle@node  
+- expected on client: div 
+  at <LayoutsDashboardSidebar collapsed=false mobile-open=false onToggle=fn  ... > 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[    1676ms] [WARNING] [Vue warn]: Hydration node mismatch:
+- rendered on server: JSHandle@node  
+- expected on client: nav 
+  at <LayoutsDashboardSidebar collapsed=false mobile-open=false onToggle=fn  ... > 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[    1701ms] [WARNING] [Vue warn]: Hydration node mismatch:
+- rendered on server: JSHandle@node  
+- expected on client: div 
+  at <BaseTransition appear=false persisted=false mode=undefined  ... > 
+  at <Transition name="fade" > 
+  at <LayoutsDashboardSidebar collapsed=false mobile-open=false onToggle=fn  ... > 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[    1702ms] [WARNING] [Vue warn]: Hydration node mismatch:
+- rendered on server: JSHandle@node  
+- expected on client: div 
+  at <BaseTransition appear=false persisted=false mode=undefined  ... > 
+  at <Transition name="fade" > 
+  at <LayoutsDashboardSidebar collapsed=false mobile-open=false onToggle=fn  ... > 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[    1703ms] [WARNING] [Vue warn]: Hydration class mismatch on JSHandle@node 
+  - rendered on server: class="px-3 pb-3 pt-1 text-[10px] text-zinc-400 flex items-center justify-between border-t border-black/5 dark:border-white/5"
+  - expected on client: class="mx-3 mb-3 p-3 rounded-xl bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-white/10 shrink-0"
+  Note: this mismatch is check-only. The DOM will not be rectified in production due to performance overhead.
+  You should fix the source of the mismatch. 
+  at <BaseTransition appear=false persisted=false mode=undefined  ... > 
+  at <Transition name="fade" > 
+  at <LayoutsDashboardSidebar collapsed=false mobile-open=false onToggle=fn  ... > 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[    1704ms] [WARNING] [Vue warn]: Hydration children mismatch on JSHandle@node 
+Server rendered element contains fewer child nodes than client vdom. 
+  at <LayoutsDashboardSidebar collapsed=false mobile-open=false onToggle=fn  ... > 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[    1704ms] [WARNING] [Vue warn]: Hydration class mismatch on JSHandle@node 
+  - rendered on server: class="flex flex-col bg-surface-card border-r border-border-card transition-all duration-300 ease-out select-none hidden md:flex shrink-0 w-60 fixed inset-y-0 left-0 z-50 w-60 md:z-auto -translate-x-full md:translate-x-0"
+  - expected on client: class="flex flex-col select-none transition-all duration-300 ease-in-out relative bg-white dark:bg-[#0c1322] border-r border-slate-200 dark:border-white/10 shadow-sm fixed inset-y-0 left-0 z-50 w-64 -translate-x-full md:relative md:inset-auto md:z-30 md:translate-x-0 md:shrink-0 md:flex md:w-64"
+  Note: this mismatch is check-only. The DOM will not be rectified in production due to performance overhead.
+  You should fix the source of the mismatch. 
+  at <LayoutsDashboardSidebar collapsed=false mobile-open=false onToggle=fn  ... > 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[    1704ms] [WARNING] [Vue warn]: Hydration node mismatch:
+- rendered on server: JSHandle@node  
+- expected on client: div 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[    1751ms] [WARNING] [Vue warn]: Hydration children mismatch on JSHandle@node 
+Server rendered element contains more child nodes than client vdom. 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[    1752ms] [WARNING] [Vue warn]: Hydration class mismatch on JSHandle@node 
+  - rendered on server: class="flex h-dvh bg-neutral-50 dark:bg-neutral-900 relative"
+  - expected on client: class="flex h-dvh bg-neutral-50 dark:bg-neutral-900 relative overflow-hidden"
+  Note: this mismatch is check-only. The DOM will not be rectified in production due to performance overhead.
+  You should fix the source of the mismatch. 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[   15606ms] [INFO] <Suspense> is an experimental feature and its API will likely change. @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:7188
+[   15653ms] [LOG] ✨ %cNuxt DevTools %c Press Shift + Alt + D to open DevTools color: black; border-radius: 3px 0 0 3px; padding: 2px 2px 1px 10px; background: #00DC82 border-radius: 0 3px 3px 0; padding: 2px 10px 1px 2px; background: #00DC8220  @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@nuxt/devtools/dist/runtime/plugins/devtools.client.js?v=208a0da6:51
+[   15851ms] [WARNING] [Vue warn]: Hydration node mismatch:
+- rendered on server: JSHandle@node  
+- expected on client: button 
+  at <LayoutsDashboardSidebar collapsed=false mobile-open=false onToggle=fn  ... > 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[   15851ms] [ERROR] Hydration completed but contains mismatches. @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:1872
+[   15853ms] [WARNING] [Vue warn]: Hydration node mismatch:
+- rendered on server: JSHandle@node  
+- expected on client: div 
+  at <LayoutsDashboardSidebar collapsed=false mobile-open=false onToggle=fn  ... > 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[   15858ms] [WARNING] [Vue warn]: Hydration node mismatch:
+- rendered on server: JSHandle@node  
+- expected on client: nav 
+  at <LayoutsDashboardSidebar collapsed=false mobile-open=false onToggle=fn  ... > 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[   15880ms] [WARNING] [Vue warn]: Hydration node mismatch:
+- rendered on server: JSHandle@node  
+- expected on client: div 
+  at <BaseTransition appear=false persisted=false mode=undefined  ... > 
+  at <Transition name="fade" > 
+  at <LayoutsDashboardSidebar collapsed=false mobile-open=false onToggle=fn  ... > 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[   15881ms] [WARNING] [Vue warn]: Hydration node mismatch:
+- rendered on server: JSHandle@node  
+- expected on client: div 
+  at <BaseTransition appear=false persisted=false mode=undefined  ... > 
+  at <Transition name="fade" > 
+  at <LayoutsDashboardSidebar collapsed=false mobile-open=false onToggle=fn  ... > 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[   15882ms] [WARNING] [Vue warn]: Hydration class mismatch on JSHandle@node 
+  - rendered on server: class="px-3 pb-3 pt-1 text-[10px] text-zinc-400 flex items-center justify-between border-t border-black/5 dark:border-white/5"
+  - expected on client: class="mx-3 mb-3 p-3 rounded-xl bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-white/10 shrink-0"
+  Note: this mismatch is check-only. The DOM will not be rectified in production due to performance overhead.
+  You should fix the source of the mismatch. 
+  at <BaseTransition appear=false persisted=false mode=undefined  ... > 
+  at <Transition name="fade" > 
+  at <LayoutsDashboardSidebar collapsed=false mobile-open=false onToggle=fn  ... > 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[   15883ms] [WARNING] [Vue warn]: Hydration children mismatch on JSHandle@node 
+Server rendered element contains fewer child nodes than client vdom. 
+  at <LayoutsDashboardSidebar collapsed=false mobile-open=false onToggle=fn  ... > 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[   15883ms] [WARNING] [Vue warn]: Hydration class mismatch on JSHandle@node 
+  - rendered on server: class="flex flex-col bg-surface-card border-r border-border-card transition-all duration-300 ease-out select-none hidden md:flex shrink-0 w-60 fixed inset-y-0 left-0 z-50 w-60 md:z-auto -translate-x-full md:translate-x-0"
+  - expected on client: class="flex flex-col select-none transition-all duration-300 ease-in-out relative bg-white dark:bg-[#0c1322] border-r border-slate-200 dark:border-white/10 shadow-sm fixed inset-y-0 left-0 z-50 w-64 -translate-x-full md:relative md:inset-auto md:z-30 md:translate-x-0 md:shrink-0 md:flex md:w-64"
+  Note: this mismatch is check-only. The DOM will not be rectified in production due to performance overhead.
+  You should fix the source of the mismatch. 
+  at <LayoutsDashboardSidebar collapsed=false mobile-open=false onToggle=fn  ... > 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[   15884ms] [WARNING] [Vue warn]: Hydration node mismatch:
+- rendered on server: JSHandle@node  
+- expected on client: div 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[   15939ms] [WARNING] [Vue warn]: Hydration children mismatch on JSHandle@node 
+Server rendered element contains more child nodes than client vdom. 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[   15941ms] [WARNING] [Vue warn]: Hydration class mismatch on JSHandle@node 
+  - rendered on server: class="flex h-dvh bg-neutral-50 dark:bg-neutral-900 relative"
+  - expected on client: class="flex h-dvh bg-neutral-50 dark:bg-neutral-900 relative overflow-hidden"
+  Note: this mismatch is check-only. The DOM will not be rectified in production due to performance overhead.
+  You should fix the source of the mismatch. 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49

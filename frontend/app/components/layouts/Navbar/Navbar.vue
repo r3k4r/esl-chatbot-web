@@ -2,14 +2,11 @@
     <header
         id="site-navbar"
         class="fixed top-0 inset-x-0 z-50 border-b transition-all duration-300"
-        :class="scrolled ? 'bg-brand-ink/60 backdrop-blur-xl border-neutral-50/10' : 'bg-transparent border-transparent'"
+        :class="scrolled ? 'bg-brand-ink/90 backdrop-blur-xl border-white/10 shadow-lg' : 'bg-transparent border-transparent'"
     >
-        <div class="container-lg layout-padding-lg h-16 flex items-center justify-between">
+        <div class="container-lg layout-padding-lg h-16 sm:h-20 flex items-center justify-between">
             <AppLink to="/" class="flex items-center gap-2 group" @click="handleLogoClick">
-                <AppImage src="/only-logo-black-border-yellow-bg.svg" alt="Tutelage AI Logo" class="size-8" />
-                <AppText size="15" weight="semibold" color="white" class-list="tracking-tight">
-                    Tutelage <span class="text-brand-primary">AI</span>
-                </AppText>
+                <AppBrandLogo size="md" theme="dark" />
             </AppLink>
 
             <nav class="hidden md-lg:flex items-center gap-7">
@@ -17,8 +14,8 @@
                     v-for="item in navLinks"
                     :key="item.link"
                     :to="item.link"
-                    class="group relative text-[13px] font-medium text-neutral-50/70 transition-colors hover:text-brand-primary after:absolute after:inset-x-0 after:-bottom-1 after:h-0.5 after:origin-[left_center] rtl:after:origin-[right_center] after:scale-x-0 after:bg-brand-primary after:transition-transform after:duration-300 hover:after:scale-x-100"
-                    :class="activeLink === item.link ? 'text-brand-primary after:scale-x-100' : ''"
+                    class="group relative text-[13px] font-medium text-neutral-50/80 transition-colors hover:text-white after:absolute after:inset-x-0 after:-bottom-1 after:h-0.5 after:origin-[left_center] rtl:after:origin-[right_center] after:scale-x-0 after:bg-[#B91C1C] after:transition-transform after:duration-300 hover:after:scale-x-100"
+                    :class="activeLink === item.link ? 'text-white after:scale-x-100' : ''"
                     @click="handleLinkClick(item.link)"
                 >
                     {{ item.name }}
@@ -27,16 +24,17 @@
 
             <div class="hidden md-lg:flex items-center gap-3">
                 <LayoutsNavbarLanguageSwitcher />
-                <AppButton to="/signin" variant="brand" size="38" class-list="px-3.5 text-[13px] gap-1.5">
+                <AppButton to="/dashboard/chat" variant="brand" size="38" class-list="px-4 text-[13px] gap-2 shadow-md">
+                    <Icon icon="lucide:sparkles" width="14" class="text-amber-300" />
                     <span>{{ t('nav.getStarted') }}</span>
                     <Icon icon="lucide:arrow-right" width="13" class="rtl:rotate-180" />
                 </AppButton>
             </div>
 
             <div class="md-lg:hidden flex items-center gap-2">
-                <AppButton to="/#cta" variant="brand" size="38" class-list="px-3 sm:px-3.5 text-[13px] gap-1.5">
+                <LayoutsNavbarLanguageSwitcher />
+                <AppButton to="/dashboard/chat" variant="brand" size="36" class-list="px-3 text-[12px] gap-1.5">
                     <span>{{ t('nav.getStarted') }}</span>
-                    <Icon icon="lucide:arrow-right" width="13" class="rtl:rotate-180" />
                 </AppButton>
                 <LayoutsNavbarMenu :nav-items="navLinks" :active-link="activeLink" @select="handleLinkClick" />
             </div>
@@ -56,7 +54,6 @@ const { t } = useLocale()
 
 let sectionObserver: IntersectionObserver | null = null
 
-// Links are constant (used for scroll-spy); only the labels are localized.
 const navLinks = computed<NavItemTypes[]>(() => [
     { name: t('nav.features'), link: '/#features' },
     { name: t('nav.howItWorks'), link: '/#how' },
@@ -121,28 +118,36 @@ const setupSectionObserver = async () => {
         return
     }
 
-    sectionObserver = new IntersectionObserver((entries) => {
-        if (isNearTop() || isFooterInView()) {
-            clearActiveLink()
-            return
+    sectionObserver = new IntersectionObserver(
+        (entries) => {
+            if (isNearTop() || isFooterInView()) {
+                clearActiveLink()
+                return
+            }
+
+            const visibleEntries = entries.filter((entry) => entry.isIntersecting)
+            if (!visibleEntries.length) return
+
+            visibleEntries.sort((a, b) => {
+                if (b.intersectionRatio !== a.intersectionRatio) {
+                    return b.intersectionRatio - a.intersectionRatio
+                }
+                return Math.abs(a.boundingClientRect.top) - Math.abs(b.boundingClientRect.top)
+            })
+
+            const primaryEntry = visibleEntries[0]
+            if (primaryEntry?.target?.id) {
+                activeLink.value = `/#${primaryEntry.target.id}`
+            }
+        },
+        {
+            root: null,
+            rootMargin: '-35% 0px -45% 0px',
+            threshold: [0.15, 0.35, 0.6],
         }
+    )
 
-        const visibleEntry = entries
-            .filter((entry) => entry.isIntersecting)
-            .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]
-
-        if (!visibleEntry) return
-
-        activeLink.value = `/#${visibleEntry.target.id}`
-    }, {
-        root: null,
-        rootMargin: '-45% 0px -45% 0px',
-        threshold: [0, 0.2, 0.5, 0.8],
-    })
-
-    for (const section of sections) {
-        sectionObserver.observe(section)
-    }
+    sections.forEach((section) => sectionObserver?.observe(section))
 }
 
 const onScroll = () => {
@@ -151,45 +156,17 @@ const onScroll = () => {
 }
 
 onMounted(() => {
-    window.addEventListener('scroll', onScroll)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    scrolled.value = window.scrollY > 20
     setupSectionObserver()
+})
 
-    if (route.path === '/' && route.hash) {
-        activeLink.value = `/${route.hash}`
-    }
-
-    onScroll()
+onUnmounted(() => {
+    window.removeEventListener('scroll', onScroll)
+    sectionObserver?.disconnect()
 })
 
 watch(() => route.path, () => {
     setupSectionObserver()
-
-    if (route.path !== '/') {
-        clearActiveLink()
-        return
-    }
-
-    if (route.hash) {
-        activeLink.value = `/${route.hash}`
-        return
-    }
-
-    syncInactiveZones()
-})
-
-watch(() => route.hash, (hash) => {
-    if (route.path !== '/') return
-
-    if (!hash) {
-        syncInactiveZones()
-        return
-    }
-
-    activeLink.value = `/${hash}`
-})
-
-onUnmounted(() => {
-    sectionObserver?.disconnect()
-    window.removeEventListener('scroll', onScroll)
 })
 </script>

@@ -5,9 +5,9 @@ export const useSeo = async (options?: {
   ogImage?: string,
 }) => {
   const seoFallback = {
-    "title": "Tutelage AI",
-    "description": "",
-    "keywords": ""
+    title: "LEO Institute | AI English Tutor & Student Portal (پەیمانگای لیۆ)",
+    description: "Master English with guaranteed results at Leo Institute in Sulaymaniyah. In-person & online courses powered by Kurdistan's first 24/7 AI Speaking Coach.",
+    keywords: "LEO Institute, پەیمانگای لیۆ, Learn English Online, English Sulaymaniyah, IELTS Kurdistan, ESL AI Tutor, Mamostayan Azadi Park"
   };
   let title = options?.title || seoFallback.title;
   let description = options?.description || seoFallback.description;
@@ -21,12 +21,11 @@ export const useSeo = async (options?: {
     ogDescription: description,
     twitterDescription: description,
     keywords,
-    ogUrl: 'https://tutelage.krd',
-    twitterImage: options?.ogImage || '/default-og-image.webp',
-    ogImage: options?.ogImage || '/default-og-image.webp',
+    ogUrl: 'https://leoinstitute.krd',
+    twitterImage: options?.ogImage || '/leo-logo.jpg',
+    ogImage: options?.ogImage || '/leo-logo.jpg',
     ogType: 'website',
     twitterCard: 'summary_large_image',
-    themeColor: '#cc923b',
+    themeColor: '#B91C1C',
   })
-
 }

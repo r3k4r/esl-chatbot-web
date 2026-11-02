@@ -29,7 +29,13 @@ const {
     <!-- Header -->
     <div class="flex items-end justify-between flex-wrap gap-3 animate-card-enter" style="--delay:0ms">
       <div>
-        <h1 class="text-[28px] font-semibold tracking-[-0.02em] text-brand-ink dark:text-white font-poppins">Vocabulary</h1>
+        <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#B91C1C]/10 border border-[#B91C1C]/20 mb-2">
+          <img src="/leo-logo.jpg" alt="Leo" class="size-3.5 rounded-full object-cover" />
+          <span class="text-[10px] font-semibold text-[#B91C1C] dark:text-red-400 uppercase tracking-widest font-poppins">
+            Leo Vocabulary Lab · پەیمانگای لیۆ
+          </span>
+        </div>
+        <h1 class="text-[28px] font-semibold tracking-[-0.02em] text-brand-ink dark:text-white font-poppins">Vocabulary &amp; Spaced Repetition</h1>
         <p class="text-[14px] text-zinc-500 dark:text-zinc-400 mt-1 font-poppins">
           <span class="text-brand-primary font-medium">{{ dueCount }} card{{ dueCount === 1 ? '' : 's' }}</span> due · spaced repetition
         </p>

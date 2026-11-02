@@ -17,7 +17,7 @@ const statusLabel = computed(() => {
     case 'connecting': return 'Connecting…'
     case 'listening': return props.muted ? 'Muted' : 'Listening…'
     case 'thinking': return 'Thinking…'
-    case 'speaking': return 'Tutelage AI is speaking'
+    case 'speaking': return 'LEO AI is speaking'
     default: return ''
   }
 })

@@ -1,0 +1,390 @@
+- generic [active] [ref=f5e1]:
+  - generic [ref=f5e4]:
+    - banner [ref=f5e5]:
+      - generic [ref=f5e6]:
+        - link "LEO Institute Logo LEO INSTITUTE پەیمانگای لیۆ · Learn · Enjoy · Stay" [ref=f5e7] [cursor=pointer]:
+          - /url: /
+          - generic [ref=f5e8]:
+            - img "LEO Institute Logo" [ref=f5e10]
+            - generic [ref=f5e11]:
+              - generic [ref=f5e12]:
+                - generic [ref=f5e13]: LEO
+                - generic [ref=f5e14]: INSTITUTE
+              - generic [ref=f5e15]:
+                - generic [ref=f5e16]: پەیمانگای لیۆ
+                - generic [ref=f5e17]: ·
+                - generic [ref=f5e18]: Learn · Enjoy · Stay
+        - navigation [ref=f5e19]:
+          - link "خولەکان" [ref=f5e788] [cursor=pointer]:
+            - /url: /#features
+          - link "ڕاهێنەری AI" [ref=f5e789] [cursor=pointer]:
+            - /url: /#how
+          - link "کەمپەس و کافتریا" [ref=f5e790] [cursor=pointer]:
+            - /url: /#dashboard
+          - link "بەشداریکردن" [ref=f5e791] [cursor=pointer]:
+            - /url: /#pricing
+        - generic [ref=f5e24]:
+          - button "Select language" [ref=f5e26] [cursor=pointer]:
+            - img "Kurdish flag" [ref=f5e793]
+            - generic [ref=f5e28]: KR
+          - link "پۆڕتاڵی لیۆ" [ref=f5e794] [cursor=pointer]:
+            - /url: /dashboard/chat
+    - main [ref=f5e34]:
+      - generic [ref=f5e35]:
+        - generic [ref=f5e37]:
+          - generic [ref=f5e38]:
+            - generic [ref=f5e39]:
+              - generic [ref=f5e40]:
+                - generic [ref=f5e41]: بە گەرەنتی فێربوون
+                - generic [ref=f5e43]: سلێمانی - مامۆستایان - بەرامبەر پارکی ئازادی
+              - generic [ref=f5e44]: فێربوونی ئینگلیزی بە ئەنجامی مسۆگەر — لەگەڵ LEO AI.
+              - generic [ref=f5e45]: کۆرسەکانمان بەشێوەی ئۆنڵاین و ڕووبەڕوو بە گەرەنتی فێربوون بەردەستە! پلاتفۆرمی تایبەتی ٢٤ کاتژمێری بۆ قسەکردن و دەربڕینی پاراو بە زیرەکی دەستکرد.
+              - generic [ref=f5e46]:
+                - link "تاقیکردنەوەی مامۆستای LEO AI" [ref=f5e795] [cursor=pointer]:
+                  - /url: /dashboard/chat
+                - 'link "پەیوەندی: 0770 736 2000" [ref=f5e796] [cursor=pointer]':
+                  - /url: https://t.me/+9647707362000
+              - generic [ref=f5e54]:
+                - generic [ref=f5e797]: کۆرسی گشتی بە گەرەنتی
+                - generic [ref=f5e803]: ڕووبەڕوو و ئۆنڵاین
+                - generic [ref=f5e809]: منداڵان و ژمێریاری ژییری
+                - generic [ref=f5e815]: ئامادەکاری ئایەڵتس
+            - generic [ref=f5e69]:
+              - generic [ref=f5e70]:
+                - generic [ref=f5e71]:
+                  - img "LEO" [ref=f5e74]
+                  - generic [ref=f5e76]:
+                    - generic [ref=f5e77]: مامۆستای LEO AI · پەیمانگای لیۆ
+                    - generic [ref=f5e78]: تاقیگەی دەنگ · داواکردن لە کافتریای لیۆ
+                - generic [ref=f5e81]:
+                  - generic [ref=f5e82]: LEO AI
+                  - button [ref=f5e83] [cursor=pointer]
+              - generic [ref=f5e85]:
+                - generic [ref=f5e821]:
+                  - img "LEO" [ref=f5e823]
+                  - generic [ref=f5e824]:
+                    - text: بەخێربێیت بۆ پەیمانگای لیۆ! من مامۆستای تایبەتی تۆم بە زیرەکی دەستکرد. ئامادەیت ڕاهێنان لەسەر داواکردن لە کافتریای پەیمانگا بکەین؟
+                    - generic [ref=f5e825]: 10:04
+                - generic [ref=f5e827]:
+                  - text: بەڵێ! دەمەوێت ڕاهێنان لەسەر داواکردنی قاوە و کێک بکەم لە کافتریای لیۆ.
+                  - generic [ref=f5e828]: 10:04
+                - generic [ref=f5e829]: LEO AI is coaching…
+              - generic [ref=f5e86]:
+                - generic [ref=f5e87]:
+                  - generic [ref=f5e89]: Can I have a double espresso and...
+                  - button [ref=f5e98] [cursor=pointer]
+                - generic [ref=f5e100]:
+                  - generic [ref=f5e101]:
+                    - generic [ref=f5e102]: دۆخی دەنگ
+                    - generic [ref=f5e104]: ·
+                    - generic [ref=f5e105]: "نمرەی دەربڕین: 96%"
+                  - generic [ref=f5e106]: "Leo Cafeteria #104"
+          - generic [ref=f5e107]:
+            - generic [ref=f5e108]: پەروەردەکردنی هەزاران فێرخوازی سەرکەوتوو لە سلێمانی و سەرانسەری کوردستان
+            - generic [ref=f5e586]:
+              - generic [ref=f5e588]:
+                - generic [ref=f5e589]: Sulaymaniyah Campus (بەرامبەر پارکی ئازادی)
+                - generic [ref=f5e595]: Guaranteed Learning Methodology (بە گەرەنتی فێربوون)
+                - generic [ref=f5e601]: 24/7 LEO AI Speaking Coach
+                - generic [ref=f5e608]: Leo Kids & Mental Math (خولی بەهێزکردن)
+                - generic [ref=f5e614]: On-Site Student Cafeteria & Lounge
+                - generic [ref=f5e618]: IELTS Academic Mastery Track
+              - generic [ref=f5e625]:
+                - generic [ref=f5e626]: Sulaymaniyah Campus (بەرامبەر پارکی ئازادی)
+                - generic [ref=f5e632]: Guaranteed Learning Methodology (بە گەرەنتی فێربوون)
+                - generic [ref=f5e638]: 24/7 LEO AI Speaking Coach
+                - generic [ref=f5e645]: Leo Kids & Mental Math (خولی بەهێزکردن)
+                - generic [ref=f5e651]: On-Site Student Cafeteria & Lounge
+                - generic [ref=f5e655]: IELTS Academic Mastery Track
+        - generic [ref=f5e110]:
+          - generic [ref=f5e112]:
+            - generic [ref=f5e113]: بەرنامە ئەکادیمییەکان
+            - generic [ref=f5e114]: کۆرسی تایبەت بۆ بەدەستهێنانی ڕەوانبێژی لە ئینگلیزیدا.
+            - generic [ref=f5e115]: چ لە کەمپەسی سەرەکیمان لە گەڕەکی مامۆستایان بخوێنیت یان بەشداربیت لە کۆرسە ئۆنڵاینەکانمان، ٢٤ کاتژمێر پلاتفۆرمی زیرەکی دەستکرد لەگەڵت دەبێت.
+          - generic [ref=f5e116]:
+            - generic [ref=f5e117]:
+              - generic [ref=f5e121]: ئینگلیزی گشتی و قسەکردن
+              - generic [ref=f5e122]: ئاستەکانی سەرەتایی تا پێشکەوتوو (A1 بۆ C1) بە گەرەنتی فێربوون و مامۆستای بە ئەزموون و بڕوانامەدار.
+              - generic [ref=f5e123]: زیاتر بزانە
+            - generic [ref=f5e126]:
+              - generic [ref=f5e130]: ڕاهێنەری دەنگی LEO AI
+              - generic [ref=f5e131]: ڕاهێنانی دەنگی دووقۆڵی بەردەوام بەبێ سنوور لەگەڵ نمرەدانی دەستبەجێ لەسەر شێوازی دەربڕین و ڕێزمان.
+              - generic [ref=f5e132]: زیاتر بزانە
+            - generic [ref=f5e135]:
+              - generic [ref=f5e139]: بەرنامەی منداڵان و ژمێریاری ژییری
+              - generic [ref=f5e140]: خولی بەهێزکردن و بەرنامەی تایبەتی منداڵانی لیۆ بۆ بەهێزکردنی توانای بیرکاری و ئینگلیزی (#leokids2025).
+              - generic [ref=f5e141]: زیاتر بزانە
+            - generic [ref=f5e144]:
+              - generic [ref=f5e148]: خولی چڕی نێودەوڵەتی IELTS
+              - generic [ref=f5e149]: ڕاهێنانی چڕ بۆ بەدەستهێنانی بەندی 7.0+ لەگەڵ تاقیکردنەوەی دەنگی هاوشێوەی تاقیکەرەوەی فەرمی ئایەڵتس.
+              - generic [ref=f5e150]: زیاتر بزانە
+            - generic [ref=f5e153]:
+              - generic [ref=f5e157]: کافتریا و ژینگەی کۆمەڵایەتی
+              - generic [ref=f5e158]: ڕاهێنانی ڕۆژانەی زمانی ئینگلیزی بە شێوەیەکی ئاسایی لە کافتریای تایبەتی پەیمانگا و ژینگەی هاندەر.
+              - generic [ref=f5e159]: زیاتر بزانە
+            - generic [ref=f5e162]:
+              - generic [ref=f5e166]: بەدواداچوونی مامۆستا و پێشکەوتن
+              - generic [ref=f5e167]: سیستەمی شیکاری پێشکەوتوو کە ڕێگە دەدات مامۆستا و دایک و باوک بە وردی چاودێری ئەنجامی خوێندن بکەن.
+              - generic [ref=f5e168]: زیاتر بزانە
+        - generic [ref=f5e172]:
+          - generic [ref=f5e173]:
+            - generic [ref=f5e174]:
+              - generic [ref=f5e175]: تایبەتمەندی پەیمانگای لیۆ
+              - generic [ref=f5e176]: وانەی نایاب لە پۆلدا + ڕاهێنەری AI لە ماڵەوە
+            - link "تاقیگەی دەنگ ببینە" [ref=f5e835] [cursor=pointer]:
+              - /url: /dashboard/chat
+          - generic [ref=f5e180]:
+            - generic [ref=f5e182]:
+              - generic [ref=f5e183]: "01"
+              - generic [ref=f5e187]: بەشداریکردن لە کۆرس
+              - generic [ref=f5e188]: ناونووسین لە خولەکانی بەیانیان یان ئێواران لە کەمپەسی ئازادی یان پەیوەندیکردن بە کۆرسە ئۆنڵاینەکانمان.
+            - generic [ref=f5e189]:
+              - generic [ref=f5e190]: "02"
+              - generic [ref=f5e194]: ڕاهێنانی ٢٤ کاتژمێری بە AI
+              - generic [ref=f5e195]: ڕاهێنان لەسەر سیناریۆکانی کافتریا، چاوپێکەوتنی کار، یان پرسیارەکانی ئایەڵتس لە ڕێگەی مۆبایلەکەتەوە.
+            - generic [ref=f5e196]:
+              - generic [ref=f5e197]: "03"
+              - generic [ref=f5e201]: گەیشتن بە ئاستی مسۆگەر
+              - generic [ref=f5e202]: بینینی بەرزبوونەوەی نمرەی دەربڕین و ڕەوانی قسەکردن بە گەرەنتی فەرمی پەیمانگای لیۆ.
+        - generic [ref=f5e204]:
+          - generic [ref=f5e206]:
+            - generic [ref=f5e207]: داشبۆردی فێرخواز
+            - generic [ref=f5e208]: ناوەندی کۆنترۆڵی زیرەکی فێرخواز.
+            - generic [ref=f5e209]: کاتەکانی قسەکردن، نمرەی دەربڕین، وشە نوێیەکان و ئاستی خولەکان هەمووی لە یەک شوێندا.
+          - generic [ref=f5e212]:
+            - generic [ref=f5e213]: portal.leoinstitute.krd / student-lab
+            - generic [ref=f5e220]:
+              - complementary [ref=f5e221]:
+                - generic [ref=f5e223]:
+                  - img "LEO Institute Logo" [ref=f5e225]
+                  - generic [ref=f5e227]:
+                    - generic [ref=f5e228]: LEO
+                    - generic [ref=f5e229]: INSTITUTE
+                - generic [ref=f5e230] [cursor=pointer]: Speaking Lab
+                - generic [ref=f5e234] [cursor=pointer]: Cafeteria Roleplay
+                - generic [ref=f5e237] [cursor=pointer]: IELTS Examiner
+                - generic [ref=f5e240] [cursor=pointer]: Leo Kids & Math
+                - generic [ref=f5e243] [cursor=pointer]: Certificate
+                - generic [ref=f5e247]:
+                  - generic [ref=f5e248]:
+                    - generic [ref=f5e249]: ئامانجی قسەکردن
+                    - generic [ref=f5e250]: 85%
+                  - generic [ref=f5e253]:
+                    - generic [ref=f5e254]: 21 min spoke
+                    - generic [ref=f5e255]: 25 min target
+              - generic [ref=f5e256]:
+                - generic [ref=f5e257]:
+                  - generic [ref=f5e258]:
+                    - generic [ref=f5e259]: بەیانیت باش
+                    - generic [ref=f5e260]: بەخێربێیتەوە بۆ پەیمانگای لیۆ 👋
+                  - link "دانیشتنی نوێی AI" [ref=f5e836] [cursor=pointer]:
+                    - /url: /dashboard/chat
+                - generic [ref=f5e263]:
+                  - generic [ref=f5e837]:
+                    - generic [ref=f5e838]: ئاستی خول
+                    - generic [ref=f5e839]: B2 Upper
+                    - generic [ref=f5e840]: ئاستی B2 پێشکەوتوو
+                  - generic [ref=f5e845]:
+                    - generic [ref=f5e846]: ماوەی قسەکردن
+                    - generic [ref=f5e847]: 14.2 hrs
+                    - generic [ref=f5e848]: لە ئەم مانگەدا
+                  - generic [ref=f5e853]:
+                    - generic [ref=f5e854]: بەردەوامی
+                    - generic [ref=f5e855]: 18 Days
+                    - generic [ref=f5e856]: بەشداریکردنی چالاک
+                  - generic [ref=f5e861]:
+                    - generic [ref=f5e862]: نمرەی دەربڕین
+                    - generic [ref=f5e863]: 94.2%
+                    - generic [ref=f5e864]: ٩٤٪ دەربڕینی تەواو
+                - generic [ref=f5e284]:
+                  - generic [ref=f5e285]:
+                    - generic [ref=f5e286]:
+                      - generic [ref=f5e287]: وشەی فێربوو
+                      - generic [ref=f5e288]: 148 words
+                    - generic [ref=f5e297]:
+                      - generic [ref=f5e298]: Sat
+                      - generic [ref=f5e299]: Sun
+                      - generic [ref=f5e300]: Mon
+                      - generic [ref=f5e301]: Tue
+                      - generic [ref=f5e302]: Wed
+                      - generic [ref=f5e303]: Thu
+                      - generic [ref=f5e304]: Fri
+                  - generic [ref=f5e305]:
+                    - generic [ref=f5e306]:
+                      - generic [ref=f5e307]:
+                        - generic [ref=f5e308]: سیناریۆی کافتریای لیۆ
+                        - generic [ref=f5e309]: تەواوکرا
+                      - generic [ref=f5e310]: "Level 1: Ordering Coffee & Croissant at Leo Cafeteria"
+                      - generic [ref=f5e311]: ١٤ وەڵام · ٩٦٪ دەربڕین
+                    - link "بەردەوامبە" [ref=f5e869] [cursor=pointer]:
+                      - /url: /dashboard/chat
+        - generic [ref=f5e318]:
+          - generic [ref=f5e320]:
+            - generic [ref=f5e321]: خول و پرۆگرامەکان
+            - generic [ref=f5e322]: خشتەی خولە سەرەکییەکان
+          - generic [ref=f5e323]:
+            - generic [ref=f5e324]:
+              - generic [ref=f5e325]: ئینگلیزی گشتی
+              - generic [ref=f5e327]:
+                - generic [ref=f5e328]: کۆرسی ئاسایی
+                - generic [ref=f5e329]: /خول
+              - generic [ref=f5e330]: خولەکانی ئاستی A1 تا B2 بە مامۆستای شارەزا لەگەڵ بەکارهێنانی تەواوی پلاتفۆرمی LEO AI.
+              - generic [ref=f5e331]:
+                - list [ref=f5e332]:
+                  - listitem [ref=f5e870]:
+                    - generic [ref=f5e874]: خولەکانی ڕووبەڕوو و ئۆنڵاین
+                  - listitem [ref=f5e875]:
+                    - generic [ref=f5e879]: فێربوون بە گەرەنتی فەرمی
+                  - listitem [ref=f5e880]:
+                    - generic [ref=f5e884]: ڕاهێنەری ٢٤ کاتژمێری LEO AI
+                  - listitem [ref=f5e885]:
+                    - generic [ref=f5e889]: کافتریا و ژینگەی خوێندن
+                  - listitem [ref=f5e890]:
+                    - generic [ref=f5e894]: بڕوانامەی فەرمی پەیمانگای لیۆ
+                - link "ناونووسین لە پەیمانگا" [ref=f5e895] [cursor=pointer]:
+                  - /url: /#cta
+            - generic [ref=f5e357]:
+              - generic [ref=f5e358]:
+                - generic [ref=f5e359]: منداڵان و ژمێریاری ژییری
+                - generic [ref=f5e360]: زۆرترین بەشداربوو
+              - generic [ref=f5e362]:
+                - generic [ref=f5e363]: تایبەت
+                - generic [ref=f5e364]: /خول
+              - generic [ref=f5e365]: خولی بەهێزکردن و ژمێریاری ژییری (Leo Kids & Mental Math) بۆ قۆناغی قوتابخانە.
+              - generic [ref=f5e366]:
+                - list [ref=f5e367]:
+                  - listitem [ref=f5e896]:
+                    - generic [ref=f5e900]: پرۆگرامی تایبەتی فێرکاری منداڵان
+                  - listitem [ref=f5e901]:
+                    - generic [ref=f5e905]: ژمێریاری ژییری و چالاککردنی مێشک
+                  - listitem [ref=f5e906]:
+                    - generic [ref=f5e910]: ژینگەی پارێزراو و دڵنیا
+                  - listitem [ref=f5e911]:
+                    - generic [ref=f5e915]: ڕاپۆرتی هەفتانە بۆ دایک و باوکان
+                  - listitem [ref=f5e916]:
+                    - generic [ref=f5e920]: "چالاکییەکانی #leokids2025"
+                - link "تۆمارکردنی منداڵەکەت" [ref=f5e921] [cursor=pointer]:
+                  - /url: /#cta
+            - generic [ref=f5e392]:
+              - generic [ref=f5e393]: خولی چڕی IELTS
+              - generic [ref=f5e395]:
+                - generic [ref=f5e396]: ئاستی باڵا
+                - generic [ref=f5e397]: /خول
+              - generic [ref=f5e398]: ڕاهێنانی چڕ بۆ وەرگرتنی زانکۆ و باڵیۆزخانە و کۆچبەری بۆ بەدەستهێنانی نمرەی بەرز.
+              - generic [ref=f5e399]:
+                - list [ref=f5e400]:
+                  - listitem [ref=f5e922]:
+                    - generic [ref=f5e926]: ستراتیژی مسۆگەری بەندی 7.0+
+                  - listitem [ref=f5e927]:
+                    - generic [ref=f5e931]: تاقیکەرەوەی دەنگی ساختەی AI
+                  - listitem [ref=f5e932]:
+                    - generic [ref=f5e936]: هەڵسەنگاندنی وتاری نووسین
+                  - listitem [ref=f5e937]:
+                    - generic [ref=f5e941]: کۆبوونەوەی تایبەت لەگەڵ مامۆستا
+                  - listitem [ref=f5e942]:
+                    - generic [ref=f5e946]: سەرچاوە ڕەسەنەکانی کامبریدج
+                - link "تاقیکردنەوەی ئاست دیاریکردن" [ref=f5e947] [cursor=pointer]:
+                  - /url: /dashboard/chat
+          - generic [ref=f5e425]: خولەکانی بەیانیان و ئێواران بەردەستن · ڕووبەڕوو لە گەڕەکی مامۆستایان یان بەتەواوی ئۆنڵاین
+        - generic [ref=f5e427]:
+          - generic [ref=f5e428]: سەردانمان بکە لە سلێمانی
+          - generic [ref=f5e431]: دەستپێکردنی ڕێگای سەرکەوتنت لە پەیمانگای لیۆ.
+          - generic [ref=f5e432]: سلێمانی - گەڕەکی مامۆستایان - بەرامبەر پارکی ئازادی. پەیوەندیمان پێوە بکە یان نامە بنێرە لە تەلەگرام و ڤایبەر.
+          - generic [ref=f5e433]:
+            - link "نامە لە تەلەگرام (0770 736 2000)" [ref=f5e948] [cursor=pointer]:
+              - /url: https://t.me/+9647707362000
+            - link "ڤایبەر (0750 886 2786)" [ref=f5e949] [cursor=pointer]:
+              - /url: tel:07508862786
+      - region "Notifications alt+T":
+        - list
+    - contentinfo [ref=f5e440]:
+      - generic [ref=f5e441]:
+        - generic [ref=f5e442]:
+          - generic [ref=f5e443]:
+            - link "LEO Institute Logo LEO INSTITUTE پەیمانگای لیۆ · Learn · Enjoy · Stay" [ref=f5e444] [cursor=pointer]:
+              - /url: /
+              - generic [ref=f5e445]:
+                - img "LEO Institute Logo" [ref=f5e447]
+                - generic [ref=f5e448]:
+                  - generic [ref=f5e449]:
+                    - generic [ref=f5e450]: LEO
+                    - generic [ref=f5e451]: INSTITUTE
+                  - generic [ref=f5e452]:
+                    - generic [ref=f5e453]: پەیمانگای لیۆ
+                    - generic [ref=f5e454]: ·
+                    - generic [ref=f5e455]: Learn · Enjoy · Stay
+            - generic [ref=f5e456]: پەیمانگای لیۆ بۆ فێرکردنی زمانی ئینگلیزی (LEO Institute) — ناوەندی پێشەنگی سلێمانی بۆ فێربوونی ئینگلیزی بە گەرەنتی و ڕاهێنانی ٢٤ کاتژمێری بە زیرەکی دەستکرد.
+            - generic [ref=f5e460]:
+              - generic [ref=f5e461]: Sulaymaniyah Campus (کەمپەسی سەرەکی)
+              - generic [ref=f5e462]: Mamostayan Neighborhood, Directly Opposite Azadi Parkسلێمانی - گەڕەکی مامۆستایان - بەرامبەر پارکی ئازادی
+            - generic [ref=f5e463]:
+              - 'link "Telegram: 0770 736 2000" [ref=f5e464] [cursor=pointer]':
+                - /url: https://t.me/+9647707362000
+              - 'link "Viber: 0750 886 2786" [ref=f5e467] [cursor=pointer]':
+                - /url: tel:07508862786
+              - link "leo.institute@yahoo.com" [ref=f5e470] [cursor=pointer]:
+                - /url: mailto:leo.institute@yahoo.com
+            - generic [ref=f5e473]:
+              - link "Leo Institute Kurdish Facebook" [ref=f5e474] [cursor=pointer]:
+                - /url: https://www.facebook.com/leo.kurdish.ins
+              - link "Learn English Online Facebook" [ref=f5e476] [cursor=pointer]:
+                - /url: https://www.facebook.com/learnenglishonlinewithus
+              - link "Leo Institute YouTube" [ref=f5e478] [cursor=pointer]:
+                - /url: https://www.youtube.com/results?search_query=%23leoinstitute
+          - generic [ref=f5e480]:
+            - generic [ref=f5e950]:
+              - generic [ref=f5e951]: خولەکان
+              - generic [ref=f5e952]:
+                - link "ئینگلیزی گشتی" [ref=f5e953] [cursor=pointer]:
+                  - /url: /#programs
+                - link "خولە ئۆنڵاینەکان" [ref=f5e954] [cursor=pointer]:
+                  - /url: /#programs
+                - link "منداڵان و ژمێریاری ژییری" [ref=f5e955] [cursor=pointer]:
+                  - /url: /#programs
+                - link "خولی چڕی ئایەڵتس" [ref=f5e956] [cursor=pointer]:
+                  - /url: /#programs
+                - link "تاقیگەی دەنگی AI" [ref=f5e957] [cursor=pointer]:
+                  - /url: /#programs
+            - generic [ref=f5e958]:
+              - generic [ref=f5e959]: کەمپەس
+              - generic [ref=f5e960]:
+                - link "کافتریای فێرخوازان" [ref=f5e961] [cursor=pointer]:
+                  - /url: /#programs
+                - link "لقی مامۆستایان" [ref=f5e962] [cursor=pointer]:
+                  - /url: /#programs
+                - link "بەرامبەر پارکی ئازادی" [ref=f5e963] [cursor=pointer]:
+                  - /url: /#programs
+                - link "خشتەی وانەکان" [ref=f5e964] [cursor=pointer]:
+                  - /url: /#programs
+                - link "پۆڕتاڵی فێرخوازان" [ref=f5e965] [cursor=pointer]:
+                  - /url: /#programs
+            - generic [ref=f5e966]:
+              - generic [ref=f5e967]: پەیوەندی
+              - generic [ref=f5e968]:
+                - link "0770 736 2000 (تەلەگرام)" [ref=f5e969] [cursor=pointer]:
+                  - /url: /#programs
+                - link "0750 886 2786 (ڤایبەر)" [ref=f5e970] [cursor=pointer]:
+                  - /url: /#programs
+                - link "leo.institute@yahoo.com" [ref=f5e971] [cursor=pointer]:
+                  - /url: /#programs
+                - link "پەیجی فەیسبووک ١" [ref=f5e972] [cursor=pointer]:
+                  - /url: /#programs
+                - link "پەیجی فەیسبووک ٢" [ref=f5e973] [cursor=pointer]:
+                  - /url: /#programs
+        - generic [ref=f5e505]:
+          - generic [ref=f5e506]: © ٢٠٢٦ پەیمانگای لیۆ (LEO Institute). هەموو مافەکان پارێزراون.
+          - generic [ref=f5e507]:
+            - generic [ref=f5e508]: کوردی
+            - generic [ref=f5e511]: تاقیگەی AI بەردەوامە ٢٤ کاتژمێر
+  - generic:
+    - generic:
+      - generic:
+        - button "Go to parent" [disabled]
+        - button "Open in editor"
+        - button "Close"
+  - generic [ref=f5e774]:
+    - button "Toggle Nuxt DevTools" [ref=f5e775] [cursor=pointer]
+    - generic "Page load time" [ref=f5e779]:
+      - generic [ref=f5e780]: "141"
+      - generic [ref=f5e781]: ms
+    - button "Toggle Component Inspector" [ref=f5e783] [cursor=pointer]

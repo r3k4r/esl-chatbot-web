@@ -1,0 +1,126 @@
+- generic [ref=f7e4]:
+  - complementary [ref=f7e5]:
+    - generic [ref=f7e6]:
+      - link "LEO Institute Logo LEO INSTITUTE" [ref=f7e7] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f7e8]:
+          - img "LEO Institute Logo" [ref=f7e10]
+          - generic [ref=f7e11]: LEO INSTITUTE
+      - button "Close sidebar" [ref=f7e13]
+    - navigation [ref=f7e16]:
+      - generic [ref=f7e17]: LEO AI Speaking Coach
+      - link "Overview" [ref=f7e18] [cursor=pointer]:
+        - /url: /dashboard
+      - link "Classes & Cohorts" [ref=f7e21] [cursor=pointer]:
+        - /url: /dashboard/classes
+      - link "LEO AI Coach" [ref=f7e25] [cursor=pointer]:
+        - /url: /dashboard/chat
+      - link "Voice Lab" [ref=f7e29] [cursor=pointer]:
+        - /url: /dashboard/voice
+      - link "Curriculum & Lessons" [ref=f7e33] [cursor=pointer]:
+        - /url: /dashboard/lessons
+      - link "Vocabulary & SRS" [ref=f7e37] [cursor=pointer]:
+        - /url: /dashboard/vocab
+      - link "Learning Goals" [ref=f7e40] [cursor=pointer]:
+        - /url: /dashboard/goals
+      - link "Billing & Plans" [ref=f7e43] [cursor=pointer]:
+        - /url: /dashboard/billing
+    - generic [ref=f7e47]:
+      - generic [ref=f7e48]:
+        - generic [ref=f7e49]: Teacher Portal Sync
+        - text: LIVE
+      - generic [ref=f7e50]:
+        - generic [ref=f7e51]: Pronunciation Accuracy94.8%
+        - generic [ref=f7e52]:
+          - generic [ref=f7e53]:
+            - text: "CEFR Level:"
+            - strong [ref=f7e54]: B2 Upper
+          - text: Mamostayan Campus
+    - generic [ref=f7e55]: پەیمانگای لیۆ0770 736 2000
+  - button [ref=f7e56]
+  - generic [ref=f7e59]:
+    - banner [ref=f7e60]:
+      - generic [ref=f7e61]:
+        - button "Open sidebar" [ref=f7e62]
+        - navigation "breadcrumb" [ref=f7e65]:
+          - list [ref=f7e66]:
+            - listitem [ref=f7e67]:
+              - generic [ref=f7e68]: leo-institute
+            - listitem [aria-hidden] [ref=f7e69]
+            - listitem [ref=f7e72]:
+              - link "learning milestones" [disabled] [ref=f7e73]
+      - button "Search users, classes, words… ⌘K" [ref=f7e75]
+      - generic [ref=f7e78]:
+        - generic [ref=f7e79]: Mamostayan Campus
+        - button "Notifications" [ref=f7e80]
+        - link [ref=f7e85] [cursor=pointer]:
+          - /url: /dashboard/chat
+          - button "Start AI Coach" [ref=f7e86]
+        - button "User menu" [ref=f7e90]:
+          - generic [ref=f7e91]: A
+          - generic [ref=f7e92]:
+            - generic [ref=f7e93]: student_ali
+            - generic [ref=f7e94]: Free
+    - main [ref=f7e95]:
+      - generic [ref=f7e96]:
+        - generic [ref=f7e97]:
+          - generic [ref=f7e98]:
+            - generic [ref=f7e99]:
+              - img "Leo" [ref=f7e100]
+              - text: Leo Institute Milestones · پەیمانگای لیۆ
+            - generic [ref=f7e101]: Learning Goals & Targets
+            - generic [ref=f7e102]: Targets you set. Progress we measure.
+          - button "New goal" [ref=f7e103]
+        - generic [ref=f7e106]:
+          - generic [ref=f7e107]:
+            - generic [ref=f7e108]: "0"
+            - generic [ref=f7e109]: Active
+          - generic [ref=f7e110]:
+            - generic [ref=f7e111]: "0"
+            - generic [ref=f7e112]: Completed
+          - generic [ref=f7e113]:
+            - generic [ref=f7e114]: "0"
+            - generic [ref=f7e115]: Total
+        - generic [ref=f7e116]:
+          - generic [ref=f7e117]:
+            - button "All" [ref=f7e118]
+            - button "Active" [ref=f7e119]
+            - button "Completed" [ref=f7e120]
+            - button "Paused" [ref=f7e121]
+          - combobox [ref=f7e122]:
+            - generic: All types
+        - generic [ref=f7e130]:
+          - generic [ref=f7e131]: No goals yet
+          - paragraph [ref=f7e132]: Set your first learning goal to start tracking progress.
+          - button "Create first goal" [ref=f7e133]
+        - generic [ref=f7e136]:
+          - generic [ref=f7e137]:
+            - generic [ref=f7e138]:
+              - paragraph [ref=f7e139]: Achievements
+              - paragraph [ref=f7e140]: 0 of 6 unlocked
+            - paragraph [ref=f7e142]: 0%
+          - generic [ref=f7e143]:
+            - generic [ref=f7e144]:
+              - paragraph [ref=f7e151]: 7-day streak
+              - paragraph [ref=f7e152]: 7 days in a row
+              - paragraph [ref=f7e153]: 0%
+            - generic [ref=f7e154]:
+              - paragraph [ref=f7e163]: Month warrior
+              - paragraph [ref=f7e164]: 30 days in a row
+              - paragraph [ref=f7e165]: 0%
+            - generic [ref=f7e166]:
+              - paragraph [ref=f7e174]: Chatterbox
+              - paragraph [ref=f7e175]: 100 sessions
+              - paragraph [ref=f7e176]: 0%
+            - generic [ref=f7e177]:
+              - paragraph [ref=f7e184]: Polyglot
+              - paragraph [ref=f7e185]: 1 000 words
+              - paragraph [ref=f7e186]: 0%
+            - generic [ref=f7e187]:
+              - paragraph [ref=f7e195]: Dedication
+              - paragraph [ref=f7e196]: 100 hours
+              - paragraph [ref=f7e197]: 0%
+            - generic [ref=f7e198]:
+              - paragraph [ref=f7e205]: Goal crusher
+              - paragraph [ref=f7e206]: 5 goals done
+              - paragraph [ref=f7e207]: 0%

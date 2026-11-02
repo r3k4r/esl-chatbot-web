@@ -78,8 +78,8 @@ onBeforeUnmount(stopAudio)
     style="--delay:0ms">
     <!-- Avatar -->
     <div v-if="message.who === 'ai'"
-      class="w-7 h-7 rounded-full bg-linear-to-br from-brand-primary to-brand-accent flex items-center justify-center shrink-0">
-      <AppIconsax name="Candle" color="#000" :size="12" />
+      class="w-7 h-7 rounded-lg overflow-hidden border border-black/10 dark:border-white/10 shrink-0 shadow-xs">
+      <img src="/leo-logo.jpg" alt="LEO" class="w-full h-full object-cover" />
     </div>
     <div v-else
       class="w-7 h-7 rounded-full bg-linear-to-br from-brand-primary to-[#b45309] text-white flex items-center justify-center text-[11px] font-semibold shrink-0 font-poppins">
@@ -137,7 +137,7 @@ onBeforeUnmount(stopAudio)
         class="mt-2 inline-block max-w-full text-left p-3 rounded-xl bg-brand-primary/8 border border-brand-primary/20">
         <div
           class="flex items-center gap-1.5 text-[12px] uppercase tracking-wider text-brand-primary font-semibold mb-1 font-poppins">
-          <AppIconsax name="Candle" color="#f59e0b" :size="12" />
+          <AppIconsax name="LampCharge" color="#B91C1C" :size="12" />
           Phrasing tip
         </div>
         <AppText size="13" color="neutral-400" class-list="line-through">

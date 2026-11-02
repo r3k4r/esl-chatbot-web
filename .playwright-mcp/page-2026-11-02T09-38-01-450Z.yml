@@ -1,0 +1,48 @@
+- generic [ref=f2e4]:
+  - button "Go back" [ref=f2e5] [cursor=pointer]:
+    - generic [ref=f2e7]: Back
+  - main [ref=f2e8]:
+    - generic [ref=f2e9]:
+      - link "LEO Institute home" [ref=f2e10] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f2e11]:
+          - img "LEO Institute Logo" [ref=f2e13]
+          - generic [ref=f2e14]:
+            - generic [ref=f2e15]:
+              - generic [ref=f2e16]: LEO
+              - generic [ref=f2e17]: INSTITUTE
+            - generic [ref=f2e18]:
+              - generic [ref=f2e19]: پەیمانگای لیۆ
+              - generic [ref=f2e20]: ·
+              - generic [ref=f2e21]: Learn · Enjoy · Stay
+      - generic [ref=f2e22]:
+        - generic [ref=f2e23]:
+          - generic [ref=f2e24]: Welcome back
+          - generic [ref=f2e25]: Sign in to continue your English learning journey.
+        - generic [ref=f2e27]:
+          - generic [ref=f2e28]:
+            - generic [ref=f2e29]:
+              - text: Username
+              - generic [ref=f2e30]: "*"
+            - textbox "Username *" [ref=f2e32]:
+              - /placeholder: Enter your username
+          - generic [ref=f2e33]:
+            - generic [ref=f2e34]:
+              - text: Password
+              - generic [ref=f2e35]: "*"
+            - generic [ref=f2e36]:
+              - textbox "Password *" [ref=f2e37]:
+                - /placeholder: Enter your password
+              - button "Toggle Password Visibility" [ref=f2e38]
+          - link "Forgot password?" [ref=f2e44] [cursor=pointer]:
+            - /url: /forgot-password
+          - button "Sign in" [ref=f2e45] [cursor=pointer]
+        - generic [ref=f2e46]:
+          - generic [ref=f2e47]: or
+          - generic [ref=f2e51]:
+            - generic [aria-hidden]:
+              - generic: Continue with Google
+        - paragraph [ref=f2e52]:
+          - text: Don't have an account?
+          - link "Create one" [ref=f2e53] [cursor=pointer]:
+            - /url: /signup

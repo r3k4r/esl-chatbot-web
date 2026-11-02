@@ -1,0 +1,18 @@
+[   39365ms] [LOG] ✨ %cNuxt DevTools %c Press Shift + Alt + D to open DevTools color: black; border-radius: 3px 0 0 3px; padding: 2px 2px 1px 10px; background: #00DC82 border-radius: 0 3px 3px 0; padding: 2px 10px 1px 2px; background: #00DC8220  @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@nuxt/devtools/dist/runtime/plugins/devtools.client.js?v=208a0da6:51
+[   39453ms] [INFO] <Suspense> is an experimental feature and its API will likely change. @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:7188
+[  155366ms] [LOG] [voice] socket connected to http://localhost:8000 @ http://localhost:3001/_nuxt/composables/useVoiceChat.ts:56
+[  155366ms] [LOG] [voice] starting — sessionId: 1567b055-5313-4701-bf1e-4fa87ccb3669 mimeType: audio/webm;codecs=opus @ http://localhost:3001/_nuxt/composables/useVoiceChat.ts:162
+[  163808ms] [LOG] [voice] stopped — sending voice:end, chunks sent: 28 @ http://localhost:3001/_nuxt/composables/useVoiceChat.ts:199
+[  179264ms] [LOG] [voice] socket connected to http://localhost:8000 @ http://localhost:3001/_nuxt/composables/useVoiceChat.ts:56
+[  179264ms] [LOG] [voice] starting — sessionId: 1567b055-5313-4701-bf1e-4fa87ccb3669 mimeType: audio/webm;codecs=opus @ http://localhost:3001/_nuxt/composables/useVoiceChat.ts:162
+[  201716ms] [LOG] [voice] stopped — sending voice:end, chunks sent: 76 @ http://localhost:3001/_nuxt/composables/useVoiceChat.ts:199
+[  204383ms] [LOG] [voice] socket connected to http://localhost:8000 @ http://localhost:3001/_nuxt/composables/useVoiceChat.ts:56
+[  204383ms] [LOG] [voice] starting — sessionId: 1567b055-5313-4701-bf1e-4fa87ccb3669 mimeType: audio/webm;codecs=opus @ http://localhost:3001/_nuxt/composables/useVoiceChat.ts:162
+[  207278ms] [LOG] [voice] stopped — sending voice:end, chunks sent: 9 @ http://localhost:3001/_nuxt/composables/useVoiceChat.ts:199
+[  216382ms] [LOG] [voice] starting — sessionId: 1567b055-5313-4701-bf1e-4fa87ccb3669 mimeType: audio/webm;codecs=opus @ http://localhost:3001/_nuxt/composables/useVoiceChat.ts:162
+[  220536ms] [LOG] [voice] stopped — sending voice:end, chunks sent: 13 @ http://localhost:3001/_nuxt/composables/useVoiceChat.ts:199
+[  222430ms] [ERROR] [voice:error] INTERNAL_ERROR Deepgram returned empty transcript @ http://localhost:3001/_nuxt/composables/useVoiceChat.ts:93
+[  222436ms] [LOG] [voice] starting — sessionId: 1567b055-5313-4701-bf1e-4fa87ccb3669 mimeType: audio/webm;codecs=opus @ http://localhost:3001/_nuxt/composables/useVoiceChat.ts:162
+[  229719ms] [LOG] [voice] stopped — sending voice:end, chunks sent: 24 @ http://localhost:3001/_nuxt/composables/useVoiceChat.ts:199
+[  971626ms] [LOG] ✨ %cNuxt DevTools %c Press Shift + Alt + D to open DevTools color: black; border-radius: 3px 0 0 3px; padding: 2px 2px 1px 10px; background: #00DC82 border-radius: 0 3px 3px 0; padding: 2px 10px 1px 2px; background: #00DC8220  @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@nuxt/devtools/dist/runtime/plugins/devtools.client.js?v=208a0da6:51
+[  971637ms] [INFO] <Suspense> is an experimental feature and its API will likely change. @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:7188

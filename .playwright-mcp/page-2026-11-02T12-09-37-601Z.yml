@@ -1,0 +1,79 @@
+- generic [ref=f27e4]:
+  - complementary [ref=f27e5]:
+    - button "Collapse sidebar" [ref=f27e6] [cursor=pointer]
+    - link "LEO Institute Logo LEO INSTITUTE" [ref=f27e10] [cursor=pointer]:
+      - /url: /
+      - generic [ref=f27e11]:
+        - img "LEO Institute Logo" [ref=f27e13]
+        - generic [ref=f27e15]:
+          - generic [ref=f27e16]: LEO
+          - generic [ref=f27e17]: INSTITUTE
+    - navigation [ref=f27e18]:
+      - generic [ref=f27e19]: LEO AI Speaking Coach
+      - link "Overview" [ref=f27e20] [cursor=pointer]:
+        - /url: /dashboard
+      - link "Users & Staff" [ref=f27e24] [cursor=pointer]:
+        - /url: /dashboard/users
+      - link "Classes & Cohorts" [ref=f27e29] [cursor=pointer]:
+        - /url: /dashboard/classes
+    - generic [ref=f27e34]:
+      - generic [ref=f27e35]:
+        - generic [ref=f27e36]: Teacher Portal Sync
+        - generic [ref=f27e39]: LIVE
+      - generic [ref=f27e40]:
+        - generic [ref=f27e41]:
+          - generic [ref=f27e42]: Pronunciation Accuracy
+          - generic [ref=f27e43]: 94.8%
+        - generic [ref=f27e46]:
+          - generic [ref=f27e47]:
+            - text: "CEFR Level:"
+            - strong [ref=f27e48]: B2 Upper
+          - generic [ref=f27e49]: Mamostayan Campus
+    - generic [ref=f27e50]:
+      - generic [ref=f27e51]: پەیمانگای لیۆ
+      - generic [ref=f27e52]: 0770 736 2000
+  - generic [ref=f27e53]:
+    - banner [ref=f27e54]:
+      - navigation "breadcrumb" [ref=f27e56]:
+        - list [ref=f27e57]:
+          - listitem [ref=f27e58]:
+            - generic [ref=f27e59]: leo-institute
+          - listitem [aria-hidden] [ref=f27e62]
+          - listitem [ref=f27e65]:
+            - link "user management" [disabled] [ref=f27e66]
+      - button "Search users, classes, words… ⌘K" [ref=f27e68] [cursor=pointer]:
+        - generic [ref=f27e71]: Search users, classes, words…
+        - generic [ref=f27e72]: ⌘K
+      - generic [ref=f27e73]:
+        - generic [ref=f27e74]: Mamostayan Campus
+        - button "Notifications" [ref=f27e77] [cursor=pointer]
+        - button "User menu" [ref=f27e82] [cursor=pointer]:
+          - generic [ref=f27e83]: P
+          - generic [ref=f27e85]:
+            - generic [ref=f27e86]: admin_main
+            - generic [ref=f27e87]: Admin
+    - main [ref=f27e88]:
+      - generic [ref=f27e89]:
+        - generic [ref=f27e90]:
+          - heading "Users" [level=1] [ref=f27e91]
+          - paragraph [ref=f27e92]: Manage accounts, roles and subscriptions.
+        - generic [ref=f27e94]:
+          - textbox "Search name, email, username…" [ref=f27e99]
+          - button "Filters" [ref=f27e101] [cursor=pointer]
+        - table [ref=f27e107]:
+          - rowgroup [ref=f27e108]:
+            - row [ref=f27e109]:
+              - columnheader "User" [ref=f27e110]
+              - columnheader "Role" [ref=f27e111]
+              - columnheader "Plan" [ref=f27e112]
+              - columnheader "Subscription" [ref=f27e113]
+              - columnheader "Account" [ref=f27e114]
+              - columnheader "Joined" [ref=f27e115]
+              - columnheader [ref=f27e116]
+              - columnheader [ref=f27e117]
+          - rowgroup [ref=f27e118]:
+            - row [ref=f27e119]:
+              - cell "No users found Try adjusting your filters or search query." [ref=f27e120]:
+                - generic [ref=f27e123]:
+                  - generic [ref=f27e124]: No users found
+                  - paragraph [ref=f27e125]: Try adjusting your filters or search query.

@@ -1,48 +1,48 @@
 <template>
   <div class="relative">
-    <div class="absolute -inset-8 rounded-4xl bg-[radial-gradient(closest-side,rgba(245,158,11,0.12),transparent_70%)] pointer-events-none" />
-    <div class="rounded-2xl bg-neutral-50 border border-neutral-200/70 shadow-card overflow-hidden transform-[perspective(1800px)_rotateX(6deg)_rotateY(-2deg)] transform-3d">
+    <div class="absolute -inset-8 rounded-4xl bg-[radial-gradient(closest-side,rgba(185,28,28,0.12),transparent_70%)] pointer-events-none" />
+    <div class="rounded-2xl bg-white border border-slate-200/90 shadow-2xl overflow-hidden transform-[perspective(1800px)_rotateX(6deg)_rotateY(-2deg)] transform-3d">
 
       <!-- Window chrome -->
-      <div class="flex items-center gap-2 px-4 py-2.5 bg-neutral-50 border-b border-neutral-200/70">
+      <div class="flex items-center gap-2 px-4 py-2.5 bg-slate-50 border-b border-slate-200">
         <div class="flex gap-1.5">
-          <span class="w-2.5 h-2.5 rounded-full bg-neutral-300" />
-          <span class="w-2.5 h-2.5 rounded-full bg-neutral-300" />
-          <span class="w-2.5 h-2.5 rounded-full bg-neutral-300" />
+          <span class="w-2.5 h-2.5 rounded-full bg-red-400" />
+          <span class="w-2.5 h-2.5 rounded-full bg-amber-400" />
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400" />
         </div>
-        <div class="mx-auto text-[11px] text-neutral-500 font-mono flex items-center gap-1.5">
-          <Icon icon="lucide:shield" width="10" /> app.tutelage.ai / dashboard
+        <div class="mx-auto text-[11px] text-slate-500 font-mono flex items-center gap-1.5">
+          <Icon icon="lucide:shield-check" width="12" class="text-emerald-500" /> portal.leoinstitute.krd / student-lab
         </div>
       </div>
 
-      <div class="grid grid-cols-12 gap-4 p-5 bg-neutral-50">
+      <div class="grid grid-cols-12 gap-4 p-5 bg-white">
 
         <!-- Sidebar -->
-        <aside class="col-span-3 hidden md:flex flex-col gap-1 pe-3 border-e border-neutral-100">
-          <div class="flex items-center gap-2 px-2 pb-3">
-            <div class="w-7 h-7 rounded-lg bg-brand-ink flex items-center justify-center">
-              <Icon icon="lucide:sparkles" width="12" class="text-brand-primary" />
-            </div>
-            <div class="text-[13px] font-semibold tracking-tight">Tutelage</div>
+        <aside class="col-span-3 hidden md:flex flex-col gap-1 pe-3 border-e border-slate-100">
+          <div class="flex items-center gap-2 px-1 pb-3">
+            <AppBrandLogo size="sm" :show-subtitle="false" />
           </div>
           <div
             v-for="item in sidebarItems"
             :key="item.label"
             class="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[12px] cursor-pointer"
-            :class="item.active ? 'bg-brand-primary/10 text-brand-ink font-medium' : 'text-neutral-500'"
+            :class="item.active ? 'bg-red-50 text-[#B91C1C] font-semibold' : 'text-slate-500 hover:text-slate-900'"
           >
             <Icon :icon="item.icon" width="14" />
             <span>{{ item.label }}</span>
-            <span v-if="item.active" class="ms-auto w-1.5 h-1.5 rounded-full bg-brand-primary" />
+            <span v-if="item.active" class="ms-auto w-1.5 h-1.5 rounded-full bg-[#B91C1C]" />
           </div>
-          <div class="mt-auto pt-4 text-[11px] text-neutral-400 px-2">
-            <div class="rounded-lg bg-neutral-50 border border-neutral-100 p-2.5">
-              <div class="font-medium text-neutral-600 mb-0.5">{{ m.dailyGoal }}</div>
-              <div class="h-1.5 rounded-full bg-neutral-200 overflow-hidden">
-                <div class="h-full w-[68%] bg-brand-primary rounded-full" />
+          <div class="mt-auto pt-4 text-[11px] text-slate-400 px-1">
+            <div class="rounded-xl bg-slate-50 border border-slate-200/70 p-3">
+              <div class="flex items-center justify-between text-xs font-semibold text-slate-700 mb-1">
+                <span>{{ m.dailyGoal }}</span>
+                <span class="text-xs text-[#B91C1C] font-bold">85%</span>
               </div>
-              <div class="flex justify-between mt-1 text-[10px]">
-                <span>17 min</span><span>25 min</span>
+              <div class="h-2 rounded-full bg-slate-200 overflow-hidden">
+                <div class="h-full w-[85%] bg-linear-to-r from-[#B91C1C] to-[#F59E0B] rounded-full" />
+              </div>
+              <div class="flex justify-between mt-1 text-[10px] text-slate-500 font-medium">
+                <span>21 min spoke</span><span>25 min target</span>
               </div>
             </div>
           </div>
@@ -53,102 +53,67 @@
           <!-- Top bar -->
           <div class="flex items-center justify-between">
             <div>
-              <div class="text-[11px] text-neutral-400 uppercase tracking-wider font-medium">{{ m.greeting }}</div>
-              <div class="text-lg font-semibold tracking-tight">{{ m.welcome }}</div>
+              <div class="text-[11px] text-[#B91C1C] uppercase tracking-wider font-bold">{{ m.greeting }}</div>
+              <div class="text-lg font-bold tracking-tight text-slate-900">{{ m.welcome }}</div>
             </div>
-            <button class="cursor-pointer hidden sm:flex items-center gap-2 text-[12px] bg-brand-ink text-neutral-50 px-3 py-1.5 rounded-lg">
-              <Icon icon="lucide:message-circle" width="13" /> {{ m.newSession }}
-            </button>
+            <NuxtLink to="/dashboard/chat" class="cursor-pointer hidden sm:flex items-center gap-2 text-[12px] font-semibold bg-[#B91C1C] text-white px-3.5 py-2 rounded-xl shadow-sm hover:bg-[#991B1B] transition">
+              <Icon icon="lucide:sparkles" width="14" /> {{ m.newSession }}
+            </NuxtLink>
           </div>
 
-          <!-- Stat cards -->
-          <div class="grid grid-cols-4 gap-3">
+          <!-- Stat tiles -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
             <div
-              v-for="stat in stats"
+              v-for="stat in statCards"
               :key="stat.label"
-              class="rounded-xl border border-neutral-100 bg-neutral-50 p-3"
+              class="rounded-xl bg-slate-50 border border-slate-100 p-3"
             >
-              <div class="flex items-center justify-between">
-                <div class="text-[10px] uppercase tracking-wider text-neutral-400 font-medium">{{ stat.label }}</div>
-                <Icon :icon="stat.icon" width="13" class="text-neutral-300" />
+              <div class="text-[11px] text-slate-500 font-medium">{{ stat.label }}</div>
+              <div class="text-xl font-bold tracking-tight text-slate-900 mt-0.5">{{ stat.val }}</div>
+              <div class="text-[10px] text-emerald-600 font-semibold mt-0.5 flex items-center gap-1">
+                <Icon icon="lucide:trending-up" width="10" /> {{ stat.sub }}
               </div>
-              <div class="text-[22px] font-semibold tracking-tight mt-1" :class="stat.color">{{ stat.value }}</div>
-              <div class="text-[10px] text-neutral-400">{{ stat.sub }}</div>
             </div>
           </div>
 
-          <!-- Chart + chat preview -->
-          <div class="grid grid-cols-5 gap-3">
-            <!-- Sparkline chart -->
-            <div class="col-span-3 rounded-xl border border-neutral-100 p-4">
-              <div class="flex items-center justify-between mb-2">
-                <div>
-                  <div class="text-[11px] text-neutral-400 uppercase tracking-wider font-medium">{{ m.wordsLearned }}</div>
-                  <div class="text-base font-semibold tracking-tight">
-                    1,248 <span class="text-brand-primary text-[12px] font-medium">+12.4%</span>
-                  </div>
-                </div>
-                <div class="text-[10px] text-neutral-400 font-mono">14d</div>
+          <!-- Two-column split -->
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="rounded-xl bg-slate-50 border border-slate-100 p-3.5 space-y-2">
+              <div class="flex items-center justify-between">
+                <div class="text-[12px] font-semibold text-slate-800">{{ m.wordsLearned }}</div>
+                <span class="text-[10px] text-slate-500 font-mono">148 words</span>
               </div>
-              <svg :viewBox="`0 0 ${chartW} ${chartH}`" class="w-full h-35">
-                <defs>
-                  <linearGradient id="ag" x1="0" x2="0" y1="0" y2="1">
-                    <stop offset="0%"   stop-color="var(--color-brand-primary)" stop-opacity="0.25" />
-                    <stop offset="100%" stop-color="var(--color-brand-primary)" stop-opacity="0" />
-                  </linearGradient>
-                </defs>
-                <path :d="areaPath" fill="url(#ag)" stroke="none" />
-                <path :d="linePath" fill="none" stroke="var(--color-brand-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="[stroke-dasharray:400] [stroke-dashoffset:400] animate-[dash_2.2s_ease-out_forwards]" />
-                <g>
-                  <circle :cx="lastX" :cy="lastY" r="4" fill="var(--color-brand-primary)" />
-                  <circle :cx="lastX" :cy="lastY" r="8" fill="var(--color-brand-primary)" opacity="0.15" />
-                </g>
-              </svg>
-              <!-- Heatmap -->
-              <div class="mt-3">
-                <div class="text-[10px] text-neutral-400 uppercase tracking-wider font-medium mb-1.5">{{ m.consistency }}</div>
-                <div class="flex gap-1">
-                  <div v-for="(week, i) in heatWeeks" :key="i" class="flex flex-col gap-1">
-                    <span
-                      v-for="(n, j) in week"
-                      :key="j"
-                      class="w-3 h-3 rounded-[3px]"
-                      :class="heatColor(n)"
-                    />
-                  </div>
-                </div>
+              <div class="h-16 flex items-end gap-1.5 pt-2">
+                <span
+                  v-for="(h, i) in [45, 60, 35, 80, 65, 90, 75]"
+                  :key="i"
+                  class="flex-1 bg-linear-to-t from-[#1B365D] to-[#B91C1C] rounded-t opacity-90 hover:opacity-100 transition"
+                  :style="{ height: `${h}%` }"
+                />
+              </div>
+              <div class="flex justify-between text-[10px] text-slate-400 font-mono">
+                <span>Sat</span><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span>
               </div>
             </div>
 
-            <!-- Recent session -->
-            <div class="col-span-2 rounded-xl border border-neutral-100 p-3 flex flex-col">
-              <div class="flex items-center justify-between mb-2">
-                <div class="text-[11px] text-neutral-400 uppercase tracking-wider font-medium">{{ m.recentSession }}</div>
-                <span class="text-[10px] font-mono text-neutral-400">{{ m.minutesAgo }}</span>
-              </div>
-              <div class="space-y-2 text-[11px] flex-1">
-                <div class="flex gap-1.5">
-                  <div class="w-5 h-5 rounded-full bg-linear-to-br from-brand-primary to-brand-accent flex items-center justify-center shrink-0">
-                    <Icon icon="lucide:sparkles" width="9" class="text-brand-ink" />
-                  </div>
-                  <div class="bg-neutral-50 rounded-lg rounded-ss-sm px-2 py-1.5 text-neutral-700">What's a goal you have this month?</div>
+            <div class="rounded-xl bg-slate-50 border border-slate-100 p-3.5 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between">
+                  <div class="text-[12px] font-semibold text-slate-800">{{ m.recentSession }}</div>
+                  <span class="text-[10px] text-emerald-700 bg-emerald-100/70 font-semibold px-2 py-0.5 rounded-full">
+                    {{ m.minutesAgo }}
+                  </span>
                 </div>
-                <div class="flex justify-end">
-                  <div class="bg-brand-ink text-neutral-50 rounded-lg rounded-ee-sm px-2 py-1.5 max-w-[85%]">I want to read two novels in English.</div>
-                </div>
-                <div class="flex gap-1.5">
-                  <div class="w-5 h-5 rounded-full bg-linear-to-br from-brand-primary to-brand-accent flex items-center justify-center shrink-0">
-                    <Icon icon="lucide:sparkles" width="9" class="text-brand-ink" />
-                  </div>
-                  <div class="bg-neutral-50 rounded-lg rounded-ss-sm px-2 py-1.5 text-neutral-700">Ambitious — which novels?</div>
+                <div class="text-[11px] text-slate-500 mt-1">Level 1: Ordering Coffee & Croissant at Leo Cafeteria</div>
+                <div class="text-[10px] text-slate-400 mt-2 flex items-center gap-2">
+                  <Icon icon="lucide:check-circle" width="12" class="text-emerald-500" />
+                  <span>{{ m.turnsAccuracy }}</span>
                 </div>
               </div>
-              <div class="mt-2 pt-2 border-t border-neutral-100 flex items-center justify-between">
-                <div class="text-[10px] text-neutral-400">{{ m.turnsAccuracy }}</div>
-                <button class="cursor-pointer text-[10px] font-medium text-brand-primary flex items-center gap-0.5">
-                  {{ m.continue }} <Icon icon="lucide:arrow-right" width="10" class="rtl:rotate-180" />
-                </button>
-              </div>
+              <NuxtLink to="/dashboard/chat" class="mt-3 w-full py-1.5 rounded-lg bg-slate-900 text-white text-[11px] font-semibold flex items-center justify-center gap-1.5 hover:bg-slate-800">
+                <span>{{ m.continue }}</span>
+                <Icon icon="lucide:arrow-right" width="11" />
+              </NuxtLink>
             </div>
           </div>
         </section>
@@ -163,73 +128,29 @@ import { Icon } from '@iconify/vue'
 const { t } = useLocale()
 
 const m = computed(() => ({
+  dailyGoal:      t('dashboardPreview.mockup.dailyGoal'),
   greeting:       t('dashboardPreview.mockup.greeting'),
   welcome:        t('dashboardPreview.mockup.welcome'),
   newSession:     t('dashboardPreview.mockup.newSession'),
-  dailyGoal:      t('dashboardPreview.mockup.dailyGoal'),
-  statLessons:    t('dashboardPreview.mockup.statLessons'),
-  statLessonsSub: t('dashboardPreview.mockup.statLessonsSub'),
-  statStudyTime:  t('dashboardPreview.mockup.statStudyTime'),
-  statStudyTimeSub: t('dashboardPreview.mockup.statStudyTimeSub'),
-  statStreak:     t('dashboardPreview.mockup.statStreak'),
-  statStreakSub:  t('dashboardPreview.mockup.statStreakSub'),
-  statLevel:      t('dashboardPreview.mockup.statLevel'),
-  statLevelSub:   t('dashboardPreview.mockup.statLevelSub'),
   wordsLearned:   t('dashboardPreview.mockup.wordsLearned'),
-  consistency:    t('dashboardPreview.mockup.consistency'),
   recentSession:  t('dashboardPreview.mockup.recentSession'),
   minutesAgo:     t('dashboardPreview.mockup.minutesAgo'),
   turnsAccuracy:  t('dashboardPreview.mockup.turnsAccuracy'),
   continue:       t('dashboardPreview.mockup.continue'),
 }))
 
-// Sparkline
-const pts = [12, 18, 14, 22, 19, 28, 24, 32, 30, 38, 35, 44, 42, 52]
-const chartW = 520, chartH = 140, pad = 8
-const maxV = Math.max(...pts), minV = Math.min(...pts)
-const xs = pts.map((_, i) => pad + (i * (chartW - pad * 2)) / (pts.length - 1))
-const ys = pts.map(v => chartH - pad - ((v - minV) / (maxV - minV)) * (chartH - pad * 2))
-const linePath = xs.map((x, i) => `${i ? 'L' : 'M'}${x},${ys[i]}`).join(' ')
-const areaPath = `${linePath} L${chartW - pad},${chartH - pad} L${pad},${chartH - pad} Z`
-const lastX = xs[xs.length - 1]
-const lastY = ys[ys.length - 1]
-
-const heatWeeks = [
-  [1, 2, 3, 4, 2, 0, 0],
-  [3, 4, 5, 3, 4, 2, 1],
-  [4, 5, 6, 5, 6, 4, 3],
-  [5, 6, 7, 6, 5, 7, 6],
-]
-
-function heatColor(n: number) {
-  if (n === 0) return 'bg-neutral-100'
-  if (n <= 2)  return 'bg-brand-primary/20'
-  if (n <= 4)  return 'bg-brand-primary/45'
-  if (n <= 5)  return 'bg-brand-primary/70'
-  return 'bg-brand-primary'
-}
-
 const sidebarItems = [
-  { label: 'Dashboard', icon: 'lucide:bar-chart-2',    active: true },
-  { label: 'Chat',      icon: 'lucide:message-circle', active: false },
-  { label: 'Voice Lab', icon: 'lucide:mic',            active: false },
-  { label: 'Vocabulary',icon: 'lucide:book-open',      active: false },
-  { label: 'Goals',     icon: 'lucide:target',         active: false },
+  { icon: 'lucide:layout-dashboard', label: 'Speaking Lab', active: true },
+  { icon: 'lucide:coffee',           label: 'Cafeteria Roleplay' },
+  { icon: 'lucide:graduation-cap',   label: 'IELTS Examiner' },
+  { icon: 'lucide:smile',            label: 'Leo Kids & Math' },
+  { icon: 'lucide:award',            label: 'Certificate' },
 ]
 
-// Numbers/icons are structural; labels + subs come from the active locale.
-const stats = computed(() => [
-  { label: m.value.statLessons,   value: '124', sub: m.value.statLessonsSub,   icon: 'lucide:book-open', color: 'text-neutral-900' },
-  { label: m.value.statStudyTime, value: '42h', sub: m.value.statStudyTimeSub, icon: 'lucide:clock',     color: 'text-neutral-900' },
-  { label: m.value.statStreak,    value: '23',  sub: m.value.statStreakSub,    icon: 'lucide:flame',     color: 'text-brand-primary' },
-  { label: m.value.statLevel,     value: 'B2',  sub: m.value.statLevelSub,     icon: 'lucide:star',      color: 'text-neutral-900' },
+const statCards = computed(() => [
+  { label: t('dashboardPreview.mockup.statLessons'),   val: 'B2 Upper', sub: t('dashboardPreview.mockup.statLessonsSub') },
+  { label: t('dashboardPreview.mockup.statStudyTime'), val: '14.2 hrs', sub: t('dashboardPreview.mockup.statStudyTimeSub') },
+  { label: t('dashboardPreview.mockup.statStreak'),    val: '18 Days',  sub: t('dashboardPreview.mockup.statStreakSub') },
+  { label: t('dashboardPreview.mockup.statLevel'),     val: '94.2%',    sub: t('dashboardPreview.mockup.statLevelSub') },
 ])
 </script>
-
-<style scoped>
-@keyframes dash {
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-</style>

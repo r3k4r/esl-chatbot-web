@@ -34,7 +34,7 @@ const emit = defineEmits<{ start: [] }>()
         <span>{{ lesson.level }}</span>
       </div>
       <span class="inline-flex items-center gap-0.5 text-brand-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity font-poppins">
-        Start <AppIconsax name="ArrowRight" color="#f59e0b" :size="11" />
+        Start <AppIconsax name="ArrowRight" color="#B91C1C" :size="11" />
       </span>
     </div>
   </div>

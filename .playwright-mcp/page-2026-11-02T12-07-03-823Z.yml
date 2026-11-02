@@ -1,0 +1,160 @@
+- generic [ref=f24e4]:
+  - complementary [ref=f24e5]:
+    - button "Collapse sidebar" [ref=f24e6] [cursor=pointer]
+    - link "LEO Institute Logo LEO INSTITUTE" [ref=f24e10] [cursor=pointer]:
+      - /url: /
+      - generic [ref=f24e11]:
+        - img "LEO Institute Logo" [ref=f24e13]
+        - generic [ref=f24e15]:
+          - generic [ref=f24e16]: LEO
+          - generic [ref=f24e17]: INSTITUTE
+    - navigation [ref=f24e18]:
+      - generic [ref=f24e19]: LEO AI Speaking Coach
+      - link "Overview" [ref=f24e20] [cursor=pointer]:
+        - /url: /dashboard
+      - link "Classes & Cohorts" [ref=f24e25] [cursor=pointer]:
+        - /url: /dashboard/classes
+      - link "LEO AI Coach" [ref=f24e30] [cursor=pointer]:
+        - /url: /dashboard/chat
+      - link "Voice Lab" [ref=f24e35] [cursor=pointer]:
+        - /url: /dashboard/voice
+      - link "Curriculum & Lessons" [ref=f24e40] [cursor=pointer]:
+        - /url: /dashboard/lessons
+      - link "Vocabulary & SRS" [ref=f24e45] [cursor=pointer]:
+        - /url: /dashboard/vocab
+      - link "Learning Goals" [ref=f24e49] [cursor=pointer]:
+        - /url: /dashboard/goals
+      - link "Billing & Plans" [ref=f24e53] [cursor=pointer]:
+        - /url: /dashboard/billing
+    - generic [ref=f24e58]:
+      - generic [ref=f24e59]:
+        - generic [ref=f24e60]: Teacher Portal Sync
+        - generic [ref=f24e63]: LIVE
+      - generic [ref=f24e64]:
+        - generic [ref=f24e65]:
+          - generic [ref=f24e66]: Pronunciation Accuracy
+          - generic [ref=f24e67]: 94.8%
+        - generic [ref=f24e70]:
+          - generic [ref=f24e71]:
+            - text: "CEFR Level:"
+            - strong [ref=f24e72]: B2 Upper
+          - generic [ref=f24e73]: Mamostayan Campus
+    - generic [ref=f24e74]:
+      - generic [ref=f24e75]: پەیمانگای لیۆ
+      - generic [ref=f24e76]: 0770 736 2000
+  - generic [ref=f24e77]:
+    - banner [ref=f24e78]:
+      - navigation "breadcrumb" [ref=f24e80]:
+        - list [ref=f24e81]:
+          - listitem [ref=f24e82]:
+            - generic [ref=f24e83]: leo-institute
+          - listitem [aria-hidden] [ref=f24e86]
+          - listitem [ref=f24e89]:
+            - link "leo overview" [disabled] [ref=f24e90]
+      - button "Search users, classes, words… ⌘K" [ref=f24e92] [cursor=pointer]:
+        - generic [ref=f24e95]: Search users, classes, words…
+        - generic [ref=f24e96]: ⌘K
+      - generic [ref=f24e97]:
+        - generic [ref=f24e98]: Mamostayan Campus
+        - button "Notifications" [ref=f24e101] [cursor=pointer]
+        - link [ref=f24e106] [cursor=pointer]:
+          - /url: /dashboard/chat
+          - button "Start AI Coach" [ref=f24e107]
+        - button "User menu" [ref=f24e112] [cursor=pointer]:
+          - generic [ref=f24e113]: A
+          - generic [ref=f24e115]:
+            - generic [ref=f24e116]: student_ali
+            - generic [ref=f24e117]: Free
+    - main [ref=f24e118]:
+      - generic [ref=f24e119]:
+        - generic [ref=f24e122]:
+          - generic [ref=f24e123]:
+            - generic [ref=f24e124]:
+              - img "Leo" [ref=f24e125]
+              - generic [ref=f24e126]: LEO Institute · پەیمانگای لیۆ
+              - generic [ref=f24e127]: ·
+              - generic [ref=f24e128]: Mamostayan Campus
+            - paragraph [ref=f24e129]: Good afternoon
+            - heading "Welcome back, student_ali." [level=1] [ref=f24e130]
+            - paragraph [ref=f24e131]: Start an AI session to begin your daily goal — 25 min today.
+            - generic [ref=f24e132]:
+              - button "LEO AI Speaking Coach" [ref=f24e133] [cursor=pointer]
+              - button "Voice Lab (Call)" [ref=f24e138] [cursor=pointer]
+              - button "Review 0 words" [ref=f24e143] [cursor=pointer]
+          - generic [ref=f24e147]:
+            - generic [ref=f24e152]:
+              - generic [ref=f24e153]: 0/25
+              - generic [ref=f24e154]: min today
+            - generic [ref=f24e155]:
+              - generic [ref=f24e159]: "0"
+              - generic [ref=f24e160]: day streak
+        - generic [ref=f24e161]:
+          - generic [ref=f24e162]:
+            - generic [ref=f24e165]:
+              - generic [ref=f24e166]:
+                - generic [ref=f24e167]: Vocabulary growth
+                - generic [ref=f24e168]:
+                  - generic [ref=f24e169]: 0 words
+                  - generic [ref=f24e170]: +0%
+              - generic [ref=f24e171]:
+                - button "7d" [ref=f24e172] [cursor=pointer]
+                - button "30d" [ref=f24e173] [cursor=pointer]
+                - button "All" [ref=f24e174] [cursor=pointer]
+            - generic [ref=f24e177]:
+              - generic [ref=f24e178]:
+                - generic [ref=f24e179]:
+                  - generic [ref=f24e180]: Practice consistency
+                  - generic [ref=f24e181]: 12 weeks · 0% of days active
+                - generic [ref=f24e182]: Less More
+              - generic [ref=f24e190]:
+                - generic [ref=f24e191]: Mon
+                - generic [ref=f24e192]: Wed
+                - generic [ref=f24e193]: Fri
+              - generic [ref=f24e194]:
+                - generic [ref=f24e195]: Recent sessions
+                - button "View all" [ref=f24e196] [cursor=pointer]
+          - generic [ref=f24e197]:
+            - generic [ref=f24e199]:
+              - generic [ref=f24e200]:
+                - generic [ref=f24e201]: Next up
+                - generic [ref=f24e202]: AI suggested
+              - generic [ref=f24e204]:
+                - generic [ref=f24e205]: Recommended
+                - generic [ref=f24e208]: Ordering at the Leo Campus Cafeteria
+                - generic [ref=f24e209]: Your practice shows growth — let's level it up.
+                - generic [ref=f24e210]:
+                  - generic [ref=f24e211]: 10 min
+                  - generic [ref=f24e215]: ·
+                  - generic [ref=f24e216]: A2
+                  - generic [ref=f24e217]: ·
+                  - generic [ref=f24e218]: Leo Scenario
+                - button "Start lesson" [ref=f24e219] [cursor=pointer]
+              - generic [ref=f24e223]:
+                - button "Azadi Park Directions & Small Talk Speaking · 12 min · B1" [ref=f24e224] [cursor=pointer]:
+                  - generic [ref=f24e229]:
+                    - generic [ref=f24e230]: Azadi Park Directions & Small Talk
+                    - generic [ref=f24e231]: Speaking · 12 min · B1
+                - button "IELTS Speaking Part 2 Mock Examiner Exam Prep · 20 min · B2" [ref=f24e234] [cursor=pointer]:
+                  - generic [ref=f24e239]:
+                    - generic [ref=f24e240]: IELTS Speaking Part 2 Mock Examiner
+                    - generic [ref=f24e241]: Exam Prep · 20 min · B2
+                - 'button "Leo Kids: Numbers & Mental Math Vocabulary · 15 min · A1" [ref=f24e244] [cursor=pointer]':
+                  - generic [ref=f24e248]:
+                    - generic [ref=f24e249]: "Leo Kids: Numbers & Mental Math"
+                    - generic [ref=f24e250]: Vocabulary · 15 min · A1
+            - generic [ref=f24e254]:
+              - generic [ref=f24e255]:
+                - generic [ref=f24e256]:
+                  - paragraph [ref=f24e257]: Due for review
+                  - paragraph [ref=f24e258]: 0 cards waiting
+                - button "Start" [ref=f24e259] [cursor=pointer]
+              - generic [ref=f24e260]:
+                - paragraph [ref=f24e261]: Level progress
+                - generic [ref=f24e262]:
+                  - generic [ref=f24e263]: A1
+                  - generic [ref=f24e264]: A2
+                  - generic [ref=f24e265]: B1
+                  - generic [ref=f24e266]: B2
+                  - generic [ref=f24e267]: C1
+                  - generic [ref=f24e268]: C2
+                - paragraph [ref=f24e271]: 100% to go to reach C1.

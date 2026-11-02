@@ -1,0 +1,126 @@
+- generic [ref=f10e4]:
+  - complementary [ref=f10e5]:
+    - generic [ref=f10e6]:
+      - link "LEO Institute Logo LEO INSTITUTE" [ref=f10e7] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f10e8]:
+          - img "LEO Institute Logo" [ref=f10e10]
+          - generic [ref=f10e11]: LEO INSTITUTE
+      - button "Close sidebar" [ref=f10e13]
+    - navigation [ref=f10e16]:
+      - generic [ref=f10e17]: LEO AI Speaking Coach
+      - link "Overview" [ref=f10e18] [cursor=pointer]:
+        - /url: /dashboard
+      - link "Classes & Cohorts" [ref=f10e21] [cursor=pointer]:
+        - /url: /dashboard/classes
+      - link "LEO AI Coach" [ref=f10e25] [cursor=pointer]:
+        - /url: /dashboard/chat
+      - link "Voice Lab" [ref=f10e29] [cursor=pointer]:
+        - /url: /dashboard/voice
+      - link "Curriculum & Lessons" [ref=f10e33] [cursor=pointer]:
+        - /url: /dashboard/lessons
+      - link "Vocabulary & SRS" [ref=f10e37] [cursor=pointer]:
+        - /url: /dashboard/vocab
+      - link "Learning Goals" [ref=f10e40] [cursor=pointer]:
+        - /url: /dashboard/goals
+      - link "Billing & Plans" [ref=f10e43] [cursor=pointer]:
+        - /url: /dashboard/billing
+    - generic [ref=f10e47]:
+      - generic [ref=f10e48]:
+        - generic [ref=f10e49]: Teacher Portal Sync
+        - text: LIVE
+      - generic [ref=f10e50]:
+        - generic [ref=f10e51]: Pronunciation Accuracy94.8%
+        - generic [ref=f10e52]:
+          - generic [ref=f10e53]:
+            - text: "CEFR Level:"
+            - strong [ref=f10e54]: B2 Upper
+          - text: Mamostayan Campus
+    - generic [ref=f10e55]: پەیمانگای لیۆ0770 736 2000
+  - button [ref=f10e56]
+  - generic [ref=f10e59]:
+    - banner [ref=f10e60]:
+      - generic [ref=f10e61]:
+        - button "Open sidebar" [ref=f10e62]
+        - navigation "breadcrumb" [ref=f10e65]:
+          - list [ref=f10e66]:
+            - listitem [ref=f10e67]:
+              - generic [ref=f10e68]: leo-institute
+            - listitem [aria-hidden] [ref=f10e69]
+            - listitem [ref=f10e72]:
+              - link "leo overview" [disabled] [ref=f10e73]
+      - button "Search users, classes, words… ⌘K" [ref=f10e75]
+      - generic [ref=f10e78]:
+        - generic [ref=f10e79]: Mamostayan Campus
+        - button "Notifications" [ref=f10e80]
+        - link [ref=f10e85] [cursor=pointer]:
+          - /url: /dashboard/chat
+          - button "Start AI Coach" [ref=f10e86]
+        - button "User menu" [ref=f10e90]:
+          - generic [ref=f10e91]: A
+          - generic [ref=f10e92]:
+            - generic [ref=f10e93]: student_ali
+            - generic [ref=f10e94]: Free
+    - main [ref=f10e95]:
+      - generic [ref=f10e96]:
+        - generic [ref=f10e99]:
+          - generic [ref=f10e100]:
+            - paragraph [ref=f10e101]: Good afternoon
+            - heading "Welcome back, student_ali." [level=1] [ref=f10e102]
+            - paragraph [ref=f10e103]: Start a session to begin your daily goal — 25 min today.
+            - generic [ref=f10e104]:
+              - button "Continue conversation" [ref=f10e105]
+              - button "Practice speaking" [ref=f10e109]
+              - button "Review 0 words" [ref=f10e113]
+          - generic [ref=f10e116]:
+            - generic [ref=f10e121]:
+              - generic [ref=f10e122]: 0/25
+              - text: min today
+            - generic [ref=f10e123]:
+              - generic [ref=f10e127]: "0"
+              - generic [ref=f10e128]: day streak
+        - generic [ref=f10e129]:
+          - generic [ref=f10e130]:
+            - generic [ref=f10e133]:
+              - generic [ref=f10e134]:
+                - generic [ref=f10e135]: Vocabulary growth
+                - generic [ref=f10e136]:
+                  - generic [ref=f10e137]: 0 words
+                  - generic [ref=f10e138]: +0%
+              - generic [ref=f10e139]:
+                - button "7d" [ref=f10e140]
+                - button "30d" [ref=f10e141]
+                - button "All" [ref=f10e142]
+            - generic [ref=f10e145]:
+              - generic [ref=f10e146]:
+                - generic [ref=f10e147]:
+                  - generic [ref=f10e148]: Practice consistency
+                  - generic [ref=f10e149]: 12 weeks · 0% of days active
+                - generic [ref=f10e150]: Less More
+              - generic [ref=f10e151]: MonWedFri
+              - generic [ref=f10e153]:
+                - generic [ref=f10e154]: Recent sessions
+                - button "View all" [ref=f10e155]
+          - generic [ref=f10e156]:
+            - generic [ref=f10e158]:
+              - generic [ref=f10e159]:
+                - generic [ref=f10e160]: Next up
+                - generic [ref=f10e161]: AI suggested
+              - generic [ref=f10e163]:
+                - generic [ref=f10e164]: Recommended
+                - generic [ref=f10e167]: No active goals yet
+                - generic [ref=f10e168]: Your practice shows growth — let's level it up.
+                - generic [ref=f10e169]:
+                  - generic [ref=f10e170]: 0 min
+                  - text: ·—·—
+                - button "Start lesson" [ref=f10e174]
+            - generic [ref=f10e178]:
+              - generic [ref=f10e179]:
+                - generic [ref=f10e180]:
+                  - paragraph [ref=f10e181]: Due for review
+                  - paragraph [ref=f10e182]: 0 cards waiting
+                - button "Start" [ref=f10e183]
+              - generic [ref=f10e184]:
+                - paragraph [ref=f10e185]: Level progress
+                - generic [ref=f10e186]: A1A2B1B2C1C2
+                - paragraph [ref=f10e187]: 100% to go to reach C1.

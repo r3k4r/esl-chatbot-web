@@ -10,7 +10,7 @@ import type {
   VoicePronunciation,
 } from '~/common/types/voice-types'
 
-// The Voice Lab is a hands-free live CALL with Tutelage AI.
+// The Voice Lab is a hands-free live CALL with LEO AI Speaking Coach.
 //
 // The backend pipeline is half-duplex (it processes a turn only on `voice:end`),
 // so a real call feel is built here on the client: the mic stays open, on-device

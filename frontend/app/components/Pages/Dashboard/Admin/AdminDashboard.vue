@@ -25,8 +25,8 @@ const weeklyEngagement = computed(() => pctOfUsers(activeUsers.value.weekly))
 // ── Donut: subscriptions ───────────────────────────────────────────────────
 const subscriptionSegments = computed(() => [
   { label: 'Free', value: subscriptions.value.FREE, color: 'var(--color-text-subtle)' },
-  { label: 'Gold', value: subscriptions.value.GOLD, color: '#f59e0b' },
-  { label: 'Premium', value: subscriptions.value.PREMIUM, color: '#8b5cf6' },
+  { label: 'Gold', value: subscriptions.value.GOLD, color: '#1B365D' },
+  { label: 'Premium', value: subscriptions.value.PREMIUM, color: '#B91C1C' },
 ])
 
 // ── Donut: user roles ──────────────────────────────────────────────────────
@@ -60,7 +60,13 @@ const inactiveUsers = computed(() =>
     <!-- Header — TWO distinct CTAs: user management + class management (different destinations) -->
     <div class="flex items-center justify-between gap-4 flex-wrap animate-card-enter" style="--delay:0ms">
       <div>
-        <p class="text-[24px] font-bold font-poppins" :style="`color:var(--text-heading)`">Admin Dashboard</p>
+        <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#B91C1C]/10 border border-[#B91C1C]/20 mb-2">
+          <img src="/leo-logo.jpg" alt="Leo" class="size-3.5 rounded-full object-cover" />
+          <span class="text-[10px] font-semibold text-[#B91C1C] dark:text-red-400 uppercase tracking-widest font-poppins">
+            Leo Institute Administration · سلێمانی
+          </span>
+        </div>
+        <p class="text-[24px] font-bold font-poppins" :style="`color:var(--text-heading)`">Campus Operations &amp; AI Analytics</p>
         <p class="text-[14px] font-poppins mt-0.5" :style="`color:var(--text-muted)`">{{ today }}</p>
       </div>
       <div class="flex items-center gap-2 flex-wrap">

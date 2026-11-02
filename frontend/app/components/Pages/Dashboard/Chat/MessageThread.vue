@@ -17,13 +17,33 @@ const emit = defineEmits<{
   'fill-suggestion': [text: string]
 }>()
 
-const suggestions: { icon: SvgBasedIconName; text: string }[] = [
-  { icon: 'Messages2', text: "Let's practice small-talk at work." },
-  { icon: 'Cup', text: 'Help me order coffee in English.' },
-  { icon: 'Briefcase', text: 'Coach me for a job interview.' },
-  { icon: 'Airplane', text: "Let's talk about planning a trip." },
-  { icon: 'Book1', text: 'Correct my grammar as we chat.' },
-  { icon: 'People', text: "Tell me about today's English idiom." },
+// Leo Institute Level-Specific Curriculum Presets for Live Pitch Demos
+const suggestions: { icon: SvgBasedIconName; text: string; level: string }[] = [
+  {
+    icon: 'Cup',
+    level: 'Level 1',
+    text: "Level 1 (Beginner): Ordering at the Leo Campus Cafeteria — Hello! I'd like to order a coffee and a fresh sandwich, please."
+  },
+  {
+    icon: 'Briefcase',
+    level: 'Level 3',
+    text: "Level 3 (Intermediate): Job Interview & Daily Fluency — Could you interview me for a position and give me feedback on my professional fluency?"
+  },
+  {
+    icon: 'Teacher',
+    level: 'IELTS',
+    text: "Advanced: IELTS Speaking Part 1 & 2 Mock Examiner — Please act as my IELTS examiner and conduct a mock speaking test with band evaluation."
+  },
+  {
+    icon: 'Location',
+    level: 'Campus',
+    text: "Sulaymaniyah Dialogue: Can you help me practice giving directions to Leo Institute located in Mamostayan directly opposite Azadi Park?"
+  },
+  {
+    icon: 'Book1',
+    level: 'Grammar',
+    text: "Leo Speaking Lab: Please correct my grammar and suggest more natural idioms as we talk today."
+  },
 ]
 
 const { getUser } = useAuthStore()
@@ -43,46 +63,61 @@ defineExpose({ scrollEl })
       >
         <div class="relative mb-4">
           <div
-            class="w-16 h-16 rounded-2xl bg-linear-to-br from-brand-primary to-brand-accent flex items-center justify-center shadow-lg"
+            class="w-16 h-16 rounded-2xl overflow-hidden border-2 border-[#B91C1C]/40 shadow-xl"
           >
-            <AppIconsax name="Candle" color="#000" :size="26" />
+            <img src="/leo-logo.jpg" alt="LEO Institute" class="w-full h-full object-cover" />
           </div>
-          <span class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-400 ring-2 ring-surface-page" />
+          <span class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 ring-2 ring-surface-page animate-pulse" />
         </div>
 
-        <AppText size="18" weight="semibold" class-list="mb-1">
-          Hi{{ getUser?.displayName ? `, ${getUser.displayName.split(' ')[0]}` : '' }}! I'm Tutelage AI 👋
+        <AppText size="18" weight="semibold" class-list="mb-1 text-lg sm:text-xl font-bold">
+          Hi{{ getUser?.displayName ? `, ${getUser.displayName.split(' ')[0]}` : '' }}! Welcome to LEO AI Speaking Lab 👋
         </AppText>
-        <AppText size="14" color="neutral-400" class-list="max-w-sm">
+        <div class="text-xs text-[#B91C1C] font-semibold mb-2">
+          پەیمانگای لیۆ · بەرامبەر پارکی ئازادی
+        </div>
+        <AppText size="14" color="neutral-400" class-list="max-w-md text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
           <template v-if="needsVerification">
-            One step left — verify your email and the AI tutor unlocks on your free plan.
-            No payment needed.
+            One step left — verify your email and the LEO AI tutor unlocks on your account. No payment needed.
           </template>
           <template v-else-if="!subActive">
-            Your subscription isn't active right now. Check Billing to get chatting again.
+            Your student subscription isn't active right now. Check Billing or your Leo Institute campus enrollment.
           </template>
           <template v-else-if="activeSession">
-            Say anything in English — I'll reply naturally and correct you as we go.
+            Speak or type anything in English — your LEO AI coach will reply naturally and correct your pronunciation.
           </template>
           <template v-else>
-            Type a message below, tap the mic, or pick a topic to start a conversation.
+            Tap a curriculum scenario preset below to start an interactive speaking simulation:
           </template>
         </AppText>
 
-        <div v-if="subActive" class="mt-5 flex flex-wrap gap-2 justify-center">
-          <AppButton
-            v-for="s in suggestions"
-            :key="s.text"
-            variant="outline"
-            size="36"
-            radius="8"
-            :icon="s.icon"
-            :icon-config="{ color: 'var(--color-text-subtle)', size: 16 }"
-            :text="s.text"
-            class-list="text-[13px] px-3 animate-card-enter"
-            style="--delay:80ms"
-            @click="emit('fill-suggestion', s.text)"
-          />
+        <!-- Level-Specific Scenario Presets -->
+        <div v-if="subActive" class="mt-6 w-full max-w-xl space-y-2">
+          <div class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 text-left px-1">
+            Curriculum Demo Scenarios (1-Click Pitch)
+          </div>
+          <div class="grid gap-2 text-left">
+            <button
+              v-for="s in suggestions"
+              :key="s.text"
+              class="w-full p-3 rounded-xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-white/10 hover:border-[#B91C1C] hover:bg-red-50/30 dark:hover:bg-red-950/20 transition-all text-left group flex items-start gap-3 shadow-xs"
+              @click="emit('fill-suggestion', s.text)"
+            >
+              <div class="p-2 rounded-lg bg-slate-100 dark:bg-zinc-800 text-[#B91C1C] group-hover:bg-[#B91C1C] group-hover:text-white transition shrink-0 mt-0.5">
+                <AppIconsax :name="s.icon" color="currentColor" :size="16" />
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-2 mb-0.5">
+                  <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-[#B91C1C]/10 text-[#B91C1C] uppercase">
+                    {{ s.level }}
+                  </span>
+                </div>
+                <div class="text-[12.5px] text-slate-700 dark:text-slate-300 font-medium leading-snug line-clamp-2">
+                  {{ s.text }}
+                </div>
+              </div>
+            </button>
+          </div>
         </div>
 
         <AppButton

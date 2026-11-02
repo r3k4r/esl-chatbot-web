@@ -78,7 +78,13 @@ const emptyMessage = computed(() =>
     <!-- Header -->
     <div class="flex items-start justify-between gap-4 animate-card-enter" style="--delay:0ms">
       <div>
-        <AppText size="30" weight="semibold" color="brand-ink" class-list="tracking-tight font-poppins dark:text-white!">Goals</AppText>
+        <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#B91C1C]/10 border border-[#B91C1C]/20 mb-2">
+          <img src="/leo-logo.jpg" alt="Leo" class="size-3.5 rounded-full object-cover" />
+          <span class="text-[10px] font-semibold text-[#B91C1C] dark:text-red-400 uppercase tracking-widest font-poppins">
+            Leo Institute Milestones · پەیمانگای لیۆ
+          </span>
+        </div>
+        <AppText size="28" weight="semibold" color="brand-ink" class-list="tracking-tight font-poppins dark:text-white! block">Learning Goals &amp; Targets</AppText>
         <AppText size="14" color="neutral-400" class-list="mt-1 font-poppins">Targets you set. Progress we measure.</AppText>
       </div>
       <AppButton variant="primary" size="38" radius="8" icon="Add" :icon-config="{ color: 'white' }" text="New goal" @click="openCreate" />

@@ -198,7 +198,7 @@ export function useDashboardOverview() {
     const map: Record<string, string> = {
       VOCABULARY: 'Book1',
       SPEAKING: 'Microphone',
-      GRAMMAR: 'Candle',
+      GRAMMAR: 'Teacher',
       CONVERSATION: 'Messages',
       STUDY_TIME: 'Clock',
     }

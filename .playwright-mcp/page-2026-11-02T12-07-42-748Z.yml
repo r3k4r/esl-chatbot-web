@@ -1,0 +1,370 @@
+- generic [active] [ref=f25e1]:
+  - generic [ref=f25e4]:
+    - complementary [ref=f25e5]:
+      - button "Collapse sidebar" [ref=f25e6] [cursor=pointer]
+      - link "LEO Institute Logo LEO INSTITUTE" [ref=f25e10] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f25e11]:
+          - img "LEO Institute Logo" [ref=f25e13]
+          - generic [ref=f25e15]:
+            - generic [ref=f25e16]: LEO
+            - generic [ref=f25e17]: INSTITUTE
+      - navigation [ref=f25e18]:
+        - generic [ref=f25e19]: LEO AI Speaking Coach
+        - link "Overview" [ref=f25e20] [cursor=pointer]:
+          - /url: /dashboard
+        - link "Classes & Cohorts" [ref=f25e25] [cursor=pointer]:
+          - /url: /dashboard/classes
+        - link "LEO AI Coach" [ref=f25e30] [cursor=pointer]:
+          - /url: /dashboard/chat
+        - link "Voice Lab" [ref=f25e35] [cursor=pointer]:
+          - /url: /dashboard/voice
+        - link "Curriculum & Lessons" [ref=f25e40] [cursor=pointer]:
+          - /url: /dashboard/lessons
+        - link "Vocabulary & SRS 11" [ref=f25e45] [cursor=pointer]:
+          - /url: /dashboard/vocab
+          - generic [ref=f25e48]: Vocabulary & SRS
+          - generic [ref=f25e49]: "11"
+        - link "Learning Goals" [ref=f25e50] [cursor=pointer]:
+          - /url: /dashboard/goals
+        - link "Billing & Plans" [ref=f25e54] [cursor=pointer]:
+          - /url: /dashboard/billing
+      - generic [ref=f25e59]:
+        - generic [ref=f25e60]:
+          - generic [ref=f25e61]: Teacher Portal Sync
+          - generic [ref=f25e64]: LIVE
+        - generic [ref=f25e65]:
+          - generic [ref=f25e66]:
+            - generic [ref=f25e67]: Pronunciation Accuracy
+            - generic [ref=f25e68]: 94.8%
+          - generic [ref=f25e71]:
+            - generic [ref=f25e72]:
+              - text: "CEFR Level:"
+              - strong [ref=f25e73]: B2 Upper
+            - generic [ref=f25e74]: Mamostayan Campus
+      - generic [ref=f25e75]:
+        - generic [ref=f25e76]: پەیمانگای لیۆ
+        - generic [ref=f25e77]: 0770 736 2000
+    - generic [ref=f25e78]:
+      - banner [ref=f25e79]:
+        - navigation "breadcrumb" [ref=f25e81]:
+          - list [ref=f25e82]:
+            - listitem [ref=f25e83]:
+              - generic [ref=f25e84]: leo-institute
+            - listitem [aria-hidden] [ref=f25e87]
+            - listitem [ref=f25e90]:
+              - link "leo overview" [disabled] [ref=f25e91]
+        - button "Search users, classes, words… ⌘K" [ref=f25e93] [cursor=pointer]:
+          - generic [ref=f25e96]: Search users, classes, words…
+          - generic [ref=f25e97]: ⌘K
+        - generic [ref=f25e98]:
+          - generic [ref=f25e99]: Mamostayan Campus
+          - button "Notifications" [ref=f25e102] [cursor=pointer]:
+            - generic [ref=f25e107]: "4"
+          - link [ref=f25e108] [cursor=pointer]:
+            - /url: /dashboard/chat
+            - button "Start AI Coach" [ref=f25e109]
+          - button "User menu" [ref=f25e114] [cursor=pointer]:
+            - generic [ref=f25e115]: A
+            - generic [ref=f25e117]:
+              - generic [ref=f25e118]: student_ali
+              - generic [ref=f25e119]: Free
+      - main [ref=f25e120]:
+        - generic [ref=f25e121]:
+          - generic [ref=f25e124]:
+            - generic [ref=f25e125]:
+              - generic [ref=f25e126]:
+                - img "Leo" [ref=f25e127]
+                - generic [ref=f25e128]: LEO Institute · پەیمانگای لیۆ
+                - generic [ref=f25e129]: ·
+                - generic [ref=f25e130]: Mamostayan Campus
+              - paragraph [ref=f25e131]: Good afternoon
+              - heading "Welcome back, student_ali." [level=1] [ref=f25e132]
+              - paragraph [ref=f25e133]: Start an AI session to begin your daily goal — 17 min today.
+              - generic [ref=f25e134]:
+                - button "LEO AI Speaking Coach" [ref=f25e135] [cursor=pointer]
+                - button "Voice Lab (Call)" [ref=f25e140] [cursor=pointer]
+                - button "Review 11 words" [ref=f25e145] [cursor=pointer]
+            - generic [ref=f25e149]:
+              - generic [ref=f25e154]:
+                - generic [ref=f25e155]: 0/17
+                - generic [ref=f25e156]: min today
+              - generic [ref=f25e157]:
+                - generic [ref=f25e161]: "10"
+                - generic [ref=f25e162]: day streak
+          - generic [ref=f25e163]:
+            - generic [ref=f25e165]:
+              - paragraph [ref=f25e167]: Words mastered
+              - paragraph [ref=f25e171]: "2"
+              - paragraph [ref=f25e172]: +0 this week
+            - generic [ref=f25e174]:
+              - paragraph [ref=f25e176]: Practice time
+              - paragraph [ref=f25e181]: 13h
+              - paragraph [ref=f25e182]: 0m this month
+            - generic [ref=f25e184]:
+              - paragraph [ref=f25e186]: Pronunciation
+              - paragraph [ref=f25e191]: 63%
+              - paragraph [ref=f25e192]: +4% vs last
+            - generic [ref=f25e194]:
+              - paragraph [ref=f25e196]: Current level
+              - paragraph [ref=f25e200]: B1
+              - paragraph [ref=f25e201]: 60% to B2
+          - generic [ref=f25e202]:
+            - generic [ref=f25e203]:
+              - generic [ref=f25e205]:
+                - generic [ref=f25e206]:
+                  - generic [ref=f25e207]:
+                    - generic [ref=f25e208]: Vocabulary growth
+                    - generic [ref=f25e209]:
+                      - generic [ref=f25e210]: 11 words
+                      - generic [ref=f25e211]: +0%
+                  - generic [ref=f25e212]:
+                    - button "7d" [ref=f25e213] [cursor=pointer]
+                    - button "30d" [ref=f25e214] [cursor=pointer]
+                    - button "All" [ref=f25e215] [cursor=pointer]
+                - generic [ref=f25e220]:
+                  - generic [ref=f25e221]: Sun
+                  - generic [ref=f25e222]: Mon
+                  - generic [ref=f25e223]: Tue
+                  - generic [ref=f25e224]: Wed
+                  - generic [ref=f25e225]: Thu
+                  - generic [ref=f25e226]: Fri
+                  - generic [ref=f25e227]: Sat
+                  - generic [ref=f25e228]: Sun
+                  - generic [ref=f25e229]: Mon
+                  - generic [ref=f25e230]: Tue
+                  - generic [ref=f25e231]: Wed
+                  - generic [ref=f25e232]: Thu
+                  - generic [ref=f25e233]: Fri
+                  - generic [ref=f25e234]: Sat
+                  - generic [ref=f25e235]: Sun
+                  - generic [ref=f25e236]: Mon
+                  - generic [ref=f25e237]: Tue
+                  - generic [ref=f25e238]: Wed
+                  - generic [ref=f25e239]: Thu
+                  - generic [ref=f25e240]: Fri
+                  - generic [ref=f25e241]: Sat
+                  - generic [ref=f25e242]: Sun
+                  - generic [ref=f25e243]: Mon
+                  - generic [ref=f25e244]: Tue
+                  - generic [ref=f25e245]: Wed
+                  - generic [ref=f25e246]: Thu
+                  - generic [ref=f25e247]: Fri
+                  - generic [ref=f25e248]: Sat
+                  - generic [ref=f25e249]: Sun
+                  - generic [ref=f25e250]: Mon
+              - generic [ref=f25e252]:
+                - generic [ref=f25e253]:
+                  - generic [ref=f25e254]:
+                    - generic [ref=f25e255]: Practice consistency
+                    - generic [ref=f25e256]: 12 weeks · 0% of days active
+                  - generic [ref=f25e257]: Less More
+                - generic [ref=f25e264]:
+                  - generic [ref=f25e265]:
+                    - generic [ref=f25e266]: Mon
+                    - generic [ref=f25e267]: Wed
+                    - generic [ref=f25e268]: Fri
+                  - generic [ref=f25e269]:
+                    - generic "0 sessions" [ref=f25e270]
+                    - generic "0 sessions" [ref=f25e271]
+                    - generic "0 sessions" [ref=f25e272]
+                    - generic "0 sessions" [ref=f25e273]
+                    - generic "0 sessions" [ref=f25e274]
+                    - generic "0 sessions" [ref=f25e275]
+                    - generic "0 sessions" [ref=f25e276]
+                  - generic [ref=f25e277]:
+                    - generic "0 sessions" [ref=f25e278]
+                    - generic "0 sessions" [ref=f25e279]
+                    - generic "0 sessions" [ref=f25e280]
+                    - generic "0 sessions" [ref=f25e281]
+                    - generic "0 sessions" [ref=f25e282]
+                    - generic "0 sessions" [ref=f25e283]
+                    - generic "0 sessions" [ref=f25e284]
+                  - generic [ref=f25e285]:
+                    - generic "0 sessions" [ref=f25e286]
+                    - generic "0 sessions" [ref=f25e287]
+                    - generic "0 sessions" [ref=f25e288]
+                    - generic "0 sessions" [ref=f25e289]
+                    - generic "0 sessions" [ref=f25e290]
+                    - generic "0 sessions" [ref=f25e291]
+                    - generic "0 sessions" [ref=f25e292]
+                  - generic [ref=f25e293]:
+                    - generic "0 sessions" [ref=f25e294]
+                    - generic "0 sessions" [ref=f25e295]
+                    - generic "0 sessions" [ref=f25e296]
+                    - generic "0 sessions" [ref=f25e297]
+                    - generic "0 sessions" [ref=f25e298]
+                    - generic "0 sessions" [ref=f25e299]
+                    - generic "0 sessions" [ref=f25e300]
+                  - generic [ref=f25e301]:
+                    - generic "0 sessions" [ref=f25e302]
+                    - generic "0 sessions" [ref=f25e303]
+                    - generic "0 sessions" [ref=f25e304]
+                    - generic "0 sessions" [ref=f25e305]
+                    - generic "0 sessions" [ref=f25e306]
+                    - generic "0 sessions" [ref=f25e307]
+                    - generic "0 sessions" [ref=f25e308]
+                  - generic [ref=f25e309]:
+                    - generic "0 sessions" [ref=f25e310]
+                    - generic "0 sessions" [ref=f25e311]
+                    - generic "0 sessions" [ref=f25e312]
+                    - generic "0 sessions" [ref=f25e313]
+                    - generic "0 sessions" [ref=f25e314]
+                    - generic "0 sessions" [ref=f25e315]
+                    - generic "0 sessions" [ref=f25e316]
+                  - generic [ref=f25e317]:
+                    - generic "0 sessions" [ref=f25e318]
+                    - generic "0 sessions" [ref=f25e319]
+                    - generic "0 sessions" [ref=f25e320]
+                    - generic "0 sessions" [ref=f25e321]
+                    - generic "0 sessions" [ref=f25e322]
+                    - generic "0 sessions" [ref=f25e323]
+                    - generic "0 sessions" [ref=f25e324]
+                  - generic [ref=f25e325]:
+                    - generic "0 sessions" [ref=f25e326]
+                    - generic "0 sessions" [ref=f25e327]
+                    - generic "0 sessions" [ref=f25e328]
+                    - generic "0 sessions" [ref=f25e329]
+                    - generic "0 sessions" [ref=f25e330]
+                    - generic "0 sessions" [ref=f25e331]
+                    - generic "0 sessions" [ref=f25e332]
+                  - generic [ref=f25e333]:
+                    - generic "0 sessions" [ref=f25e334]
+                    - generic "0 sessions" [ref=f25e335]
+                    - generic "0 sessions" [ref=f25e336]
+                    - generic "0 sessions" [ref=f25e337]
+                    - generic "0 sessions" [ref=f25e338]
+                    - generic "0 sessions" [ref=f25e339]
+                    - generic "0 sessions" [ref=f25e340]
+                  - generic [ref=f25e341]:
+                    - generic "0 sessions" [ref=f25e342]
+                    - generic "0 sessions" [ref=f25e343]
+                    - generic "0 sessions" [ref=f25e344]
+                    - generic "0 sessions" [ref=f25e345]
+                    - generic "0 sessions" [ref=f25e346]
+                    - generic "0 sessions" [ref=f25e347]
+                    - generic "0 sessions" [ref=f25e348]
+                  - generic [ref=f25e349]:
+                    - generic "0 sessions" [ref=f25e350]
+                    - generic "0 sessions" [ref=f25e351]
+                    - generic "0 sessions" [ref=f25e352]
+                    - generic "0 sessions" [ref=f25e353]
+                    - generic "0 sessions" [ref=f25e354]
+                    - generic "0 sessions" [ref=f25e355]
+                    - generic "0 sessions" [ref=f25e356]
+                  - generic [ref=f25e357]:
+                    - generic "0 sessions" [ref=f25e358]
+                    - generic "0 sessions" [ref=f25e359]
+                    - generic "0 sessions" [ref=f25e360]
+                    - generic "0 sessions" [ref=f25e361]
+                    - generic "0 sessions" [ref=f25e362]
+                    - generic "0 sessions" [ref=f25e363]
+                    - generic "0 sessions" [ref=f25e364]
+                - generic [ref=f25e365]:
+                  - generic [ref=f25e366]: Recent sessions
+                  - button "View all" [ref=f25e367] [cursor=pointer]
+                - generic [ref=f25e368]:
+                  - generic [ref=f25e369]:
+                    - generic [ref=f25e374]:
+                      - generic [ref=f25e375]: Untitled session
+                      - generic [ref=f25e376]: Chat · 2 turns
+                    - generic [ref=f25e377]: 43 min ago
+                  - generic [ref=f25e378]:
+                    - generic [ref=f25e383]:
+                      - generic [ref=f25e384]: Voice Lab call
+                      - generic [ref=f25e385]: Voice · 4 turns
+                    - generic [ref=f25e386]: 44 min ago
+                  - generic [ref=f25e387]:
+                    - generic [ref=f25e392]:
+                      - generic [ref=f25e393]: Untitled session
+                      - generic [ref=f25e394]: Chat · 4 turns
+                    - generic [ref=f25e395]: 58 min ago
+                  - generic [ref=f25e396]:
+                    - generic [ref=f25e401]:
+                      - generic [ref=f25e402]: Travel planning conversation
+                      - generic [ref=f25e403]: Voice · 4 turns · 86% accuracy
+                    - generic [ref=f25e404]: 138 days ago
+                  - generic [ref=f25e405]:
+                    - generic [ref=f25e410]:
+                      - generic [ref=f25e411]: Discussing news and current events
+                      - generic [ref=f25e412]: Chat · 6 turns · 92%
+                    - generic [ref=f25e413]: 141 days ago
+            - generic [ref=f25e414]:
+              - generic [ref=f25e416]:
+                - generic [ref=f25e417]:
+                  - generic [ref=f25e418]: Next up
+                  - generic [ref=f25e419]: AI suggested
+                - generic [ref=f25e421]:
+                  - generic [ref=f25e422]: Recommended
+                  - generic [ref=f25e425]: Learn 50 new business English words
+                  - generic [ref=f25e426]: Your practice shows growth — let's level it up.
+                  - generic [ref=f25e427]:
+                    - generic [ref=f25e428]: 15 min
+                    - generic [ref=f25e432]: ·
+                    - generic [ref=f25e433]: MEDIUM
+                    - generic [ref=f25e434]: ·
+                    - generic [ref=f25e435]: Vocabulary
+                  - button "Start lesson" [ref=f25e436] [cursor=pointer]
+                - generic [ref=f25e440]:
+                  - button "Achieve average pronunciation score of 85+ in voice sessions Speaking · 15 min · HARD" [ref=f25e441] [cursor=pointer]:
+                    - generic [ref=f25e446]:
+                      - generic [ref=f25e447]: Achieve average pronunciation score of 85+ in voice sessions
+                      - generic [ref=f25e448]: Speaking · 15 min · HARD
+                  - button "Study English for 30 minutes every day this month Study Time · 15 min · EASY" [ref=f25e451] [cursor=pointer]:
+                    - generic [ref=f25e456]:
+                      - generic [ref=f25e457]: Study English for 30 minutes every day this month
+                      - generic [ref=f25e458]: Study Time · 15 min · EASY
+              - generic [ref=f25e462]:
+                - generic [ref=f25e463]:
+                  - generic [ref=f25e464]:
+                    - paragraph [ref=f25e465]: Due for review
+                    - paragraph [ref=f25e466]: 11 cards waiting
+                  - button "Start" [ref=f25e467] [cursor=pointer]
+                - generic [ref=f25e468]:
+                  - generic [ref=f25e469]:
+                    - generic [ref=f25e470]:
+                      - paragraph [ref=f25e471]: reluctant
+                      - paragraph [ref=f25e472]: now
+                    - paragraph [ref=f25e473]: Unwilling and hesitant
+                  - generic [ref=f25e474]:
+                    - generic [ref=f25e475]:
+                      - paragraph [ref=f25e476]: exploitation
+                      - paragraph [ref=f25e477]: now
+                    - paragraph [ref=f25e478]: The action of treating someone unfairly to benefit from their work
+                  - generic [ref=f25e479]:
+                    - generic [ref=f25e480]:
+                      - paragraph [ref=f25e481]: perseverance
+                      - paragraph [ref=f25e482]: now
+                    - paragraph [ref=f25e483]: Continued effort and determination despite difficulty or failure
+                  - generic [ref=f25e484]:
+                    - generic [ref=f25e485]:
+                      - paragraph [ref=f25e486]: spectacular
+                      - paragraph [ref=f25e487]: now
+                    - paragraph [ref=f25e488]: Beautiful in a dramatic and eye-catching way
+                - generic [ref=f25e489]:
+                  - paragraph [ref=f25e490]: Level progress
+                  - generic [ref=f25e491]:
+                    - generic [ref=f25e492]: A1
+                    - generic [ref=f25e493]: A2
+                    - generic [ref=f25e494]: B1
+                    - generic [ref=f25e495]: B2
+                    - generic [ref=f25e496]: C1
+                    - generic [ref=f25e497]: C2
+                  - paragraph [ref=f25e501]: 60% to go to reach C1.
+        - region "Notifications alt+T":
+          - list
+  - generic:
+    - generic:
+      - generic:
+        - button "Go to parent" [disabled]
+        - button "Open in editor"
+        - button "Close"
+  - generic:
+    - generic:
+      - generic:
+        - generic:
+          - button "Toggle Nuxt DevTools"
+          - generic "Page load time":
+            - generic: "206"
+            - generic: ms
+          - button "Toggle Component Inspector"

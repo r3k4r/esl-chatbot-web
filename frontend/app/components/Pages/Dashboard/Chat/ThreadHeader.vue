@@ -55,21 +55,22 @@ function doEnd() {
       />
 
       <div class="relative shrink-0">
-        <div
-          class="w-9 h-9 rounded-full bg-linear-to-br from-brand-primary to-brand-accent flex items-center justify-center"
-        >
-          <AppIconsax name="Candle" color="#000" :size="16" />
+        <div class="w-9 h-9 rounded-xl overflow-hidden border border-black/10 dark:border-white/10 shadow-xs">
+          <img src="/leo-logo.jpg" alt="LEO" class="w-full h-full object-cover" />
         </div>
         <span
           :class="[
             'absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full ring-2 ring-surface-page',
-            isSessionEnded ? 'bg-zinc-400' : 'bg-emerald-400',
+            isSessionEnded ? 'bg-zinc-400' : 'bg-emerald-500',
           ]"
         />
       </div>
 
       <div class="leading-tight min-w-0">
-        <AppText size="14" weight="semibold" class-list="truncate">Tutelage · AI Tutor</AppText>
+        <div class="flex items-center gap-1.5">
+          <AppText size="14" weight="semibold" class-list="truncate font-semibold">LEO AI Speaking Coach</AppText>
+          <span class="text-[10px] font-medium text-slate-500 dark:text-slate-400">· پەیمانگای لیۆ</span>
+        </div>
         <AppText size="12" color="neutral-400" class-list="truncate">
           {{ topic || 'Open conversation' }}
           <span class="hidden sm:inline"> · {{ cefrLabel }}</span>

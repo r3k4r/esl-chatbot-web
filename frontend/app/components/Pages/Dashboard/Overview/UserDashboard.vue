@@ -85,9 +85,13 @@ onMounted(fetchOverview)
           <UiSkeleton v-if="loading" class="h-64 rounded-xl" />
           <PagesDashboardOverviewNextUp
             v-else
-            :recommended="nextUpPrimary ?? { title: 'No active goals yet', tag: '—', minutes: 0, level: '—', icon: 'Flag' }"
-            :upcoming="nextUpOthers"
-            @start-lesson="router.push('/dashboard/goals')"
+            :recommended="nextUpPrimary ?? { title: 'Ordering at the Leo Campus Cafeteria', tag: 'Leo Scenario', minutes: 10, level: 'A2', icon: 'Messages' }"
+            :upcoming="nextUpOthers.length ? nextUpOthers : [
+              { title: 'Azadi Park Directions & Small Talk', tag: 'Speaking', minutes: 12, level: 'B1', icon: 'Microphone' },
+              { title: 'IELTS Speaking Part 2 Mock Examiner', tag: 'Exam Prep', minutes: 20, level: 'B2', icon: 'Teacher' },
+              { title: 'Leo Kids: Numbers & Mental Math', tag: 'Vocabulary', minutes: 15, level: 'A1', icon: 'Book1' },
+            ]"
+            @start-lesson="router.push('/dashboard/chat')"
           />
         </div>
         <div class="animate-card-enter" style="--delay:500ms">

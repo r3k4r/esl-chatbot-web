@@ -81,8 +81,8 @@ onBeforeUnmount(stopAudio)
 
     <!-- AI reply -->
     <div class="flex items-start gap-2.5">
-      <div class="flex size-7 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-brand-primary to-brand-accent">
-        <AppIconsax name="Candle" color="#000" :size="12" />
+      <div class="flex size-7 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-[#1B365D] to-[#B91C1C] shadow-xs">
+        <AppIconsax name="Teacher" color="#ffffff" :size="13" />
       </div>
       <div class="max-w-[80%]">
         <div class="inline-block rounded-[14px] rounded-bl-sm bg-surface-raised px-3.5 py-2.5 text-left">

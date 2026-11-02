@@ -11,7 +11,7 @@
 
 <script setup lang="ts">
 useSeoMeta({
-  title: 'Tutelage AI — Learn English Smarter',
-  description: 'AI-powered conversations, voice practice, and intelligent progress tracking — all in one platform built for serious learners.',
+  title: 'LEO Institute | AI English Tutor & Student Portal (پەیمانگای لیۆ)',
+  description: "Master English with guaranteed results at Leo Institute in Sulaymaniyah. In-person & online courses powered by Kurdistan's first 24/7 AI Speaking Coach.",
 })
 </script>

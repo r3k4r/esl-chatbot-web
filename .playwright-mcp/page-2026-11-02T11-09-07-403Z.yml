@@ -1,0 +1,188 @@
+- generic [ref=f3e4]:
+  - complementary [ref=f3e5]:
+    - generic [ref=f3e6]:
+      - link "LEO Institute Logo LEO INSTITUTE" [ref=f3e7] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f3e8]:
+          - img "LEO Institute Logo" [ref=f3e10]
+          - generic [ref=f3e11]: LEO INSTITUTE
+      - button "Close sidebar" [ref=f3e13]
+    - navigation [ref=f3e16]:
+      - generic [ref=f3e17]: LEO AI Speaking Coach
+      - link "Overview" [ref=f3e18] [cursor=pointer]:
+        - /url: /dashboard
+      - link "Classes & Cohorts" [ref=f3e21] [cursor=pointer]:
+        - /url: /dashboard/classes
+      - link "LEO AI Coach" [ref=f3e25] [cursor=pointer]:
+        - /url: /dashboard/chat
+      - link "Voice Lab" [ref=f3e29] [cursor=pointer]:
+        - /url: /dashboard/voice
+      - link "Curriculum & Lessons" [ref=f3e33] [cursor=pointer]:
+        - /url: /dashboard/lessons
+      - link "Vocabulary & SRS" [ref=f3e37] [cursor=pointer]:
+        - /url: /dashboard/vocab
+      - link "Learning Goals" [ref=f3e40] [cursor=pointer]:
+        - /url: /dashboard/goals
+      - link "Billing & Plans" [ref=f3e43] [cursor=pointer]:
+        - /url: /dashboard/billing
+    - generic [ref=f3e47]:
+      - generic [ref=f3e48]:
+        - generic [ref=f3e49]: Teacher Portal Sync
+        - text: LIVE
+      - generic [ref=f3e50]:
+        - generic [ref=f3e51]: Pronunciation Accuracy94.8%
+        - generic [ref=f3e52]:
+          - generic [ref=f3e53]:
+            - text: "CEFR Level:"
+            - strong [ref=f3e54]: B2 Upper
+          - text: Mamostayan Campus
+    - generic [ref=f3e55]: پەیمانگای لیۆ0770 736 2000
+  - button [ref=f3e56]
+  - generic [ref=f3e59]:
+    - banner [ref=f3e60]:
+      - generic [ref=f3e61]:
+        - button "Open sidebar" [ref=f3e62]
+        - navigation "breadcrumb" [ref=f3e65]:
+          - list [ref=f3e66]:
+            - listitem [ref=f3e67]:
+              - generic [ref=f3e68]: leo-institute
+            - listitem [aria-hidden] [ref=f3e69]
+            - listitem [ref=f3e72]:
+              - link "curriculum library" [disabled] [ref=f3e73]
+      - button "Search users, classes, words… ⌘K" [ref=f3e75]
+      - generic [ref=f3e78]:
+        - generic [ref=f3e79]: Mamostayan Campus
+        - button "Notifications" [ref=f3e80]
+        - link [ref=f3e85] [cursor=pointer]:
+          - /url: /dashboard/chat
+          - button "Start AI Coach" [ref=f3e86]
+        - button "User menu" [ref=f3e90]:
+          - generic [ref=f3e91]: A
+          - generic [ref=f3e92]:
+            - generic [ref=f3e93]: student_ali
+            - generic [ref=f3e94]: Premium
+    - main [ref=f3e95]:
+      - generic [ref=f3e96]:
+        - generic [ref=f3e97]:
+          - generic [ref=f3e98]:
+            - generic [ref=f3e99]:
+              - img "Leo" [ref=f3e100]
+              - text: Leo Institute Curriculum · مامۆستایان
+            - heading "Curriculum & Scenario Library" [level=1] [ref=f3e101]
+            - paragraph [ref=f3e102]: Curated speaking scenarios mapped to Leo Institute courses. Click any lesson to launch 24/7 AI roleplay.
+          - textbox "Search Leo lessons & scenarios…" [ref=f3e106]
+        - generic [ref=f3e108]:
+          - button "All" [ref=f3e109]
+          - button "Business" [ref=f3e110]
+          - button "Travel" [ref=f3e111]
+          - button "Grammar" [ref=f3e112]
+          - button "Real-life" [ref=f3e113]
+          - button "Pronunciation" [ref=f3e114]
+          - button "Exams" [ref=f3e115]
+        - generic [ref=f3e116]:
+          - generic [ref=f3e117]:
+            - generic [ref=f3e118]:
+              - text: Real-life
+              - generic [ref=f3e119]: Popular
+            - paragraph [ref=f3e122]: Ordering food at the Leo Campus Cafeteria
+            - generic [ref=f3e123]:
+              - generic [ref=f3e124]:
+                - generic [ref=f3e125]: 10 min
+                - text: ·A2
+              - generic [ref=f3e129]: Start
+          - generic [ref=f3e132]:
+            - generic [ref=f3e133]:
+              - text: Travel
+              - generic [ref=f3e134]: Popular
+            - paragraph [ref=f3e137]: Azadi Park directions & Sulaymaniyah small talk
+            - generic [ref=f3e138]:
+              - generic [ref=f3e139]:
+                - generic [ref=f3e140]: 12 min
+                - text: ·A2
+              - generic [ref=f3e144]: Start
+          - generic [ref=f3e147]:
+            - generic [ref=f3e148]:
+              - text: Exams
+              - generic [ref=f3e149]: Popular
+            - paragraph [ref=f3e152]: "IELTS Speaking Part 2: Cue card & 2-min speech"
+            - generic [ref=f3e153]:
+              - generic [ref=f3e154]:
+                - generic [ref=f3e155]: 25 min
+                - text: ·B2
+              - generic [ref=f3e159]: Start
+          - generic [ref=f3e162]:
+            - generic [ref=f3e163]:
+              - text: Business
+              - generic [ref=f3e164]: Popular
+            - paragraph [ref=f3e167]: "Job interview: strengths, weaknesses & career goals"
+            - generic [ref=f3e168]:
+              - generic [ref=f3e169]:
+                - generic [ref=f3e170]: 20 min
+                - text: ·B2
+              - generic [ref=f3e174]: Start
+          - generic [ref=f3e177]:
+            - generic [ref=f3e178]: Exams
+            - paragraph [ref=f3e179]: "IELTS Speaking Part 1: Hometown, family & studies"
+            - generic [ref=f3e180]:
+              - generic [ref=f3e181]:
+                - generic [ref=f3e182]: 15 min
+                - text: ·B1
+              - generic [ref=f3e186]: Start
+          - generic [ref=f3e189]:
+            - generic [ref=f3e190]:
+              - text: Exams
+              - generic [ref=f3e191]: Popular
+            - paragraph [ref=f3e194]: "IELTS Speaking Part 3: Abstract debate & opinion"
+            - generic [ref=f3e195]:
+              - generic [ref=f3e196]:
+                - generic [ref=f3e197]: 20 min
+                - text: ·C1
+              - generic [ref=f3e201]: Start
+          - generic [ref=f3e204]:
+            - generic [ref=f3e205]: Grammar
+            - paragraph [ref=f3e206]: Present perfect vs past simple in daily stories
+            - generic [ref=f3e207]:
+              - generic [ref=f3e208]:
+                - generic [ref=f3e209]: 18 min
+                - text: ·B1
+              - generic [ref=f3e213]: Start
+          - generic [ref=f3e216]:
+            - generic [ref=f3e217]: Pronunciation
+            - paragraph [ref=f3e218]: The English "TH" & "V/W" sounds for Kurdish speakers
+            - generic [ref=f3e219]:
+              - generic [ref=f3e220]:
+                - generic [ref=f3e221]: 12 min
+                - text: ·A2
+              - generic [ref=f3e225]: Start
+          - generic [ref=f3e228]:
+            - generic [ref=f3e229]: Business
+            - paragraph [ref=f3e230]: Professional workplace email & polite requests
+            - generic [ref=f3e231]:
+              - generic [ref=f3e232]:
+                - generic [ref=f3e233]: 15 min
+                - text: ·B2
+              - generic [ref=f3e237]: Start
+          - generic [ref=f3e240]:
+            - generic [ref=f3e241]: Grammar
+            - paragraph [ref=f3e242]: Conditionals in everyday speech (If I had...)
+            - generic [ref=f3e243]:
+              - generic [ref=f3e244]:
+                - generic [ref=f3e245]: 18 min
+                - text: ·B1
+              - generic [ref=f3e249]: Start
+          - generic [ref=f3e252]:
+            - generic [ref=f3e253]: Real-life
+            - paragraph [ref=f3e254]: Discussing global news & local events politely
+            - generic [ref=f3e255]:
+              - generic [ref=f3e256]:
+                - generic [ref=f3e257]: 15 min
+                - text: ·B2
+              - generic [ref=f3e261]: Start
+          - generic [ref=f3e264]:
+            - generic [ref=f3e265]: Travel
+            - paragraph [ref=f3e266]: Airport check-in, customs & travel logistics
+            - generic [ref=f3e267]:
+              - generic [ref=f3e268]:
+                - generic [ref=f3e269]: 15 min
+                - text: ·B1
+              - generic [ref=f3e273]: Start

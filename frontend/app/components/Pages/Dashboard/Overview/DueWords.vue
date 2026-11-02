@@ -22,7 +22,7 @@ const levelLabels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2']
         </p>
       </div>
       <button
-        class="text-[11px] font-semibold px-2.5 py-1 rounded-md bg-brand-ink text-white hover:bg-neutral-800 transition font-poppins"
+        class="text-[11px] font-semibold px-2.5 py-1 rounded-md bg-[#B91C1C] text-white hover:bg-red-700 transition font-poppins cursor-pointer"
         @click="emit('startReview')"
       >
         Start
@@ -56,7 +56,7 @@ const levelLabels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2']
       </div>
       <div class="mt-1.5 h-2 rounded-full bg-zinc-100 dark:bg-white/5 overflow-hidden relative">
         <div
-          class="h-full bg-linear-to-r from-brand-primary to-brand-accent rounded-full animate-fill-bar"
+          class="h-full bg-linear-to-r from-[#1B365D] to-[#B91C1C] rounded-full animate-fill-bar"
           :style="`width:${levelPct}%; --delay:600ms`"
         />
         <div

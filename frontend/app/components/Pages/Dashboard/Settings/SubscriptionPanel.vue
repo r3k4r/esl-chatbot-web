@@ -252,7 +252,7 @@ const modalAmount   = computed(() => paymentData.value?.amountIQD ?? selectedPri
 
 const planBadgeStyle = computed(() => {
   if (currentPlan.value === 'PREMIUM')
-    return 'background:rgba(245,158,11,0.12);color:var(--color-brand-primary);border:1px solid rgba(245,158,11,0.25)'
+    return 'background:rgba(185,28,28,0.12);color:#B91C1C;border:1px solid rgba(185,28,28,0.25)'
   if (currentPlan.value === 'GOLD')
     return 'background:rgba(245,158,11,0.08);color:#f59e0b;border:1px solid rgba(245,158,11,0.2)'
   return 'background:var(--surface-well);color:var(--text-muted);border:1px solid var(--border-inner)'
@@ -269,7 +269,7 @@ const planBadgeStyle = computed(() => {
         <div class="flex items-center gap-3">
           <div
             class="size-10 rounded-xl flex items-center justify-center shrink-0"
-            style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2)"
+            style="background:rgba(185,28,28,0.1);border:1px solid rgba(185,28,28,0.2)"
           >
             <AppIconsax name="Crown1" color="var(--color-brand-primary)" :size="18" />
           </div>
@@ -432,7 +432,7 @@ const planBadgeStyle = computed(() => {
             type="button"
             class="relative flex flex-col gap-2 p-4 rounded-xl border text-left transition-all duration-200 cursor-pointer"
             :style="selectedPlan === p
-              ? 'border-color:var(--color-brand-primary);background:rgba(245,158,11,0.05)'
+              ? 'border-color:#B91C1C;background:rgba(185,28,28,0.05)'
               : 'border-color:var(--border-card);background:var(--surface-raised)'"
             @click="selectedPlan = p"
           >
@@ -475,7 +475,7 @@ const planBadgeStyle = computed(() => {
               type="button"
               class="relative py-2 rounded-xl text-[12px] font-semibold font-poppins border text-center transition-all duration-200 cursor-pointer"
               :style="selectedInterval === m
-                ? 'border-color:var(--color-brand-primary);background:rgba(245,158,11,0.07);color:var(--color-brand-primary)'
+                ? 'border-color:#B91C1C;background:rgba(185,28,28,0.07);color:#B91C1C'
                 : 'border-color:var(--border-card);background:var(--surface-raised);color:var(--text-muted)'"
               @click="selectedInterval = m"
             >

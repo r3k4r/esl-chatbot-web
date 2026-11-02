@@ -38,33 +38,40 @@ const minsLeft = computed(() => Math.max(0, props.goalMins - props.doneMins))
     <!-- dot texture -->
     <div class="dot-bg absolute inset-0 opacity-80 pointer-events-none" />
     <!-- glow orb -->
-    <div class="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-brand-primary/10 blur-3xl pointer-events-none" />
+    <div class="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-[#B91C1C]/10 blur-3xl pointer-events-none" />
 
     <div class="relative p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center gap-6 justify-between">
       <!-- Text + CTA -->
       <div>
-        <p class="text-[11px] uppercase tracking-[0.2em] text-zinc-400 font-semibold font-poppins">Good {{ greetingTime
-          }}</p>
+        <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#B91C1C]/10 border border-[#B91C1C]/20 mb-2.5">
+          <img src="/leo-logo.jpg" alt="Leo" class="size-4 rounded-full object-cover" />
+          <span class="text-[10px] font-semibold text-[#B91C1C] dark:text-red-400 uppercase tracking-widest font-poppins">
+            LEO Institute · پەیمانگای لیۆ
+          </span>
+          <span class="text-zinc-400 text-[10px]">·</span>
+          <span class="text-zinc-500 text-[10px] hidden sm:inline">Mamostayan Campus</span>
+        </div>
+        <p class="text-[11px] uppercase tracking-[0.2em] text-zinc-400 font-semibold font-poppins">Good {{ greetingTime }}</p>
         <h1
-          class="mt-1 text-[32px] sm:text-[38px] font-semibold tracking-[-0.03em] text-brand-ink dark:text-white leading-[1.1] font-poppins">
+          class="mt-1 text-[30px] sm:text-[36px] font-semibold tracking-[-0.03em] text-brand-ink dark:text-white leading-[1.1] font-poppins">
           Welcome back, {{ name }}.
         </h1>
         <p class="mt-2 text-[14px] text-zinc-500 dark:text-zinc-400 max-w-md font-poppins">
           <template v-if="goalMet">
-            <span class="text-emerald-500 font-medium">Daily goal complete!</span> Great work today, keep the streak going.
+            <span class="text-emerald-500 font-medium">Daily goal complete!</span> Outstanding progress today. Your practice is synced with the Leo faculty portal.
           </template>
           <template v-else-if="doneMins === 0">
-            Start a session to begin your daily goal — <span class="text-brand-primary font-medium">{{ goalMins }} min</span> today.
+            Start an AI session to begin your daily goal — <span class="text-[#B91C1C] font-semibold">{{ goalMins }} min</span> today.
           </template>
           <template v-else>
-            <span class="text-brand-primary font-medium">{{ minsLeft }} min left</span> to hit today's goal. Keep going!
+            <span class="text-[#B91C1C] font-semibold">{{ minsLeft }} min left</span> to hit today's target. Keep your fluency streak going!
           </template>
         </p>
 
         <div class="mt-5 flex flex-wrap items-center gap-2">
           <AppButton variant="primary" size="38" radius="8" icon="Messages" :icon-config="{ color: 'white' }"
-            text="Continue conversation" @click="emit('navChat')" />
-          <AppButton variant="secondary" size="38" radius="8" icon="Microphone" text="Practice speaking"
+            text="LEO AI Speaking Coach" @click="emit('navChat')" />
+          <AppButton variant="secondary" size="38" radius="8" icon="Microphone" text="Voice Lab (Call)"
             @click="emit('navVoice')" />
           <AppButton variant="secondary" size="38" radius="8" icon="Book1" :text="`Review ${dueVocabCount ?? 0} words`"
             @click="emit('navVocab')" />
@@ -78,8 +85,8 @@ const minsLeft = computed(() => Math.max(0, props.goalMins - props.doneMins))
           <svg viewBox="0 0 120 120" class="w-full h-full -rotate-90">
             <defs>
               <linearGradient id="ringGrad" x1="0" x2="1" y1="0" y2="1">
-                <stop offset="0%" stop-color="var(--color-brand-accent)" />
-                <stop offset="100%" stop-color="var(--color-brand-primary)" />
+                <stop offset="0%" stop-color="#1B365D" />
+                <stop offset="100%" stop-color="#B91C1C" />
               </linearGradient>
             </defs>
             <!-- track -->
@@ -101,8 +108,8 @@ const minsLeft = computed(() => Math.max(0, props.goalMins - props.doneMins))
         <!-- Streak flame -->
         <div class="text-center">
           <div
-            class="relative inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-brand-primary/15 border border-brand-primary/20">
-            <AppIconsax name="Flash" color="var(--color-brand-primary)" :size="26" />
+            class="relative inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#B91C1C]/10 border border-[#B91C1C]/20">
+            <AppIconsax name="Flash" color="#B91C1C" :size="26" />
           </div>
           <div
             class="mt-2 text-[22px] font-semibold tracking-tight text-brand-ink dark:text-white leading-none font-poppins">

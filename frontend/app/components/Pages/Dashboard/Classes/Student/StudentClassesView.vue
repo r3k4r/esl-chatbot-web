@@ -68,7 +68,13 @@ async function handleCopy(code: string, id: string) {
     <!-- Page header -->
     <div class="flex items-center justify-between gap-4 animate-card-enter" style="--delay:0ms">
       <div>
-        <AppText size="22" weight="semibold" color="black" class-list="tracking-[-0.02em] block">Classes</AppText>
+        <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#B91C1C]/10 border border-[#B91C1C]/20 mb-2">
+          <img src="/leo-logo.jpg" alt="Leo" class="size-3.5 rounded-full object-cover" />
+          <span class="text-[10px] font-semibold text-[#B91C1C] dark:text-red-400 uppercase tracking-widest font-poppins">
+            Leo Institute Cohorts · پەیمانگای لیۆ
+          </span>
+        </div>
+        <AppText size="22" weight="semibold" color="black" class-list="tracking-[-0.02em] block">Leo Classes &amp; Cohorts</AppText>
         <AppText size="13" color="neutral-400" class-list="mt-0.5 block">Classes you're enrolled in</AppText>
       </div>
       <AppButton

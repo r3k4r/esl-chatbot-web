@@ -1,0 +1,102 @@
+[     379ms] [VERBOSE] [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) %o @ http://localhost:3001/signin:0
+[    1504ms] [INFO] <Suspense> is an experimental feature and its API will likely change. @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:7188
+[    1614ms] [LOG] ✨ %cNuxt DevTools %c Press Shift + Alt + D to open DevTools color: black; border-radius: 3px 0 0 3px; padding: 2px 2px 1px 10px; background: #00DC82 border-radius: 0 3px 3px 0; padding: 2px 10px 1px 2px; background: #00DC8220  @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@nuxt/devtools/dist/runtime/plugins/devtools.client.js?v=208a0da6:51
+[   61232ms] [WARNING] [Vue warn]: Missing required prop: "primaryNav" 
+  at <LayoutsDashboardSidebar collapsed=false mobile-open=false onToggle=fn  ... > 
+  at <Dashboard ref=Ref< Proxy(Object) > > 
+  at <AsyncComponentWrapper ref=Ref< Proxy(Object) > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[   61232ms] [WARNING] [Vue warn]: Missing required prop: "secondaryNav" 
+  at <LayoutsDashboardSidebar collapsed=false mobile-open=false onToggle=fn  ... > 
+  at <Dashboard ref=Ref< Proxy(Object) > > 
+  at <AsyncComponentWrapper ref=Ref< Proxy(Object) > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[   61233ms] [WARNING] [Vue warn]: Extraneous non-emits event listeners (toggle) were passed to component but could not be automatically inherited because component renders fragment or text root nodes. If the listener is intended to be a component custom event listener only, declare it using the "emits" option. 
+  at <LayoutsDashboardSidebar collapsed=false mobile-open=false onToggle=fn  ... > 
+  at <Dashboard ref=Ref< Proxy(Object) > > 
+  at <AsyncComponentWrapper ref=Ref< Proxy(Object) > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[  118803ms] [WARNING] [Vue warn]: Extraneous non-emits event listeners (toggle) were passed to component but could not be automatically inherited because component renders fragment or text root nodes. If the listener is intended to be a component custom event listener only, declare it using the "emits" option. 
+  at <LayoutsDashboardSidebar collapsed=false mobile-open=false onToggle=fn  ... > 
+  at <Dashboard ref=Ref< Proxy(Object) > > 
+  at <AsyncComponentWrapper ref=Ref< Proxy(Object) > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[  119045ms] [WARNING] [Vue warn]: Extraneous non-emits event listeners (toggle) were passed to component but could not be automatically inherited because component renders fragment or text root nodes. If the listener is intended to be a component custom event listener only, declare it using the "emits" option. 
+  at <LayoutsDashboardSidebar collapsed=false mobile-open=false onToggle=fn  ... > 
+  at <Dashboard ref=Ref< Proxy(Object) > > 
+  at <AsyncComponentWrapper ref=Ref< Proxy(Object) > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[  269169ms] [WARNING] [Vue warn]: Extraneous non-emits event listeners (toggle) were passed to component but could not be automatically inherited because component renders fragment or text root nodes. If the listener is intended to be a component custom event listener only, declare it using the "emits" option. 
+  at <LayoutsDashboardSidebar collapsed=false mobile-open=false onToggle=fn  ... > 
+  at <Dashboard ref=Ref< Proxy(Object) > > 
+  at <AsyncComponentWrapper ref=Ref< Proxy(Object) > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[  296791ms] [WARNING] [Vue warn]: Extraneous non-emits event listeners (toggle) were passed to component but could not be automatically inherited because component renders fragment or text root nodes. If the listener is intended to be a component custom event listener only, declare it using the "emits" option. 
+  at <LayoutsDashboardSidebar collapsed=false mobile-open=false onToggle=fn  ... > 
+  at <Dashboard ref=Ref< Proxy(Object) > > 
+  at <AsyncComponentWrapper ref=Ref< Proxy(Object) > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[  312166ms] [WARNING] [Vue warn]: Extraneous non-emits event listeners (toggle) were passed to component but could not be automatically inherited because component renders fragment or text root nodes. If the listener is intended to be a component custom event listener only, declare it using the "emits" option. 
+  at <LayoutsDashboardSidebar collapsed=false mobile-open=false onToggle=fn  ... > 
+  at <Dashboard ref=Ref< Proxy(Object) > > 
+  at <AsyncComponentWrapper ref=Ref< Proxy(Object) > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[  357435ms] [WARNING] [Vue warn]: Extraneous non-emits event listeners (toggle) were passed to component but could not be automatically inherited because component renders fragment or text root nodes. If the listener is intended to be a component custom event listener only, declare it using the "emits" option. 
+  at <LayoutsDashboardSidebar collapsed=false mobile-open=false onToggle=fn  ... > 
+  at <Dashboard ref=Ref< Proxy(Object) > > 
+  at <AsyncComponentWrapper ref=Ref< Proxy(Object) > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[  411481ms] [WARNING] [Vue warn]: Extraneous non-emits event listeners (toggle) were passed to component but could not be automatically inherited because component renders fragment or text root nodes. If the listener is intended to be a component custom event listener only, declare it using the "emits" option. 
+  at <LayoutsDashboardSidebar collapsed=false mobile-open=false onToggle=fn  ... > 
+  at <Dashboard ref=Ref< Proxy(Object) > > 
+  at <AsyncComponentWrapper ref=Ref< Proxy(Object) > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[  415848ms] [WARNING] [Vue warn]: Extraneous non-emits event listeners (toggle) were passed to component but could not be automatically inherited because component renders fragment or text root nodes. If the listener is intended to be a component custom event listener only, declare it using the "emits" option. 
+  at <LayoutsDashboardSidebar collapsed=false mobile-open=false onToggle=fn  ... > 
+  at <Dashboard ref=Ref< Proxy(Object) > > 
+  at <AsyncComponentWrapper ref=Ref< Proxy(Object) > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49

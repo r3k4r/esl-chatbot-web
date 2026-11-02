@@ -1,193 +1,194 @@
 {
   "nav": {
-    "features": "Features",
-    "howItWorks": "How It Works",
-    "dashboard": "Dashboard",
-    "pricing": "Pricing",
-    "getStarted": "Get Started"
+    "features": "Programs",
+    "howItWorks": "AI Speaking Lab",
+    "dashboard": "Campus & Cafeteria",
+    "pricing": "Tuition & Plans",
+    "getStarted": "LEO AI Portal",
+    "contact": "Contact & Visit"
   },
 
   "hero": {
-    "badgeNew": "New",
-    "badgeText": "AI-Powered Learning, now in beta",
-    "titleLead": "Learn English",
-    "titleAccent": "smarter",
-    "titleTrail": " with AI.",
-    "subtitle": "AI-powered conversations, voice practice, and intelligent progress tracking — all in one platform built for serious learners.",
-    "ctaPrimary": "Get Started",
-    "ctaSecondary": "See Pricing",
-    "checks": ["Free to start", "No credit card", "40+ topics"],
-    "trustedBy": "Trusted by 2,000+ learners worldwide"
+    "badgeNew": "Guaranteed Learning",
+    "badgeText": "Sulaymaniyah — Opposite Azadi Park",
+    "titleLead": "Master English with ",
+    "titleAccent": "Guaranteed Results",
+    "titleTrail": " — Powered by LEO AI.",
+    "subtitle": "Kurdistan's premier language academy offering in-person & online courses, backed by your exclusive 24/7 AI Speaking Coach to build real conversational fluency.",
+    "ctaPrimary": "Test Drive LEO AI Coach",
+    "ctaSecondary": "Call 0770 736 2000",
+    "checks": ["Guaranteed Fluency Courses", "In-Person & Online Batches", "Leo Kids & Mental Math", "IELTS Academic Prep"],
+    "trustedBy": "Educating thousands of successful graduates across Sulaymaniyah & Kurdistan"
   },
 
   "chatMockup": {
-    "tutorName": "AI Tutor · Tutelage AI",
-    "sessionLabel": "Session · B2 Intermediate",
+    "tutorName": "LEO AI Speaking Coach · پەیمانگای لیۆ",
+    "sessionLabel": "Leo Speaking Lab · Cafeteria Simulation",
     "listening": "Listening",
     "voiceMode": "Voice mode",
     "pronunciation": "Pronunciation:",
     "messages": [
-      "Hi! I'm your English tutor. What would you like to practice today?",
-      "I want to practice talking about travel.",
-      "Great choice! Tell me about a place you've visited recently.",
-      "I went to Erbil last summer. It was very hot but beautiful."
+      "Welcome to Leo Institute! I'm your AI speaking coach. Ready to practice ordering at the campus cafeteria?",
+      "Yes! Let's practice ordering coffee and a snack at the Leo cafeteria.",
+      "Excellent! 'Hello, welcome to Leo Cafeteria! What can I get for you today?'",
+      "Can I have a double espresso and a fresh croissant, please?"
     ]
   },
 
   "features": {
-    "eyebrow": "Features",
-    "title": "Everything you need to master English.",
-    "description": "A complete toolkit — designed together, not bolted on. Every session feeds your goals, your vocabulary, and your analytics.",
+    "eyebrow": "Academic Programs",
+    "title": "Bespoke Courses Engineered for Real Fluency.",
+    "description": "Whether studying in-person at our Mamostayan campus or joining our interactive online cohorts, every program is supported by 24/7 AI speaking practice.",
     "learnMore": "Learn more",
     "items": {
       "conversation": {
-        "title": "AI Conversation",
-        "description": "Session-based chat with an AI tutor that adapts to your level, goals, and the topics you care about."
+        "title": "General English & Speaking",
+        "description": "Interactive levels from Beginner to Advanced (A1 to C1) with guaranteed learning results and certified tutors."
       },
       "voice": {
-        "title": "Voice Practice",
-        "description": "Real-time speaking with live pronunciation feedback and natural back-and-forth dialogue."
+        "title": "LEO AI 24/7 Speaking Coach",
+        "description": "Unlimited 1-on-1 voice conversation practice with instant pronunciation scoring and real-time grammar feedback."
       },
       "vocab": {
-        "title": "Vocabulary SRS",
-        "description": "A spaced repetition system that schedules reviews so new words actually stick long-term."
+        "title": "LEO Kids & Mental Math",
+        "description": "Fun, high-energy academic strengthening courses (خولی بەهێزکردن) and mental arithmetic for young achievers (#leokids2025)."
       },
       "pronunciation": {
-        "title": "Pronunciation Score",
-        "description": "AI-powered accuracy scoring on individual phonemes so you know exactly what to work on."
+        "title": "IELTS & Academic Prep",
+        "description": "Targeted test strategies and simulated speaking examiner interviews designed to achieve Band 7.0+ scores."
       },
       "goals": {
-        "title": "Learning Goals",
-        "description": "Set weekly targets, track milestones, and get nudges when your streak is slipping."
+        "title": "Campus Cafeteria & Community",
+        "description": "Practice conversational English naturally in our on-site student cafeteria and vibrant campus social lounges."
       },
       "analytics": {
-        "title": "Progress Analytics",
-        "description": "Clear visual insights into time, vocabulary growth, fluency, and accuracy over time."
+        "title": "Teacher Oversight & Progress",
+        "description": "Comprehensive student analytics allowing teachers and parents to monitor homework and spoken fluency outside class."
       }
     }
   },
 
   "howItWorks": {
-    "eyebrow": "How it works",
-    "title": "Three steps. Real fluency.",
-    "seeInAction": "See it in action",
+    "eyebrow": "The LEO Advantage",
+    "title": "Classroom Excellence + 24/7 AI Tutor",
+    "seeInAction": "Try Speaking Lab",
     "steps": {
       "one": {
-        "title": "Start a Conversation",
-        "description": "Choose a topic — travel, work, interviews — and begin chatting with an AI tuned to your level."
+        "title": "Join Your Ideal Class",
+        "description": "Enroll in morning or evening batches in-person at our Azadi Park campus or join our interactive live online stream."
       },
       "two": {
-        "title": "Practice Speaking",
-        "description": "Switch on voice mode for real pronunciation practice with instant feedback on what you said."
+        "title": "Practice 24/7 with LEO AI",
+        "description": "Role-play cafeteria scenarios, job interviews, or IELTS exam questions anytime from your phone or laptop."
       },
       "three": {
-        "title": "Track & Improve",
-        "description": "Watch your vocabulary, fluency and streak grow with analytics that celebrate real progress."
+        "title": "Achieve Guaranteed Results",
+        "description": "Track your pronunciation accuracy and CEFR milestones with measurable progress guaranteed by Leo Institute."
       }
     }
   },
 
   "dashboardPreview": {
-    "eyebrow": "Dashboard",
-    "title": "Your learning command center.",
-    "description": "Streaks, vocabulary, minutes and level — all in one calm view, so you always know what to do next.",
+    "eyebrow": "Student & Teacher Portal",
+    "title": "Your Institutional Command Center.",
+    "description": "Every speaking turn, vocabulary review, and attendance milestone tracked in one sleek dashboard.",
     "mockup": {
       "greeting": "Good morning",
-      "welcome": "Welcome back, Aram 👋",
-      "newSession": "New session",
-      "dailyGoal": "Daily goal",
-      "statLessons": "Lessons",
-      "statLessonsSub": "+8 this week",
-      "statStudyTime": "Study time",
+      "welcome": "Welcome back to Leo Institute 👋",
+      "newSession": "New AI session",
+      "dailyGoal": "Speaking goal",
+      "statLessons": "Course Level",
+      "statLessonsSub": "B2 Upper-Intermediate",
+      "statStudyTime": "Speaking time",
       "statStudyTimeSub": "this month",
-      "statStreak": "Streak",
-      "statStreakSub": "days · keep going",
-      "statLevel": "Level",
-      "statLevelSub": "Upper-Intermediate",
-      "wordsLearned": "Words learned",
-      "consistency": "Practice consistency",
-      "recentSession": "Recent session",
-      "minutesAgo": "8 min ago",
-      "turnsAccuracy": "12 turns · 94% accuracy",
-      "continue": "Continue"
+      "statStreak": "Attendance",
+      "statStreakSub": "Active enrollment",
+      "statLevel": "Pronunciation",
+      "statLevelSub": "94% accuracy score",
+      "wordsLearned": "Vocab mastered",
+      "consistency": "Speaking consistency",
+      "recentSession": "Cafeteria Simulation",
+      "minutesAgo": "Just completed",
+      "turnsAccuracy": "14 turns · 96% accuracy",
+      "continue": "Practice Now"
     }
   },
 
   "pricing": {
-    "eyebrow": "Pricing",
-    "title": "Real Progress for Pocket Change",
-    "perMonth": "/month",
-    "mostPopular": "Most Popular",
-    "footnote": "Cancel anytime · Team & school plans on request",
+    "eyebrow": "Enrollment & Programs",
+    "title": "Transparent Institutional Tuition",
+    "perMonth": "/course",
+    "mostPopular": "Most Enrolled",
+    "footnote": "Flexible morning and evening cohorts · In-person at Mamostayan or 100% Online",
     "plans": {
       "starter": {
-        "name": "Starter",
-        "price": "Free",
-        "description": "Try the core experience and see how Tutelage fits into your routine.",
-        "cta": "Start Free",
+        "name": "General English",
+        "price": "Standard Cohort",
+        "description": "Complete level progression (A1–B2) with certified native-level teachers and full LEO AI access.",
+        "cta": "Enroll at Campus",
         "features": [
-          "3 sessions/day",
-          "20 msgs/session",
-          "Gemini Flash-Lite AI",
-          "Basic vocabulary SRS",
-          "Progress tracking"
+          "In-person & Online cohorts",
+          "Guaranteed learning outcomes",
+          "24/7 LEO AI Speaking Coach",
+          "Campus cafeteria access",
+          "Official LEO Certificate"
         ]
       },
       "gold": {
-        "name": "Gold",
-        "price": "25,000 IQD",
-        "description": "Serious learners who want more sessions, smarter AI, and full analytics.",
-        "cta": "Get Gold",
+        "name": "LEO Kids & Mental Math",
+        "price": "Specialized",
+        "description": "Academic strengthening (خولی بەهێزکردن) and mental math for school-age students.",
+        "cta": "Register Child",
         "features": [
-          "15 sessions/day",
-          "100 msgs/session",
-          "Gemini 2.5 Flash AI",
-          "Full vocabulary SRS",
-          "Progress analytics"
+          "Interactive kids curriculum",
+          "Mental math & brain training",
+          "Safe campus environment",
+          "Weekly parent progress report",
+          "#leokids2025 community events"
         ]
       },
       "premium": {
-        "name": "Premium",
-        "price": "45,000 IQD",
-        "description": "Everything you need to go all-in on the full Tutelage experience.",
-        "cta": "Get Premium",
+        "name": "IELTS Academic Mastery",
+        "price": "Intensive Track",
+        "description": "High-intensity training for university admissions, embassy interviews, and immigration.",
+        "cta": "Book Placement Test",
         "features": [
-          "50 sessions/day",
-          "150 msgs/session",
-          "GPT-5 mini AI",
-          "Priority voice TTS",
-          "Advanced analytics"
+          "Band 7.0+ guaranteed strategy",
+          "AI Mock Speaking Examiner",
+          "Writing essay evaluations",
+          "1-on-1 tutor feedback sessions",
+          "Exclusive Cambridge materials"
         ]
       }
     }
   },
 
   "finalCta": {
-    "badge": "Join 2,000+ learners",
-    "titleLead": "Ready to transform ",
-    "titleTrail": "your English learning?",
-    "subtitle": "Your AI tutor, your voice lab, your progress — all in one place. Start your first session in under a minute.",
-    "ctaPrimary": "Get Started Free",
-    "ctaSecondary": "Watch 30s demo"
+    "badge": "Visit Us in Sulaymaniyah",
+    "titleLead": "Start Your English Journey at ",
+    "titleTrail": "LEO Institute Today.",
+    "subtitle": "Opposite Azadi Park, Mamostayan Neighborhood, Sulaymaniyah. Call or message us directly on Telegram or Viber.",
+    "ctaPrimary": "Chat on Telegram (0770 736 2000)",
+    "ctaSecondary": "Viber (0750 886 2786)"
   },
 
   "footer": {
-    "tagline": "An AI-powered English learning platform — conversations, voice, vocabulary and real progress in one place.",
+    "tagline": "LEO Language & Educational Institute (پەیمانگای لیۆ) — Sulaymaniyah's premier academy for guaranteed English mastery and 24/7 AI conversational practice.",
     "columns": {
       "product": {
-        "heading": "Product",
-        "links": ["Features", "AI Chat", "Voice Lab", "Vocabulary", "Pricing"]
+        "heading": "Programs",
+        "links": ["General English", "Online Courses", "LEO Kids & Math", "IELTS Intensive", "AI Speaking Lab"]
       },
       "resources": {
-        "heading": "Resources",
-        "links": ["Blog", "Guides", "Placement Test", "Changelog", "Status"]
+        "heading": "Campus Life",
+        "links": ["Student Cafeteria", "Mamostayan Branch", "Opposite Azadi Park", "Class Schedule", "Student Portal"]
       },
       "company": {
-        "heading": "Company",
-        "links": ["About", "Careers", "Press", "Partners", "Contact"]
+        "heading": "Contact & Visit",
+        "links": ["0770 736 2000 (Telegram)", "0750 886 2786 (Viber)", "leo.institute{'@'}yahoo.com", "Facebook Page 1", "Facebook Page 2"]
       }
     },
-    "rights": "© 2026 Tutelage AI. All rights reserved.",
-    "status": "All systems normal"
+    "rights": "© 2026 LEO Institute (پەیمانگای لیۆ). All rights reserved.",
+    "status": "AI Speaking Lab Online 24/7"
   }
 }

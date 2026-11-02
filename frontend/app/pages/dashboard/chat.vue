@@ -57,6 +57,14 @@ const {
 
 // Mobile-only: below `md` the sessions list lives in a drawer.
 const sessionsOpen = ref(false)
+
+const route = useRoute()
+
+onMounted(() => {
+  if (route.query.topic && typeof route.query.topic === 'string') {
+    fillSuggestion(`Hi! I'd like to practice the scenario: "${route.query.topic}". Can you roleplay with me?`)
+  }
+})
 </script>
 
 <template>

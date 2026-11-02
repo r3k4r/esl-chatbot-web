@@ -1,0 +1,269 @@
+- generic [ref=e4]:
+  - banner [ref=e5]:
+    - generic [ref=e6]:
+      - link "LEO Institute Logo LEO INSTITUTE پەیمانگای لیۆ · Learn · Enjoy · Stay" [ref=e7] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e8]:
+          - img "LEO Institute Logo" [ref=e10]
+          - generic [ref=e11]:
+            - generic [ref=e12]:
+              - generic [ref=e13]: LEO
+              - generic [ref=e14]: INSTITUTE
+            - generic [ref=e15]:
+              - generic [ref=e16]: پەیمانگای لیۆ
+              - generic [ref=e17]: ·
+              - generic [ref=e18]: Learn · Enjoy · Stay
+      - generic [ref=e19]:
+        - button "Select language" [ref=e21] [cursor=pointer]:
+          - generic [ref=e23]: EN
+        - link "nav.getStarted" [ref=e25] [cursor=pointer]:
+          - /url: /dashboard/chat
+        - button "Toggle menu" [ref=e28] [cursor=pointer]
+  - main [ref=e30]:
+    - generic [ref=e31]:
+      - generic [ref=e33]:
+        - generic [ref=e34]:
+          - generic [ref=e35]:
+            - generic [ref=e36]:
+              - generic [ref=e37]: hero.badgeNew
+              - generic [ref=e39]: hero.badgeText
+            - generic [ref=e40]: hero.titleLead hero.titleAccenthero.titleTrail
+            - generic [ref=e41]: hero.subtitle
+            - generic [ref=e42]:
+              - link "hero.ctaPrimary" [ref=e43] [cursor=pointer]:
+                - /url: /dashboard/chat
+              - link "hero.ctaSecondary" [ref=e47] [cursor=pointer]:
+                - /url: https://t.me/+9647707362000
+          - generic [ref=e52]:
+            - generic [ref=e53]:
+              - generic [ref=e54]:
+                - img "LEO" [ref=e57]
+                - generic [ref=e59]:
+                  - generic [ref=e60]: chatMockup.tutorName
+                  - generic [ref=e61]: chatMockup.sessionLabel
+              - generic [ref=e64]:
+                - generic [ref=e65]: LEO AI
+                - button [ref=e66] [cursor=pointer]
+            - generic [ref=e69]:
+              - generic [ref=e70]:
+                - generic [ref=e72]: Can I have a double espresso and...
+                - button [ref=e81] [cursor=pointer]
+              - generic [ref=e83]:
+                - generic [ref=e84]:
+                  - generic [ref=e85]: chatMockup.voiceMode
+                  - generic [ref=e87]: ·
+                  - generic [ref=e88]: chatMockup.pronunciation 96%
+                - generic [ref=e89]: "Leo Cafeteria #104"
+        - generic [ref=e90]: hero.trustedBy
+      - generic [ref=e93]:
+        - generic [ref=e95]:
+          - generic [ref=e96]: features.eyebrow
+          - generic [ref=e97]: features.title
+          - generic [ref=e98]: features.description
+        - generic [ref=e99]:
+          - generic [ref=e100]:
+            - generic [ref=e104]: features.items.conversation.title
+            - generic [ref=e105]: features.items.conversation.description
+            - generic [ref=e106]: features.learnMore
+          - generic [ref=e109]:
+            - generic [ref=e113]: features.items.voice.title
+            - generic [ref=e114]: features.items.voice.description
+            - generic [ref=e115]: features.learnMore
+          - generic [ref=e118]:
+            - generic [ref=e122]: features.items.vocab.title
+            - generic [ref=e123]: features.items.vocab.description
+            - generic [ref=e124]: features.learnMore
+          - generic [ref=e127]:
+            - generic [ref=e131]: features.items.pronunciation.title
+            - generic [ref=e132]: features.items.pronunciation.description
+            - generic [ref=e133]: features.learnMore
+          - generic [ref=e136]:
+            - generic [ref=e140]: features.items.goals.title
+            - generic [ref=e141]: features.items.goals.description
+            - generic [ref=e142]: features.learnMore
+          - generic [ref=e145]:
+            - generic [ref=e149]: features.items.analytics.title
+            - generic [ref=e150]: features.items.analytics.description
+            - generic [ref=e151]: features.learnMore
+      - generic [ref=e155]:
+        - generic [ref=e156]:
+          - generic [ref=e157]:
+            - generic [ref=e158]: howItWorks.eyebrow
+            - generic [ref=e159]: howItWorks.title
+          - link "howItWorks.seeInAction" [ref=e161] [cursor=pointer]:
+            - /url: /dashboard/chat
+        - generic [ref=e163]:
+          - generic [ref=e165]:
+            - generic [ref=e166]: "01"
+            - generic [ref=e170]: howItWorks.steps.one.title
+            - generic [ref=e171]: howItWorks.steps.one.description
+          - generic [ref=e172]:
+            - generic [ref=e173]: "02"
+            - generic [ref=e177]: howItWorks.steps.two.title
+            - generic [ref=e178]: howItWorks.steps.two.description
+          - generic [ref=e179]:
+            - generic [ref=e180]: "03"
+            - generic [ref=e184]: howItWorks.steps.three.title
+            - generic [ref=e185]: howItWorks.steps.three.description
+      - generic [ref=e187]:
+        - generic [ref=e189]:
+          - generic [ref=e190]: dashboardPreview.eyebrow
+          - generic [ref=e191]: dashboardPreview.title
+          - generic [ref=e192]: dashboardPreview.description
+        - generic [ref=e195]:
+          - generic [ref=e196]: portal.leoinstitute.krd / student-lab
+          - generic [ref=e203]:
+            - complementary [ref=e204]:
+              - generic [ref=e206]:
+                - img "LEO Institute Logo" [ref=e208]
+                - generic [ref=e210]:
+                  - generic [ref=e211]: LEO
+                  - generic [ref=e212]: INSTITUTE
+              - generic [ref=e213] [cursor=pointer]: Speaking Lab
+              - generic [ref=e217] [cursor=pointer]: Cafeteria Roleplay
+              - generic [ref=e220] [cursor=pointer]: IELTS Examiner
+              - generic [ref=e223] [cursor=pointer]: Leo Kids & Math
+              - generic [ref=e226] [cursor=pointer]: Certificate
+              - generic [ref=e230]:
+                - generic [ref=e231]:
+                  - generic [ref=e232]: dashboardPreview.mockup.dailyGoal
+                  - generic [ref=e233]: 85%
+                - generic [ref=e236]:
+                  - generic [ref=e237]: 21 min spoke
+                  - generic [ref=e238]: 25 min target
+            - generic [ref=e239]:
+              - generic [ref=e240]:
+                - generic [ref=e241]:
+                  - generic [ref=e242]: dashboardPreview.mockup.greeting
+                  - generic [ref=e243]: dashboardPreview.mockup.welcome
+                - link "dashboardPreview.mockup.newSession" [ref=e244] [cursor=pointer]:
+                  - /url: /dashboard/chat
+              - generic [ref=e246]:
+                - generic [ref=e247]:
+                  - generic [ref=e248]: dashboardPreview.mockup.statLessons
+                  - generic [ref=e249]: B2 Upper
+                  - generic [ref=e250]: dashboardPreview.mockup.statLessonsSub
+                - generic [ref=e252]:
+                  - generic [ref=e253]: dashboardPreview.mockup.statStudyTime
+                  - generic [ref=e254]: 14.2 hrs
+                  - generic [ref=e255]: dashboardPreview.mockup.statStudyTimeSub
+                - generic [ref=e257]:
+                  - generic [ref=e258]: dashboardPreview.mockup.statStreak
+                  - generic [ref=e259]: 18 Days
+                  - generic [ref=e260]: dashboardPreview.mockup.statStreakSub
+                - generic [ref=e262]:
+                  - generic [ref=e263]: dashboardPreview.mockup.statLevel
+                  - generic [ref=e264]: 94.2%
+                  - generic [ref=e265]: dashboardPreview.mockup.statLevelSub
+              - generic [ref=e267]:
+                - generic [ref=e268]:
+                  - generic [ref=e269]:
+                    - generic [ref=e270]: dashboardPreview.mockup.wordsLearned
+                    - generic [ref=e271]: 148 words
+                  - generic [ref=e280]:
+                    - generic [ref=e281]: Sat
+                    - generic [ref=e282]: Sun
+                    - generic [ref=e283]: Mon
+                    - generic [ref=e284]: Tue
+                    - generic [ref=e285]: Wed
+                    - generic [ref=e286]: Thu
+                    - generic [ref=e287]: Fri
+                - generic [ref=e288]:
+                  - generic [ref=e289]:
+                    - generic [ref=e290]:
+                      - generic [ref=e291]: dashboardPreview.mockup.recentSession
+                      - generic [ref=e292]: dashboardPreview.mockup.minutesAgo
+                    - generic [ref=e293]: "Level 1: Ordering Coffee & Croissant at Leo Cafeteria"
+                    - generic [ref=e294]: dashboardPreview.mockup.turnsAccuracy
+                  - link "dashboardPreview.mockup.continue" [ref=e297] [cursor=pointer]:
+                    - /url: /dashboard/chat
+      - generic [ref=e301]:
+        - generic [ref=e303]:
+          - generic [ref=e304]: pricing.eyebrow
+          - generic [ref=e305]: pricing.title
+        - generic [ref=e306]:
+          - generic [ref=e307]:
+            - generic [ref=e308]: pricing.plans.starter.name
+            - generic [ref=e310]:
+              - generic [ref=e311]: pricing.plans.starter.price
+              - generic [ref=e312]: pricing.perMonth
+            - generic [ref=e313]: pricing.plans.starter.description
+            - generic [ref=e314]:
+              - list
+              - link "pricing.plans.starter.cta" [ref=e316] [cursor=pointer]:
+                - /url: /#cta
+          - generic [ref=e319]:
+            - generic [ref=e320]:
+              - generic [ref=e321]: pricing.plans.gold.name
+              - generic [ref=e322]: pricing.mostPopular
+            - generic [ref=e324]:
+              - generic [ref=e325]: pricing.plans.gold.price
+              - generic [ref=e326]: pricing.perMonth
+            - generic [ref=e327]: pricing.plans.gold.description
+            - generic [ref=e328]:
+              - list
+              - link "pricing.plans.gold.cta" [ref=e330] [cursor=pointer]:
+                - /url: /#cta
+          - generic [ref=e333]:
+            - generic [ref=e334]: pricing.plans.premium.name
+            - generic [ref=e336]:
+              - generic [ref=e337]: pricing.plans.premium.price
+              - generic [ref=e338]: pricing.perMonth
+            - generic [ref=e339]: pricing.plans.premium.description
+            - generic [ref=e340]:
+              - list
+              - link "pricing.plans.premium.cta" [ref=e342] [cursor=pointer]:
+                - /url: /dashboard/chat
+        - generic [ref=e344]: pricing.footnote
+      - generic [ref=e346]:
+        - generic [ref=e347]: finalCta.badge
+        - generic [ref=e350]: finalCta.titleLeadfinalCta.titleTrail
+        - generic [ref=e351]: finalCta.subtitle
+        - generic [ref=e352]:
+          - link "finalCta.ctaPrimary" [ref=e353] [cursor=pointer]:
+            - /url: https://t.me/+9647707362000
+          - link "finalCta.ctaSecondary" [ref=e356] [cursor=pointer]:
+            - /url: tel:07508862786
+  - contentinfo [ref=e359]:
+    - generic [ref=e360]:
+      - generic [ref=e361]:
+        - generic [ref=e362]:
+          - link "LEO Institute Logo LEO INSTITUTE پەیمانگای لیۆ · Learn · Enjoy · Stay" [ref=e363] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e364]:
+              - img "LEO Institute Logo" [ref=e366]
+              - generic [ref=e367]:
+                - generic [ref=e368]:
+                  - generic [ref=e369]: LEO
+                  - generic [ref=e370]: INSTITUTE
+                - generic [ref=e371]:
+                  - generic [ref=e372]: پەیمانگای لیۆ
+                  - generic [ref=e373]: ·
+                  - generic [ref=e374]: Learn · Enjoy · Stay
+          - generic [ref=e375]: footer.tagline
+          - generic [ref=e379]:
+            - generic [ref=e380]: Sulaymaniyah Campus (کەمپەسی سەرەکی)
+            - generic [ref=e381]: Mamostayan Neighborhood, Directly Opposite Azadi Parkسلێمانی - گەڕەکی مامۆستایان - بەرامبەر پارکی ئازادی
+          - generic [ref=e382]:
+            - 'link "Telegram: 0770 736 2000" [ref=e383] [cursor=pointer]':
+              - /url: https://t.me/+9647707362000
+            - 'link "Viber: 0750 886 2786" [ref=e386] [cursor=pointer]':
+              - /url: tel:07508862786
+            - link "leo.institute@yahoo.com" [ref=e389] [cursor=pointer]:
+              - /url: mailto:leo.institute@yahoo.com
+          - generic [ref=e392]:
+            - link "Leo Institute Kurdish Facebook" [ref=e393] [cursor=pointer]:
+              - /url: https://www.facebook.com/leo.kurdish.ins
+            - link "Learn English Online Facebook" [ref=e395] [cursor=pointer]:
+              - /url: https://www.facebook.com/learnenglishonlinewithus
+            - link "Leo Institute YouTube" [ref=e397] [cursor=pointer]:
+              - /url: https://www.youtube.com/results?search_query=%23leoinstitute
+        - generic [ref=e399]:
+          - generic [ref=e400]: footer.columns.product.heading
+          - generic [ref=e402]: footer.columns.resources.heading
+          - generic [ref=e404]: footer.columns.company.heading
+      - generic [ref=e406]:
+        - generic [ref=e407]: footer.rights
+        - generic [ref=e408]:
+          - generic [ref=e409]: English
+          - generic [ref=e412]: footer.status

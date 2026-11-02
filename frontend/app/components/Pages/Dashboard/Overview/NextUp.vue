@@ -23,7 +23,7 @@ const emit = defineEmits<{ startLesson: [] }>()
       <div class="absolute -right-6 -bottom-6 w-20 h-20 rounded-full bg-brand-primary/20 blur-2xl pointer-events-none" />
       <div class="relative">
         <div class="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-brand-primary font-semibold font-poppins">
-          <AppIconsax name="Candle" color="#f59e0b" :size="10" />
+          <AppIconsax name="Flash" color="#B91C1C" :size="11" />
           Recommended
         </div>
         <AppText size="15" weight="semibold" color="brand-ink" class="mt-1 leading-snug font-poppins">

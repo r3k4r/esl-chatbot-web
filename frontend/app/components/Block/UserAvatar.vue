@@ -81,7 +81,7 @@ async function handleSignOut() {
         aria-label="User menu">
         <!-- Avatar circle -->
         <div
-          class="w-8 h-8 rounded-full bg-linear-to-br from-brand-primary to-[#b45309] text-white flex items-center justify-center text-[12px] font-semibold font-poppins shrink-0">
+          class="w-8 h-8 rounded-full bg-linear-to-br from-[#B91C1C] to-[#1B365D] text-white flex items-center justify-center text-[12px] font-semibold font-poppins shrink-0">
           <AppImage v-if="user?.avatarUrl" :src="user.avatarUrl" :alt="user.displayName"
             class="w-full h-full rounded-full object-cover" />
           <span v-else>{{ initials }}</span>
@@ -101,7 +101,7 @@ async function handleSignOut() {
       <!-- User info header -->
       <div class="px-3 py-3 flex items-center gap-3">
         <div
-          class="w-10 h-10 rounded-full bg-linear-to-br from-brand-primary to-[#b45309] text-white flex items-center justify-center text-[14px] font-semibold font-poppins shrink-0">
+          class="w-10 h-10 rounded-full bg-linear-to-br from-[#B91C1C] to-[#1B365D] text-white flex items-center justify-center text-[14px] font-semibold font-poppins shrink-0">
           <AppImage v-if="user?.avatarUrl" :src="user.avatarUrl" :alt="user.displayName"
             class="w-full h-full rounded-full object-cover" />
           <span v-else>{{ initials }}</span>

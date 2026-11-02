@@ -1,0 +1,74 @@
+- generic [ref=f8e4]:
+  - complementary [ref=f8e5]:
+    - generic [ref=f8e6]:
+      - link "LEO Institute Logo LEO INSTITUTE" [ref=f8e7] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f8e8]:
+          - img "LEO Institute Logo" [ref=f8e10]
+          - generic [ref=f8e11]: LEO INSTITUTE
+      - button "Close sidebar" [ref=f8e13]
+    - navigation [ref=f8e16]:
+      - generic [ref=f8e17]: LEO AI Speaking Coach
+      - link "Overview" [ref=f8e18] [cursor=pointer]:
+        - /url: /dashboard
+      - link "Classes & Cohorts" [ref=f8e21] [cursor=pointer]:
+        - /url: /dashboard/classes
+      - link "LEO AI Coach" [ref=f8e25] [cursor=pointer]:
+        - /url: /dashboard/chat
+      - link "Voice Lab" [ref=f8e29] [cursor=pointer]:
+        - /url: /dashboard/voice
+      - link "Curriculum & Lessons" [ref=f8e33] [cursor=pointer]:
+        - /url: /dashboard/lessons
+      - link "Vocabulary & SRS" [ref=f8e37] [cursor=pointer]:
+        - /url: /dashboard/vocab
+      - link "Learning Goals" [ref=f8e40] [cursor=pointer]:
+        - /url: /dashboard/goals
+      - link "Billing & Plans" [ref=f8e43] [cursor=pointer]:
+        - /url: /dashboard/billing
+    - generic [ref=f8e47]:
+      - generic [ref=f8e48]:
+        - generic [ref=f8e49]: Teacher Portal Sync
+        - text: LIVE
+      - generic [ref=f8e50]:
+        - generic [ref=f8e51]: Pronunciation Accuracy94.8%
+        - generic [ref=f8e52]:
+          - generic [ref=f8e53]:
+            - text: "CEFR Level:"
+            - strong [ref=f8e54]: B2 Upper
+          - text: Mamostayan Campus
+    - generic [ref=f8e55]: پەیمانگای لیۆ0770 736 2000
+  - button [ref=f8e56]
+  - generic [ref=f8e59]:
+    - banner [ref=f8e60]:
+      - generic [ref=f8e61]:
+        - button "Open sidebar" [ref=f8e62]
+        - navigation "breadcrumb" [ref=f8e65]:
+          - list [ref=f8e66]:
+            - listitem [ref=f8e67]:
+              - generic [ref=f8e68]: leo-institute
+            - listitem [aria-hidden] [ref=f8e69]
+            - listitem [ref=f8e72]:
+              - link "classes & cohorts" [disabled] [ref=f8e73]
+      - button "Search users, classes, words… ⌘K" [ref=f8e75]
+      - generic [ref=f8e78]:
+        - generic [ref=f8e79]: Mamostayan Campus
+        - button "Notifications" [ref=f8e80]
+        - link [ref=f8e85] [cursor=pointer]:
+          - /url: /dashboard/chat
+          - button "Start AI Coach" [ref=f8e86]
+        - button "User menu" [ref=f8e90]:
+          - generic [ref=f8e91]: A
+          - generic [ref=f8e92]:
+            - generic [ref=f8e93]: student_ali
+            - generic [ref=f8e94]: Free
+    - main [ref=f8e95]:
+      - generic [ref=f8e96]:
+        - generic [ref=f8e97]:
+          - generic [ref=f8e98]:
+            - generic [ref=f8e99]:
+              - img "Leo" [ref=f8e100]
+              - text: Leo Institute Cohorts · پەیمانگای لیۆ
+            - generic [ref=f8e101]: Leo Classes & Cohorts
+            - generic [ref=f8e102]: Classes you're enrolled in
+          - button "Join a class" [ref=f8e103]
+        - textbox "Search classes…" [ref=f8e112]

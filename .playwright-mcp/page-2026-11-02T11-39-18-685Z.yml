@@ -1,0 +1,122 @@
+- generic [ref=f18e4]:
+  - complementary [ref=f18e5]:
+    - button "Collapse sidebar" [ref=f18e6] [cursor=pointer]
+    - link "LEO Institute Logo LEO INSTITUTE" [ref=f18e10] [cursor=pointer]:
+      - /url: /
+      - generic [ref=f18e11]:
+        - img "LEO Institute Logo" [ref=f18e13]
+        - generic [ref=f18e15]:
+          - generic [ref=f18e16]: LEO
+          - generic [ref=f18e17]: INSTITUTE
+    - navigation [ref=f18e18]:
+      - generic [ref=f18e19]: LEO AI Speaking Coach
+      - link "Overview" [ref=f18e20] [cursor=pointer]:
+        - /url: /dashboard
+      - link "Classes & Cohorts" [ref=f18e24] [cursor=pointer]:
+        - /url: /dashboard/classes
+      - link "LEO AI Coach" [ref=f18e29] [cursor=pointer]:
+        - /url: /dashboard/chat
+      - link "Voice Lab" [ref=f18e34] [cursor=pointer]:
+        - /url: /dashboard/voice
+      - link "Curriculum & Lessons" [ref=f18e39] [cursor=pointer]:
+        - /url: /dashboard/lessons
+      - link "Vocabulary & SRS" [ref=f18e44] [cursor=pointer]:
+        - /url: /dashboard/vocab
+      - link "Learning Goals" [ref=f18e48] [cursor=pointer]:
+        - /url: /dashboard/goals
+      - link "Billing & Plans" [ref=f18e52] [cursor=pointer]:
+        - /url: /dashboard/billing
+    - generic [ref=f18e58]:
+      - generic [ref=f18e59]:
+        - generic [ref=f18e60]: Teacher Portal Sync
+        - generic [ref=f18e63]: LIVE
+      - generic [ref=f18e64]:
+        - generic [ref=f18e65]:
+          - generic [ref=f18e66]: Pronunciation Accuracy
+          - generic [ref=f18e67]: 94.8%
+        - generic [ref=f18e70]:
+          - generic [ref=f18e71]:
+            - text: "CEFR Level:"
+            - strong [ref=f18e72]: B2 Upper
+          - generic [ref=f18e73]: Mamostayan Campus
+    - generic [ref=f18e74]:
+      - generic [ref=f18e75]: پەیمانگای لیۆ
+      - generic [ref=f18e76]: 0770 736 2000
+  - generic [ref=f18e77]:
+    - banner [ref=f18e78]:
+      - navigation "breadcrumb" [ref=f18e80]:
+        - list [ref=f18e81]:
+          - listitem [ref=f18e82]:
+            - generic [ref=f18e83]: leo-institute
+          - listitem [aria-hidden] [ref=f18e86]
+          - listitem [ref=f18e89]:
+            - link "subscriptions & billing" [disabled] [ref=f18e90]
+      - button "Search users, classes, words… ⌘K" [ref=f18e92] [cursor=pointer]:
+        - generic [ref=f18e95]: Search users, classes, words…
+        - generic [ref=f18e96]: ⌘K
+      - generic [ref=f18e97]:
+        - generic [ref=f18e98]: Mamostayan Campus
+        - button "Notifications" [ref=f18e101] [cursor=pointer]
+        - link [ref=f18e106] [cursor=pointer]:
+          - /url: /dashboard/chat
+          - button "Start AI Coach" [ref=f18e107]
+        - button "User menu" [ref=f18e112] [cursor=pointer]:
+          - generic [ref=f18e113]: A
+          - generic [ref=f18e115]:
+            - generic [ref=f18e116]: student_ali
+            - generic [ref=f18e117]: Free
+    - main [ref=f18e118]:
+      - generic [ref=f18e120]:
+        - generic [ref=f18e121]:
+          - generic [ref=f18e122]:
+            - img "Leo" [ref=f18e123]
+            - generic [ref=f18e124]: Leo Institute Official Portal · پەیمانگای لیۆ
+          - generic [ref=f18e130]:
+            - generic [ref=f18e131]: LEO Student Subscriptions & FIB Billing
+            - generic [ref=f18e132]: Manage your AI Coach plan. Pay online via First Iraqi Bank (FIB) QR code or at the Leo campus desk.
+        - generic [ref=f18e136]:
+          - generic [ref=f18e137]:
+            - generic [ref=f18e139]:
+              - generic [ref=f18e141]: Free
+              - generic [ref=f18e142]: Gold
+              - generic [ref=f18e143]: Premium
+            - generic [ref=f18e144]:
+              - generic [ref=f18e145]:
+                - generic [ref=f18e146]: Sessions/day
+                - generic [ref=f18e147]: "3"
+                - generic [ref=f18e148]: "15"
+                - generic [ref=f18e149]: "50"
+              - generic [ref=f18e150]:
+                - generic [ref=f18e151]: Msgs/session
+                - generic [ref=f18e152]: "20"
+                - generic [ref=f18e153]: "100"
+                - generic [ref=f18e154]: "150"
+              - generic [ref=f18e155]:
+                - generic [ref=f18e156]: AI model
+                - generic [ref=f18e157]: Lite
+                - generic [ref=f18e158]: Flash
+                - generic [ref=f18e159]: GPT-5
+              - generic [ref=f18e160]:
+                - generic [ref=f18e161]: Voice TTS
+                - generic [ref=f18e162]: —
+                - generic [ref=f18e163]: Azure
+                - generic [ref=f18e164]: HD
+              - generic [ref=f18e165]:
+                - generic [ref=f18e166]: SRS vocab
+                - generic [ref=f18e167]: Basic
+                - generic [ref=f18e168]: Full
+                - generic [ref=f18e169]: Full
+              - generic [ref=f18e170]:
+                - generic [ref=f18e171]: Analytics
+                - generic [ref=f18e172]: Basic
+                - generic [ref=f18e173]: Full
+                - generic [ref=f18e174]: Full
+          - generic [ref=f18e175]:
+            - generic [ref=f18e176]: Secure Payment via FIB & Campus Desk
+            - generic [ref=f18e181]: Paid securely through First Iraqi Bank (FIB)
+            - generic [ref=f18e186]: IQD currency — zero foreign exchange fees
+            - generic [ref=f18e191]: Direct activation for Leo Institute students
+            - generic [ref=f18e196]: In-person cash activation at Mamostayan campus
+            - generic [ref=f18e201]:
+              - generic [ref=f18e202]: "Mamostayan Campus Registration Desk:"
+              - generic [ref=f18e203]: Visit us opposite Azadi Park or contact 0770 736 2000 for instant on-site activation.

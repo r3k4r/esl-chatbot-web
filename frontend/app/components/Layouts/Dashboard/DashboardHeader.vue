@@ -6,16 +6,16 @@ const { isStaff } = useRole()
 const route = useRoute()
 
 const pageTitles: Record<string, string> = {
-  '/dashboard': 'Overview',
-  '/dashboard/chat': 'AI Chat',
+  '/dashboard': 'Leo Overview',
+  '/dashboard/chat': 'AI Speaking Coach',
   '/dashboard/voice': 'Voice Lab',
-  '/dashboard/vocab': 'Vocabulary',
-  '/dashboard/goals': 'Goals',
-  '/dashboard/lessons': 'Lessons',
-  '/dashboard/profile': 'Profile',
-  '/dashboard/billing': 'Billing',
-  '/dashboard/users': 'Users',
-  '/dashboard/classes': 'Classes',
+  '/dashboard/vocab': 'Vocabulary & SRS',
+  '/dashboard/goals': 'Learning Milestones',
+  '/dashboard/lessons': 'Curriculum Library',
+  '/dashboard/profile': 'Student Profile',
+  '/dashboard/billing': 'Subscriptions & Billing',
+  '/dashboard/users': 'User Management',
+  '/dashboard/classes': 'Classes & Cohorts',
 }
 
 const pageTitle = computed(() => pageTitles[route.path] ?? 'Dashboard')
@@ -35,9 +35,12 @@ const pageSlug = computed(() => pageTitle.value.toLowerCase())
       </button>
 
       <UiBreadcrumb>
-        <UiBreadcrumbList class="text-[11px] font-mono flex-nowrap gap-1 sm:gap-1.5">
+        <UiBreadcrumbList class="text-[11px] font-mono flex-nowrap gap-1 sm:gap-1.5 items-center">
           <UiBreadcrumbItem>
-            <UiBreadcrumbLink as="span" class="text-zinc-400 cursor-default">app</UiBreadcrumbLink>
+            <UiBreadcrumbLink as="span" class="text-zinc-400 cursor-default flex items-center gap-1.5">
+              <span class="size-2 rounded-full bg-[#B91C1C]" />
+              <span>leo-institute</span>
+            </UiBreadcrumbLink>
           </UiBreadcrumbItem>
           <UiBreadcrumbSeparator />
           <UiBreadcrumbItem>
@@ -52,14 +55,20 @@ const pageSlug = computed(() => pageTitle.value.toLowerCase())
     <LayoutsDashboardCommandPalette />
 
     <!-- Right actions -->
-    <div class="flex items-center gap-1.5">
+    <div class="flex items-center gap-2">
+      <!-- Campus Indicator (Live) -->
+      <div class="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 dark:bg-white/5 text-[11px] text-zinc-500 font-poppins">
+        <span class="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+        <span>Mamostayan Campus</span>
+      </div>
+
       <!-- Notifications -->
       <LayoutsDashboardNotificationBell />
 
       <!-- New session CTA — learner feature, hidden for staff -->
       <NuxtLink v-if="!isStaff" to="/dashboard/chat">
-        <AppButton variant="primary" size="36" radius="8" icon="Candle" :icon-config="{ color: 'white' }"
-          text="New session" class="hidden sm:flex text-[12.5px]!" />
+        <AppButton variant="primary" size="36" radius="8" icon="Messages" :icon-config="{ color: 'white', size: 14 }"
+          text="Start AI Coach" class="hidden sm:flex text-[12.5px]!" />
       </NuxtLink>
 
       <!-- User avatar popup -->

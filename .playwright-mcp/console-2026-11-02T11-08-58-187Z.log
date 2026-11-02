@@ -1,0 +1,274 @@
+[    2589ms] [INFO] <Suspense> is an experimental feature and its API will likely change. @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:7188
+[    2671ms] [LOG] ✨ %cNuxt DevTools %c Press Shift + Alt + D to open DevTools color: black; border-radius: 3px 0 0 3px; padding: 2px 2px 1px 10px; background: #00DC82 border-radius: 0 3px 3px 0; padding: 2px 10px 1px 2px; background: #00DC8220  @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@nuxt/devtools/dist/runtime/plugins/devtools.client.js?v=208a0da6:51
+[    2824ms] [WARNING] [Vue warn]: Extraneous non-emits event listeners (toggle) were passed to component but could not be automatically inherited because component renders fragment or text root nodes. If the listener is intended to be a component custom event listener only, declare it using the "emits" option. 
+  at <LayoutsDashboardSidebar collapsed=false mobile-open=false onToggle=fn  ... > 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[    2906ms] [WARNING] [Vue warn]: Hydration class mismatch on JSHandle@node 
+  - rendered on server: class="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-brand-primary/10 blur-3xl pointer-events-none"
+  - expected on client: class="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-[#B91C1C]/10 blur-3xl pointer-events-none"
+  Note: this mismatch is check-only. The DOM will not be rectified in production due to performance overhead.
+  You should fix the source of the mismatch. 
+  at <PagesDashboardOverviewGreetingHero key=1 streak=0 done-mins=0  ... > 
+  at <PagesDashboardOverviewUserDashboard key=2 > 
+  at <Index onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouteProvider key="/dashboard" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /dashboard, hash: , query: Object, name: dashboard, path: /dashboard}  ... > 
+  at <RouterView name=undefined route=undefined > 
+  at <NuxtPage > 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[    2910ms] [ERROR] Hydration completed but contains mismatches. @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:1872
+[    2911ms] [WARNING] [Vue warn]: Hydration node mismatch:
+- rendered on server: JSHandle@node  
+- expected on client: p 
+  at <PagesDashboardOverviewGreetingHero key=1 streak=0 done-mins=0  ... > 
+  at <PagesDashboardOverviewUserDashboard key=2 > 
+  at <Index onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouteProvider key="/dashboard" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /dashboard, hash: , query: Object, name: dashboard, path: /dashboard}  ... > 
+  at <RouterView name=undefined route=undefined > 
+  at <NuxtPage > 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[    2912ms] [WARNING] [Vue warn]: Hydration node mismatch:
+- rendered on server: JSHandle@node  
+- expected on client: h1 
+  at <PagesDashboardOverviewGreetingHero key=1 streak=0 done-mins=0  ... > 
+  at <PagesDashboardOverviewUserDashboard key=2 > 
+  at <Index onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouteProvider key="/dashboard" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /dashboard, hash: , query: Object, name: dashboard, path: /dashboard}  ... > 
+  at <RouterView name=undefined route=undefined > 
+  at <NuxtPage > 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[    2912ms] [WARNING] [Vue warn]: Hydration node mismatch:
+- rendered on server: JSHandle@node  
+- expected on client: p 
+  at <PagesDashboardOverviewGreetingHero key=1 streak=0 done-mins=0  ... > 
+  at <PagesDashboardOverviewUserDashboard key=2 > 
+  at <Index onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouteProvider key="/dashboard" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /dashboard, hash: , query: Object, name: dashboard, path: /dashboard}  ... > 
+  at <RouterView name=undefined route=undefined > 
+  at <NuxtPage > 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[    2913ms] [WARNING] [Vue warn]: Hydration children mismatch on JSHandle@node 
+Server rendered element contains fewer child nodes than client vdom. 
+  at <PagesDashboardOverviewGreetingHero key=1 streak=0 done-mins=0  ... > 
+  at <PagesDashboardOverviewUserDashboard key=2 > 
+  at <Index onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouteProvider key="/dashboard" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /dashboard, hash: , query: Object, name: dashboard, path: /dashboard}  ... > 
+  at <RouterView name=undefined route=undefined > 
+  at <NuxtPage > 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[    2918ms] [WARNING] [Vue warn]: Hydration attribute mismatch on JSHandle@node 
+  - rendered on server: stop-color="var(--color-brand-accent)"
+  - expected on client: stop-color="#F59E0B"
+  Note: this mismatch is check-only. The DOM will not be rectified in production due to performance overhead.
+  You should fix the source of the mismatch. 
+  at <PagesDashboardOverviewGreetingHero key=1 streak=0 done-mins=0  ... > 
+  at <PagesDashboardOverviewUserDashboard key=2 > 
+  at <Index onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouteProvider key="/dashboard" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /dashboard, hash: , query: Object, name: dashboard, path: /dashboard}  ... > 
+  at <RouterView name=undefined route=undefined > 
+  at <NuxtPage > 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[    2919ms] [WARNING] [Vue warn]: Hydration attribute mismatch on JSHandle@node 
+  - rendered on server: stop-color="var(--color-brand-primary)"
+  - expected on client: stop-color="#B91C1C"
+  Note: this mismatch is check-only. The DOM will not be rectified in production due to performance overhead.
+  You should fix the source of the mismatch. 
+  at <PagesDashboardOverviewGreetingHero key=1 streak=0 done-mins=0  ... > 
+  at <PagesDashboardOverviewUserDashboard key=2 > 
+  at <Index onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouteProvider key="/dashboard" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /dashboard, hash: , query: Object, name: dashboard, path: /dashboard}  ... > 
+  at <RouterView name=undefined route=undefined > 
+  at <NuxtPage > 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[    2921ms] [WARNING] [Vue warn]: Hydration class mismatch on JSHandle@node 
+  - rendered on server: class="relative inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-brand-primary/15 border border-brand-primary/20"
+  - expected on client: class="relative inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#B91C1C]/10 border border-[#B91C1C]/20"
+  Note: this mismatch is check-only. The DOM will not be rectified in production due to performance overhead.
+  You should fix the source of the mismatch. 
+  at <PagesDashboardOverviewGreetingHero key=1 streak=0 done-mins=0  ... > 
+  at <PagesDashboardOverviewUserDashboard key=2 > 
+  at <Index onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouteProvider key="/dashboard" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /dashboard, hash: , query: Object, name: dashboard, path: /dashboard}  ... > 
+  at <RouterView name=undefined route=undefined > 
+  at <NuxtPage > 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[    2927ms] [WARNING] [Vue warn]: Hydration text mismatch in JSHandle@node 
+  - rendered on server: "No active goals yet"
+  - expected on client: "Ordering at the Leo Campus Cafeteria" 
+  at <AppText size="15" weight="semibold" color="brand-ink"  ... > 
+  at <PagesDashboardOverviewNextUp key=1 recommended= {title: Ordering at the Leo Campus Cafeteria, tag: Leo Scenario, minutes: 10, level: A2, icon: Messages} upcoming= [Object, Object, Object]  ... > 
+  at <PagesDashboardOverviewUserDashboard key=2 > 
+  at <Index onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouteProvider key="/dashboard" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /dashboard, hash: , query: Object, name: dashboard, path: /dashboard}  ... > 
+  at <RouterView name=undefined route=undefined > 
+  at <NuxtPage > 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[    2931ms] [WARNING] [Vue warn]: Hydration text mismatch in JSHandle@node 
+  - rendered on server: " 0 min "
+  - expected on client: " 10 min " 
+  at <PagesDashboardOverviewNextUp key=1 recommended= {title: Ordering at the Leo Campus Cafeteria, tag: Leo Scenario, minutes: 10, level: A2, icon: Messages} upcoming= [Object, Object, Object]  ... > 
+  at <PagesDashboardOverviewUserDashboard key=2 > 
+  at <Index onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouteProvider key="/dashboard" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /dashboard, hash: , query: Object, name: dashboard, path: /dashboard}  ... > 
+  at <RouterView name=undefined route=undefined > 
+  at <NuxtPage > 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[    2932ms] [WARNING] [Vue warn]: Hydration text content mismatch on JSHandle@node 
+  - rendered on server: —
+  - expected on client: A2 
+  at <PagesDashboardOverviewNextUp key=1 recommended= {title: Ordering at the Leo Campus Cafeteria, tag: Leo Scenario, minutes: 10, level: A2, icon: Messages} upcoming= [Object, Object, Object]  ... > 
+  at <PagesDashboardOverviewUserDashboard key=2 > 
+  at <Index onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouteProvider key="/dashboard" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /dashboard, hash: , query: Object, name: dashboard, path: /dashboard}  ... > 
+  at <RouterView name=undefined route=undefined > 
+  at <NuxtPage > 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[    2933ms] [WARNING] [Vue warn]: Hydration text content mismatch on JSHandle@node 
+  - rendered on server: —
+  - expected on client: Leo Scenario 
+  at <PagesDashboardOverviewNextUp key=1 recommended= {title: Ordering at the Leo Campus Cafeteria, tag: Leo Scenario, minutes: 10, level: A2, icon: Messages} upcoming= [Object, Object, Object]  ... > 
+  at <PagesDashboardOverviewUserDashboard key=2 > 
+  at <Index onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouteProvider key="/dashboard" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /dashboard, hash: , query: Object, name: dashboard, path: /dashboard}  ... > 
+  at <RouterView name=undefined route=undefined > 
+  at <NuxtPage > 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[    2936ms] [WARNING] [Vue warn]: Hydration node mismatch:
+- rendered on server: JSHandle@node  
+- expected on client: button 
+  at <PagesDashboardOverviewNextUp key=1 recommended= {title: Ordering at the Leo Campus Cafeteria, tag: Leo Scenario, minutes: 10, level: A2, icon: Messages} upcoming= [Object, Object, Object]  ... > 
+  at <PagesDashboardOverviewUserDashboard key=2 > 
+  at <Index onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouteProvider key="/dashboard" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /dashboard, hash: , query: Object, name: dashboard, path: /dashboard}  ... > 
+  at <RouterView name=undefined route=undefined > 
+  at <NuxtPage > 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[    2939ms] [WARNING] [Vue warn]: Hydration children mismatch on JSHandle@node 
+Server rendered element contains fewer child nodes than client vdom. 
+  at <PagesDashboardOverviewNextUp key=1 recommended= {title: Ordering at the Leo Campus Cafeteria, tag: Leo Scenario, minutes: 10, level: A2, icon: Messages} upcoming= [Object, Object, Object]  ... > 
+  at <PagesDashboardOverviewUserDashboard key=2 > 
+  at <Index onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouteProvider key="/dashboard" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /dashboard, hash: , query: Object, name: dashboard, path: /dashboard}  ... > 
+  at <RouterView name=undefined route=undefined > 
+  at <NuxtPage > 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[    3029ms] [WARNING] [Vue warn]: Hydration attribute mismatch on JSHandle@node 
+  - rendered on server: stroke="var(--color-brand-primary)"
+  - expected on client: stroke="#B91C1C"
+  Note: this mismatch is check-only. The DOM will not be rectified in production due to performance overhead.
+  You should fix the source of the mismatch. 
+  at <Anonymous size=26 color="#B91C1C" type="linear" > 
+  at <AsyncComponentWrapper size=26 color="#B91C1C" type="linear" > 
+  at <VsxIcon icon-name="Flash" size=26 color="#B91C1C"  ... > 
+  at <AppIconsax name="Flash" color="#B91C1C" size=26 > 
+  at <PagesDashboardOverviewGreetingHero key=1 streak=0 done-mins=0  ... > 
+  at <PagesDashboardOverviewUserDashboard key=2 > 
+  at <Index onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< undefined > > 
+  at <RouteProvider key="/dashboard" vnode= {__v_isVNode: true, __v_skip: true, type: Object, props: Object, key: null} route= {fullPath: /dashboard, hash: , query: Object, name: dashboard, path: /dashboard}  ... > 
+  at <RouterView name=undefined route=undefined > 
+  at <NuxtPage > 
+  at <Dashboard ref=Ref< undefined > > 
+  at <AsyncComponentWrapper ref=Ref< undefined > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49
+[    3707ms] [WARNING] [Vue warn]: Extraneous non-emits event listeners (toggle) were passed to component but could not be automatically inherited because component renders fragment or text root nodes. If the listener is intended to be a component custom event listener only, declare it using the "emits" option. 
+  at <LayoutsDashboardSidebar collapsed=false mobile-open=false onToggle=fn  ... > 
+  at <Dashboard ref=Ref< Proxy(Object) > > 
+  at <AsyncComponentWrapper ref=Ref< Proxy(Object) > > 
+  at <LayoutLoader key="dashboard" layoutProps= {ref: RefImpl} name="dashboard" > 
+  at <NuxtLayoutProvider layoutProps= {ref: RefImpl} key="dashboard" name="dashboard"  ... > 
+  at <NuxtLayout > 
+  at <App key=4 > 
+  at <NuxtRoot> @ http://localhost:3001/_nuxt/@fs/C:/firstapp/esl-chatbot-web/frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js?v=208a0da6:49

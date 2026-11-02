@@ -1,0 +1,88 @@
+- generic [ref=f17e4]:
+  - complementary [ref=f17e5]:
+    - button "Collapse sidebar" [ref=f17e6] [cursor=pointer]
+    - link "LEO Institute Logo LEO INSTITUTE" [ref=f17e10] [cursor=pointer]:
+      - /url: /
+      - generic [ref=f17e11]:
+        - img "LEO Institute Logo" [ref=f17e13]
+        - generic [ref=f17e15]:
+          - generic [ref=f17e16]: LEO
+          - generic [ref=f17e17]: INSTITUTE
+    - navigation [ref=f17e18]:
+      - generic [ref=f17e19]: LEO AI Speaking Coach
+      - link "Overview" [ref=f17e20] [cursor=pointer]:
+        - /url: /dashboard
+      - link "Classes & Cohorts" [ref=f17e24] [cursor=pointer]:
+        - /url: /dashboard/classes
+      - link "LEO AI Coach" [ref=f17e29] [cursor=pointer]:
+        - /url: /dashboard/chat
+      - link "Voice Lab" [ref=f17e34] [cursor=pointer]:
+        - /url: /dashboard/voice
+      - link "Curriculum & Lessons" [ref=f17e40] [cursor=pointer]:
+        - /url: /dashboard/lessons
+      - link "Vocabulary & SRS" [ref=f17e45] [cursor=pointer]:
+        - /url: /dashboard/vocab
+      - link "Learning Goals" [ref=f17e49] [cursor=pointer]:
+        - /url: /dashboard/goals
+      - link "Billing & Plans" [ref=f17e53] [cursor=pointer]:
+        - /url: /dashboard/billing
+    - generic [ref=f17e58]:
+      - generic [ref=f17e59]:
+        - generic [ref=f17e60]: Teacher Portal Sync
+        - generic [ref=f17e63]: LIVE
+      - generic [ref=f17e64]:
+        - generic [ref=f17e65]:
+          - generic [ref=f17e66]: Pronunciation Accuracy
+          - generic [ref=f17e67]: 94.8%
+        - generic [ref=f17e70]:
+          - generic [ref=f17e71]:
+            - text: "CEFR Level:"
+            - strong [ref=f17e72]: B2 Upper
+          - generic [ref=f17e73]: Mamostayan Campus
+    - generic [ref=f17e74]:
+      - generic [ref=f17e75]: پەیمانگای لیۆ
+      - generic [ref=f17e76]: 0770 736 2000
+  - generic [ref=f17e77]:
+    - banner [ref=f17e78]:
+      - navigation "breadcrumb" [ref=f17e80]:
+        - list [ref=f17e81]:
+          - listitem [ref=f17e82]:
+            - generic [ref=f17e83]: leo-institute
+          - listitem [aria-hidden] [ref=f17e86]
+          - listitem [ref=f17e89]:
+            - link "voice lab" [disabled] [ref=f17e90]
+      - button "Search users, classes, words… ⌘K" [ref=f17e92] [cursor=pointer]:
+        - generic [ref=f17e95]: Search users, classes, words…
+        - generic [ref=f17e96]: ⌘K
+      - generic [ref=f17e97]:
+        - generic [ref=f17e98]: Mamostayan Campus
+        - button "Notifications" [ref=f17e101] [cursor=pointer]
+        - link [ref=f17e106] [cursor=pointer]:
+          - /url: /dashboard/chat
+          - button "Start AI Coach" [ref=f17e107]
+        - button "User menu" [ref=f17e112] [cursor=pointer]:
+          - generic [ref=f17e113]: A
+          - generic [ref=f17e115]:
+            - generic [ref=f17e116]: student_ali
+            - generic [ref=f17e117]: Free
+    - main [ref=f17e118]:
+      - generic [ref=f17e119]:
+        - generic [ref=f17e120]:
+          - generic [ref=f17e121]:
+            - img "Leo" [ref=f17e122]
+            - generic [ref=f17e123]: LEO Live Speaking Lab · پەیمانگای لیۆ
+          - heading "Voice Lab & Live Pronunciation Coach" [level=1] [ref=f17e124]
+          - paragraph [ref=f17e125]: A live speaking call with LEO AI Speaking Coach. Talk hands-free, get scored on how you sound.
+        - generic [ref=f17e126]:
+          - generic [ref=f17e130]:
+            - heading "Call LEO AI Speaking Coach" [level=2] [ref=f17e136]
+            - generic [ref=f17e137]: A hands-free speaking call. Talk naturally, get spoken replies, and see how you sound.
+            - button "Start call" [ref=f17e138] [cursor=pointer]
+            - generic [ref=f17e142]:
+              - generic [ref=f17e143]: Just talk — it listens and replies on its own, like a phone call.
+              - generic [ref=f17e149]: Pause when you finish a sentence; the AI takes its turn automatically.
+              - generic [ref=f17e154]: Every turn is scored on grammar, vocabulary, and fluency.
+          - generic [ref=f17e160]:
+            - generic [ref=f17e161]: Live scoring
+            - generic [ref=f17e165]: Start a call and your grammar, vocabulary, and fluency scores update here after every turn you speak.
+            - generic [ref=f17e166]: Word-level pronunciation scoring is a GOLD feature.

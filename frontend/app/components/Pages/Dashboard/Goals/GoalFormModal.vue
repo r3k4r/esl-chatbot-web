@@ -60,7 +60,7 @@ watch(() => props.open, (v) => {
 const TYPES: { value: GoalType; label: string; icon: string }[] = [
   { value: 'VOCABULARY',   label: 'Vocabulary',   icon: 'Book1'      },
   { value: 'SPEAKING',     label: 'Speaking',     icon: 'Microphone' },
-  { value: 'GRAMMAR',      label: 'Grammar',      icon: 'Candle'     },
+  { value: 'GRAMMAR',      label: 'Grammar',      icon: 'Teacher'     },
   { value: 'CONVERSATION', label: 'Conversation', icon: 'Messages'   },
   { value: 'STUDY_TIME',   label: 'Study Time',   icon: 'Clock'      },
 ]

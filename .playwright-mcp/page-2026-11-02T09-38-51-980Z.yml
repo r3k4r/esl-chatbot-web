@@ -1,0 +1,408 @@
+- generic [ref=f5e1]:
+  - generic [ref=f5e4]:
+    - banner [ref=f5e5]:
+      - generic [ref=f5e6]:
+        - link "LEO Institute Logo LEO INSTITUTE پەیمانگای لیۆ · Learn · Enjoy · Stay" [ref=f5e7] [cursor=pointer]:
+          - /url: /
+          - generic [ref=f5e8]:
+            - img "LEO Institute Logo" [ref=f5e10]
+            - generic [ref=f5e11]:
+              - generic [ref=f5e12]:
+                - generic [ref=f5e13]: LEO
+                - generic [ref=f5e14]: INSTITUTE
+              - generic [ref=f5e15]:
+                - generic [ref=f5e16]: پەیمانگای لیۆ
+                - generic [ref=f5e17]: ·
+                - generic [ref=f5e18]: Learn · Enjoy · Stay
+        - navigation [ref=f5e19]:
+          - link "Programs" [ref=f5e20] [cursor=pointer]:
+            - /url: /#features
+          - link "AI Speaking Lab" [ref=f5e21] [cursor=pointer]:
+            - /url: /#how
+          - link "Campus & Cafeteria" [ref=f5e22] [cursor=pointer]:
+            - /url: /#dashboard
+          - link "Tuition & Plans" [ref=f5e23] [cursor=pointer]:
+            - /url: /#pricing
+        - generic [ref=f5e24]:
+          - generic [ref=f5e25]:
+            - button "Select language" [expanded] [active] [ref=f5e26] [cursor=pointer]:
+              - generic [ref=f5e28]: EN
+            - listbox "Language selection" [ref=f5e519]:
+              - generic [ref=f5e520]:
+                - option "English EN" [selected] [ref=f5e521] [cursor=pointer]:
+                  - generic [ref=f5e527]:
+                    - generic [ref=f5e528]: English
+                    - generic [ref=f5e529]: EN
+                - option "Kurdish flag کوردی KR" [ref=f5e532] [cursor=pointer]:
+                  - img "Kurdish flag" [ref=f5e534]
+                  - generic [ref=f5e535]:
+                    - generic [ref=f5e536]: کوردی
+                    - generic [ref=f5e537]: KR
+          - link "LEO AI Portal" [ref=f5e30] [cursor=pointer]:
+            - /url: /dashboard/chat
+    - main [ref=f5e34]:
+      - generic [ref=f5e35]:
+        - generic [ref=f5e37]:
+          - generic [ref=f5e38]:
+            - generic [ref=f5e39]:
+              - generic [ref=f5e40]:
+                - generic [ref=f5e41]: Guaranteed Learning
+                - generic [ref=f5e43]: Sulaymaniyah — Opposite Azadi Park
+              - generic [ref=f5e44]: Master English with Guaranteed Results — Powered by LEO AI.
+              - generic [ref=f5e45]: Kurdistan's premier language academy offering in-person & online courses, backed by your exclusive 24/7 AI Speaking Coach to build real conversational fluency.
+              - generic [ref=f5e46]:
+                - link "Test Drive LEO AI Coach" [ref=f5e47] [cursor=pointer]:
+                  - /url: /dashboard/chat
+                - link "Call 0770 736 2000" [ref=f5e51] [cursor=pointer]:
+                  - /url: https://t.me/+9647707362000
+              - generic [ref=f5e54]:
+                - generic [ref=f5e55]: Guaranteed Fluency Courses
+                - generic [ref=f5e58]: In-Person & Online Batches
+                - generic [ref=f5e61]: Leo Kids & Mental Math
+                - generic [ref=f5e64]: IELTS Academic Prep
+            - generic [ref=f5e69]:
+              - generic [ref=f5e70]:
+                - generic [ref=f5e71]:
+                  - img "LEO" [ref=f5e74]
+                  - generic [ref=f5e76]:
+                    - generic [ref=f5e77]: LEO AI Speaking Coach · پەیمانگای لیۆ
+                    - generic [ref=f5e78]: Leo Speaking Lab · Cafeteria Simulation
+                - generic [ref=f5e81]:
+                  - generic [ref=f5e82]: LEO AI
+                  - button [ref=f5e83] [cursor=pointer]
+              - generic [ref=f5e85]:
+                - generic [ref=f5e565]:
+                  - img "LEO" [ref=f5e567]
+                  - generic [ref=f5e568]:
+                    - text: Welcome to Leo Institute! I'm your AI speaking coach. Ready to practice ordering at the campus cafeteria?
+                    - generic [ref=f5e569]: 10:04
+                - generic [ref=f5e571]:
+                  - text: Yes! Let's practice ordering coffee and a snack at the Leo cafeteria.
+                  - generic [ref=f5e572]: 10:04
+                - generic [ref=f5e573]:
+                  - img "LEO" [ref=f5e575]
+                  - generic [ref=f5e576]:
+                    - text: Excellent! 'Hello, welcome to Leo Cafeteria! What can I get for you today?'
+                    - generic [ref=f5e577]: 10:05
+                - generic [ref=f5e579]:
+                  - text: Can I have a double espresso and a fresh croissant, please?
+                  - generic [ref=f5e580]: 10:05
+              - generic [ref=f5e86]:
+                - generic [ref=f5e87]:
+                  - generic [ref=f5e89]: Can I have a double espresso and...
+                  - button [ref=f5e98] [cursor=pointer]
+                - generic [ref=f5e100]:
+                  - generic [ref=f5e101]:
+                    - generic [ref=f5e102]: Voice mode
+                    - generic [ref=f5e104]: ·
+                    - generic [ref=f5e105]: "Pronunciation: 96%"
+                  - generic [ref=f5e106]: "Leo Cafeteria #104"
+          - generic [ref=f5e107]:
+            - generic [ref=f5e108]: Educating thousands of successful graduates across Sulaymaniyah & Kurdistan
+            - generic [ref=f5e586]:
+              - generic [ref=f5e588]:
+                - generic [ref=f5e589]: Sulaymaniyah Campus (بەرامبەر پارکی ئازادی)
+                - generic [ref=f5e595]: Guaranteed Learning Methodology (بە گەرەنتی فێربوون)
+                - generic [ref=f5e601]: 24/7 LEO AI Speaking Coach
+                - generic [ref=f5e608]: Leo Kids & Mental Math (خولی بەهێزکردن)
+                - generic [ref=f5e614]: On-Site Student Cafeteria & Lounge
+                - generic [ref=f5e618]: IELTS Academic Mastery Track
+              - generic [ref=f5e625]:
+                - generic [ref=f5e626]: Sulaymaniyah Campus (بەرامبەر پارکی ئازادی)
+                - generic [ref=f5e632]: Guaranteed Learning Methodology (بە گەرەنتی فێربوون)
+                - generic [ref=f5e638]: 24/7 LEO AI Speaking Coach
+                - generic [ref=f5e645]: Leo Kids & Mental Math (خولی بەهێزکردن)
+                - generic [ref=f5e651]: On-Site Student Cafeteria & Lounge
+                - generic [ref=f5e655]: IELTS Academic Mastery Track
+        - generic [ref=f5e110]:
+          - generic [ref=f5e112]:
+            - generic [ref=f5e113]: Academic Programs
+            - generic [ref=f5e114]: Bespoke Courses Engineered for Real Fluency.
+            - generic [ref=f5e115]: Whether studying in-person at our Mamostayan campus or joining our interactive online cohorts, every program is supported by 24/7 AI speaking practice.
+          - generic [ref=f5e116]:
+            - generic [ref=f5e117]:
+              - generic [ref=f5e121]: General English & Speaking
+              - generic [ref=f5e122]: Interactive levels from Beginner to Advanced (A1 to C1) with guaranteed learning results and certified tutors.
+              - generic [ref=f5e123]: Learn more
+            - generic [ref=f5e126]:
+              - generic [ref=f5e130]: LEO AI 24/7 Speaking Coach
+              - generic [ref=f5e131]: Unlimited 1-on-1 voice conversation practice with instant pronunciation scoring and real-time grammar feedback.
+              - generic [ref=f5e132]: Learn more
+            - generic [ref=f5e135]:
+              - generic [ref=f5e139]: LEO Kids & Mental Math
+              - generic [ref=f5e140]: Fun, high-energy academic strengthening courses (خولی بەهێزکردن) and mental arithmetic for young achievers (#leokids2025).
+              - generic [ref=f5e141]: Learn more
+            - generic [ref=f5e144]:
+              - generic [ref=f5e148]: IELTS & Academic Prep
+              - generic [ref=f5e149]: Targeted test strategies and simulated speaking examiner interviews designed to achieve Band 7.0+ scores.
+              - generic [ref=f5e150]: Learn more
+            - generic [ref=f5e153]:
+              - generic [ref=f5e157]: Campus Cafeteria & Community
+              - generic [ref=f5e158]: Practice conversational English naturally in our on-site student cafeteria and vibrant campus social lounges.
+              - generic [ref=f5e159]: Learn more
+            - generic [ref=f5e162]:
+              - generic [ref=f5e166]: Teacher Oversight & Progress
+              - generic [ref=f5e167]: Comprehensive student analytics allowing teachers and parents to monitor homework and spoken fluency outside class.
+              - generic [ref=f5e168]: Learn more
+        - generic [ref=f5e172]:
+          - generic [ref=f5e173]:
+            - generic [ref=f5e174]:
+              - generic [ref=f5e175]: The LEO Advantage
+              - generic [ref=f5e176]: Classroom Excellence + 24/7 AI Tutor
+            - link "Try Speaking Lab" [ref=f5e178] [cursor=pointer]:
+              - /url: /dashboard/chat
+          - generic [ref=f5e180]:
+            - generic [ref=f5e182]:
+              - generic [ref=f5e183]: "01"
+              - generic [ref=f5e187]: Join Your Ideal Class
+              - generic [ref=f5e188]: Enroll in morning or evening batches in-person at our Azadi Park campus or join our interactive live online stream.
+            - generic [ref=f5e189]:
+              - generic [ref=f5e190]: "02"
+              - generic [ref=f5e194]: Practice 24/7 with LEO AI
+              - generic [ref=f5e195]: Role-play cafeteria scenarios, job interviews, or IELTS exam questions anytime from your phone or laptop.
+            - generic [ref=f5e196]:
+              - generic [ref=f5e197]: "03"
+              - generic [ref=f5e201]: Achieve Guaranteed Results
+              - generic [ref=f5e202]: Track your pronunciation accuracy and CEFR milestones with measurable progress guaranteed by Leo Institute.
+        - generic [ref=f5e204]:
+          - generic [ref=f5e206]:
+            - generic [ref=f5e207]: Student & Teacher Portal
+            - generic [ref=f5e208]: Your Institutional Command Center.
+            - generic [ref=f5e209]: Every speaking turn, vocabulary review, and attendance milestone tracked in one sleek dashboard.
+          - generic [ref=f5e212]:
+            - generic [ref=f5e213]: portal.leoinstitute.krd / student-lab
+            - generic [ref=f5e220]:
+              - complementary [ref=f5e221]:
+                - generic [ref=f5e223]:
+                  - img "LEO Institute Logo" [ref=f5e225]
+                  - generic [ref=f5e227]:
+                    - generic [ref=f5e228]: LEO
+                    - generic [ref=f5e229]: INSTITUTE
+                - generic [ref=f5e230] [cursor=pointer]: Speaking Lab
+                - generic [ref=f5e234] [cursor=pointer]: Cafeteria Roleplay
+                - generic [ref=f5e237] [cursor=pointer]: IELTS Examiner
+                - generic [ref=f5e240] [cursor=pointer]: Leo Kids & Math
+                - generic [ref=f5e243] [cursor=pointer]: Certificate
+                - generic [ref=f5e247]:
+                  - generic [ref=f5e248]:
+                    - generic [ref=f5e249]: Speaking goal
+                    - generic [ref=f5e250]: 85%
+                  - generic [ref=f5e253]:
+                    - generic [ref=f5e254]: 21 min spoke
+                    - generic [ref=f5e255]: 25 min target
+              - generic [ref=f5e256]:
+                - generic [ref=f5e257]:
+                  - generic [ref=f5e258]:
+                    - generic [ref=f5e259]: Good morning
+                    - generic [ref=f5e260]: Welcome back to Leo Institute 👋
+                  - link "New AI session" [ref=f5e261] [cursor=pointer]:
+                    - /url: /dashboard/chat
+                - generic [ref=f5e263]:
+                  - generic [ref=f5e264]:
+                    - generic [ref=f5e265]: Course Level
+                    - generic [ref=f5e266]: B2 Upper
+                    - generic [ref=f5e267]: B2 Upper-Intermediate
+                  - generic [ref=f5e269]:
+                    - generic [ref=f5e270]: Speaking time
+                    - generic [ref=f5e271]: 14.2 hrs
+                    - generic [ref=f5e272]: this month
+                  - generic [ref=f5e274]:
+                    - generic [ref=f5e275]: Attendance
+                    - generic [ref=f5e276]: 18 Days
+                    - generic [ref=f5e277]: Active enrollment
+                  - generic [ref=f5e279]:
+                    - generic [ref=f5e280]: Pronunciation
+                    - generic [ref=f5e281]: 94.2%
+                    - generic [ref=f5e282]: 94% accuracy score
+                - generic [ref=f5e284]:
+                  - generic [ref=f5e285]:
+                    - generic [ref=f5e286]:
+                      - generic [ref=f5e287]: Vocab mastered
+                      - generic [ref=f5e288]: 148 words
+                    - generic [ref=f5e297]:
+                      - generic [ref=f5e298]: Sat
+                      - generic [ref=f5e299]: Sun
+                      - generic [ref=f5e300]: Mon
+                      - generic [ref=f5e301]: Tue
+                      - generic [ref=f5e302]: Wed
+                      - generic [ref=f5e303]: Thu
+                      - generic [ref=f5e304]: Fri
+                  - generic [ref=f5e305]:
+                    - generic [ref=f5e306]:
+                      - generic [ref=f5e307]:
+                        - generic [ref=f5e308]: Cafeteria Simulation
+                        - generic [ref=f5e309]: Just completed
+                      - generic [ref=f5e310]: "Level 1: Ordering Coffee & Croissant at Leo Cafeteria"
+                      - generic [ref=f5e311]: 14 turns · 96% accuracy
+                    - link "Practice Now" [ref=f5e314] [cursor=pointer]:
+                      - /url: /dashboard/chat
+        - generic [ref=f5e318]:
+          - generic [ref=f5e320]:
+            - generic [ref=f5e321]: Enrollment & Programs
+            - generic [ref=f5e322]: Transparent Institutional Tuition
+          - generic [ref=f5e323]:
+            - generic [ref=f5e324]:
+              - generic [ref=f5e325]: General English
+              - generic [ref=f5e327]:
+                - generic [ref=f5e328]: Standard Cohort
+                - generic [ref=f5e329]: /course
+              - generic [ref=f5e330]: Complete level progression (A1–B2) with certified native-level teachers and full LEO AI access.
+              - generic [ref=f5e331]:
+                - list [ref=f5e332]:
+                  - listitem [ref=f5e333]:
+                    - generic [ref=f5e336]: In-person & Online cohorts
+                  - listitem [ref=f5e337]:
+                    - generic [ref=f5e340]: Guaranteed learning outcomes
+                  - listitem [ref=f5e341]:
+                    - generic [ref=f5e344]: 24/7 LEO AI Speaking Coach
+                  - listitem [ref=f5e345]:
+                    - generic [ref=f5e348]: Campus cafeteria access
+                  - listitem [ref=f5e349]:
+                    - generic [ref=f5e352]: Official LEO Certificate
+                - link "Enroll at Campus" [ref=f5e354] [cursor=pointer]:
+                  - /url: /#cta
+            - generic [ref=f5e357]:
+              - generic [ref=f5e358]:
+                - generic [ref=f5e359]: LEO Kids & Mental Math
+                - generic [ref=f5e360]: Most Enrolled
+              - generic [ref=f5e362]:
+                - generic [ref=f5e363]: Specialized
+                - generic [ref=f5e364]: /course
+              - generic [ref=f5e365]: Academic strengthening (خولی بەهێزکردن) and mental math for school-age students.
+              - generic [ref=f5e366]:
+                - list [ref=f5e367]:
+                  - listitem [ref=f5e368]:
+                    - generic [ref=f5e371]: Interactive kids curriculum
+                  - listitem [ref=f5e372]:
+                    - generic [ref=f5e375]: Mental math & brain training
+                  - listitem [ref=f5e376]:
+                    - generic [ref=f5e379]: Safe campus environment
+                  - listitem [ref=f5e380]:
+                    - generic [ref=f5e383]: Weekly parent progress report
+                  - listitem [ref=f5e384]:
+                    - generic [ref=f5e387]: "#leokids2025 community events"
+                - link "Register Child" [ref=f5e389] [cursor=pointer]:
+                  - /url: /#cta
+            - generic [ref=f5e392]:
+              - generic [ref=f5e393]: IELTS Academic Mastery
+              - generic [ref=f5e395]:
+                - generic [ref=f5e396]: Intensive Track
+                - generic [ref=f5e397]: /course
+              - generic [ref=f5e398]: High-intensity training for university admissions, embassy interviews, and immigration.
+              - generic [ref=f5e399]:
+                - list [ref=f5e400]:
+                  - listitem [ref=f5e401]:
+                    - generic [ref=f5e404]: Band 7.0+ guaranteed strategy
+                  - listitem [ref=f5e405]:
+                    - generic [ref=f5e408]: AI Mock Speaking Examiner
+                  - listitem [ref=f5e409]:
+                    - generic [ref=f5e412]: Writing essay evaluations
+                  - listitem [ref=f5e413]:
+                    - generic [ref=f5e416]: 1-on-1 tutor feedback sessions
+                  - listitem [ref=f5e417]:
+                    - generic [ref=f5e420]: Exclusive Cambridge materials
+                - link "Book Placement Test" [ref=f5e422] [cursor=pointer]:
+                  - /url: /dashboard/chat
+          - generic [ref=f5e425]: Flexible morning and evening cohorts · In-person at Mamostayan or 100% Online
+        - generic [ref=f5e427]:
+          - generic [ref=f5e428]: Visit Us in Sulaymaniyah
+          - generic [ref=f5e431]: Start Your English Journey at LEO Institute Today.
+          - generic [ref=f5e432]: Opposite Azadi Park, Mamostayan Neighborhood, Sulaymaniyah. Call or message us directly on Telegram or Viber.
+          - generic [ref=f5e433]:
+            - link "Chat on Telegram (0770 736 2000)" [ref=f5e434] [cursor=pointer]:
+              - /url: https://t.me/+9647707362000
+            - link "Viber (0750 886 2786)" [ref=f5e437] [cursor=pointer]:
+              - /url: tel:07508862786
+      - region "Notifications alt+T":
+        - list
+    - contentinfo [ref=f5e440]:
+      - generic [ref=f5e441]:
+        - generic [ref=f5e442]:
+          - generic [ref=f5e443]:
+            - link "LEO Institute Logo LEO INSTITUTE پەیمانگای لیۆ · Learn · Enjoy · Stay" [ref=f5e444] [cursor=pointer]:
+              - /url: /
+              - generic [ref=f5e445]:
+                - img "LEO Institute Logo" [ref=f5e447]
+                - generic [ref=f5e448]:
+                  - generic [ref=f5e449]:
+                    - generic [ref=f5e450]: LEO
+                    - generic [ref=f5e451]: INSTITUTE
+                  - generic [ref=f5e452]:
+                    - generic [ref=f5e453]: پەیمانگای لیۆ
+                    - generic [ref=f5e454]: ·
+                    - generic [ref=f5e455]: Learn · Enjoy · Stay
+            - generic [ref=f5e456]: LEO Language & Educational Institute (پەیمانگای لیۆ) — Sulaymaniyah's premier academy for guaranteed English mastery and 24/7 AI conversational practice.
+            - generic [ref=f5e460]:
+              - generic [ref=f5e461]: Sulaymaniyah Campus (کەمپەسی سەرەکی)
+              - generic [ref=f5e462]: Mamostayan Neighborhood, Directly Opposite Azadi Parkسلێمانی - گەڕەکی مامۆستایان - بەرامبەر پارکی ئازادی
+            - generic [ref=f5e463]:
+              - 'link "Telegram: 0770 736 2000" [ref=f5e464] [cursor=pointer]':
+                - /url: https://t.me/+9647707362000
+              - 'link "Viber: 0750 886 2786" [ref=f5e467] [cursor=pointer]':
+                - /url: tel:07508862786
+              - link "leo.institute@yahoo.com" [ref=f5e470] [cursor=pointer]:
+                - /url: mailto:leo.institute@yahoo.com
+            - generic [ref=f5e473]:
+              - link "Leo Institute Kurdish Facebook" [ref=f5e474] [cursor=pointer]:
+                - /url: https://www.facebook.com/leo.kurdish.ins
+              - link "Learn English Online Facebook" [ref=f5e476] [cursor=pointer]:
+                - /url: https://www.facebook.com/learnenglishonlinewithus
+              - link "Leo Institute YouTube" [ref=f5e478] [cursor=pointer]:
+                - /url: https://www.youtube.com/results?search_query=%23leoinstitute
+          - generic [ref=f5e480]:
+            - generic [ref=f5e481]:
+              - generic [ref=f5e482]: Programs
+              - generic [ref=f5e483]:
+                - link "General English" [ref=f5e484] [cursor=pointer]:
+                  - /url: /#programs
+                - link "Online Courses" [ref=f5e485] [cursor=pointer]:
+                  - /url: /#programs
+                - link "LEO Kids & Math" [ref=f5e486] [cursor=pointer]:
+                  - /url: /#programs
+                - link "IELTS Intensive" [ref=f5e487] [cursor=pointer]:
+                  - /url: /#programs
+                - link "AI Speaking Lab" [ref=f5e488] [cursor=pointer]:
+                  - /url: /#programs
+            - generic [ref=f5e489]:
+              - generic [ref=f5e490]: Campus Life
+              - generic [ref=f5e491]:
+                - link "Student Cafeteria" [ref=f5e492] [cursor=pointer]:
+                  - /url: /#programs
+                - link "Mamostayan Branch" [ref=f5e493] [cursor=pointer]:
+                  - /url: /#programs
+                - link "Opposite Azadi Park" [ref=f5e494] [cursor=pointer]:
+                  - /url: /#programs
+                - link "Class Schedule" [ref=f5e495] [cursor=pointer]:
+                  - /url: /#programs
+                - link "Student Portal" [ref=f5e496] [cursor=pointer]:
+                  - /url: /#programs
+            - generic [ref=f5e497]:
+              - generic [ref=f5e498]: Contact & Visit
+              - generic [ref=f5e499]:
+                - link "0770 736 2000 (Telegram)" [ref=f5e500] [cursor=pointer]:
+                  - /url: /#programs
+                - link "0750 886 2786 (Viber)" [ref=f5e501] [cursor=pointer]:
+                  - /url: /#programs
+                - link "leo.institute@yahoo.com" [ref=f5e502] [cursor=pointer]:
+                  - /url: /#programs
+                - link "Facebook Page 1" [ref=f5e503] [cursor=pointer]:
+                  - /url: /#programs
+                - link "Facebook Page 2" [ref=f5e504] [cursor=pointer]:
+                  - /url: /#programs
+        - generic [ref=f5e505]:
+          - generic [ref=f5e506]: © 2026 LEO Institute (پەیمانگای لیۆ). All rights reserved.
+          - generic [ref=f5e507]:
+            - generic [ref=f5e508]: English
+            - generic [ref=f5e511]: AI Speaking Lab Online 24/7
+  - generic:
+    - generic:
+      - generic:
+        - button "Go to parent" [disabled]
+        - button "Open in editor"
+        - button "Close"
+  - generic [ref=f5e774]:
+    - button "Toggle Nuxt DevTools" [ref=f5e775] [cursor=pointer]
+    - generic "Page load time" [ref=f5e779]:
+      - generic [ref=f5e780]: "141"
+      - generic [ref=f5e781]: ms
+    - button "Toggle Component Inspector" [ref=f5e783] [cursor=pointer]

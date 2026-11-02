@@ -16,7 +16,7 @@ const emit = defineEmits<{
 const TYPE_META: Record<string, { icon: string; color: string }> = {
   VOCABULARY: { icon: 'Book1', color: 'text-blue-500 bg-blue-500/10 border-blue-500/20' },
   SPEAKING: { icon: 'Microphone', color: 'text-purple-500 bg-purple-500/10 border-purple-500/20' },
-  GRAMMAR: { icon: 'Candle', color: 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20' },
+  GRAMMAR: { icon: 'Teacher', color: 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20' },
   CONVERSATION: { icon: 'Messages', color: 'text-brand-primary bg-brand-primary/10 border-brand-primary/20' },
   STUDY_TIME: { icon: 'Clock', color: 'text-rose-500 bg-rose-500/10 border-rose-500/20' },
 }
