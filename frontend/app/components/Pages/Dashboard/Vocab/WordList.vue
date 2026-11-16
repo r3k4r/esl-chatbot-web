@@ -126,7 +126,7 @@ function confirmDelete() {
         </span>
 
         <!-- Delete -->
-        <AppButton
+        <AppButton aria-label="Delete word"
           variant="outline"
           size="32"
           radius="8"

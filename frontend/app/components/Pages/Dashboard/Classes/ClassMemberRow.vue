@@ -74,7 +74,7 @@ function avatarInitial(name: string) { return name.charAt(0).toUpperCase() }
     <!-- Row actions (3-dot menu) — never hover-only, per the design rules -->
     <UiDropdownMenu v-if="hasMenu">
       <UiDropdownMenuTrigger as-child>
-        <AppButton
+        <AppButton aria-label="Member actions"
           variant="secondary" size="28" radius="8" aspect="square" icon="More"
           :icon-config="{ color: 'currentColor', size: 16 }" :loading="busy"
         />

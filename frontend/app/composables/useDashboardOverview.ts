@@ -64,7 +64,8 @@ export function useDashboardOverview() {
 
   async function fetchOverview() {
     loading.value = true
-    error.value = null
+    // `error` is only replaced once the answer arrives, so a retry keeps the error
+    // screen up (with a spinning button) instead of flashing back to skeletons.
     try {
       const res = await useHttp<{ success: boolean; message: string; data: DashboardOverviewData }>({
         method: 'GET',
@@ -74,6 +75,7 @@ export function useDashboardOverview() {
       })
       if (res.success && res.data?.data) {
         raw.value = res.data.data
+        error.value = null
       } else {
         error.value = res.data?.message ?? res.message ?? 'Failed to load dashboard'
       }

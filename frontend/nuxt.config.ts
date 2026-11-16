@@ -60,5 +60,14 @@ export default defineNuxtConfig({
       },
     ],
   },
-  modules: ['@pinia/nuxt', '@nuxt/image', 'shadcn-nuxt', 'nuxt-marquee', '@nuxtjs/i18n']
+  modules: ['@pinia/nuxt', '@nuxt/image', 'shadcn-nuxt', 'nuxt-marquee', '@nuxtjs/i18n'],
+
+  // `nuxi build --envName e2e` (used by Playwright) builds into its own folders so it
+  // never clobbers a running dev server's .nuxt or a production .output.
+  $env: {
+    e2e: {
+      buildDir: '.nuxt-e2e',
+      nitro: { output: { dir: '.output-e2e' } },
+    },
+  },
 })

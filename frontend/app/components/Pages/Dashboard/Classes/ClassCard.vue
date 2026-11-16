@@ -113,7 +113,7 @@ const codeStatusIcon = computed(() => {
             {{ cls.classCode }}
           </AppText>
         </div>
-        <AppButton
+        <AppButton aria-label="Copy class code"
           variant="secondary"
           size="32"
           radius="8"
@@ -121,7 +121,7 @@ const codeStatusIcon = computed(() => {
           :icon-config="{ color: copying ? 'var(--color-brand-primary)' : 'currentColor', size: 14 }"
           @click.stop="emit('copy', cls.classCode)"
         />
-        <AppButton
+        <AppButton aria-label="Generate a new class code"
           variant="secondary"
           size="32"
           radius="8"

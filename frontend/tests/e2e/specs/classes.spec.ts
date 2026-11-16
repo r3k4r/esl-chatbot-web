@@ -1,0 +1,111 @@
+import { test, expect, visit } from '../support/fixtures'
+import { classDetail } from '../../fixtures/api'
+import type { Page } from '@playwright/test'
+
+const tab = (page: Page, name: string) => page.getByRole('button', { name, exact: true })
+
+test.describe('student', () => {
+  test.beforeEach(async ({ loginAs }) => loginAs('student'))
+
+  test('lists enrolled classes', async ({ page }) => {
+    await visit(page, '/dashboard/classes')
+    await expect(page.getByText('English B1 Evening')).toBeVisible()
+    await expect(page.getByText('Business English')).toBeVisible()
+  })
+
+  test('joining with an unknown code shows the server error', async ({ page }) => {
+    await visit(page, '/dashboard/classes')
+    await page.getByRole('button', { name: 'Join a class' }).first().click()
+    const dialog = page.getByRole('dialog')
+    await dialog.getByLabel('Class code').fill('NOPE123')
+    await dialog.getByRole('button', { name: 'Join class' }).click()
+    await expect(page.getByText('No class found with that code.')).toBeVisible()
+  })
+
+  test('joins a class with a valid code', async ({ page }) => {
+    await visit(page, '/dashboard/classes')
+    await page.getByRole('button', { name: 'Join a class' }).first().click()
+    const dialog = page.getByRole('dialog')
+    await dialog.getByLabel('Class code').fill('engb1x')
+    const joined = page.waitForResponse((r) => r.url().endsWith('/classes/join') && r.status() === 200)
+    await dialog.getByRole('button', { name: 'Join class' }).click()
+    await joined
+  })
+
+  test('sees only member tabs and no management actions', async ({ page }) => {
+    await visit(page, '/dashboard/classes/c1')
+    for (const name of ['Members', 'Tasks', 'Announcements']) await expect(tab(page, name)).toBeVisible()
+    for (const name of ['Students', 'Analytics']) await expect(tab(page, name)).toHaveCount(0)
+    await expect(page.getByRole('link', { name: 'Edit', exact: true })).toHaveCount(0)
+    await expect(page.getByRole('button', { name: 'Archive', exact: true })).toHaveCount(0)
+    await expect(page.getByPlaceholder(/Write an announcement/)).toHaveCount(0)
+  })
+
+  test('deep-links straight to a tab', async ({ page }) => {
+    await visit(page, '/dashboard/classes/c1?tab=announcements')
+    await expect(page.getByText('Welcome to the class! Homework is due Friday.')).toBeVisible()
+  })
+
+  test('a student cannot force a tutor-only tab via the URL', async ({ page }) => {
+    await visit(page, '/dashboard/classes/c1?tab=analytics')
+    await expect(page.getByText('Subject-verb agreement')).toHaveCount(0)
+  })
+})
+
+test.describe('tutor', () => {
+  test.beforeEach(async ({ loginAs }) => loginAs('tutor'))
+
+  test('lists the classes they teach', async ({ page }) => {
+    await visit(page, '/dashboard/classes')
+    await expect(page.getByText('My Classes')).toBeVisible()
+    await expect(page.getByText('English B1 Evening')).toBeVisible()
+  })
+
+  test('sees every tab plus edit and archive', async ({ page }) => {
+    await visit(page, '/dashboard/classes/c1')
+    for (const name of ['Members', 'Students', 'Analytics', 'Tasks', 'Announcements']) await expect(tab(page, name)).toBeVisible()
+    await expect(page.getByRole('link', { name: 'Edit', exact: true })).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Archive', exact: true })).toBeVisible()
+  })
+
+  test('monitors students and class analytics', async ({ page }) => {
+    await visit(page, '/dashboard/classes/c1')
+    await tab(page, 'Students').click()
+    await expect(page.getByText('Yuki Tanaka').first()).toBeVisible()
+    await tab(page, 'Analytics').click()
+    await expect(page.getByText('Subject-verb agreement')).toBeVisible()
+  })
+
+  test('posts an announcement', async ({ page }) => {
+    await visit(page, '/dashboard/classes/c1?tab=announcements')
+    await page.getByPlaceholder(/Write an announcement/).fill('Quiz moved to Monday.')
+    const posted = page.waitForRequest((r) => r.url().endsWith('/classes/c1/announcements') && r.method() === 'POST')
+    await page.getByRole('button', { name: 'Post', exact: true }).click()
+    expect((await posted).postDataJSON()).toMatchObject({ content: 'Quiz moved to Monday.' })
+  })
+
+  test('creates a class', async ({ page }) => {
+    await visit(page, '/dashboard/classes/create')
+    await page.getByLabel('Class name').fill('IELTS Speaking Prep')
+    const created = page.waitForRequest((r) => r.url().endsWith('/classes') && r.method() === 'POST')
+    await page.getByRole('button', { name: 'Create class' }).click()
+    expect((await created).postDataJSON()).toMatchObject({ className: 'IELTS Speaking Prep' })
+  })
+
+  test('keeps Create class disabled until the class has a name', async ({ page }) => {
+    await visit(page, '/dashboard/classes/create')
+    const create = page.getByRole('button', { name: 'Create class' })
+    await expect(create).toBeDisabled()
+    await page.getByLabel('Class name').fill('   ')
+    await expect(create).toBeDisabled()
+    await page.getByLabel('Class name').fill('Grammar club')
+    await expect(create).toBeEnabled()
+  })
+
+  test('an archived class is read-only with an unarchive action', async ({ page, mockApi }) => {
+    await mockApi('GET', '/classes/c1', { body: { success: true, message: 'OK', data: { ...classDetail('c1', 'tutor'), archived: true, archivedAt: '2026-06-01T00:00:00.000Z' } } })
+    await visit(page, '/dashboard/classes/c1')
+    await expect(page.getByRole('button', { name: 'Unarchive' }).first()).toBeVisible()
+    await expect(page.getByRole('link', { name: 'Edit', exact: true })).toHaveCount(0)
+  })
+})

@@ -12,7 +12,14 @@
     "build:infisical": "infisical run --env=dev -- nuxt build",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "test": "node tests/run-vitest.mjs run",
+    "test:watch": "node tests/run-vitest.mjs",
+    "test:coverage": "node tests/run-vitest.mjs run --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:report": "playwright show-report tests/.playwright-report",
+    "test:all": "bun run test && bun run test:e2e"
   },
   "dependencies": {
     "@lucide/vue": "^1.17.0",
@@ -44,7 +51,13 @@
   },
   "devDependencies": {
     "@iconify/vue": "^5.0.0",
+    "@nuxt/test-utils": "^4.4.0",
+    "@playwright/test": "^1.65.1",
     "@types/node": "^25.6.0",
-    "typescript": "^6.0.2"
+    "@vitest/coverage-v8": "^4",
+    "@vue/test-utils": "^2.6.0",
+    "happy-dom": "^21.0.4",
+    "typescript": "^6.0.2",
+    "vitest": "^4"
   }
 }

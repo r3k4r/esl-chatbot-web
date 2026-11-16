@@ -206,7 +206,11 @@ Verified: `nuxi typecheck` clean + production `nuxt build`.
 
 ---
 
-### 🐛 `AppButton` sends every `:to` through `router-link` — external links break (found 2026-07-25, NOT fixed)
+### ✅ `AppButton` sends every `:to` through `router-link` — external links break (found 2026-07-25, FIXED 2026-11-16)
+**Fixed (Rekar's request):** the template now uses `resolvedTag` with the `NuxtLink` component, which
+handles internal and external URLs; a disabled button with `to` renders as a real disabled `<button>`.
+Covered in `tests/unit/components/primitives.nuxt.test.ts`. Original notes below.
+
 **Rekar's call — this is a shared global component, so it was deliberately left alone and fixed at
 the call site instead** (frontend/CLAUDE.md rule #4).
 
@@ -223,7 +227,11 @@ button in the app (7 usages), so it needs a deliberate pass + retest rather than
 
 ---
 
-### 🐛 `AppButton`'s `disabled` prop is never applied to the element (found 2026-07-31, NOT fixed)
+### ✅ `AppButton`'s `disabled` prop is never applied to the element (found 2026-07-31, FIXED 2026-11-16)
+**Fixed (Rekar's request):** `:disabled="isDisabled"` is bound. Every `:disabled` consumer was checked
+(all mean it literally), and the call-site workarounds in Composer, SessionsPanel, SessionEndedPanel,
+ThreadHeader and UsersPagination now use the real prop. Original notes below.
+
 **Same line as the `:to` bug above, same reasoning for leaving it — Rekar's call.**
 
 `App/Button.vue:2` binds `:disabled="loading"`, not `:disabled="isDisabled"`. Because `disabled` is a

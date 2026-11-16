@@ -82,7 +82,7 @@ const barColor = computed(() => {
         <!-- 3-dot actions menu -->
         <UiDropdownMenu>
           <UiDropdownMenuTrigger as-child>
-            <AppButton variant="secondary" size="28" radius="8" aspect="square" icon="More"
+            <AppButton aria-label="Goal actions" variant="secondary" size="28" radius="8" aspect="square" icon="More"
               :icon-config="{ color: 'var(--color-text-subtle)', size: 14 }"
               class-list="border-0! shadow-none! bg-transparent! hover:bg-surface-raised!" />
           </UiDropdownMenuTrigger>

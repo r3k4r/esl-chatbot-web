@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const {
   loading,
+  error,
   fetchTutorDashboard,
   classes,
   students,
@@ -67,6 +68,17 @@ const inactiveCount = computed(() =>
       />
     </div>
 
+    <!-- Failed to load: one clear message instead of a dashboard full of zeros -->
+    <BlockLoadError
+      v-if="error"
+      title="We couldn't load your classes overview"
+      description="Your classes and students are safe. This is usually a brief connection problem, so give it another try in a moment."
+      :detail="error"
+      :retrying="loading"
+      @retry="fetchTutorDashboard"
+    />
+
+    <template v-else>
     <!-- Stat cards -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 animate-card-enter" style="--delay:80ms">
       <template v-if="loading">
@@ -191,6 +203,7 @@ const inactiveCount = computed(() =>
         </template>
       </PagesDashboardSharedDashSectionCard>
     </div>
+    </template>
 
   </div>
 </template>

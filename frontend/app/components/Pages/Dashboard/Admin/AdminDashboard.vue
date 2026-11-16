@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const {
   loading,
+  error,
   fetchAdminDashboard,
   totalUsers,
   usersByRole,
@@ -69,6 +70,17 @@ const inactiveUsers = computed(() =>
       </div>
     </div>
 
+    <!-- Failed to load: one clear message instead of a dashboard full of zeros -->
+    <BlockLoadError
+      v-if="error"
+      title="We couldn't load the platform overview"
+      description="Nothing has changed on the platform. This is usually a brief connection problem, so give it another try in a moment."
+      :detail="error"
+      :retrying="loading"
+      @retry="fetchAdminDashboard"
+    />
+
+    <template v-else>
     <!-- Top stat cards -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 animate-card-enter" style="--delay:80ms">
       <template v-if="loading">
@@ -221,6 +233,7 @@ const inactiveUsers = computed(() =>
       </PagesDashboardSharedDashSectionCard>
 
     </div>
+    </template>
 
   </div>
 </template>

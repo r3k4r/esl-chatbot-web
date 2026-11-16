@@ -93,7 +93,7 @@ function isExpired(expiresAt: string | null) {
     <!-- Actions — always visible -->
     <td class="px-4 py-3.5">
       <div class="flex items-center gap-1.5">
-        <AppButton
+        <AppButton aria-label="View class"
           variant="primary"
           size="28"
           radius="8"
@@ -101,7 +101,7 @@ function isExpired(expiresAt: string | null) {
           :icon-config="{ color: 'white', size: 13 }"
           @click="$emit('open', cls.id)"
         />
-        <AppButton
+        <AppButton aria-label="Edit class"
           variant="secondary"
           size="28"
           radius="8"
@@ -109,7 +109,7 @@ function isExpired(expiresAt: string | null) {
           :icon-config="{ color: 'currentColor', size: 13 }"
           @click="$emit('edit', cls.id)"
         />
-        <AppButton
+        <AppButton aria-label="Delete class"
           variant="secondary"
           size="28"
           radius="8"

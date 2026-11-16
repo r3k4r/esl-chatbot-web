@@ -45,7 +45,12 @@ bun run preview    # Serve the built output locally (no secrets needed)
 bun run generate   # Static generation (via Infisical)
 ```
 
-There is no lint step or test runner configured in this workspace.
+```bash
+bun run test        # unit tests (Vitest) — tests/unit
+bun run test:e2e    # e2e (Playwright, desktop + tablet + phone) — tests/e2e
+```
+
+Tests live in `tests/` — read [tests/README.md](tests/README.md) before adding one. When you add an endpoint call, add its route to `tests/e2e/mock-api/routes.ts`; when you add a page, add it to the role and responsive matrices. There is no lint step.
 
 ## Folder Structure Rules (authoritative)
 

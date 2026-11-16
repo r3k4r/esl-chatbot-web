@@ -3,6 +3,7 @@ const router = useRouter()
 
 const {
   loading,
+  error,
   fetchOverview,
   greetingHeroProps,
   dueVocabCount,
@@ -26,6 +27,16 @@ onMounted(fetchOverview)
 <template>
   <div class="h-full overflow-y-auto p-5 sm:p-7 space-y-5">
 
+    <!-- Failed to load: one clear message instead of a dashboard full of zeros -->
+    <BlockLoadError
+      v-if="error"
+      title="We couldn't load your dashboard"
+      :detail="error"
+      :retrying="loading"
+      @retry="fetchOverview"
+    />
+
+    <template v-else>
     <!-- Greeting hero -->
     <div class="animate-card-enter" style="--delay:0ms">
       <UiSkeleton v-if="loading" class="h-44 w-full rounded-2xl" />
@@ -102,6 +113,7 @@ onMounted(fetchOverview)
         </div>
       </div>
     </div>
+    </template>
 
   </div>
 </template>

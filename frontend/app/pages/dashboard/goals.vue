@@ -34,7 +34,12 @@ watch([filterStatus, filterType], fetchGoals)
 
 const modalOpen = ref(false)
 const editingGoal = ref<Goal | null>(null)
+// The open flag and the target are separate on purpose: UiAlertDialogAction closes the
+// dialog (update:open=false) BEFORE its @click runs, so a target tied to `open` would
+// already be gone by the time confirmDelete reads it — goals were never deleted.
+const deleteOpen = ref(false)
 const deleteTarget = ref<string | null>(null)
+function askDelete(id: string) { deleteTarget.value = id; deleteOpen.value = true }
 
 function openCreate() { editingGoal.value = null; modalOpen.value = true }
 function openEdit(goal: Goal) { editingGoal.value = goal; modalOpen.value = true }
@@ -142,7 +147,7 @@ const emptyMessage = computed(() =>
           :goal="goal"
           :delay="80 + i * 60"
           @edit="openEdit"
-          @delete="id => deleteTarget = id"
+          @delete="askDelete"
           @update-status="handleStatusChange"
           @update-progress="(id, p) => updateGoal(id, { progress: p })"
         />
@@ -190,14 +195,14 @@ const emptyMessage = computed(() =>
   />
 
   <!-- Delete confirmation -->
-  <UiAlertDialog :open="!!deleteTarget" @update:open="v => { if (!v) deleteTarget = null }">
+  <UiAlertDialog v-model:open="deleteOpen">
     <UiAlertDialogContent>
       <UiAlertDialogHeader>
         <UiAlertDialogTitle class="font-poppins">Delete goal?</UiAlertDialogTitle>
         <UiAlertDialogDescription class="font-poppins">This action cannot be undone.</UiAlertDialogDescription>
       </UiAlertDialogHeader>
       <UiAlertDialogFooter>
-        <UiAlertDialogCancel class="font-poppins" @click="deleteTarget = null">Cancel</UiAlertDialogCancel>
+        <UiAlertDialogCancel class="font-poppins">Cancel</UiAlertDialogCancel>
         <UiAlertDialogAction class="bg-red-500 hover:bg-red-600 font-poppins" @click="confirmDelete">Delete</UiAlertDialogAction>
       </UiAlertDialogFooter>
     </UiAlertDialogContent>

@@ -99,7 +99,7 @@ async function handleSubmit(payload: {
 
       <!-- Header -->
       <div class="flex items-center gap-3 animate-card-enter" style="--delay:0ms">
-        <AppButton variant="secondary" size="36" radius="8" icon="ArrowLeft" :to="`/dashboard/classes/${classId}`" />
+        <AppButton aria-label="Go back" variant="secondary" size="36" radius="8" icon="ArrowLeft" :to="`/dashboard/classes/${classId}`" />
         <div>
           <template v-if="loading">
             <UiSkeleton class="h-6 w-40 rounded-lg" />

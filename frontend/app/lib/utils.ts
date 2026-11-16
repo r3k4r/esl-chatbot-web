@@ -6,6 +6,25 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+/** "45 seconds", "1 minute", "3 hours" — rounded up so we never promise too early. */
+export function waitText(seconds: number): string {
+  const [count, unit] = seconds < 60
+    ? [Math.max(1, Math.ceil(seconds)), 'second']
+    : seconds < 3600
+      ? [Math.ceil(seconds / 60), 'minute']
+      : [Math.ceil(seconds / 3600), 'hour']
+  return `${count} ${unit}${count === 1 ? '' : 's'}`
+}
+
+/** `Retry-After` is either delta-seconds or an HTTP date; returns whole seconds, or undefined. */
+export function parseRetryAfter(header: string | null | undefined, now = Date.now()): number | undefined {
+  if (!header) return undefined
+  const seconds = Number(header)
+  if (Number.isFinite(seconds)) return seconds > 0 ? Math.ceil(seconds) : undefined
+  const at = Date.parse(header)
+  return Number.isNaN(at) || at <= now ? undefined : Math.ceil((at - now) / 1000)
+}
+
 /**
  * Strip HTML tags to plain text and decode the handful of entities our
  * sanitized AI replies can contain. SSR-safe (no DOM access), so it's usable

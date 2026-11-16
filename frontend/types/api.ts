@@ -691,7 +691,7 @@ export interface paths {
         put?: never;
         /**
          * Login with username and password
-         * @description Standard email/password login. Returns an access token (15m) and a refresh token (7d). If the account was created with Google Sign-In (no password), a 400 is returned with a clear message directing the user to Google login.
+         * @description Standard email/password login. Returns an access token (20m) and a refresh token (1h), each with its expiry. If the account was created with Google Sign-In (no password), a 400 is returned with a clear message directing the user to Google login.
          */
         post: {
             parameters: {
@@ -828,6 +828,10 @@ export interface paths {
                                 user?: components["schemas"]["AuthUser"];
                                 accessToken?: string;
                                 refreshToken?: string;
+                                /** Format: date-time */
+                                accessTokenExpiresAt?: string;
+                                /** Format: date-time */
+                                refreshTokenExpiresAt?: string;
                             } | {
                                 /** @example true */
                                 needsRegistration?: boolean;
@@ -977,7 +981,13 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Obtain a new access token using a valid refresh token */
+        /**
+         * Obtain a new access token using a valid refresh token
+         * @description Always returns a new access token. Once the refresh token has used half its
+         *     lifetime it is rotated: the response also carries `refreshToken` +
+         *     `refreshTokenExpiresAt`, and the old refresh token stops working after a
+         *     60-second grace period (so concurrent tabs don't sign each other out).
+         */
         post: {
             parameters: {
                 query?: never;
@@ -1006,7 +1016,16 @@ export interface paths {
                             /** @example Access token refreshed */
                             message?: string;
                             data?: {
-                                accessToken?: string;
+                                accessToken: string;
+                                /** Format: date-time */
+                                accessTokenExpiresAt: string;
+                                /** @description Present only when the refresh token was rotated */
+                                refreshToken?: string;
+                                /**
+                                 * Format: date-time
+                                 * @description Present only when the refresh token was rotated
+                                 */
+                                refreshTokenExpiresAt?: string;
                             };
                         };
                     };
@@ -1018,7 +1037,7 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Rate limit exceeded (30 requests per 15 minutes per IP) */
+                /** @description Rate limit exceeded (30 requests per 15 minutes per IP). `Retry-After` header holds the wait in seconds. */
                 429: {
                     headers: {
                         [name: string]: unknown;
@@ -7410,15 +7429,23 @@ export interface components {
             } | null;
         };
         AuthTokens: {
-            /** @description JWT access token — expires in 15 minutes. Send as Bearer token in Authorization header. */
+            /** @description JWT access token — expires in 20 minutes (JWT_ACCESS_EXPIRES). Send as Bearer token in Authorization header. */
             accessToken?: string;
-            /** @description JWT refresh token — expires in 7 days. Store securely (httpOnly cookie or secure storage). */
+            /** @description JWT refresh token — expires in 1 hour (JWT_REFRESH_EXPIRES) and is rotated by POST /auth/refresh once half its lifetime is used. Store securely (httpOnly cookie or secure storage). */
             refreshToken?: string;
+            /** Format: date-time */
+            accessTokenExpiresAt?: string;
+            /** Format: date-time */
+            refreshTokenExpiresAt?: string;
         };
         AuthResponse: {
             user?: components["schemas"]["AuthUser"];
             accessToken?: string;
             refreshToken?: string;
+            /** Format: date-time */
+            accessTokenExpiresAt?: string;
+            /** Format: date-time */
+            refreshTokenExpiresAt?: string;
         };
         ClassCodeInfo: {
             /** Format: uuid */

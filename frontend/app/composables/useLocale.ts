@@ -2,14 +2,18 @@
  * Thin wrapper around @nuxtjs/i18n that preserves the existing `useLocale()`
  * API surface used by all public marketing components.
  *
- * Previously this was a hand-rolled cookie-based locale system. It is now
- * fully backed by @nuxtjs/i18n, which handles SSR, cookie persistence, and
- * `<html lang>` + `dir` attributes automatically.
+ * Backed by @nuxtjs/i18n, which handles SSR and the `<html lang>` + `dir`
+ * attributes. The chosen language is remembered in localStorage (i18n's own
+ * cookie is off: `detectBrowserLanguage: false`) and restored after hydration
+ * by plugins/locale.client.ts — so the server always renders the default
+ * language first.
  *
  * Usage in components is unchanged:
  *   const { t, dir, isRtl, locale, locales, setLocale, config } = useLocale()
  *   // template: {{ t('hero.titleLead') }}
  */
+export const LOCALE_STORAGE_KEY = 'locale'
+
 export function useLocale() {
   const { locale, locales, setLocale: i18nSetLocale, t, tm, rt } = useI18n()
 
@@ -27,6 +31,10 @@ export function useLocale() {
     // validate via the locale registry before calling.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     i18nSetLocale(next as any)
+    // Remembered per device; restored after hydration by plugins/locale.client.ts.
+    if (import.meta.client) {
+      try { localStorage.setItem(LOCALE_STORAGE_KEY, next) } catch { /* storage unavailable */ }
+    }
   }
 
   /**
