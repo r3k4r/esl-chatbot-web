@@ -1,6 +1,6 @@
 import { toast } from 'vue-sonner'
 import { useAuthStore } from '~~/stores/auth';
-import { parseRetryAfter, waitText } from '~/lib/utils';
+import { inApp, parseRetryAfter, waitText } from '~/lib/utils';
 
 type HttpOptions = {
   method: 'GET' | 'POST' | 'DELETE' | 'PUT' | 'PATCH'
@@ -26,9 +26,6 @@ type HttpResponse<T = any> = {
 const FALLBACK_BASE_URL = 'http://localhost:8000/api/v1'
 
 type NuxtAppOrNull = ReturnType<typeof tryUseNuxtApp>
-// Nuxt composables (useCookie, useRuntimeConfig) need the Nuxt context, which is gone
-// after an `await` during SSR — so it is captured up front and re-entered here.
-const inApp = <T>(app: NuxtAppOrNull, fn: () => T): T => (app ? app.runWithContext(fn) : fn())
 
 function buildHeaders(app: NuxtAppOrNull, requireAuth: boolean, body?: any, extra?: Record<string, string>): Record<string, string> {
   const headers: Record<string, string> = {

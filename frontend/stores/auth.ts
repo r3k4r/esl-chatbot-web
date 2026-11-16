@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import type { User } from "@/common/model/user";
+import { inApp } from "~/lib/utils";
 import type { RefreshOutcome, TokenSet } from "~/common/types/auth-types";
 import type {
   SignInSchema,
@@ -28,9 +29,8 @@ const STORAGE_KEYS = ["accessToken", "refreshToken", "accessTokenExpiresAt", "re
 
 // Nuxt composables (useCookie, useRuntimeConfig) need the Nuxt context. During SSR it
 // is gone after the first `await` inside an action, so each action captures the app
-// up front and runs composables through it. (This is what used to break SSR refresh:
+// up front and runs composables through `inApp`. (This is what used to break SSR refresh:
 // users were signed out on any reload once their access token had expired.)
-const inApp = <T>(app: NuxtAppOrNull, fn: () => T): T => (app ? app.runWithContext(fn) : fn());
 
 // One refresh at a time per store (per request on the server): parallel 401s all
 // wait for the same answer instead of racing — or signing each other out.

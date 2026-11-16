@@ -6,6 +6,24 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+/**
+ * Runs `fn` inside a captured Nuxt app's context and returns its result *synchronously*.
+ * Nuxt composables (useCookie, useRuntimeConfig) need that context, which is gone after
+ * an `await` during SSR. On the server `app.runWithContext` always returns a Promise
+ * (unctx `callAsync`), even for a sync `fn`, so the result is captured inside instead.
+ */
+export function inApp<T>(app: { runWithContext: (fn: () => any) => unknown } | null | undefined, fn: () => T): T {
+  if (!app) return fn()
+  let result!: T
+  let failed = false
+  let error: unknown
+  app.runWithContext(() => {
+    try { result = fn() } catch (e) { failed = true; error = e }
+  })
+  if (failed) throw error
+  return result
+}
+
 /** "45 seconds", "1 minute", "3 hours" — rounded up so we never promise too early. */
 export function waitText(seconds: number): string {
   const [count, unit] = seconds < 60
