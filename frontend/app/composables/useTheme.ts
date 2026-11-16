@@ -47,5 +47,5 @@ export function useTheme() {
     if (profileTheme === 'light' || profileTheme === 'dark') applyTheme(profileTheme)
   }
 
-  return { theme: readonly(theme), applyTheme, syncFromProfile }
+  return { theme: readonly(theme), applyTheme, syncFromProfile, paint }
 }
