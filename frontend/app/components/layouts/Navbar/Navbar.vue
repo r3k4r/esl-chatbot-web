@@ -1,8 +1,10 @@
 <template>
     <header
         id="site-navbar"
-        class="fixed top-0 inset-x-0 z-50 border-b transition-all duration-300"
-        :class="scrolled ? 'bg-brand-ink/60 backdrop-blur-xl border-neutral-50/10' : 'bg-transparent border-transparent'"
+        class="fixed top-0 inset-x-0 z-50 border-b transition-[background-color,border-color,box-shadow] duration-300"
+        :class="scrolled
+            ? 'bg-brand-ink/95 backdrop-blur-md border-neutral-50/8 shadow-[0_12px_32px_-16px_rgba(17,17,17,0.45)]'
+            : 'bg-transparent border-transparent'"
     >
         <div class="container-lg layout-padding-lg h-16 flex items-center justify-between">
             <AppLink to="/" class="flex items-center gap-2 group" @click="handleLogoClick">
@@ -17,7 +19,7 @@
                     v-for="item in navLinks"
                     :key="item.link"
                     :to="item.link"
-                    class="group relative text-[13px] font-medium text-neutral-50/70 transition-colors hover:text-brand-primary after:absolute after:inset-x-0 after:-bottom-1 after:h-0.5 after:origin-[left_center] rtl:after:origin-[right_center] after:scale-x-0 after:bg-brand-primary after:transition-transform after:duration-300 hover:after:scale-x-100"
+                    class="group relative text-[14px] font-medium text-neutral-50/70 transition-colors hover:text-brand-primary after:absolute after:inset-x-0 after:-bottom-1 after:h-0.5 after:origin-[left_center] rtl:after:origin-[right_center] after:scale-x-0 after:bg-brand-primary after:transition-transform after:duration-300 hover:after:scale-x-100"
                     :class="activeLink === item.link ? 'text-brand-primary after:scale-x-100' : ''"
                     @click="handleLinkClick(item.link)"
                 >
@@ -27,16 +29,16 @@
 
             <div class="hidden md-lg:flex items-center gap-3">
                 <LayoutsNavbarLanguageSwitcher />
-                <AppButton to="/signin" variant="brand" size="38" class-list="px-3.5 text-[13px] gap-1.5">
+                <AppButton to="/signin" variant="brand" size="38" class-list="px-3.5 text-[14px] gap-1.5">
                     <span>{{ t('nav.getStarted') }}</span>
-                    <Icon icon="lucide:arrow-right" width="13" class="rtl:rotate-180" />
+                    <Icon icon="lucide:arrow-right" width="16" class="rtl:rotate-180" />
                 </AppButton>
             </div>
 
             <div class="md-lg:hidden flex items-center gap-2">
-                <AppButton to="/#cta" variant="brand" size="38" class-list="px-3 sm:px-3.5 text-[13px] gap-1.5">
+                <AppButton to="/#cta" variant="brand" size="38" class-list="px-3 sm:px-3.5 text-[14px] gap-1.5">
                     <span>{{ t('nav.getStarted') }}</span>
-                    <Icon icon="lucide:arrow-right" width="13" class="rtl:rotate-180" />
+                    <Icon icon="lucide:arrow-right" width="16" class="rtl:rotate-180" />
                 </AppButton>
                 <LayoutsNavbarMenu :nav-items="navLinks" :active-link="activeLink" @select="handleLinkClick" />
             </div>

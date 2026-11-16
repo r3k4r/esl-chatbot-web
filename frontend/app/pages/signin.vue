@@ -17,6 +17,9 @@ const formData = reactive<SignInSchema>({
 })
 
 const serverError = ref<string>('')
+// Too many sign-in attempts: lock the button until the backend's Retry-After lifts.
+const cooldown = useCooldown()
+const submitLabel = computed(() => cooldown.active.value ? `Try again in ${cooldown.label.value}` : 'Sign in')
 const reacceptOpen = ref(false)
 let reacceptCancelled = false
 
@@ -46,6 +49,7 @@ const handleSubmit = async () => {
         return
     }
 
+    if (response.status === 429 && response.retryAfter) cooldown.start(response.retryAfter)
     serverError.value = response.message || 'Invalid username or password'
 }
 
@@ -117,10 +121,11 @@ const handleReacceptClose = () => {
                     size="52"
                     radius="full"
                     :loading="authStore.isLoading"
+                    :disabled="cooldown.active.value"
                     class-list="w-full mt-2"
-                    aria-label="Sign in"
+                    :aria-label="submitLabel"
                 >
-                    Sign in
+                    {{ submitLabel }}
                 </AppButton>
             </template>
         </Form>

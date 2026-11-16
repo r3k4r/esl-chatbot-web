@@ -47,6 +47,18 @@ export const PLAN_META: Record<PlanId, PlanMeta> = {
   },
 }
 
+// Landing-page pricing card: structural ids + localized copy (see Pages/Home/Pricing.vue).
+export interface PricingPlan {
+  id: 'starter' | 'gold' | 'premium'
+  planKey?: 'GOLD' | 'PREMIUM'
+  featured?: boolean
+  name: string
+  price: string
+  description: string
+  features: string[]
+  cta: string
+}
+
 export const INTERVAL_LABELS: Record<IntervalMonths, string> = {
   1: '1 month',
   3: '3 months',

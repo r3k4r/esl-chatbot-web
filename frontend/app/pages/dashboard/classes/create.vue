@@ -42,7 +42,7 @@ async function handleSubmit(payload: {
 
       <!-- Header -->
       <div class="flex items-center gap-3 animate-card-enter" style="--delay:0ms">
-        <AppButton variant="secondary" size="36" radius="8" icon="ArrowLeft" :to="'/dashboard/classes'" />
+        <AppButton aria-label="Go back" variant="secondary" size="36" radius="8" icon="ArrowLeft" :to="'/dashboard/classes'" />
         <div>
           <p class="text-[22px] font-semibold font-poppins tracking-tight" :style="`color:var(--text-heading)`">Create a class</p>
           <p class="text-[13px] font-poppins mt-0.5" :style="`color:var(--text-muted)`">Set up a new class for your students</p>

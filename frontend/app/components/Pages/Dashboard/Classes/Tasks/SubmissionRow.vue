@@ -96,7 +96,7 @@ async function saveFeedback() {
           <div class="rounded-lg p-3 space-y-1.5" style="background:var(--surface-raised);border-left:3px solid var(--color-brand-primary)">
             <div class="flex items-center justify-between">
               <AppText size="11" weight="semibold" :uppercase="true" class-list="tracking-[0.1em]" :style="`color:var(--color-brand-primary)`">Your feedback</AppText>
-              <AppButton
+              <AppButton aria-label="Edit feedback"
                 variant="secondary"
                 size="24"
                 radius="8"

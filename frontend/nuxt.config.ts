@@ -11,8 +11,9 @@ export default defineNuxtConfig({
       script: [
         {
           // Apply the saved theme before first paint so dark-mode users
-          // don't get a flash of the light UI. Kept in sync by useTheme().
-          innerHTML: "try{if(localStorage.getItem('theme')==='dark')document.documentElement.classList.add('dark')}catch(e){}",
+          // don't get a flash of the light UI. Dashboard only — public pages are
+          // always light. Same rule as paint() in composables/useTheme.ts.
+          innerHTML: "try{var p=location.pathname;if(localStorage.getItem('theme')==='dark'&&(p==='/dashboard'||p.indexOf('/dashboard/')===0))document.documentElement.classList.add('dark')}catch(e){}",
         },
       ],
     },
@@ -60,5 +61,14 @@ export default defineNuxtConfig({
       },
     ],
   },
-  modules: ['@pinia/nuxt', '@nuxt/image', 'shadcn-nuxt', 'nuxt-marquee', '@nuxtjs/i18n']
+  modules: ['@pinia/nuxt', '@nuxt/image', 'shadcn-nuxt', 'nuxt-marquee', '@nuxtjs/i18n'],
+
+  // `nuxi build --envName e2e` (used by Playwright) builds into its own folders so it
+  // never clobbers a running dev server's .nuxt or a production .output.
+  $env: {
+    e2e: {
+      buildDir: '.nuxt-e2e',
+      nitro: { output: { dir: '.output-e2e' } },
+    },
+  },
 })

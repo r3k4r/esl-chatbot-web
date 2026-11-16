@@ -104,7 +104,7 @@ function isExpired(expiresAt: string | null) {
         class="flex-1"
         @click="$emit('open', cls.id)"
       />
-      <AppButton
+      <AppButton aria-label="Edit class"
         v-if="!cls.archived"
         variant="secondary"
         size="32"
@@ -113,7 +113,7 @@ function isExpired(expiresAt: string | null) {
         :icon-config="{ color: 'currentColor', size: 13 }"
         @click="$emit('edit', cls.id)"
       />
-      <AppButton
+      <AppButton aria-label="Delete class"
         variant="secondary"
         size="32"
         radius="8"

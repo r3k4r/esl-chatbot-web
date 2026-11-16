@@ -24,11 +24,7 @@ const emit = defineEmits<{
 // render an entirely blank list with no explanation.
 const visibleCount = computed(() => props.todayList.length + props.earlierList.length)
 
-// AppButton never binds its `disabled` prop to the element, so the disabled look
-// comes from the call site (see the note in Composer.vue).
-const newSessionClass = computed(
-  () => `w-full justify-center text-[14px]${props.dailyLimitReached ? ' opacity-50 pointer-events-none' : ''}`,
-)
+const newSessionClass = 'w-full justify-center text-[14px]'
 </script>
 
 <template>
@@ -44,6 +40,7 @@ const newSessionClass = computed(
         :text="creating ? 'Starting…' : 'New session'"
         :class-list="newSessionClass"
         :loading="creating"
+        :disabled="dailyLimitReached"
         @click="emit('new-session')"
       />
       <AppText

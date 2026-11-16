@@ -1,6 +1,6 @@
 <template>
-  <component :is="tag ? tag : to ? 'router-link' : 'button'" :to="to" :class="mergedClasses" :disabled="loading"
-    v-bind="attrs" :type="buttonType">
+  <component :is="resolvedTag" :to="isDisabled ? undefined : to"
+    :class="mergedClasses" :disabled="isDisabled || undefined" v-bind="attrs" :type="buttonType">
     <Icon v-if="loading" mode="mask" icon="svg-spinners:180-ring-with-bg" class="text-2xl mx-auto" />
     <template v-else>
       <slot name="before" />
@@ -19,6 +19,7 @@ import { activeClasses, buttonRadiusClasses, buttonSizeClasses, variantClasses, 
 
 import type { RouteLocationRaw } from "vue-router";
 import { Icon } from "@iconify/vue";
+import { NuxtLink } from "#components";
 import type { SvgBasedIconName } from "~/common/types/iconsax-types";
 
 defineOptions({
@@ -53,9 +54,11 @@ const attrs = useAttrs()
 
 const isDisabled = computed(() => Boolean(props.disabled || props.loading))
 
+// A disabled button with `to` renders as a real disabled <button>: links can't be disabled.
 const resolvedTag = computed(() => {
   if (props.tag) return props.tag
-  return props.to && !isDisabled.value ? 'NuxtLink' : 'button'
+  // NuxtLink, not router-link: it also handles external URLs (router-link 404s them).
+  return props.to && !isDisabled.value ? NuxtLink : 'button'
 })
 
 

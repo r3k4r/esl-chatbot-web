@@ -121,7 +121,7 @@ const submissionState = computed(() => {
       <div v-if="canManage" class="shrink-0" @click.stop>
         <UiDropdownMenu>
           <UiDropdownMenuTrigger as-child>
-            <AppButton variant="secondary" size="28" radius="8" aspect="square" icon="More"
+            <AppButton aria-label="Task actions" variant="secondary" size="28" radius="8" aspect="square" icon="More"
               :icon-config="{ color: 'currentColor', size: 16 }" />
           </UiDropdownMenuTrigger>
           <UiDropdownMenuContent align="end" :style="`background:var(--surface-card);border-color:var(--border-card)`">

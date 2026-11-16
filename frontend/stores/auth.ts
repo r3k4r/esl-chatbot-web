@@ -1,5 +1,7 @@
 import { defineStore } from "pinia";
 import type { User } from "@/common/model/user";
+import { inApp } from "~/lib/utils";
+import type { RefreshOutcome, TokenSet } from "~/common/types/auth-types";
 import type {
   SignInSchema,
   SignUpSchema,
@@ -13,10 +15,56 @@ interface AuthState {
   user: User | null;
   accessToken: string | null;
   refreshToken: string | null;
+  /** ISO-8601, from the backend. Drives the proactive refresh in plugins/auth-session.client.ts. */
+  accessTokenExpiresAt: string | null;
+  refreshTokenExpiresAt: string | null;
   isCheckedUser: boolean;
   isAuthenticated: boolean;
   isLoading: boolean;
-  _isRefreshing: boolean; // true while a refresh request is in-flight
+}
+
+type NuxtAppOrNull = ReturnType<typeof tryUseNuxtApp>;
+
+const STORAGE_KEYS = ["accessToken", "refreshToken", "accessTokenExpiresAt", "refreshTokenExpiresAt"] as const;
+
+// Nuxt composables (useCookie, useRuntimeConfig) need the Nuxt context. During SSR it
+// is gone after the first `await` inside an action, so each action captures the app
+// up front and runs composables through `inApp`. (This is what used to break SSR refresh:
+// users were signed out on any reload once their access token had expired.)
+
+// One refresh at a time per store (per request on the server): parallel 401s all
+// wait for the same answer instead of racing — or signing each other out.
+const inflightRefresh = new WeakMap<object, Promise<RefreshOutcome>>();
+
+/** `exp` of a JWT as ISO — fallback for sessions stored before the backend sent expiries. */
+function jwtExpiry(token: string | null): string | null {
+  try {
+    const payload = JSON.parse(atob(token!.split(".")[1]!.replace(/-/g, "+").replace(/_/g, "/")));
+    return typeof payload.exp === "number" ? new Date(payload.exp * 1000).toISOString() : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Picks the token fields out of a login / verify / google response. */
+function tokensFrom(data: any): TokenSet {
+  return {
+    accessToken: data.accessToken,
+    refreshToken: data.refreshToken,
+    accessTokenExpiresAt: data.accessTokenExpiresAt ?? jwtExpiry(data.accessToken),
+    refreshTokenExpiresAt: data.refreshTokenExpiresAt ?? jwtExpiry(data.refreshToken),
+  };
+}
+
+/** Cookie options matching server/api/set-cookie.post.ts; they live as long as the refresh token. */
+function cookieOptions(refreshTokenExpiresAt: string | null) {
+  const msLeft = refreshTokenExpiresAt ? Date.parse(refreshTokenExpiresAt) - Date.now() : NaN;
+  return {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax" as const,
+    maxAge: Number.isFinite(msLeft) && msLeft > 0 ? Math.ceil(msLeft / 1000) : 60 * 60 * 24 * 30,
+  };
 }
 
 export const useAuthStore = defineStore("useAuthStore", {
@@ -24,13 +72,15 @@ export const useAuthStore = defineStore("useAuthStore", {
     user: null,
     accessToken: null,
     refreshToken: null,
+    accessTokenExpiresAt: null,
+    refreshTokenExpiresAt: null,
     isCheckedUser: false,
     isAuthenticated: false,
     isLoading: false,
-    _isRefreshing: false,
   }),
   actions: {
     async signIn(credentials: SignInSchema) {
+      const app = tryUseNuxtApp();
       this.isLoading = true;
 
       const response = await useHttp({
@@ -45,10 +95,7 @@ export const useAuthStore = defineStore("useAuthStore", {
       });
 
       if (response.success) {
-        await this._persistTokens(
-          response.data.data.accessToken,
-          response.data.data.refreshToken
-        );
+        await this._persistTokens(tokensFrom(response.data.data), app);
         this.setUserFromResponse(response.data.data.user);
       }
       this.isLoading = false;
@@ -77,50 +124,39 @@ export const useAuthStore = defineStore("useAuthStore", {
       return response;
     },
 
-    // SSR-safe user fetch — keeps useFetch for server-side rendering.
-    // Cache key uses a stable value so it isn't stuck on "null" from SSR startup.
+    /**
+     * Loads the signed-in user (SSR-safe). An expired access token is refreshed and
+     * the request retried by useHttp, so a reload keeps the session for as long as
+     * the refresh token lives.
+     */
     async fetchUser(): Promise<void> {
-      const config = useRuntimeConfig();
-      this.getTokenFromStorage();
+      const app = tryUseNuxtApp();
+      this.getTokenFromStorage(app);
 
-      const token = this.accessToken;
-
-      const { data, status } = await useFetch<any>("/auth/me", {
-        method: "GET",
-        baseURL: config.BASE_URL,
-        // Stable key: avoids a stale "user-account-null" cache entry from SSR
-        key: "user-account",
-        cache: "no-cache",
-        headers: token
-          ? {
-              "Content-Type": "application/json",
-              "Accept-Language": "en",
-              Authorization: `Bearer ${token}`,
-            }
-          : {
-              "Content-Type": "application/json",
-              "Accept-Language": "en",
-            },
-      });
-
-      this.isCheckedUser = true;
-
-      if (status.value === "error") {
-        // useFetch surfaces 401 as an error status
-        const refreshed = await this.refreshTokens();
-        if (!refreshed) {
-          await this._clearSession();
-          return;
-        }
-        // Retry once after refresh — clear the cache key so useFetch re-runs
-        clearNuxtData("user-account");
-        return this.fetchUser();
+      // A guest has nothing to check — skip the round trip.
+      if (!this.accessToken && !this.refreshToken) {
+        this.isCheckedUser = true;
+        this.isAuthenticated = false;
+        this.user = null;
+        return;
       }
 
-      const user = (data.value as any)?.data;
+      const res = await inApp(app, () => useHttp<any>({
+        method: "GET",
+        url: "/auth/me",
+        requireAuth: true,
+        showToast: false,
+      }));
+
+      this.isCheckedUser = true;
+      const user = res.success ? res.data?.data : null;
       if (user) {
         this.setUserFromResponse(user);
+      } else if (res.status === 401 || res.status === 403 || res.status === 404) {
+        // Rejected (expired session, deactivated, deleted): sign out locally.
+        await this._clearSession(app);
       } else {
+        // No answer (offline / 5xx): the session may well be fine — don't destroy it.
         this.user = null;
         this.isAuthenticated = false;
       }
@@ -153,6 +189,7 @@ export const useAuthStore = defineStore("useAuthStore", {
     },
 
     async verifyEmail(input: VerifyEmailSchema) {
+      const app = tryUseNuxtApp();
       this.isLoading = true;
       const response = await useHttp({
         method: "POST",
@@ -164,10 +201,7 @@ export const useAuthStore = defineStore("useAuthStore", {
       // Verifying the email logs the user in — the backend returns a token pair
       // here (the verified OTP is the proof of ownership). Persist it.
       if (response.success && response.data?.data?.accessToken) {
-        await this._persistTokens(
-          response.data.data.accessToken,
-          response.data.data.refreshToken
-        );
+        await this._persistTokens(tokensFrom(response.data.data), app);
         this.setUserFromResponse(response.data.data.user);
       }
       this.isLoading = false;
@@ -187,6 +221,7 @@ export const useAuthStore = defineStore("useAuthStore", {
     },
 
     async acceptAgreement(creds: AcceptAgreementInput) {
+      const app = tryUseNuxtApp();
       this.isLoading = true;
       const response = await useHttp({
         method: "POST",
@@ -195,10 +230,7 @@ export const useAuthStore = defineStore("useAuthStore", {
         showToast: false,
       });
       if (response.success && response.data?.data?.accessToken) {
-        await this._persistTokens(
-          response.data.data.accessToken,
-          response.data.data.refreshToken
-        );
+        await this._persistTokens(tokensFrom(response.data.data), app);
         this.setUserFromResponse(response.data.data.user);
       }
       this.isLoading = false;
@@ -206,6 +238,7 @@ export const useAuthStore = defineStore("useAuthStore", {
     },
 
     async googleAuth(idToken: string, username?: string, acceptAgreement?: boolean) {
+      const app = tryUseNuxtApp();
       this.isLoading = true;
       const body = username
         ? { idToken, username, acceptAgreement }
@@ -217,10 +250,7 @@ export const useAuthStore = defineStore("useAuthStore", {
       });
 
       if (response.success && response.data?.data?.accessToken) {
-        await this._persistTokens(
-          response.data.data.accessToken,
-          response.data.data.refreshToken
-        );
+        await this._persistTokens(tokensFrom(response.data.data), app);
         this.setUserFromResponse(response.data.data.user);
       }
 
@@ -229,8 +259,9 @@ export const useAuthStore = defineStore("useAuthStore", {
     },
 
     async signOut() {
+      const app = tryUseNuxtApp();
       const refreshTokenForLogout = this.refreshToken;
-      await this._clearSession();
+      await this._clearSession(app);
 
       if (refreshTokenForLogout) {
         // fire-and-forget — don't block navigation on a logout API call
@@ -243,36 +274,17 @@ export const useAuthStore = defineStore("useAuthStore", {
       }
     },
 
-    // Returns true if new tokens were obtained, false if the session must end.
-    async refreshTokens(): Promise<boolean> {
-      // Prevent concurrent refresh races
-      if (this._isRefreshing) return false;
-
-      // Recover tokens from storage in case Pinia state was lost (page reload / SSR hydration)
-      this.getTokenFromStorage();
-
-      if (!this.refreshToken) return false;
-
-      this._isRefreshing = true;
-
-      const response = await useHttp({
-        method: "POST",
-        url: "/auth/refresh",
-        body: { refreshToken: this.refreshToken },
-        requireAuth: false,
-        showToast: false,
-      });
-
-      this._isRefreshing = false;
-
-      if (!response.success || !response.data) {
-        await this._clearSession();
-        return false;
-      }
-
-      // /auth/refresh only returns a new accessToken — refresh token stays the same
-      await this._persistTokens(response.data.data.accessToken, this.refreshToken!);
-      return true;
+    /**
+     * Swaps the refresh token for a new access token (and a new refresh token when the
+     * backend rotates it). Concurrent callers share one request. Only a rejected
+     * refresh ends the session; a network blip / 429 / 5xx returns `unavailable`.
+     */
+    refreshTokens(app: NuxtAppOrNull = tryUseNuxtApp()): Promise<RefreshOutcome> {
+      const pending = inflightRefresh.get(this);
+      if (pending) return pending;
+      const run = this._refresh(app).finally(() => inflightRefresh.delete(this));
+      inflightRefresh.set(this, run);
+      return run;
     },
 
     setUserFromResponse(user: User) {
@@ -295,51 +307,121 @@ export const useAuthStore = defineStore("useAuthStore", {
       this.isCheckedUser = true;
     },
 
-    getTokenFromStorage() {
+    /**
+     * Fills missing tokens from storage. In-memory values win: after an SSR refresh
+     * the hydrated state is newer than what the browser had stored.
+     * Server: the httpOnly cookies. Browser: localStorage.
+     */
+    getTokenFromStorage(app: NuxtAppOrNull = tryUseNuxtApp()) {
       if (import.meta.server) {
-        const accessTokenCookie = useCookie("accessToken");
-        const refreshTokenCookie = useCookie("refreshToken");
-        this.accessToken = accessTokenCookie.value ?? null;
-        this.refreshToken = refreshTokenCookie.value ?? null;
+        this.accessToken ||= inApp(app, () => useCookie("accessToken").value) ?? null;
+        this.refreshToken ||= inApp(app, () => useCookie("refreshToken").value) ?? null;
       } else {
-        this.accessToken =
-          localStorage.getItem("accessToken") ||
-          useCookie("accessToken").value ||
-          null;
-        this.refreshToken =
-          localStorage.getItem("refreshToken") ||
-          useCookie("refreshToken").value ||
-          null;
+        for (const key of STORAGE_KEYS) this[key] ||= localStorage.getItem(key);
+      }
+      this.accessTokenExpiresAt ||= jwtExpiry(this.accessToken);
+      this.refreshTokenExpiresAt ||= jwtExpiry(this.refreshToken);
+    },
+
+    /** Browser only: writes the in-memory tokens (possibly refreshed during SSR) to localStorage. */
+    syncClientStorage() {
+      if (!import.meta.client) return;
+      this.getTokenFromStorage();
+      for (const key of STORAGE_KEYS) {
+        const value = this[key];
+        if (value) localStorage.setItem(key, value);
       }
     },
 
     // ── Private helpers ─────────────────────────────────────────────────────
 
-    async _persistTokens(accessToken: string, refreshToken: string) {
-      this.accessToken = accessToken;
-      this.refreshToken = refreshToken;
+    async _refresh(app: NuxtAppOrNull): Promise<RefreshOutcome> {
+      this.getTokenFromStorage(app);
+      const refreshToken = this.refreshToken;
+      const expired = this.refreshTokenExpiresAt && Date.parse(this.refreshTokenExpiresAt) <= Date.now();
+      if (!refreshToken || expired) {
+        await this._clearSession(app);
+        return "ended";
+      }
 
-      if (import.meta.client) {
-        localStorage.setItem("accessToken", accessToken);
-        localStorage.setItem("refreshToken", refreshToken);
+      const response = await inApp(app, () => useHttp<any>({
+        method: "POST",
+        url: "/auth/refresh",
+        body: { refreshToken },
+        requireAuth: false,
+        showToast: false,
+      }));
+
+      const data = response.data?.data;
+      if (response.success && data?.accessToken) {
+        await this._persistTokens({
+          accessToken: data.accessToken,
+          accessTokenExpiresAt: data.accessTokenExpiresAt ?? jwtExpiry(data.accessToken),
+          // Present only when the backend rotated the refresh token.
+          refreshToken: data.refreshToken ?? refreshToken,
+          refreshTokenExpiresAt: data.refreshToken
+            ? data.refreshTokenExpiresAt ?? jwtExpiry(data.refreshToken)
+            : this.refreshTokenExpiresAt,
+        }, app);
+        return "refreshed";
+      }
+
+      if (response.status === 401 || response.status === 403) {
+        await this._clearSession(app);
+        return "ended";
+      }
+      return "unavailable";
+    },
+
+    async _persistTokens(tokens: TokenSet, app: NuxtAppOrNull = tryUseNuxtApp()) {
+      this.accessToken = tokens.accessToken;
+      this.refreshToken = tokens.refreshToken;
+      this.accessTokenExpiresAt = tokens.accessTokenExpiresAt;
+      this.refreshTokenExpiresAt = tokens.refreshTokenExpiresAt;
+
+      if (import.meta.server) {
+        // During SSR, write the httpOnly cookies straight onto the response.
+        inApp(app, () => {
+          const options = cookieOptions(tokens.refreshTokenExpiresAt);
+          useCookie("accessToken", options).value = tokens.accessToken;
+          useCookie("refreshToken", options).value = tokens.refreshToken;
+        });
+        return;
+      }
+
+      for (const key of STORAGE_KEYS) {
+        const value = tokens[key];
+        if (value) localStorage.setItem(key, value);
+        else localStorage.removeItem(key);
       }
 
       // httpOnly server cookie — SSR reads tokens from here
       await fetch("/api/set-cookie", {
         method: "POST",
-        body: JSON.stringify({ accessToken, refreshToken }),
+        body: JSON.stringify({
+          accessToken: tokens.accessToken,
+          refreshToken: tokens.refreshToken,
+          expiresAt: tokens.refreshTokenExpiresAt,
+        }),
         headers: { "Content-Type": "application/json" },
         credentials: "include",
       });
     },
 
-    async _clearSession() {
+    async _clearSession(app: NuxtAppOrNull = tryUseNuxtApp()) {
       this.$reset();
+      // The user is now known to be signed out — don't re-check on the next navigation.
+      this.isCheckedUser = true;
 
-      if (import.meta.client) {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
+      if (import.meta.server) {
+        inApp(app, () => {
+          useCookie("accessToken").value = null;
+          useCookie("refreshToken").value = null;
+        });
+        return;
       }
+
+      for (const key of STORAGE_KEYS) localStorage.removeItem(key);
 
       // Clear httpOnly server cookie
       fetch("/api/clear-cookie", {

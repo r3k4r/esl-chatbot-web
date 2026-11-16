@@ -1,11 +1,9 @@
 <script setup lang="ts">
 // Extracted from users/index.vue, which was well over the file-length rule.
 //
-// Every navigation goes through goTo(), which clamps to [1, totalPages]. That is
-// deliberate rather than relying on `:disabled`: AppButton declares a `disabled`
-// prop but never binds it to the element (see frontend/TASKS.md), so the old
-// prev/next arrows stayed clickable and walked past the last page into empty
-// results — the reported bug.
+// Every navigation goes through goTo(), which clamps to [1, totalPages], and the
+// arrows are disabled at either end — two guards against walking past the last
+// page into empty results (the original bug).
 const props = defineProps<{
   page: number
   totalPages: number
@@ -46,8 +44,6 @@ const rangeLabel = computed(() => {
   const to = Math.min(props.page * props.limit, props.total)
   return `${from}–${to} of ${props.total} users`
 })
-
-const arrowClass = (enabled: boolean) => (enabled ? '' : 'opacity-40 pointer-events-none')
 </script>
 
 <template>
@@ -83,7 +79,7 @@ const arrowClass = (enabled: boolean) => (enabled ? '' : 'opacity-40 pointer-eve
         radius="8"
         aspect="square"
         icon="ArrowLeft"
-        :class-list="arrowClass(canPrev)"
+        :disabled="!canPrev"
         aria-label="Previous page"
         @click="goTo(page - 1)"
       />
@@ -114,7 +110,7 @@ const arrowClass = (enabled: boolean) => (enabled ? '' : 'opacity-40 pointer-eve
         radius="8"
         aspect="square"
         icon="ArrowRight"
-        :class-list="arrowClass(canNext)"
+        :disabled="!canNext"
         aria-label="Next page"
         @click="goTo(page + 1)"
       />

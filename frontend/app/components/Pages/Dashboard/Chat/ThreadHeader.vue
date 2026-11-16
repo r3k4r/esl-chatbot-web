@@ -17,17 +17,7 @@ const emit = defineEmits<{
 
 const confirmEnd = ref(false)
 
-// AppButton never binds its `disabled` prop to the element (see Composer.vue),
-// so the dimmed look is applied here.
 const actionsDisabled = computed(() => !props.activeSessionId)
-const refreshClass = computed(
-  () => `shrink-0${actionsDisabled.value || props.refreshing ? ' opacity-50 pointer-events-none' : ''}`,
-)
-// `gap-2` spaces the icon from the slotted label (AppButton only adds a margin
-// for labels passed via its `text` prop, and ours collapses on narrow screens).
-const endClass = computed(
-  () => `gap-2 px-2.5 sm:px-4${actionsDisabled.value || props.ending ? ' opacity-50 pointer-events-none' : ''}`,
-)
 
 function doEnd() {
   confirmEnd.value = false
@@ -86,7 +76,8 @@ function doEnd() {
         size="36"
         radius="8"
         aspect="square"
-        :class-list="refreshClass"
+        class-list="shrink-0"
+        :disabled="actionsDisabled || refreshing"
         aria-label="Refresh session"
         @click="emit('refresh')"
       >
@@ -106,7 +97,8 @@ function doEnd() {
         :loading="ending"
         icon="CloseCircle"
         :icon-config="{ color: 'currentColor', size: 16 }"
-        :class-list="endClass"
+        class-list="gap-2 px-2.5 sm:px-4"
+        :disabled="actionsDisabled"
         @click="confirmEnd = true"
       >
         <span class="hidden sm:inline text-[14px]">End session</span>

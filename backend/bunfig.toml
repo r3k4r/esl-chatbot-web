@@ -1,5 +1,0 @@
-[test]
-# Runs once before any test file is imported. Redirects Prisma to the dedicated
-# test database and mocks the AI layer so tests are deterministic, free, and
-# never touch the dev/prod database. See src/test/setup.ts and docs/testing.md.
-preload = ["./src/test/setup.ts"]

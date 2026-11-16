@@ -3,6 +3,8 @@ import type { AdminDashboardData } from '~/common/types/admin-types'
 export function useAdminDashboard() {
   const raw = ref<AdminDashboardData | null>(null)
   const loading = ref(false)
+  // Kept until the next answer arrives, so a retry keeps the error screen (spinning button) up.
+  const error = ref<string | null>(null)
 
   async function fetchAdminDashboard() {
     loading.value = true
@@ -12,7 +14,12 @@ export function useAdminDashboard() {
       requireAuth: true,
       showToast: false,
     })
-    if (res.success && res.data?.data) raw.value = res.data.data
+    if (res.success && res.data?.data) {
+      raw.value = res.data.data
+      error.value = null
+    } else {
+      error.value = res.message || 'Failed to load the admin dashboard'
+    }
     loading.value = false
   }
 
@@ -25,6 +32,7 @@ export function useAdminDashboard() {
 
   return {
     loading,
+    error,
     fetchAdminDashboard,
     totalUsers,
     usersByRole,

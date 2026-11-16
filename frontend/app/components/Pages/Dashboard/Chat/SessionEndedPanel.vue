@@ -16,10 +16,7 @@ const score = computed(() =>
   props.evaluation ? Math.round(props.evaluation.avgOverallScore ?? 0) : null,
 )
 
-// AppButton never binds its `disabled` prop to the element (see Composer.vue).
-const newSessionClass = computed(
-  () => `justify-center text-[14px]${props.dailyLimitReached ? ' opacity-50 pointer-events-none' : ''}`,
-)
+const newSessionClass = 'justify-center text-[14px]'
 
 const highlights = computed(() => {
   const e = props.evaluation
@@ -85,6 +82,7 @@ const highlights = computed(() => {
           :icon-config="{ color: 'white', size: 18 }"
           :text="creating ? 'Starting…' : 'New session'"
           :loading="creating"
+          :disabled="dailyLimitReached"
           :class-list="newSessionClass"
           @click="emit('new-session')"
         />

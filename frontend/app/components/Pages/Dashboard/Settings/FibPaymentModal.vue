@@ -204,7 +204,7 @@ function openAppLink() {
               <AppText size="18" weight="bold" font-family="mono" class-list="tracking-[0.3em] flex-1 select-all" :style="`color:var(--text-heading)`">
                 {{ payment.readableCode }}
               </AppText>
-              <AppButton
+              <AppButton aria-label="Copy payment code"
                 variant="secondary" size="32" radius="8"
                 icon="Copy" :icon-config="{ color: 'currentColor', size: 13 }"
                 @click="copyCode"

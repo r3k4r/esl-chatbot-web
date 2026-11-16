@@ -7,6 +7,14 @@ const THEME_STORAGE_KEY = 'theme'
 const theme = ref<ThemePreference>('light')
 let initialized = false
 
+/** Dark mode is dashboard-only: public pages (landing, auth) always render light. */
+const isDashboardPath = (path: string) => path === '/dashboard' || path.startsWith('/dashboard/')
+
+/** The one place that sets <html class="dark">. Same rule as the head script in nuxt.config.ts. */
+function paint(path = window.location.pathname) {
+  document.documentElement.classList.toggle('dark', theme.value === 'dark' && isDashboardPath(path))
+}
+
 function ensureInit() {
   if (initialized || !import.meta.client) return
   initialized = true
@@ -16,7 +24,7 @@ function ensureInit() {
     const stored = localStorage.getItem(THEME_STORAGE_KEY)
     if (stored === 'dark' || stored === 'light') theme.value = stored
   } catch { /* storage unavailable (private mode) — keep default */ }
-  document.documentElement.classList.toggle('dark', theme.value === 'dark')
+  paint()
 }
 
 export function useTheme() {
@@ -26,7 +34,7 @@ export function useTheme() {
   function applyTheme(next: ThemePreference) {
     theme.value = next
     if (!import.meta.client) return
-    document.documentElement.classList.toggle('dark', next === 'dark')
+    paint()
     try { localStorage.setItem(THEME_STORAGE_KEY, next) } catch { /* ignore */ }
   }
 
@@ -39,5 +47,5 @@ export function useTheme() {
     if (profileTheme === 'light' || profileTheme === 'dark') applyTheme(profileTheme)
   }
 
-  return { theme: readonly(theme), applyTheme, syncFromProfile }
+  return { theme: readonly(theme), applyTheme, syncFromProfile, paint }
 }

@@ -251,8 +251,8 @@ async function handleConfirmDelete() {
         Page {{ meta.page }} of {{ meta.totalPages }} ({{ meta.total }} total)
       </AppText>
       <div class="flex items-center gap-2">
-        <AppButton variant="secondary" size="32" radius="8" icon="ArrowLeft2" :disabled="meta.page <= 1" @click="load(meta.page - 1)" />
-        <AppButton variant="secondary" size="32" radius="8" icon="ArrowRight2" :disabled="meta.page >= meta.totalPages" @click="load(meta.page + 1)" />
+        <AppButton aria-label="Previous page" variant="secondary" size="32" radius="8" icon="ArrowLeft2" :disabled="meta.page <= 1" @click="load(meta.page - 1)" />
+        <AppButton aria-label="Next page" variant="secondary" size="32" radius="8" icon="ArrowRight2" :disabled="meta.page >= meta.totalPages" @click="load(meta.page + 1)" />
       </div>
     </div>
 

@@ -22,6 +22,9 @@ const formData = reactive<SignUpSchema>({
 
 const serverError = ref<string>('')
 const showTerms = ref(false)
+// Too many sign-ups from this network: lock the button until Retry-After lifts.
+const cooldown = useCooldown()
+const submitLabel = computed(() => cooldown.active.value ? `Try again in ${cooldown.label.value}` : 'Create account')
 
 const handleSubmit = async () => {
     serverError.value = ''
@@ -32,6 +35,7 @@ const handleSubmit = async () => {
         toast.success('Account created! Check your email for a verification code.')
         router.push('/verify-email')
     } else {
+        if (response.status === 429 && response.retryAfter) cooldown.start(response.retryAfter)
         serverError.value = response.message || 'Registration failed. Please try again.'
     }
 }
@@ -131,10 +135,11 @@ const handleSubmit = async () => {
                     size="52"
                     radius="full"
                     :loading="authStore.isLoading"
+                    :disabled="cooldown.active.value"
                     class-list="w-full mt-2"
-                    aria-label="Create account"
+                    :aria-label="submitLabel"
                 >
-                    Create account
+                    {{ submitLabel }}
                 </AppButton>
             </template>
         </Form>

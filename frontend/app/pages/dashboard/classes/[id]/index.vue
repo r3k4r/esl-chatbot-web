@@ -167,7 +167,7 @@ onMounted(load)
 
     <!-- Back + header -->
     <div class="flex items-center gap-3 mb-6 animate-card-enter" style="--delay:0ms">
-      <AppButton variant="secondary" size="36" radius="8" icon="ArrowLeft"
+      <AppButton aria-label="Go back" variant="secondary" size="36" radius="8" icon="ArrowLeft"
         :icon-config="{ color: 'currentColor', size: 14 }" @click="router.push('/dashboard/classes')" />
       <div class="flex-1 min-w-0">
         <template v-if="loading">

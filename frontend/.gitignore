@@ -23,3 +23,10 @@ logs
 .env.*
 !.env.example
 .agentrun/
+
+# Test artefacts
+.nuxt-e2e
+.output-e2e
+tests/.coverage
+tests/.playwright-report
+tests/.playwright-results

@@ -59,18 +59,12 @@ const messagesLeft = computed(() =>
   Math.max(0, props.messagesPerSessionHard - props.userMessageCount),
 )
 
-// AppButton declares a `disabled` prop but never binds it to the element (it
-// only binds `loading`), so the disabled *look* has to come from the call site.
-// Logged in frontend/TASKS.md next to the related `:to` bug — fixing the shared
-// component would silently change every `:disabled` button in the app.
 // `gap-2` spaces the icon from the slotted label — AppButton only adds a margin
 // when the label comes through its `text` prop, and ours is a slot so it can
 // collapse to icon-only on narrow screens.
-const sendClass = computed(
-  () => `shrink-0 gap-2 px-3 sm:px-4${props.canSend ? '' : ' opacity-50 pointer-events-none'}`,
-)
-// The mic stays clickable while unavailable on purpose — startVoice() answers
-// with a toast explaining why, which beats a dead button.
+const sendClass = 'shrink-0 gap-2 px-3 sm:px-4'
+// The mic stays clickable while unavailable on purpose (so it is only dimmed, not
+// disabled) — startVoice() answers with a toast explaining why, which beats a dead button.
 const micClass = computed(() => `shrink-0${props.micDisabled ? ' opacity-50' : ''}`)
 
 const taRef = ref<ComponentPublicInstance | null>(null)
@@ -175,6 +169,7 @@ function onKeydown(e: KeyboardEvent) {
           icon="Send"
           :icon-config="{ color: 'white', size: 16 }"
           :loading="sending"
+          :disabled="!canSend"
           :class-list="sendClass"
           :aria-label="isRecording ? 'Send voice message' : 'Send message'"
           @click="emit('send')"

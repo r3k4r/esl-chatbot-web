@@ -139,7 +139,7 @@ const STATUS_TEXT: Record<string, string> = {
     <td class="px-4 py-3 text-right">
       <UiDropdownMenu>
         <UiDropdownMenuTrigger as-child>
-          <AppButton variant="secondary" size="32" radius="8" aspect="square" icon="More" />
+          <AppButton aria-label="User actions" variant="secondary" size="32" radius="8" aspect="square" icon="More" />
         </UiDropdownMenuTrigger>
         <UiDropdownMenuContent align="end" class="w-52">
           <NuxtLink :to="`/dashboard/users/${user.id}/profile`">

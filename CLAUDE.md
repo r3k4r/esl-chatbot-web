@@ -54,7 +54,7 @@ cd backend && bun run generate:types     # Regenerate frontend/types/api.ts from
 cd backend && bun test                   # Integration tests (requires DB running)
 ```
 
-Frontend has no lint or test runner configured. Type-check:
+Frontend tests: `cd frontend && bun run test` (Vitest unit) and `bun run test:e2e` (Playwright against a mock API — no backend needed). See [frontend/tests/README.md](frontend/tests/README.md). Type-check:
 
 ```bash
 cd frontend && bunx nuxi typecheck

@@ -16,6 +16,9 @@ const formData = reactive<ForgotPasswordSchema>({
 })
 
 const serverError = ref<string>('')
+// Too many reset requests: lock the button until the backend's Retry-After lifts.
+const cooldown = useCooldown()
+const submitLabel = computed(() => cooldown.active.value ? `Try again in ${cooldown.label.value}` : 'Send reset code')
 
 const handleSubmit = async () => {
     serverError.value = ''
@@ -26,6 +29,7 @@ const handleSubmit = async () => {
         toast.success('If that email is registered, a reset code has been sent.')
         router.push('/verify-otp')
     } else {
+        if (response.status === 429 && response.retryAfter) cooldown.start(response.retryAfter)
         serverError.value = response.message || 'Something went wrong. Please try again.'
     }
 }
@@ -59,10 +63,11 @@ const handleSubmit = async () => {
                     size="52"
                     radius="full"
                     :loading="authStore.isLoading"
+                    :disabled="cooldown.active.value"
                     class-list="w-full mt-2"
-                    aria-label="Send reset code"
+                    :aria-label="submitLabel"
                 >
-                    Send reset code
+                    {{ submitLabel }}
                 </AppButton>
             </template>
         </Form>

@@ -3,6 +3,8 @@ import type { TutorDashboardData } from '~/common/types/tutor-types'
 export function useTutorDashboard() {
   const raw = ref<TutorDashboardData | null>(null)
   const loading = ref(false)
+  // Kept until the next answer arrives, so a retry keeps the error screen (spinning button) up.
+  const error = ref<string | null>(null)
 
   async function fetchTutorDashboard() {
     loading.value = true
@@ -12,7 +14,12 @@ export function useTutorDashboard() {
       requireAuth: true,
       showToast: false,
     })
-    if (res.success && res.data?.data) raw.value = res.data.data
+    if (res.success && res.data?.data) {
+      raw.value = res.data.data
+      error.value = null
+    } else {
+      error.value = res.message || 'Failed to load the tutor dashboard'
+    }
     loading.value = false
   }
 
@@ -24,6 +31,7 @@ export function useTutorDashboard() {
 
   return {
     loading,
+    error,
     fetchTutorDashboard,
     classes,
     students,
