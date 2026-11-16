@@ -37,10 +37,10 @@ const goBack = () => {
 
             <div class="relative w-full max-w-md">
                 <NuxtLink to="/" class="flex items-center gap-2 mb-10" aria-label="Tutelage home">
-                    <div class="size-9 rounded-xl bg-linear-to-br from-brand-primary to-primary-400 flex items-center justify-center shadow-glow">
-                        <span class="text-brand-ink font-bold text-lg">T</span>
-                    </div>
-                    <AppText tag="span" size="18" weight="semibold" color="brand-ink">Tutelage AI</AppText>
+                    <AppImage src="/only-logo-black-border-yellow-bg.svg" alt="Tutelage AI Logo" class="size-9" />
+                    <AppText tag="span" size="18" weight="semibold" color="brand-ink" class-list="tracking-tight">
+                        Tutelage <span class="text-brand-primary">AI</span>
+                    </AppText>
                 </NuxtLink>
 
                 <slot />
