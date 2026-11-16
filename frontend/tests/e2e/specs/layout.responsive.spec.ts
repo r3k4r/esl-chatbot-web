@@ -74,7 +74,7 @@ test('dashboard sidebar: always visible on desktop, a drawer on phones', async (
 
   if (isPhone(page)) {
     await expect(chatLink).not.toBeInViewport()
-    await page.getByRole('button', { name: 'Open sidebar' }).click()
+    await page.getByRole('button', { name: 'Open menu' }).click()
     await expect(chatLink).toBeInViewport()
     await chatLink.click()
     await expect(page).toHaveURL(/\/dashboard\/chat/)

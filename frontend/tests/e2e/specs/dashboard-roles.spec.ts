@@ -25,7 +25,7 @@ for (const persona of Object.keys(NAV) as Persona[]) {
 test('only FREE students see the upgrade card', async ({ page, loginAs }) => {
   await loginAs('free')
   await visit(page, '/dashboard')
-  await expect(page.getByRole('link', { name: /Upgrade now/ })).toBeVisible()
+  await expect(page.getByRole('link', { name: /Upgrade/ })).toBeVisible()
 })
 
 test('paid students and staff do not see the upgrade card', async ({ browser }) => {
@@ -35,7 +35,7 @@ test('paid students and staff do not see the upgrade card', async ({ browser }) 
     await context.addCookies([{ name: 'accessToken', value: `e2e-${persona}`, url: test.info().project.use.baseURL! }])
     await page.addInitScript((t) => localStorage.setItem('accessToken', t), `e2e-${persona}`)
     await visit(page, '/dashboard')
-    await expect(page.getByRole('link', { name: /Upgrade now/ }), persona).toHaveCount(0)
+    await expect(page.getByRole('link', { name: /Upgrade/ }), persona).toHaveCount(0)
     await context.close()
   }
 })

@@ -10,6 +10,9 @@ const { getUser } = useAdmin()
 
 const userId = computed(() => route.params.id as string)
 const user = ref<AdminUserItem | null>(null)
+// Names the id crumb in the header breadcrumb.
+const { setTitle } = useBreadcrumbs()
+watch(() => user.value?.displayName || user.value?.username, setTitle, { immediate: true })
 const loading = ref(false)
 const activeTab = ref('overview')
 

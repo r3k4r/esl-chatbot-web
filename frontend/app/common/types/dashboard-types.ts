@@ -132,3 +132,11 @@ export interface Lesson {
   level: string
   popular?: boolean
 }
+
+// ─── Header breadcrumb ────────────────────────────────────────────────────────
+
+export interface Breadcrumb {
+  label: string
+  /** Absent on the last crumb (the current page). */
+  to?: string
+}

@@ -2,48 +2,36 @@
 const emit = defineEmits<{ 'open-sidebar': [] }>()
 // Staff = admins + tutors. Learner/subscription features are hidden for them.
 const { isStaff } = useRole()
-
-const route = useRoute()
-
-const pageTitles: Record<string, string> = {
-  '/dashboard': 'Overview',
-  '/dashboard/chat': 'AI Chat',
-  '/dashboard/voice': 'Voice Lab',
-  '/dashboard/vocab': 'Vocabulary',
-  '/dashboard/goals': 'Goals',
-  '/dashboard/lessons': 'Lessons',
-  '/dashboard/profile': 'Profile',
-  '/dashboard/billing': 'Billing',
-  '/dashboard/users': 'Users',
-  '/dashboard/classes': 'Classes',
-}
-
-const pageTitle = computed(() => pageTitles[route.path] ?? 'Dashboard')
-const pageSlug = computed(() => pageTitle.value.toLowerCase())
+const { crumbs } = useBreadcrumbs()
 </script>
 
 <template>
   <header
-    class="h-16 flex items-center justify-between px-5 sm:px-7 border-b border-black/6 dark:border-white/6 bg-white/70 dark:bg-[#0e0e10]/70 backdrop-blur sticky top-0 z-30 shrink-0">
-    <!-- Left: burger (mobile) + breadcrumb -->
-    <div class="flex items-center gap-3">
-      <!-- Mobile burger -->
-      <button
-        class="md:hidden w-9 h-9 rounded-lg flex items-center justify-center text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-white/5 hover:text-brand-ink dark:hover:text-white transition"
-        aria-label="Open sidebar" @click="emit('open-sidebar')">
-        <AppIconsax name="HambergerMenu" color="currentColor" :size="18" />
-      </button>
+    class="sticky top-0 z-30 flex h-14 shrink-0 items-center justify-between gap-3 border-b border-border-card bg-surface-card/85 px-3 backdrop-blur sm:px-5">
+    <div class="flex min-w-0 items-center gap-2">
+      <AppButton variant="ghost" size="36" radius="8" aspect="square" icon="HambergerMenu"
+        :icon-config="{ color: 'var(--color-text-body)', size: 20 }"
+        class-list="md:hidden shrink-0 hover:bg-surface-raised dark:hover:bg-surface-raised" aria-label="Open menu"
+        @click="emit('open-sidebar')" />
 
-      <UiBreadcrumb>
-        <UiBreadcrumbList class="text-[11px] font-mono flex-nowrap gap-1 sm:gap-1.5">
-          <UiBreadcrumbItem>
-            <UiBreadcrumbLink as="span" class="text-zinc-400 cursor-default">app</UiBreadcrumbLink>
-          </UiBreadcrumbItem>
-          <UiBreadcrumbSeparator />
-          <UiBreadcrumbItem>
-            <UiBreadcrumbPage class="text-brand-ink dark:text-white font-mono text-[11px]">{{ pageSlug }}
-            </UiBreadcrumbPage>
-          </UiBreadcrumbItem>
+      <UiBreadcrumb class="min-w-0">
+        <UiBreadcrumbList class="flex-nowrap gap-1.5 text-[14px] font-poppins sm:gap-2">
+          <template v-for="(crumb, i) in crumbs" :key="crumb.label + i">
+            <!-- Phones show only the current page -->
+            <UiBreadcrumbItem :class="['min-w-0', crumb.to && 'hidden sm:inline-flex']">
+              <UiBreadcrumbLink v-if="crumb.to" as-child>
+                <AppLink :to="crumb.to"
+                  class="inline-flex items-center gap-1.5 rounded-md text-text-muted transition-colors hover:text-text-heading">
+                  <AppIconsax v-if="i === 0" name="Home2" color="currentColor" :size="16" />
+                  <span class="truncate">{{ crumb.label }}</span>
+                </AppLink>
+              </UiBreadcrumbLink>
+              <UiBreadcrumbPage v-else class="truncate font-semibold text-text-heading">
+                {{ crumb.label }}
+              </UiBreadcrumbPage>
+            </UiBreadcrumbItem>
+            <UiBreadcrumbSeparator v-if="crumb.to" class="hidden text-text-subtle sm:inline-flex" />
+          </template>
         </UiBreadcrumbList>
       </UiBreadcrumb>
     </div>
@@ -51,18 +39,14 @@ const pageSlug = computed(() => pageTitle.value.toLowerCase())
     <!-- Global search / command palette (md+) -->
     <LayoutsDashboardCommandPalette />
 
-    <!-- Right actions -->
-    <div class="flex items-center gap-1.5">
-      <!-- Notifications -->
+    <div class="flex shrink-0 items-center gap-2">
+      <LayoutsDashboardThemeToggle />
       <LayoutsDashboardNotificationBell />
 
       <!-- New session CTA — learner feature, hidden for staff -->
-      <NuxtLink v-if="!isStaff" to="/dashboard/chat">
-        <AppButton variant="primary" size="36" radius="8" icon="Candle" :icon-config="{ color: 'white' }"
-          text="New session" class="hidden sm:flex text-[12.5px]!" />
-      </NuxtLink>
+      <AppButton v-if="!isStaff" to="/dashboard/chat" variant="primary" size="36" radius="8" icon="Add"
+        :icon-config="{ color: 'white', size: 18 }" text="New session" class-list="hidden sm:flex text-[14px]" />
 
-      <!-- User avatar popup -->
       <BlockUserAvatar />
     </div>
   </header>

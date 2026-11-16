@@ -235,16 +235,17 @@
   /* ── Dashboard surface tokens (light) ─────────────────────────────────────
      Change values here to update the whole dashboard UI in one place.
      ─────────────────────────────────────────────────────────────────────── */
-  --surface-page:    #f0eeeb;   /* page/layout bg — warm off-white, not pure white */
-  --surface-card:    #faf9f7;   /* card bg — slightly warmer than page */
-  --surface-raised:  #f3f1ee;   /* inner boxes, table header, code blocks */
-  --surface-well:    #ebe9e5;   /* icon wells, avatar bg, deepest inset */
-  --border-card:     rgba(0,0,0,0.07);   /* card outer border */
-  --border-inner:    rgba(0,0,0,0.06);   /* dividers inside a card */
+  /* Calm and quiet: a soft warm page, clean white cards that lift off it. */
+  --surface-page:    #f6f5f2;   /* page/layout bg — soft warm off-white */
+  --surface-card:    #ffffff;   /* card, sidebar, header */
+  --surface-raised:  #f8f7f5;   /* inner boxes, table header, hover rows */
+  --surface-well:    #f0eeea;   /* icon wells, avatar bg, deepest inset */
+  --border-card:     rgba(17,17,17,0.08);   /* card outer border */
+  --border-inner:    rgba(17,17,17,0.06);   /* dividers inside a card */
   --text-heading:    #18181b;
   --text-body:       #3f3f46;
-  --text-muted:      #71717a;
-  --text-subtle:     #a1a1aa;
+  --text-muted:      #686870;   /* AA on card and page */
+  --text-subtle:     #9a9aa2;
   --status-active-bg:       #d1fae5;
   --status-active-text:     #065f46;
   --status-inactive-bg:     #f3f1ee;
@@ -290,11 +291,11 @@
   --sidebar-ring: var(--primary-300);
 
   /* ── Dashboard surface tokens (dark) ───────────────────────────────────── */
-  --surface-page:    #111113;
-  --surface-card:    #18181b;
-  --surface-raised:  #1f1f23;
-  --surface-well:    #27272a;
-  --border-card:     rgba(255,255,255,0.07);
+  --surface-page:    #0f0f11;
+  --surface-card:    #17171a;
+  --surface-raised:  #1d1d21;
+  --surface-well:    #26262b;
+  --border-card:     rgba(255,255,255,0.08);
   --border-inner:    rgba(255,255,255,0.06);
   --text-heading:    #fafafa;
   --text-body:       #d4d4d8;
@@ -322,6 +323,11 @@
 
 	.layout-padding-lg {
 		@apply px-4 md:px-16 xl:px-32.75 2xl:px-53;
+	}
+
+	/* Round outline icon button in the dashboard header (theme, notifications). */
+	.header-circle-btn {
+		@apply relative flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full border border-border-card bg-surface-card text-text-muted outline-none transition-colors hover:bg-surface-raised hover:text-text-heading focus-visible:ring-2 focus-visible:ring-brand-primary/50;
 	}
 
 	.layout-padding-md {

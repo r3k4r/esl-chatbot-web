@@ -7,12 +7,15 @@ const props = defineProps<{
   ending: boolean
   refreshing?: boolean
   sessionTimer?: string
+  /** Desktop sessions panel is hidden: show the button that brings it back. */
+  sessionsHidden?: boolean
 }>()
 
 const emit = defineEmits<{
   'refresh': []
   'end': []
   'open-sessions': []
+  'show-sessions': []
 }>()
 
 const confirmEnd = ref(false)
@@ -27,8 +30,7 @@ function doEnd() {
 
 <template>
   <div
-    class="h-14 border-b flex items-center justify-between gap-2 px-3 sm:px-5 shrink-0"
-    style="border-color:var(--border-inner)"
+    class="h-14 border-b border-border-inner bg-surface-card flex items-center justify-between gap-2 px-3 sm:px-5 shrink-0"
   >
     <div class="flex items-center gap-2 sm:gap-2.5 min-w-0">
       <!-- Mobile: opens the sessions drawer (no rail below md) -->
@@ -42,6 +44,19 @@ function doEnd() {
         class-list="md:hidden shrink-0"
         aria-label="Show sessions"
         @click="emit('open-sessions')"
+      />
+      <AppButton
+        v-if="sessionsHidden"
+        variant="ghost"
+        size="36"
+        radius="8"
+        aspect="square"
+        icon="SidebarRight"
+        :icon-config="{ color: 'var(--color-text-muted)', size: 20 }"
+        class-list="hidden md:flex shrink-0 hover:bg-surface-raised dark:hover:bg-surface-raised"
+        aria-label="Show sessions"
+        title="Show sessions"
+        @click="emit('show-sessions')"
       />
 
       <div class="relative shrink-0">

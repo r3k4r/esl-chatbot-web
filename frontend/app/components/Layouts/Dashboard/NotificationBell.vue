@@ -46,14 +46,11 @@ function onSelect(n: Notification) {
 <template>
   <UiDropdownMenu :open="open" @update:open="v => v ? onOpen() : onClose()">
     <UiDropdownMenuTrigger as-child>
-      <button
-        class="relative w-9 h-9 rounded-lg flex items-center justify-center text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-white/5 hover:text-brand-ink dark:hover:text-white transition cursor-pointer"
-        aria-label="Notifications"
-      >
-        <AppIconsax name="Notification" color="currentColor" :size="22" />
+      <button class="header-circle-btn" aria-label="Notifications">
+        <AppIconsax name="Notification" color="currentColor" :size="18" />
         <span
           v-if="unreadCount > 0"
-          class="absolute top-1.5 right-1.5 min-w-4 h-4 px-1 rounded-full flex items-center justify-center text-[10px] font-bold font-mono text-white bg-brand-primary ring-2 ring-white dark:ring-[#0e0e10]"
+          class="absolute -top-1 -right-1 min-w-4.5 h-4.5 px-1 rounded-full flex items-center justify-center text-[10px] font-bold font-mono text-white bg-brand-primary ring-2 ring-surface-card"
         >
           {{ unreadCount > 99 ? '99+' : unreadCount }}
         </span>

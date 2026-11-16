@@ -47,5 +47,26 @@ export function useTheme() {
     if (profileTheme === 'light' || profileTheme === 'dark') applyTheme(profileTheme)
   }
 
-  return { theme: readonly(theme), applyTheme, syncFromProfile, paint }
+  /**
+   * Flip light/dark. `persist` (students) also saves it on the learner profile,
+   * otherwise the next profile fetch would sync it straight back.
+   */
+  async function toggleTheme(persist: boolean) {
+    const next: ThemePreference = theme.value === 'dark' ? 'light' : 'dark'
+    applyTheme(next)
+    if (!persist) return
+    const res = await useHttp({
+      method: 'PATCH',
+      url: '/users/me/learner-profile',
+      body: { theme: next },
+      requireAuth: true,
+      showToast: false,
+    })
+    if (!res.success) {
+      const { toast } = await import('vue-sonner')
+      toast.error('Could not save your theme. It will only apply on this device.')
+    }
+  }
+
+  return { theme: readonly(theme), applyTheme, toggleTheme, syncFromProfile, paint }
 }

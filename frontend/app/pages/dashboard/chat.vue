@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { toast } from 'vue-sonner'
 
-definePageMeta({ layout: 'dashboard', requiresAuth: true })
+definePageMeta({ layout: 'dashboard', requiresAuth: true, collapseSidebar: true })
 
 const {
   threadRef,
@@ -57,6 +57,8 @@ const {
 
 // Mobile-only: below `md` the sessions list lives in a drawer.
 const sessionsOpen = ref(false)
+// Desktop: the sessions panel can slide away to give the thread the room.
+const sessionsPanelOpen = useCookie<boolean>('chat-sessions-open', { default: () => true })
 </script>
 
 <template>
@@ -64,6 +66,7 @@ const sessionsOpen = ref(false)
 
     <!-- Sessions rail — desktop only (fixed width, self-scrolling) -->
     <PagesDashboardChatSessionsSidebar
+      v-model:open="sessionsPanelOpen"
       :sessions="sessions"
       :today-list="todayList"
       :earlier-list="earlierList"
@@ -101,6 +104,8 @@ const sessionsOpen = ref(false)
         :ending="ending"
         :refreshing="refreshing"
         :session-timer="sessionTimer"
+        :sessions-hidden="!sessionsPanelOpen"
+        @show-sessions="sessionsPanelOpen = true"
         @refresh="refreshCurrent"
         @end="endCurrent"
         @open-sessions="sessionsOpen = true"

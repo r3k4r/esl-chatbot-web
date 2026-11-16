@@ -13,6 +13,9 @@ const { getClass, refreshCode, archiveClass } = useClasses()
 
 const classId = computed(() => route.params.id as string)
 const cls = ref<ClassDetail | null>(null)
+// Names the id crumb in the header breadcrumb.
+const { setTitle } = useBreadcrumbs()
+watch(() => cls.value?.className, setTitle, { immediate: true })
 const loading = ref(true)
 const copying = ref(false)
 const refreshing = ref(false)
