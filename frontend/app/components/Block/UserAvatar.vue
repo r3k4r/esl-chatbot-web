@@ -134,29 +134,28 @@ async function handleSignOut() {
       <UiDropdownMenuSeparator />
 
       <!-- Profile -->
-      <UiDropdownMenuItem as-child class="focus:text-white group">
+      <UiDropdownMenuItem as-child class="group">
         <NuxtLink to="/dashboard/profile" class="flex items-center gap-2.5 cursor-pointer">
-          <AppIconsax name="Profile" color="currentColor" :size="14" class="text-zinc-500 group-focus:text-white" />
-          <span class="text-[13px]">Profile</span>
+          <AppIconsax name="Profile" color="currentColor" :size="16" class="text-text-muted group-focus:text-text-heading" />
+          <span class="text-[14px]">Profile</span>
         </NuxtLink>
       </UiDropdownMenuItem>
 
       <!-- Billing — personal subscription, hidden for staff -->
-      <UiDropdownMenuItem v-if="!isStaff" as-child class="focus:text-white group">
+      <UiDropdownMenuItem v-if="!isStaff" as-child class="group">
         <NuxtLink to="/dashboard/billing" class="flex items-center gap-2.5 cursor-pointer">
-          <AppIconsax name="Wallet2" color="currentColor" :size="14" class="text-zinc-500 group-focus:text-white" />
-          <span class="text-[13px]">Billing</span>
+          <AppIconsax name="Wallet2" color="currentColor" :size="16" class="text-text-muted group-focus:text-text-heading" />
+          <span class="text-[14px]">Billing</span>
         </NuxtLink>
       </UiDropdownMenuItem>
 
       <UiDropdownMenuSeparator />
 
       <!-- Sign out (destructive) -->
-      <UiDropdownMenuItem
-        class="flex items-center gap-2.5 cursor-pointer bg-destructive text-white focus:bg-destructive/80 focus:text-white"
+      <UiDropdownMenuItem variant="destructive" class="flex items-center gap-2.5 cursor-pointer"
         @click="handleSignOut">
-        <AppIconsax name="Logout" color="currentColor" :size="14" />
-        <span class="text-[13px]">Sign out</span>
+        <AppIconsax name="Logout" color="currentColor" :size="16" />
+        <span class="text-[14px]">Sign out</span>
       </UiDropdownMenuItem>
     </UiDropdownMenuContent>
   </UiDropdownMenu>

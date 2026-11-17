@@ -33,25 +33,20 @@ defineExpose({ scrollEl })
 </script>
 
 <template>
-  <div ref="scrollEl" class="flex-1 min-h-0 overflow-y-auto px-3 sm:px-6 py-4 sm:py-6">
-    <div class="max-w-3xl mx-auto space-y-4 h-full">
+  <div ref="scrollEl" class="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-5 sm:py-8">
+    <div class="max-w-2xl mx-auto space-y-6 h-full">
 
       <!-- Empty state -->
       <div
         v-if="!messages.length"
         class="flex flex-col items-center justify-center h-full text-center animate-card-enter pb-4"
       >
-        <div class="relative mb-4">
-          <div
-            class="w-16 h-16 rounded-2xl bg-linear-to-br from-brand-primary to-brand-accent flex items-center justify-center shadow-lg"
-          >
-            <AppIconsax name="Candle" color="#000" :size="26" />
-          </div>
-          <span class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-400 ring-2 ring-surface-page" />
+        <div class="mb-4 grid size-12 place-content-center rounded-xl bg-brand-primary/12">
+          <AppIconsax name="Candle" color="var(--color-brand-primary)" type="bold" :size="24" />
         </div>
 
-        <AppText size="18" weight="semibold" class-list="mb-1">
-          Hi{{ getUser?.displayName ? `, ${getUser.displayName.split(' ')[0]}` : '' }}! I'm Tutelage AI 👋
+        <AppText size="20" weight="semibold" class-list="mb-1.5">
+          Hi{{ getUser?.displayName ? ` ${getUser.displayName.split(' ')[0]}` : '' }}, what shall we practise?
         </AppText>
         <AppText size="14" color="neutral-400" class-list="max-w-sm">
           <template v-if="needsVerification">
@@ -69,18 +64,18 @@ defineExpose({ scrollEl })
           </template>
         </AppText>
 
-        <div v-if="subActive" class="mt-5 flex flex-wrap gap-2 justify-center">
+        <div v-if="subActive" class="mt-6 grid w-full max-w-xl gap-2 sm:grid-cols-2">
           <AppButton
             v-for="s in suggestions"
             :key="s.text"
             variant="outline"
-            size="36"
+            size="40"
             radius="8"
             :icon="s.icon"
-            :icon-config="{ color: 'var(--color-text-subtle)', size: 16 }"
+            :icon-config="{ color: 'var(--color-text-muted)', size: 18 }"
             :text="s.text"
-            class-list="text-[13px] px-3 animate-card-enter"
-            style="--delay:80ms"
+            class-list="justify-start px-3 text-[14px] font-normal"
+            text-class-list="truncate"
             @click="emit('fill-suggestion', s.text)"
           />
         </div>

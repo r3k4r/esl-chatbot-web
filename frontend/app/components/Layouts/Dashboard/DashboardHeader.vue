@@ -1,13 +1,11 @@
 <script setup lang="ts">
 const emit = defineEmits<{ 'open-sidebar': [] }>()
-// Staff = admins + tutors. Learner/subscription features are hidden for them.
-const { isStaff } = useRole()
 const { crumbs } = useBreadcrumbs()
 </script>
 
 <template>
   <header
-    class="sticky top-0 z-30 flex h-14 shrink-0 items-center justify-between gap-3 border-b border-border-card bg-surface-card/85 px-3 backdrop-blur sm:px-5">
+    class="sticky top-0 z-30 flex h-14 shrink-0 items-center justify-between gap-3 border-b border-border-card bg-surface-card px-3 sm:px-5">
     <div class="flex min-w-0 items-center gap-2">
       <AppButton variant="ghost" size="36" radius="8" aspect="square" icon="HambergerMenu"
         :icon-config="{ color: 'var(--color-text-body)', size: 20 }"
@@ -42,11 +40,6 @@ const { crumbs } = useBreadcrumbs()
     <div class="flex shrink-0 items-center gap-2">
       <LayoutsDashboardThemeToggle />
       <LayoutsDashboardNotificationBell />
-
-      <!-- New session CTA — learner feature, hidden for staff -->
-      <AppButton v-if="!isStaff" to="/dashboard/chat" variant="primary" size="36" radius="8" icon="Add"
-        :icon-config="{ color: 'white', size: 18 }" text="New session" class-list="hidden sm:flex text-[14px]" />
-
       <BlockUserAvatar />
     </div>
   </header>

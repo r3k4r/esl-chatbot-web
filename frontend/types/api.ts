@@ -4859,10 +4859,120 @@ export interface paths {
         };
         put?: never;
         post?: never;
-        delete?: never;
+        /**
+         * Delete one of your own chats
+         * @description Hides the chat from your list for good. It still counts toward the daily
+         *     session and message limits, and stays in tutor/admin stats.
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Session deleted */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            success?: boolean;
+                            message?: string;
+                        };
+                    };
+                };
+                /** @description Missing or invalid token */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Session not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
         options?: never;
         head?: never;
-        patch?: never;
+        /**
+         * Rename or pin one of your own chats
+         * @description Send any of `{ title (1-60), isPinned }`. Pinned chats are listed first.
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        title?: string;
+                        isPinned?: boolean;
+                    };
+                };
+            };
+            responses: {
+                /** @description Session updated */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            success?: boolean;
+                            message?: string;
+                            data?: components["schemas"]["SessionListItem"];
+                        };
+                    };
+                };
+                /** @description Missing or invalid token */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Session not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Validation error */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
         trace?: never;
     };
     "/sessions/{id}/end": {
@@ -7557,6 +7667,7 @@ export interface components {
             /** Format: uuid */
             id?: string;
             topic?: string | null;
+            title?: string | null;
             /** Format: date-time */
             startedAt?: string;
         };
@@ -7578,6 +7689,9 @@ export interface components {
             /** @enum {string} */
             mode?: "TEXT" | "VOICE";
             topic?: string | null;
+            /** @description AI-given name, renamable. Null until the first reply. */
+            title?: string | null;
+            isPinned?: boolean;
             summary?: string | null;
             /** Format: date-time */
             startedAt?: string;

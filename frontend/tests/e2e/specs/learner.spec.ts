@@ -3,15 +3,33 @@ import { test, expect, visit } from '../support/fixtures'
 test.beforeEach(async ({ loginAs }) => loginAs('student'))
 
 test.describe('AI chat', () => {
-  test('opens the latest active session with its history', async ({ page }) => {
+  test('opens on a blank chat, without opening or creating a session', async ({ page }) => {
+    let created = false
+    page.on('request', (r) => { if (r.url().endsWith('/sessions') && r.method() === 'POST') created = true })
     await visit(page, '/dashboard/chat')
-    await expect(page).toHaveURL(/session=sess-1/)
+    await expect(page.getByText('Practised café vocabulary.')).toBeVisible()
+    await expect(page).not.toHaveURL(/session=/)
+    await expect(page.getByText('I would like a large coffee, please.')).toHaveCount(0)
+    expect(created).toBe(false)
+  })
+
+  test('opens a session from its link with its history', async ({ page }) => {
+    await visit(page, '/dashboard/chat?session=sess-1')
     await expect(page.getByText('I would like a large coffee, please.')).toBeVisible()
     await expect(page.getByText('Great order! Would you like milk with that?')).toBeVisible()
   })
 
-  test('sends a message and shows the tutor reply', async ({ page }) => {
+  test('the first message of a blank chat creates the session', async ({ page }) => {
     await visit(page, '/dashboard/chat')
+    const created = page.waitForRequest((r) => r.url().endsWith('/sessions') && r.method() === 'POST')
+    await page.getByPlaceholder('Ask anything in English, or just say hi.').fill('Hello there')
+    await page.getByRole('button', { name: 'Send message' }).click()
+    expect((await created).postDataJSON()).toEqual({ mode: 'TEXT', topic: null })
+    await expect(page).toHaveURL(/session=sess-new/)
+  })
+
+  test('sends a message and shows the tutor reply', async ({ page }) => {
+    await visit(page, '/dashboard/chat?session=sess-1')
     await expect(page.getByText('I would like a large coffee, please.')).toBeVisible()
 
     const sent = page.waitForRequest((r) => r.url().endsWith('/sessions/sess-1/messages') && r.method() === 'POST')
@@ -27,7 +45,7 @@ test.describe('AI chat', () => {
 
   test('puts the text back when sending fails', async ({ page, mockApi }) => {
     await mockApi('POST', '/sessions/sess-1/messages', { status: 500, body: { success: false, message: 'AI provider unavailable' } })
-    await visit(page, '/dashboard/chat')
+    await visit(page, '/dashboard/chat?session=sess-1')
     const box = page.getByPlaceholder('Ask anything in English, or just say hi.')
     await box.fill('One more message')
     await page.getByRole('button', { name: 'Send message' }).click()
@@ -40,34 +58,68 @@ test.describe('AI chat', () => {
   test('shows the backend reason when a plan limit is hit', async ({ page, mockApi }) => {
     const reason = 'Daily message limit reached (20). Upgrade to GOLD for more messages.'
     await mockApi('POST', '/sessions/sess-1/messages', { status: 429, body: { success: false, message: reason } })
-    await visit(page, '/dashboard/chat')
+    await visit(page, '/dashboard/chat?session=sess-1')
     await page.getByPlaceholder('Ask anything in English, or just say hi.').fill('Hello again')
     await page.getByRole('button', { name: 'Send message' }).click()
     await expect(page.getByText(reason)).toBeVisible()
   })
 
-  test('starts a new session', async ({ page }) => {
-    await visit(page, '/dashboard/chat')
+  test('New chat clears the thread without creating a session', async ({ page }) => {
+    let created = false
+    page.on('request', (r) => { if (r.url().endsWith('/sessions') && r.method() === 'POST') created = true })
+    await visit(page, '/dashboard/chat?session=sess-1')
     await expect(page.getByText('I would like a large coffee, please.')).toBeVisible()
-    const created = page.waitForRequest((r) => r.url().endsWith('/sessions') && r.method() === 'POST')
-    // The header CTA is a link to this page; the sessions panel button is the one that creates.
-    await page.getByRole('button', { name: 'New session', exact: true }).last().click()
-    expect((await created).postDataJSON()).toEqual({ mode: 'TEXT', topic: null })
+    await page.getByRole('button', { name: 'New chat', exact: true }).last().click()
+    await expect(page.getByText('I would like a large coffee, please.')).toHaveCount(0)
+    await expect(page).not.toHaveURL(/session=/)
+    expect(created).toBe(false)
   })
 
   test('filters the sessions list by search', async ({ page }) => {
     await visit(page, '/dashboard/chat')
     await expect(page.getByText('Practised café vocabulary.')).toBeVisible()
-    await page.getByPlaceholder('Search sessions').fill('interview')
+    await page.getByPlaceholder('Search chats').fill('interview')
     await expect(page.getByText('Session ended').first()).toBeVisible()
     await expect(page.getByText('Practised café vocabulary.')).toHaveCount(0)
+  })
+
+  test('a chat without an AI name yet falls back to its topic', async ({ page }) => {
+    await visit(page, '/dashboard/chat')
+    await expect(page.getByText('Ordering Coffee').first()).toBeVisible()
+    await expect(page.getByText('Job interview').first()).toBeVisible()
+  })
+
+  test('pins, renames and deletes a chat from its menu', async ({ page }) => {
+    await visit(page, '/dashboard/chat')
+
+    const pinned = page.waitForRequest((r) => r.url().endsWith('/sessions/sess-1') && r.method() === 'PATCH')
+    await page.getByRole('button', { name: 'Options for Ordering Coffee' }).first().click()
+    await page.getByRole('menuitem', { name: 'Pin to top' }).click()
+    expect((await pinned).postDataJSON()).toEqual({ isPinned: true })
+    await expect(page.getByText('Pinned', { exact: true }).first()).toBeVisible()
+
+    const renamed = page.waitForRequest((r) => r.url().endsWith('/sessions/sess-1') && r.method() === 'PATCH')
+    await page.getByRole('button', { name: 'Options for Ordering Coffee' }).first().click()
+    await page.getByRole('menuitem', { name: 'Rename' }).click()
+    const nameBox = page.getByLabel('Chat name').first()
+    await nameBox.fill('Café practice')
+    await nameBox.press('Enter')
+    expect((await renamed).postDataJSON()).toEqual({ title: 'Café practice' })
+    await expect(page.getByText('Café practice').first()).toBeVisible()
+
+    const deleted = page.waitForRequest((r) => r.url().endsWith('/sessions/sess-1') && r.method() === 'DELETE')
+    await page.getByRole('button', { name: 'Options for Café practice' }).first().click()
+    await page.getByRole('menuitem', { name: 'Delete' }).click()
+    await page.getByRole('alertdialog').getByRole('button', { name: 'Delete' }).click()
+    await deleted
+    await expect(page.getByText('Café practice')).toHaveCount(0)
   })
 
   test('an ended session offers a new one instead of the composer', async ({ page }) => {
     await visit(page, '/dashboard/chat?session=sess-2')
     await expect(page.getByText('Session complete')).toBeVisible()
     await expect(page.getByRole('button', { name: 'Send message' })).toHaveCount(0)
-    await expect(page.getByRole('button', { name: 'New session' }).last()).toBeVisible()
+    await expect(page.getByRole('button', { name: 'New chat' }).last()).toBeVisible()
   })
 })
 

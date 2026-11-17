@@ -1,16 +1,14 @@
 <template>
-  <div class="flex items-start gap-2.5 animate-card-enter" style="--delay:0ms">
-    <div class="w-7 h-7 rounded-full bg-linear-to-br from-brand-primary to-brand-accent flex items-center justify-center shrink-0">
-      <AppIconsax name="Candle" color="#000" :size="12" />
+  <!-- Same row shape as a tutor reply, so the answer lands exactly where this was -->
+  <div class="flex items-center gap-3 animate-card-enter" style="--delay:0ms" role="status">
+    <div class="grid size-7 shrink-0 place-content-center rounded-lg bg-brand-primary/12" aria-hidden="true">
+      <AppIconsax name="Candle" color="var(--color-brand-primary)" type="bold" :size="16" />
     </div>
-    <div class="flex items-center gap-2">
-      <!-- Bouncing dots -->
-      <div class="flex gap-1 px-3 py-2.5 rounded-[14px] rounded-bl-sm bg-zinc-100 dark:bg-white/5">
-        <span class="w-1.5 h-1.5 rounded-full bg-zinc-400 dark:bg-zinc-500 animate-bounce" />
-        <span class="w-1.5 h-1.5 rounded-full bg-zinc-400 dark:bg-zinc-500 animate-bounce [animation-delay:120ms]" />
-        <span class="w-1.5 h-1.5 rounded-full bg-zinc-400 dark:bg-zinc-500 animate-bounce [animation-delay:240ms]" />
-      </div>
-      <span class="shimmer-text text-[11px] font-medium text-zinc-500 dark:text-zinc-400 font-poppins">Tutelage AI is thinking…</span>
+    <div class="flex items-center gap-1" aria-hidden="true">
+      <span class="size-1.5 rounded-full bg-text-subtle animate-bounce" />
+      <span class="size-1.5 rounded-full bg-text-subtle animate-bounce [animation-delay:120ms]" />
+      <span class="size-1.5 rounded-full bg-text-subtle animate-bounce [animation-delay:240ms]" />
     </div>
+    <span class="shimmer-text text-[14px] text-text-muted font-poppins">Thinking…</span>
   </div>
 </template>

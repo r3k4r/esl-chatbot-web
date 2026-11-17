@@ -66,9 +66,10 @@ export const weightClasses: Record<TextWeight, string> = {
 
 export const colorClasses: Record<TextColor, string> = {
   'white': 'text-neutral-50',
-  'black': 'text-neutral-900 dark:text-neutral-50',
-  'neutral-600': 'text-neutral-600 dark:text-neutral-200',
-  'neutral-400': 'text-neutral-400 dark:text-neutral-300',
+  // dark: variants only ever apply in the dashboard (public pages are always light)
+  'black': 'text-neutral-900 dark:text-text-heading',
+  'neutral-600': 'text-neutral-600 dark:text-text-body',
+  'neutral-400': 'text-neutral-400 dark:text-text-muted',
   'primary-orange-500': 'text-primary-500 dark:text-primary-300',
   'primary-500': 'text-primary-500 dark:text-primary-300',
   'error': 'text-destructive',
@@ -77,8 +78,8 @@ export const colorClasses: Record<TextColor, string> = {
   'info': 'text-secondary-700 dark:text-secondary-200',
   // Landing-page colors — resolved to tokens in main.css
   'brand-primary': 'text-brand-primary',
-  'brand-ink':     'text-brand-ink',
-  'brand-sub':     'text-brand-sub',
+  'brand-ink':     'text-brand-ink dark:text-text-heading',
+  'brand-sub':     'text-brand-sub dark:text-text-muted',
   'white-90': 'text-neutral-50/90',
   'white-70': 'text-neutral-50/70',
   'white-60': 'text-neutral-50/60',

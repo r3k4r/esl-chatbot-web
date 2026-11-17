@@ -65,6 +65,24 @@ export function useSessions() {
     })
   }
 
+  async function updateSession(id: string, body: { title?: string; isPinned?: boolean }) {
+    return await useHttp<SingleResponse<SessionListItem>>({
+      method: 'PATCH',
+      url: `/sessions/${id}`,
+      body,
+      requireAuth: true,
+    })
+  }
+
+  /** Hides the chat from the learner's list; it still counts toward daily limits. */
+  async function deleteSession(id: string) {
+    return await useHttp<SingleResponse<null>>({
+      method: 'DELETE',
+      url: `/sessions/${id}`,
+      requireAuth: true,
+    })
+  }
+
   async function sendMessage(sessionId: string, content: string, type: 'TEXT' | 'VOICE' = 'TEXT') {
     return await useHttp<SingleResponse<SendMessageResult>>({
       method: 'POST',
@@ -86,5 +104,5 @@ export function useSessions() {
     })
   }
 
-  return { listSessions, createSession, getSession, endSession, sendMessage, listMessages }
+  return { listSessions, createSession, getSession, endSession, updateSession, deleteSession, sendMessage, listMessages }
 }

@@ -80,7 +80,7 @@ const highlights = computed(() => {
           radius="8"
           icon="Add"
           :icon-config="{ color: 'white', size: 18 }"
-          :text="creating ? 'Starting…' : 'New session'"
+          text="New chat"
           :loading="creating"
           :disabled="dailyLimitReached"
           :class-list="newSessionClass"

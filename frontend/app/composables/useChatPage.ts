@@ -11,7 +11,7 @@ import { useVoiceChat } from '~/composables/useVoiceChat'
 
 export function useChatPage() {
   const authStore = useAuthStore()
-  const { listSessions, createSession, getSession, sendMessage, endSession } = useSessions()
+  const { listSessions, createSession, getSession, sendMessage, endSession, updateSession, deleteSession } = useSessions()
   const {
     voiceState,
     partialTranscript,
@@ -129,18 +129,25 @@ export function useChatPage() {
     )
   })
 
+  /** The open chat's name, from the list (which reloads after each reply, so the AI name shows up). */
+  const activeTitle = computed(
+    () => sessions.value.find((s) => s.id === activeSessionId.value)?.title ?? 'New chat',
+  )
+
+  // Pinned chats get their own group on top; Today / Earlier hold the rest.
+  const pinnedList = computed(() => filteredSessions.value.filter((s) => s.pinned))
   const todayList = computed(() => {
     const today = new Date().toDateString()
     return filteredSessions.value.filter((s) => {
       const raw = rawSessions.value.find((r) => r.id === s.id)
-      return raw ? new Date(raw.createdAt).toDateString() === today : false
+      return !s.pinned && raw ? new Date(raw.createdAt).toDateString() === today : false
     })
   })
   const earlierList = computed(() => {
     const today = new Date().toDateString()
     return filteredSessions.value.filter((s) => {
       const raw = rawSessions.value.find((r) => r.id === s.id)
-      return raw ? new Date(raw.createdAt).toDateString() !== today : false
+      return !s.pinned && raw ? new Date(raw.createdAt).toDateString() !== today : false
     })
   })
 
@@ -248,9 +255,11 @@ export function useChatPage() {
   function toChatSession(s: SessionListItem): ChatSession {
     return {
       id: s.id,
-      title: s.topic || 'Open conversation',
+      // The AI names the chat on its first reply; until then it is just a new chat.
+      title: s.title || s.topic || 'New chat',
       when: fmtWhen(s.startedAt || s.createdAt),
       active: s.id === activeSessionId.value,
+      pinned: s.isPinned,
       preview: s.summary || (s.endedAt ? 'Session ended' : `${s.messageCount} messages`),
     }
   }
@@ -303,6 +312,7 @@ export function useChatPage() {
     if (!session) return null
     rawSessions.value = [session, ...rawSessions.value]
     activeSessionId.value = session.id
+    router.replace({ query: { session: session.id } })
     activeSession.value = { ...session, messages: [], evaluation: null }
     messageEntities.value = []
     messages.value = []
@@ -311,20 +321,15 @@ export function useChatPage() {
   }
 
   // ─── API actions ──────────────────────────────────────────────────────────
-  async function loadSessions(autoPick = false) {
+  // The page opens on a blank chat, like any AI app. Only a `?session=` link
+  // (search, notifications, a reload) opens an existing one.
+  async function loadSessions() {
     const res = await listSessions({ limit: 30 })
     if (!res.success) return
     rawSessions.value = res.data?.data ?? []
     rebuildSessions()
-    if (!activeSessionId.value) {
-      const fromQuery = route.query.session as string | undefined
-      if (fromQuery) {
-        await openSession(fromQuery)
-      } else if (autoPick) {
-        const firstActive = rawSessions.value.find((s) => !s.endedAt) ?? rawSessions.value[0]
-        if (firstActive) await openSession(firstActive.id)
-      }
-    }
+    const fromQuery = route.query.session as string | undefined
+    if (!activeSessionId.value && fromQuery) await openSession(fromQuery)
   }
 
   async function openSession(id: string | number, skipIfSame = true) {
@@ -343,14 +348,15 @@ export function useChatPage() {
     scrollBottom()
   }
 
-  async function newSession() {
-    if (creating.value) return
+  /** A blank chat. The session itself is created by the first message (ensureSession),
+   *  so opening and leaving an empty chat never spends one of the day's sessions. */
+  function newSession() {
+    if (creating.value || sending.value) return
     activeSessionId.value = null
     activeSession.value = null
     messageEntities.value = []
     messages.value = []
     router.replace({ query: {} })
-    await ensureSession()
     focusComposer()
   }
 
@@ -463,6 +469,41 @@ export function useChatPage() {
     loadSessions()
   }
 
+  // ─── Chat list: rename / pin / delete ──────────────────────────────────────
+  function patchRaw(id: string, patch: Partial<SessionListItem>) {
+    rawSessions.value = rawSessions.value.map((s) => (s.id === id ? { ...s, ...patch } : s))
+    rebuildSessions()
+  }
+
+  async function renameSession(id: string | number, title: string) {
+    const sid = String(id)
+    const next = title.trim()
+    const before = rawSessions.value.find((s) => s.id === sid)
+    if (!before || !next || next === before.title) return
+    patchRaw(sid, { title: next }) // shown at once; put back if the server says no
+    const res = await updateSession(sid, { title: next })
+    if (!res.success) { patchRaw(sid, { title: before.title }); toast.error(res.message || 'Could not rename the chat') }
+  }
+
+  async function togglePin(id: string | number) {
+    const sid = String(id)
+    const before = rawSessions.value.find((s) => s.id === sid)
+    if (!before) return
+    patchRaw(sid, { isPinned: !before.isPinned })
+    const res = await updateSession(sid, { isPinned: !before.isPinned })
+    if (!res.success) { patchRaw(sid, { isPinned: before.isPinned }); toast.error(res.message || 'Could not pin the chat') }
+  }
+
+  async function removeSession(id: string | number) {
+    const sid = String(id)
+    const res = await deleteSession(sid)
+    if (!res.success) { toast.error(res.message || 'Could not delete the chat'); return }
+    rawSessions.value = rawSessions.value.filter((s) => s.id !== sid)
+    rebuildSessions()
+    if (activeSessionId.value === sid) newSession()
+    toast.success('Chat deleted')
+  }
+
   async function refreshCurrent() {
     if (!activeSessionId.value || refreshing.value) return
     refreshing.value = true
@@ -573,7 +614,7 @@ export function useChatPage() {
   }
 
   onMounted(async () => {
-    await loadSessions(subActive.value)
+    await loadSessions()
     if (needsVerification.value) {
       toast.message('Verify your email to unlock the AI tutor — it comes free with your account.')
     } else if (!subActive.value) {
@@ -611,10 +652,15 @@ export function useChatPage() {
     composerDisabled,
     dailyLimitReached,
     sessionEvaluation,
+    activeTitle,
+    pinnedList,
     todayList,
     earlierList,
     sessionTimer,
     // actions
+    renameSession,
+    togglePin,
+    removeSession,
     needsVerification,
     needsBilling,
     newSession,

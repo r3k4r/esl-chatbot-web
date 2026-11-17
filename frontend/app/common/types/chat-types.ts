@@ -7,6 +7,9 @@ export interface SessionListItem {
   id: string
   mode: SessionMode
   topic: string | null
+  /** AI-given name (first reply), renamable. Null until then. */
+  title: string | null
+  isPinned: boolean
   summary: string | null
   startedAt: string
   endedAt: string | null

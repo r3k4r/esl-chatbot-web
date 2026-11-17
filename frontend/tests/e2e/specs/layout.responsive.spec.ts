@@ -90,7 +90,7 @@ test('chat sessions are reachable at every size', async ({ page, loginAs }) => {
   if (isPhone(page)) {
     await page.getByRole('button', { name: 'Show sessions' }).click()
   }
-  await expect(page.getByPlaceholder('Search sessions').last()).toBeVisible()
+  await expect(page.getByPlaceholder('Search chats').last()).toBeVisible()
   await expect(page.getByText('Job interview').last()).toBeVisible()
 })
 

@@ -35,6 +35,7 @@ export interface SearchGoalResult {
 export interface SearchSessionResult {
   id: string
   topic: string | null
+  title: string | null
   startedAt: string
 }
 

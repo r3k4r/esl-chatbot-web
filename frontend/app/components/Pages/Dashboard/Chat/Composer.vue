@@ -35,7 +35,6 @@ const emit = defineEmits<{
   'stop': []
   're-record': []
   'discard': []
-  'attach': []
 }>()
 
 const placeholder = computed(() => {
@@ -46,7 +45,6 @@ const placeholder = computed(() => {
   if (props.isSessionEnded) return 'Session ended — start a new one.'
   if (props.hardCapReached) return 'Session message limit reached.'
   if (props.isReviewing) return 'Listen back, then Send — or redo it.'
-  if (!props.activeSessionId) return 'Type a message to start chatting with Tutelage AI…'
   return 'Ask anything in English, or just say hi.'
 })
 
@@ -84,8 +82,8 @@ function onKeydown(e: KeyboardEvent) {
 </script>
 
 <template>
-  <div class="border-t p-3 sm:p-4 shrink-0" style="border-color:var(--border-inner)">
-    <div class="max-w-3xl mx-auto">
+  <div class="px-3 pb-3 pt-1 sm:px-6 sm:pb-4 shrink-0">
+    <div class="max-w-2xl mx-auto">
       <PagesDashboardChatVoiceRecordingBar
         v-if="isRecording"
         :stream="audioStream"
@@ -110,26 +108,15 @@ function onKeydown(e: KeyboardEvent) {
         <AppText size="13" color="neutral-400">Transcribing your recording…</AppText>
       </div>
 
-      <div class="dash-card p-2 sm:p-2.5 flex items-end gap-1.5 sm:gap-2">
-        <AppButton
-          variant="ghost"
-          size="36"
-          radius="8"
-          aspect="square"
-          icon="Paperclip"
-          :icon-config="{ color: 'var(--color-text-subtle)', size: 16 }"
-          class-list="hidden sm:flex shrink-0"
-          aria-label="Attach a file"
-          @click="emit('attach')"
-        />
-
+      <div
+        class="flex items-end gap-1.5 rounded-2xl border border-border-card bg-surface-card p-2 ps-3 transition-colors focus-within:border-text-subtle sm:gap-2">
         <UiTextarea
           ref="taRef"
           :model-value="modelValue"
           rows="1"
           :placeholder="placeholder"
           :disabled="inputDisabled"
-          class="flex-1 min-h-9 max-h-32 resize-none border-0 bg-transparent shadow-none focus-visible:ring-0 px-1 py-2 text-[14px]! font-poppins disabled:cursor-not-allowed disabled:opacity-60"
+          class="flex-1 min-h-9 max-h-32 resize-none border-0 bg-transparent shadow-none focus-visible:ring-0 px-1 py-2 text-[15px]! font-poppins disabled:cursor-not-allowed disabled:opacity-60"
           style="color:var(--text-heading)"
           @update:model-value="emit('update:modelValue', String($event))"
           @keydown="onKeydown"

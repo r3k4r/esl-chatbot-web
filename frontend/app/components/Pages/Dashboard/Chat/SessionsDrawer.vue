@@ -7,6 +7,7 @@ import type { ChatSession } from '~/common/types/dashboard-types'
 const props = defineProps<{
   open: boolean
   sessions: ChatSession[]
+  pinnedList: ChatSession[]
   todayList: ChatSession[]
   earlierList: ChatSession[]
   creating: boolean
@@ -18,6 +19,9 @@ const emit = defineEmits<{
   'update:open': [val: boolean]
   'new-session': []
   'open-session': [id: string | number]
+  'rename-session': [id: string | number, title: string]
+  'pin-session': [id: string | number]
+  'delete-session': [id: string | number]
   'update:search': [val: string]
 }>()
 
@@ -50,13 +54,14 @@ function create() {
     >
       <UiSheetHeader class="px-4 py-3 border-b" style="border-color:var(--border-inner)">
         <UiSheetTitle class="text-[15px]" style="color:var(--text-heading)">
-          Your sessions
+          Your chats
         </UiSheetTitle>
       </UiSheetHeader>
 
       <div class="flex-1 min-h-0">
         <PagesDashboardChatSessionsPanel
           :sessions="sessions"
+          :pinned-list="pinnedList"
           :today-list="todayList"
           :earlier-list="earlierList"
           :creating="creating"
@@ -64,6 +69,9 @@ function create() {
           :daily-limit-reached="dailyLimitReached"
           @new-session="create"
           @open-session="pick"
+          @rename-session="(id, title) => emit('rename-session', id, title)"
+          @pin-session="emit('pin-session', $event)"
+          @delete-session="emit('delete-session', $event)"
           @update:search="emit('update:search', $event)"
         />
       </div>

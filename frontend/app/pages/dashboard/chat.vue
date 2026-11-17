@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { toast } from 'vue-sonner'
 
 definePageMeta({ layout: 'dashboard', requiresAuth: true, collapseSidebar: true })
 
@@ -29,9 +28,14 @@ const {
   composerDisabled,
   dailyLimitReached,
   sessionEvaluation,
+  activeTitle,
+  pinnedList,
   todayList,
   earlierList,
   sessionTimer,
+  renameSession,
+  togglePin,
+  removeSession,
   needsVerification,
   newSession,
   openSession,
@@ -68,6 +72,7 @@ const sessionsPanelOpen = useCookie<boolean>('chat-sessions-open', { default: ()
     <PagesDashboardChatSessionsSidebar
       v-model:open="sessionsPanelOpen"
       :sessions="sessions"
+      :pinned-list="pinnedList"
       :today-list="todayList"
       :earlier-list="earlierList"
       :creating="creating"
@@ -75,6 +80,9 @@ const sessionsPanelOpen = useCookie<boolean>('chat-sessions-open', { default: ()
       :daily-limit-reached="dailyLimitReached"
       @new-session="newSession"
       @open-session="openSession"
+      @rename-session="renameSession"
+      @pin-session="togglePin"
+      @delete-session="removeSession"
       @update:search="search = $event"
     />
 
@@ -82,6 +90,7 @@ const sessionsPanelOpen = useCookie<boolean>('chat-sessions-open', { default: ()
     <PagesDashboardChatSessionsDrawer
       v-model:open="sessionsOpen"
       :sessions="sessions"
+      :pinned-list="pinnedList"
       :today-list="todayList"
       :earlier-list="earlierList"
       :creating="creating"
@@ -89,15 +98,18 @@ const sessionsPanelOpen = useCookie<boolean>('chat-sessions-open', { default: ()
       :daily-limit-reached="dailyLimitReached"
       @new-session="newSession"
       @open-session="openSession"
+      @rename-session="renameSession"
+      @pin-session="togglePin"
+      @delete-session="removeSession"
       @update:search="search = $event"
     />
 
     <!-- Main thread (fills remaining space, column flex) -->
-    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-surface-card">
 
       <!-- Thread header (fixed height, never scrolls) -->
       <PagesDashboardChatThreadHeader
-        :topic="activeSession?.topic"
+        :title="activeTitle"
         :cefr-label="cefrLabel"
         :is-session-ended="isSessionEnded"
         :active-session-id="activeSessionId"
@@ -164,7 +176,6 @@ const sessionsPanelOpen = useCookie<boolean>('chat-sessions-open', { default: ()
         @stop="reviewVoice"
         @re-record="reRecordVoice"
         @discard="cancelVoice"
-        @attach="toast.message('Attachments — coming soon')"
       />
     </div>
   </div>

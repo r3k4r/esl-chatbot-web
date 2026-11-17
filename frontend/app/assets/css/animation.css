@@ -44,7 +44,7 @@
 .dash-card {
   background-color: var(--surface-card);
   border: 1px solid var(--border-card);
-  @apply rounded-xl shadow-soft;
+  @apply rounded-xl;
 }
 
 /* ─── Load-in animations (staggered via --delay) ───────────────────────────── */

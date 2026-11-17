@@ -68,8 +68,8 @@ export const fibPayments: FibPaymentRecord[] = [
 // ── Learning data (student) ─────────────────────────────────────────────────
 
 export const sessions: SessionListItem[] = [
-  { id: 'sess-1', mode: 'TEXT', topic: 'Ordering coffee', summary: 'Practised café vocabulary.', startedAt: new Date(Date.now() - 2 * 3_600_000).toISOString(), endedAt: null, durationSeconds: null, messageCount: 6, averageScore: 78, createdAt: T },
-  { id: 'sess-2', mode: 'VOICE', topic: 'Job interview', summary: null, startedAt: new Date(Date.now() - 3 * DAY).toISOString(), endedAt: new Date(Date.now() - 3 * DAY + 600_000).toISOString(), durationSeconds: 600, messageCount: 4, averageScore: 71, createdAt: T },
+  { id: 'sess-1', mode: 'TEXT', topic: 'Ordering coffee', title: 'Ordering Coffee', isPinned: false, summary: 'Practised café vocabulary.', startedAt: new Date(Date.now() - 2 * 3_600_000).toISOString(), endedAt: null, durationSeconds: null, messageCount: 6, averageScore: 78, createdAt: T },
+  { id: 'sess-2', mode: 'VOICE', topic: 'Job interview', title: null, isPinned: false, summary: null, startedAt: new Date(Date.now() - 3 * DAY).toISOString(), endedAt: new Date(Date.now() - 3 * DAY + 600_000).toISOString(), durationSeconds: 600, messageCount: 4, averageScore: 71, createdAt: T },
 ]
 
 export const messages: ChatMessage[] = [

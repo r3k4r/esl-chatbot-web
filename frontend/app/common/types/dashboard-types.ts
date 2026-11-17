@@ -79,6 +79,7 @@ export interface ChatSession {
   title: string
   when: string
   active?: boolean
+  pinned?: boolean
   preview: string
 }
 

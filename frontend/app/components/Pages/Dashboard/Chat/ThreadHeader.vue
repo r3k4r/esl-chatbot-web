@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const props = defineProps<{
-  topic: string | null | undefined
+  title: string
   cefrLabel: string
   isSessionEnded: boolean
   activeSessionId: string | null
@@ -59,41 +59,26 @@ function doEnd() {
         @click="emit('show-sessions')"
       />
 
-      <div class="relative shrink-0">
-        <div
-          class="w-9 h-9 rounded-full bg-linear-to-br from-brand-primary to-brand-accent flex items-center justify-center"
-        >
-          <AppIconsax name="Candle" color="#000" :size="16" />
-        </div>
-        <span
-          :class="[
-            'absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full ring-2 ring-surface-page',
-            isSessionEnded ? 'bg-zinc-400' : 'bg-emerald-400',
-          ]"
-        />
-      </div>
-
       <div class="leading-tight min-w-0">
-        <AppText size="14" weight="semibold" class-list="truncate">Tutelage · AI Tutor</AppText>
-        <AppText size="12" color="neutral-400" class-list="truncate">
-          {{ topic || 'Open conversation' }}
-          <span class="hidden sm:inline"> · {{ cefrLabel }}</span>
-          <template v-if="activeSessionId">
-            · {{ isSessionEnded ? 'Ended' : sessionTimer }}
-          </template>
+        <AppText size="14" weight="semibold" class-list="truncate">
+          {{ title }}
+        </AppText>
+        <AppText v-if="activeSessionId" size="12" color="neutral-400" class-list="truncate">
+          Level {{ cefrLabel }} · {{ isSessionEnded ? 'Ended' : sessionTimer }}
         </AppText>
       </div>
     </div>
 
-    <div class="flex items-center gap-1.5 shrink-0">
+    <div v-if="!actionsDisabled" class="flex items-center gap-1.5 shrink-0">
       <AppButton
-        variant="outline"
+        variant="ghost"
         size="36"
         radius="8"
         aspect="square"
         class-list="shrink-0"
-        :disabled="actionsDisabled || refreshing"
+        :disabled="refreshing"
         aria-label="Refresh session"
+        title="Refresh"
         @click="emit('refresh')"
       >
         <AppIconsax
@@ -112,8 +97,7 @@ function doEnd() {
         :loading="ending"
         icon="CloseCircle"
         :icon-config="{ color: 'currentColor', size: 16 }"
-        class-list="gap-2 px-2.5 sm:px-4"
-        :disabled="actionsDisabled"
+        class-list="gap-2 px-2.5 sm:px-3"
         @click="confirmEnd = true"
       >
         <span class="hidden sm:inline text-[14px]">End session</span>

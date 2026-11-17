@@ -73,7 +73,7 @@ const contentGroups = computed<ResultGroup[]>(() => {
   if (r.goals?.length)
     groups.push({ key: 'goals', label: 'Goals', items: r.goals.map((g) => ({ id: g.id, label: g.description, sub: titleCase(g.type), icon: 'Flag', to: '/dashboard/goals' })) })
   if (r.sessions?.length)
-    groups.push({ key: 'sessions', label: 'Sessions', items: r.sessions.map((s) => ({ id: s.id, label: s.topic ?? 'Untitled session', sub: formatDate(s.startedAt), icon: 'MessageText', to: '/dashboard/chat' })) })
+    groups.push({ key: 'sessions', label: 'Sessions', items: r.sessions.map((s) => ({ id: s.id, label: s.title ?? s.topic ?? 'Untitled chat', sub: formatDate(s.startedAt), icon: 'MessageText', to: `/dashboard/chat?session=${s.id}` })) })
   return groups
 })
 

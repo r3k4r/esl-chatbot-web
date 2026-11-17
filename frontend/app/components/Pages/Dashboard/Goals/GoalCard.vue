@@ -103,9 +103,9 @@ const barColor = computed(() => {
               </UiDropdownMenuItem>
             </template>
             <UiDropdownMenuSeparator />
-            <UiDropdownMenuItem class="gap-2 cursor-pointer bg-destructive text-white focus:bg-destructive hover:text-white"
+            <UiDropdownMenuItem variant="destructive" class="gap-2 cursor-pointer"
               @click="emit('delete', goal.id)">
-              <AppIconsax name="Trash" color="white" :size="13" />
+              <AppIconsax name="Trash" color="currentColor" :size="16" />
               Delete
             </UiDropdownMenuItem>
           </UiDropdownMenuContent>

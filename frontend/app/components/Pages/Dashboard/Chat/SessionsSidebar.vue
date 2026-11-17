@@ -5,6 +5,7 @@ import type { ChatSession } from '~/common/types/dashboard-types'
 // SessionsDrawer.vue instead — see chat.vue.
 defineProps<{
   sessions: ChatSession[]
+  pinnedList: ChatSession[]
   todayList: ChatSession[]
   earlierList: ChatSession[]
   creating: boolean
@@ -15,6 +16,9 @@ defineProps<{
 const emit = defineEmits<{
   'new-session': []
   'open-session': [id: string | number]
+  'rename-session': [id: string | number, title: string]
+  'pin-session': [id: string | number]
+  'delete-session': [id: string | number]
   'update:search': [val: string]
 }>()
 
@@ -35,15 +39,16 @@ const open = defineModel<boolean>('open', { required: true })
     <!-- Fixed inner width, so the content slides instead of squashing -->
     <div class="flex h-full w-72 flex-col">
       <div class="flex h-14 shrink-0 items-center justify-between border-b border-border-inner ps-4 pe-2">
-        <AppText size="15" weight="semibold">Sessions</AppText>
+        <AppText size="15" weight="semibold">Chats</AppText>
         <AppButton variant="ghost" size="36" radius="8" aspect="square" icon="SidebarLeft"
           :icon-config="{ color: 'var(--color-text-muted)', size: 20 }"
-          class-list="hover:bg-surface-raised dark:hover:bg-surface-raised" aria-label="Hide sessions"
-          title="Hide sessions" @click="open = false" />
+          class-list="hover:bg-surface-raised dark:hover:bg-surface-raised" aria-label="Hide chats"
+          title="Hide chats" @click="open = false" />
       </div>
 
       <PagesDashboardChatSessionsPanel
         :sessions="sessions"
+        :pinned-list="pinnedList"
         :today-list="todayList"
         :earlier-list="earlierList"
         :creating="creating"
@@ -51,6 +56,9 @@ const open = defineModel<boolean>('open', { required: true })
         :daily-limit-reached="dailyLimitReached"
         @new-session="emit('new-session')"
         @open-session="emit('open-session', $event)"
+        @rename-session="(id, title) => emit('rename-session', id, title)"
+        @pin-session="emit('pin-session', $event)"
+        @delete-session="emit('delete-session', $event)"
         @update:search="emit('update:search', $event)"
       />
     </div>
