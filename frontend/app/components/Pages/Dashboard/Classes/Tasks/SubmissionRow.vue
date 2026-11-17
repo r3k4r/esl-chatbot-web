@@ -2,23 +2,23 @@
 import { toast } from 'vue-sonner'
 import type { TaskSubmissionItem } from '~/common/types/task-types'
 
+// One student's hand-in, with the tutor's feedback (write, or edit what was sent).
 const props = defineProps<{
   taskId: string
   submission: TaskSubmissionItem
 }>()
 
-const emit = defineEmits<{
-  updated: [submission: TaskSubmissionItem]
-}>()
+const emit = defineEmits<{ updated: [submission: TaskSubmissionItem] }>()
 
 const { giveFeedback } = useTasks()
 
-const feedbackDraft = ref(props.submission.feedback ?? '')
-const editing = ref(false)
+const draft = ref(props.submission.feedback ?? '')
+const editing = ref(!props.submission.feedback)
 const saving = ref(false)
-const feedbackError = ref('')
+const error = ref('')
 
-function avatarInitial(name: string) { return name.charAt(0).toUpperCase() }
+const initials = computed(() =>
+  (props.submission.student.displayName ?? '?').split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase())
 
 function relativeDate(iso: string) {
   const diff = Date.now() - new Date(iso).getTime()
@@ -28,133 +28,82 @@ function relativeDate(iso: string) {
   const hrs = Math.round(diff / 3_600_000)
   if (hrs < 24) return `${hrs}h ago`
   const days = Math.round(diff / 86_400_000)
-  return days === 1 ? 'Yesterday' : `${days}d ago`
+  return days === 1 ? 'yesterday' : `${days}d ago`
 }
 
 function startEditing() {
-  feedbackDraft.value = props.submission.feedback ?? ''
-  feedbackError.value = ''
+  draft.value = props.submission.feedback ?? ''
+  error.value = ''
   editing.value = true
 }
 
-async function saveFeedback() {
-  const text = feedbackDraft.value.trim()
-  if (!text) { feedbackError.value = 'Feedback cannot be empty'; return }
-  if (text.length > 5000) { feedbackError.value = 'Feedback must be at most 5000 characters'; return }
+async function save() {
+  const text = draft.value.trim()
+  if (!text) { error.value = 'Write some feedback first.'; return }
   if (saving.value) return
   saving.value = true
-  feedbackError.value = ''
+  error.value = ''
   const res = await giveFeedback(props.taskId, props.submission.id, text)
   saving.value = false
-  if (!res.success) {
-    feedbackError.value = res.message || 'Could not save feedback'
-    return
-  }
-  const updated = (res.data as any)?.data as TaskSubmissionItem
-  emit('updated', updated)
+  if (!res.success) { error.value = res.message || 'Could not save feedback'; return }
+  emit('updated', (res.data as any)?.data as TaskSubmissionItem)
   editing.value = false
-  toast.success('Feedback saved.')
+  toast.success('Feedback sent.')
 }
 </script>
 
 <template>
-  <div class="rounded-xl overflow-hidden" style="border:1px solid var(--border-inner)">
-    <!-- Student header -->
-    <div class="flex items-center gap-3 px-4 py-3" style="background:var(--surface-raised);border-bottom:1px solid var(--border-inner)">
+  <article class="space-y-2.5 py-4 first:pt-0 last:pb-0">
+    <div class="flex items-center gap-2.5">
       <UiAvatar class="size-8 shrink-0">
         <UiAvatarImage v-if="submission.student.avatarUrl" :src="submission.student.avatarUrl" :alt="submission.student.displayName ?? ''" />
-        <UiAvatarFallback class="text-[12px] font-semibold font-poppins" style="background:rgba(245,158,11,0.15);color:var(--color-brand-primary)">
-          {{ avatarInitial(submission.student.displayName ?? '?') }}
-        </UiAvatarFallback>
+        <UiAvatarFallback class="bg-surface-well text-[12px] font-semibold text-text-muted">{{ initials }}</UiAvatarFallback>
       </UiAvatar>
-      <AppText size="13" weight="semibold" class-list="flex-1 truncate" :style="`color:var(--text-heading)`">
-        {{ submission.student.displayName }}
-      </AppText>
-      <AppText size="11" :style="`color:var(--text-subtle)`">{{ relativeDate(submission.createdAt) }}</AppText>
+      <div class="min-w-0 flex-1">
+        <AppText size="14" weight="semibold" class-list="truncate">{{ submission.student.displayName }}</AppText>
+        <AppText size="13" color="neutral-400">Handed in {{ relativeDate(submission.createdAt) }}</AppText>
+      </div>
+      <UiBadge class="shrink-0 rounded-md border-0 text-[12px] font-semibold"
+        :style="submission.feedback
+          ? 'background:var(--status-active-bg);color:var(--status-active-text)'
+          : 'background:var(--status-blocked-bg);color:var(--status-blocked-text)'">
+        {{ submission.feedback ? 'Reviewed' : 'To review' }}
+      </UiBadge>
     </div>
 
-    <div class="p-4 space-y-3" style="background:var(--surface-card)">
-      <!-- Submitted content -->
-      <div v-if="submission.content">
-        <AppText size="13" class-list="whitespace-pre-wrap leading-relaxed" :style="`color:var(--text-body)`">
-          {{ submission.content }}
-        </AppText>
+    <AppText v-if="submission.content" size="14" color="neutral-600" class-list="whitespace-pre-wrap break-words leading-6">
+      {{ submission.content }}
+    </AppText>
+    <AppLink v-if="submission.fileUrl" :to="submission.fileUrl" target="_blank" rel="noopener noreferrer"
+      class="flex items-center gap-1.5 text-[14px] text-brand-ink underline underline-offset-2 dark:text-brand-primary">
+      <AppIconsax name="Link" color="currentColor" :size="16" />
+      <span class="truncate">{{ submission.fileUrl }}</span>
+    </AppLink>
+    <PagesDashboardClassesTasksTaskFileList v-if="submission.attachments?.length" :task-id="taskId"
+      :files="submission.attachments" single />
+
+    <!-- Sent feedback -->
+    <div v-if="submission.feedback && !editing" class="rounded-lg bg-surface-raised p-3">
+      <div class="flex items-center justify-between gap-2">
+        <AppText size="13" weight="semibold" color="neutral-600">Your feedback</AppText>
+        <AppButton variant="ghost" size="28" radius="8" icon="Edit2" text="Edit"
+          :icon-config="{ color: 'currentColor', size: 16 }" class-list="text-[13px] text-text-muted px-2"
+          @click="startEditing" />
       </div>
+      <AppText size="14" color="neutral-600" class-list="mt-1 whitespace-pre-wrap leading-6">{{ submission.feedback }}</AppText>
+    </div>
 
-      <!-- File link -->
-      <div v-if="submission.fileUrl" class="flex items-center gap-2">
-        <AppIconsax name="AttachCircle" color="var(--color-brand-primary)" :size="14" />
-        <AppLink :to="submission.fileUrl" target="_blank" rel="noopener noreferrer" class="text-[13px] text-brand-primary underline underline-offset-2 truncate max-w-xs">
-          {{ submission.fileUrl }}
-        </AppLink>
-      </div>
-
-      <!-- Feedback area -->
-      <div class="pt-1" style="border-top:1px solid var(--border-inner)">
-        <!-- Existing feedback (non-editing view) -->
-        <template v-if="submission.feedback && !editing">
-          <div class="rounded-lg p-3 space-y-1.5" style="background:var(--surface-raised);border-left:3px solid var(--color-brand-primary)">
-            <div class="flex items-center justify-between">
-              <AppText size="11" weight="semibold" :uppercase="true" class-list="tracking-[0.1em]" :style="`color:var(--color-brand-primary)`">Your feedback</AppText>
-              <AppButton aria-label="Edit feedback"
-                variant="secondary"
-                size="24"
-                radius="8"
-                icon="Edit2"
-                :icon-config="{ color: 'currentColor', size: 11 }"
-                @click="startEditing"
-              />
-            </div>
-            <AppText size="13" class-list="whitespace-pre-wrap leading-relaxed" :style="`color:var(--text-body)`">
-              {{ submission.feedback }}
-            </AppText>
-            <AppText v-if="submission.feedbackAt" size="11" :style="`color:var(--text-subtle)`">
-              {{ relativeDate(submission.feedbackAt) }}
-            </AppText>
-          </div>
-        </template>
-
-        <!-- Write / Edit feedback form -->
-        <template v-else-if="editing || !submission.feedback">
-          <div class="space-y-2">
-            <AppText size="11" weight="semibold" :uppercase="true" class-list="tracking-[0.1em] block" :style="`color:var(--text-subtle)`">
-              {{ submission.feedback ? 'Edit feedback' : 'Write feedback' }}
-            </AppText>
-            <UiTextarea
-              v-model="feedbackDraft"
-              placeholder="Write feedback for this student…"
-              rows="3"
-              maxlength="5000"
-              class="resize-none font-poppins text-[13px] w-full"
-              :style="`color:var(--text-body);background:var(--surface-raised);border-color:var(--border-inner)`"
-            />
-            <div v-if="feedbackError" class="text-[12px] text-red-500 font-poppins">{{ feedbackError }}</div>
-            <div class="flex items-center gap-2 justify-end">
-              <AppButton
-                v-if="editing"
-                variant="secondary"
-                size="28"
-                radius="8"
-                text="Cancel"
-                class="text-[12px]!"
-                @click="editing = false"
-              />
-              <AppButton
-                variant="primary"
-                size="28"
-                radius="8"
-                icon="Send2"
-                :icon-config="{ color: 'white', size: 12 }"
-                text="Save"
-                class="text-[12px]!"
-                :loading="saving"
-                :disabled="!feedbackDraft.trim()"
-                @click="saveFeedback"
-              />
-            </div>
-          </div>
-        </template>
+    <!-- Write / edit feedback -->
+    <div v-else class="space-y-2">
+      <UiTextarea v-model="draft" :aria-label="`Feedback for ${submission.student.displayName}`"
+        placeholder="Write feedback…" rows="2" maxlength="5000" class="resize-none text-[14px] leading-6" />
+      <AppText v-if="error" size="13" color="error">{{ error }}</AppText>
+      <div class="flex justify-end gap-1.5">
+        <AppButton v-if="submission.feedback" variant="ghost" size="32" radius="8" text="Cancel"
+          class-list="text-[14px]" @click="editing = false" />
+        <AppButton variant="primary" size="32" radius="8" icon="Send2" :icon-config="{ color: 'white', size: 16 }"
+          text="Send feedback" class-list="text-[14px] px-3" :loading="saving" :disabled="!draft.trim()" @click="save" />
       </div>
     </div>
-  </div>
+  </article>
 </template>

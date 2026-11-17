@@ -17,10 +17,9 @@ const totalPages = ref(1)
 const totalCount = ref(0)
 const loadingMore = ref(false)
 
-// Dialog / sheet state
+// Dialog state
 const formOpen = ref(false)
 const editingTask = ref<TaskItem | null>(null)
-const detailTask = ref<TaskItem | null>(null)
 const deleteTarget = ref<TaskItem | null>(null)
 const deleteConfirmOpen = ref(false)
 const deleting = ref(false)
@@ -52,7 +51,7 @@ async function loadMore() {
 }
 
 function handleOpenTask(task: TaskItem) {
-  detailTask.value = task
+  navigateTo(`/dashboard/classes/${props.classId}/tasks/${task.id}`)
 }
 
 function handleCreate() {
@@ -78,7 +77,7 @@ async function handleConfirmDelete() {
   deleteConfirmOpen.value = false
   if (!res.success) { toast.error(res.message || 'Could not delete task'); return }
   tasks.value = tasks.value.filter(t => t.id !== deleteTarget.value!.id)
-  if (detailTask.value?.id === deleteTarget.value.id) detailTask.value = null
+  totalCount.value = Math.max(0, totalCount.value - 1)
   deleteTarget.value = null
   toast.success('Task deleted.')
 }
@@ -92,7 +91,6 @@ async function handleToggleClosed(task: TaskItem) {
   const updated = (res.data as any)?.data as TaskItem
   if (updated) {
     tasks.value = tasks.value.map(t => t.id === updated.id ? updated : t)
-    if (detailTask.value?.id === updated.id) detailTask.value = updated
   }
   toast.success(task.status === 'OPEN' ? 'Task closed.' : 'Task reopened.')
 }
@@ -101,15 +99,10 @@ function handleTaskSaved(saved: TaskItem) {
   const idx = tasks.value.findIndex(t => t.id === saved.id)
   if (idx >= 0) {
     tasks.value = tasks.value.map(t => t.id === saved.id ? saved : t)
-    if (detailTask.value?.id === saved.id) detailTask.value = saved
   } else {
     tasks.value = [saved, ...tasks.value]
+    totalCount.value++
   }
-}
-
-function handleTaskUpdated(updated: TaskItem) {
-  tasks.value = tasks.value.map(t => t.id === updated.id ? updated : t)
-  detailTask.value = updated
 }
 
 watch(() => props.classId, () => load(true), { immediate: true })
@@ -120,18 +113,18 @@ watch(() => props.classId, () => load(true), { immediate: true })
 
     <!-- Header row -->
     <div class="flex items-center justify-between">
-      <AppText size="13" :style="`color:var(--text-muted)`">
+      <AppText size="14" :style="`color:var(--text-muted)`">
         {{ totalCount ? `${totalCount} task${totalCount === 1 ? '' : 's'}` : '' }}
       </AppText>
       <AppButton
         v-if="canManage"
         variant="primary"
-        size="32"
+        size="36"
         radius="8"
         icon="Add"
-        :icon-config="{ color: 'white', size: 13 }"
+        :icon-config="{ color: 'white', size: 16 }"
         text="New task"
-        class="text-[12px]!"
+        class-list="text-[14px]"
         @click="handleCreate"
       />
     </div>
@@ -194,15 +187,6 @@ watch(() => props.classId, () => load(true), { immediate: true })
       :class-id="classId"
       :task="editingTask"
       @saved="handleTaskSaved"
-    />
-
-    <!-- Task detail sheet -->
-    <PagesDashboardClassesTasksTaskDetailSheet
-      :task="detailTask"
-      :can-manage="canManage"
-      :is-student="isStudent"
-      @close="detailTask = null"
-      @task-updated="handleTaskUpdated"
     />
 
     <!-- Delete confirmation -->

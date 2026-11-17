@@ -11,7 +11,7 @@ import type { VocabularyItem, VocabularyStats } from '../../app/common/types/voc
 import type {
   ClassItem, ClassDetail, AdminClassItem, ClassStudentSummary, ClassStudentDetail, ClassAnalytics, AnnouncementItem,
 } from '../../app/common/types/class-types'
-import type { TaskItem, TaskSubmissionItem } from '../../app/common/types/task-types'
+import type { TaskItem, TaskSubmissionItem, TaskCommentItem, TaskAttachment } from '../../app/common/types/task-types'
 import type { MyProfileData } from '../../app/common/types/profile-types'
 import type { UserSubscriptionDetail, FibPaymentRecord } from '../../app/common/types/subscription-types'
 import type { AdminDashboardData, AdminUserItem } from '../../app/common/types/admin-types'
@@ -163,13 +163,21 @@ export const announcements: AnnouncementItem[] = [
 ]
 
 const author = { id: 'u-tutor', displayName: 'Sarah Miller', avatarUrl: '' }
+const worksheet: TaskAttachment = { id: 'ta1', taskId: 't1', commentId: null, submissionId: null, uploadedById: 'u-tutor', fileName: 'weekend-worksheet.pdf', fileUrl: 'https://files.tutelage.test/tasks/t1/ws.pdf', mimeType: 'application/pdf', size: 48_213, createdAt: T }
+// A 1×1 PNG as a data URL, so the image viewer has something real to show offline.
+const photo: TaskAttachment = { id: 'ta2', taskId: 't1', commentId: null, submissionId: null, uploadedById: 'u-tutor', fileName: 'park-photo.png', fileUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=', mimeType: 'image/png', size: 70, createdAt: T }
 export const tasks: TaskItem[] = [
-  { id: 't1', classId: 'c1', createdById: 'u-tutor', title: 'Describe your weekend', description: 'Write 150 words about your weekend.', deadline: daysFrom(5), status: 'OPEN', closedAt: null, createdAt: T, updatedAt: T, createdBy: author, submissionCount: 1, mySubmission: null },
-  { id: 't2', classId: 'c1', createdById: 'u-tutor', title: 'Past tense quiz', description: 'Answer the ten questions.', deadline: null, status: 'CLOSED', closedAt: T, createdAt: T, updatedAt: T, createdBy: author, submissionCount: 2, mySubmission: null },
+  { id: 't1', classId: 'c1', createdById: 'u-tutor', title: 'Describe your weekend', description: 'Write 150 words about your weekend.', deadline: daysFrom(5), status: 'OPEN', closedAt: null, commentsEnabled: true, commentCount: 2, attachments: [worksheet, photo], createdAt: T, updatedAt: T, createdBy: author, submissionCount: 1, mySubmission: null },
+  { id: 't2', classId: 'c1', createdById: 'u-tutor', title: 'Past tense quiz', description: 'Answer the ten questions.', deadline: null, status: 'CLOSED', closedAt: T, commentsEnabled: false, commentCount: 0, attachments: [], createdAt: T, updatedAt: T, createdBy: author, submissionCount: 2, mySubmission: null },
+]
+
+export const taskComments: TaskCommentItem[] = [
+  { id: 'tc1', taskId: 't1', content: 'Use the past simple, please.', editedAt: null, createdAt: T, author: { ...author, classRole: 'TUTOR' }, attachments: [] },
+  { id: 'tc2', taskId: 't1', content: 'Can I write about Sunday only?', editedAt: null, createdAt: T, author: { id: 'u-student', displayName: 'Ali Hassan', avatarUrl: '', classRole: 'STUDENT' }, attachments: [] },
 ]
 
 export const submissions: TaskSubmissionItem[] = [
-  { id: 'sub1', taskId: 't1', studentId: 'u-student', content: 'On Saturday I visited my grandmother.', fileUrl: null, feedback: null, feedbackAt: null, createdAt: T, updatedAt: T, student: { id: 'u-student', displayName: 'Ali Hassan', avatarUrl: '' } },
+  { id: 'sub1', taskId: 't1', studentId: 'u-student', content: 'On Saturday I visited my grandmother.', fileUrl: null, feedback: null, feedbackAt: null, createdAt: T, updatedAt: T, student: { id: 'u-student', displayName: 'Ali Hassan', avatarUrl: '' }, attachments: [] },
 ]
 
 // ── Staff dashboards ───────────────────────────────────────────────────────

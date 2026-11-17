@@ -169,6 +169,15 @@ export const routes: Record<string, Handler> = {
   'DELETE /tasks/:id': auth(() => ok(null, 'Task deleted'), STAFF),
   'GET /tasks/:id/submissions': auth(() => ok(F.submissions), STAFF),
   'POST /tasks/:id/submissions': auth(({ body }) => created({ ...F.submissions[0]!, ...body, id: 'sub-new' }, 'Submitted')),
+  // Comment bodies are multipart, so the mock answers with a fixed comment.
+  'GET /tasks/:id/comments': auth(({ params, query }) => page(F.taskComments.filter((c) => c.taskId === params.id), query)),
+  'POST /tasks/:id/comments': auth(({ params }) => created({ ...F.taskComments[1]!, id: 'tc-new', taskId: params.id, content: 'Posted from the test' }, 'Comment posted')),
+  'PATCH /tasks/:id/comments/:commentId': auth(({ params }) => ok({ ...F.taskComments.find((c) => c.id === params.commentId), editedAt: new Date().toISOString() }, 'Comment updated')),
+  'DELETE /tasks/:id/comments/:commentId': auth(() => ok(null, 'Comment deleted')),
+  'POST /tasks/:id/attachments': auth(() => created([]), STAFF),
+  'DELETE /tasks/:id/attachments/:attachmentId': auth(() => ok(null, 'File removed'), STAFF),
+  // A data: URL so the browser "download" stays inside the test page.
+  'GET /tasks/:id/attachments/:attachmentId/download': auth(() => ok({ url: 'data:text/plain,mock', fileName: 'file.txt' })),
   'PATCH /tasks/:id/submissions/:submissionId/feedback': auth(({ body }) => ok({ ...F.submissions[0]!, feedback: body?.feedback, feedbackAt: new Date().toISOString() }), STAFF),
 
   // ── Admin ─────────────────────────────────────────────────────────────────

@@ -1,4 +1,4 @@
-import type { TaskItem, TaskSubmissionItem, ClassPaginationMeta } from '~/common/types/task-types'
+import type { TaskItem, TaskSubmissionItem, ClassPaginationMeta, TaskAttachment, TaskCommentItem, CommentDraft } from '~/common/types/task-types'
 
 export type { TaskItem, TaskSubmissionItem }
 
@@ -46,7 +46,7 @@ export function useTasks() {
     })
   }
 
-  async function updateTask(taskId: string, body: { title?: string; description?: string; deadline?: string | null; closed?: boolean }) {
+  async function updateTask(taskId: string, body: { title?: string; description?: string; deadline?: string | null; closed?: boolean; commentsEnabled?: boolean }) {
     return await useHttp<SingleResponse<TaskItem>>({
       method: 'PATCH',
       url: `/tasks/${taskId}`,
@@ -63,11 +63,16 @@ export function useTasks() {
     })
   }
 
-  async function submitTask(taskId: string, body: { content?: string; fileUrl?: string }) {
+  /** Hand in: text, a link and/or files (multipart). */
+  async function submitTask(taskId: string, work: { content?: string; fileUrl?: string; files?: File[] }) {
+    const form = new FormData()
+    if (work.content) form.append('content', work.content)
+    if (work.fileUrl) form.append('fileUrl', work.fileUrl)
+    for (const f of work.files ?? []) form.append('files', f)
     return await useHttp<SingleResponse<TaskSubmissionItem>>({
       method: 'POST',
       url: `/tasks/${taskId}/submissions`,
-      body,
+      body: form,
       requireAuth: true,
     })
   }
@@ -89,7 +94,85 @@ export function useTasks() {
     })
   }
 
+  // ── Comments + files (multipart) ──────────────────────────────────────────
+
+  function draftForm(draft: Partial<CommentDraft>) {
+    const form = new FormData()
+    if (draft.content !== undefined) form.append('content', draft.content)
+    if (draft.removeAttachmentIds?.length) form.append('removeAttachmentIds', draft.removeAttachmentIds.join(','))
+    for (const f of draft.files ?? []) form.append('files', f)
+    return form
+  }
+
+  async function listComments(taskId: string) {
+    // shortcut: first 100 comments only, add "load more" if a task's thread gets longer
+    return await useHttp<PaginatedResponse<TaskCommentItem>>({
+      method: 'GET',
+      url: `/tasks/${taskId}/comments?limit=100`,
+      requireAuth: true,
+    })
+  }
+
+  async function postComment(taskId: string, draft: CommentDraft) {
+    return await useHttp<SingleResponse<TaskCommentItem>>({
+      method: 'POST',
+      url: `/tasks/${taskId}/comments`,
+      body: draftForm(draft),
+      requireAuth: true,
+    })
+  }
+
+  async function updateComment(taskId: string, commentId: string, draft: CommentDraft) {
+    return await useHttp<SingleResponse<TaskCommentItem>>({
+      method: 'PATCH',
+      url: `/tasks/${taskId}/comments/${commentId}`,
+      body: draftForm(draft),
+      requireAuth: true,
+    })
+  }
+
+  async function deleteComment(taskId: string, commentId: string) {
+    return await useHttp<{ success: boolean; message?: string }>({
+      method: 'DELETE',
+      url: `/tasks/${taskId}/comments/${commentId}`,
+      requireAuth: true,
+    })
+  }
+
+  async function addTaskFiles(taskId: string, files: File[]) {
+    return await useHttp<ListResponse<TaskAttachment>>({
+      method: 'POST',
+      url: `/tasks/${taskId}/attachments`,
+      body: draftForm({ files }),
+      requireAuth: true,
+    })
+  }
+
+  async function deleteTaskFile(taskId: string, attachmentId: string) {
+    return await useHttp<{ success: boolean; message?: string }>({
+      method: 'DELETE',
+      url: `/tasks/${taskId}/attachments/${attachmentId}`,
+      requireAuth: true,
+    })
+  }
+
+  /** A 5-minute link that saves the file under its own name (the plain fileUrl opens inline). */
+  async function getTaskFileDownload(taskId: string, attachmentId: string) {
+    return await useHttp<SingleResponse<{ url: string; fileName: string }>>({
+      method: 'GET',
+      url: `/tasks/${taskId}/attachments/${attachmentId}/download`,
+      requireAuth: true,
+    })
+  }
+
   return {
+    getTaskFileDownload,
+    listComments,
+    postComment,
+    updateComment,
+    deleteComment,
+    addTaskFiles,
+    deleteTaskFile,
     listClassTasks,
     getTask,
     createTask,

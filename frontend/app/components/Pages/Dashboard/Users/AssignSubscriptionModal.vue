@@ -177,12 +177,12 @@ function submit() {
           </UiSelect>
 
           <!-- Date picker -->
-          <FormInput
+          <FormDateInput
             v-else
             id="sub-end-date"
             v-model="endDate"
-            type="date"
             placeholder="End date"
+            :min-date="new Date()"
           />
         </div>
 

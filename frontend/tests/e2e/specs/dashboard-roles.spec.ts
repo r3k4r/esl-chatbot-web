@@ -101,9 +101,9 @@ test.describe('role dashboards', () => {
 
 /** Every page a role can reach must render without crashing. */
 const PAGES: Record<Persona, string[]> = {
-  student: ['/dashboard/chat', '/dashboard/voice', '/dashboard/vocab', '/dashboard/goals', '/dashboard/classes', '/dashboard/classes/c1', '/dashboard/billing', '/dashboard/profile'],
+  student: ['/dashboard/chat', '/dashboard/voice', '/dashboard/vocab', '/dashboard/goals', '/dashboard/classes', '/dashboard/classes/c1', '/dashboard/classes/c1/tasks/t1', '/dashboard/billing', '/dashboard/profile'],
   free: ['/dashboard/billing'],
-  tutor: ['/dashboard/classes', '/dashboard/classes/c1', '/dashboard/classes/create', '/dashboard/classes/c1/edit', '/dashboard/profile'],
+  tutor: ['/dashboard/classes', '/dashboard/classes/c1', '/dashboard/classes/c1/tasks/t1', '/dashboard/classes/create', '/dashboard/classes/c1/edit', '/dashboard/profile'],
   admin: ['/dashboard/users', '/dashboard/users/u-student', '/dashboard/users/u-student/profile', '/dashboard/classes', '/dashboard/classes/c1', '/dashboard/profile'],
 }
 

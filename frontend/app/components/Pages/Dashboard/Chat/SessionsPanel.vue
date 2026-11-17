@@ -93,7 +93,7 @@ function confirmDelete() {
       </UiEmpty>
 
       <template v-else>
-      <section v-for="(group, gi) in groups" :key="group.label" :class="gi && 'mt-3'">
+      <section v-for="(group, gi) in groups" :key="group.label" :class="{ 'mt-3': gi > 0 }">
         <AppText size="12" weight="semibold" color="neutral-400" class-list="px-2.5 pb-1 pt-1">
           {{ group.label }}
         </AppText>

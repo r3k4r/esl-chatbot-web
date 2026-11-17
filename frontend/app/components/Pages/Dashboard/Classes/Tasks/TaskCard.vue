@@ -100,6 +100,22 @@ const submissionState = computed(() => {
             </div>
           </template>
 
+          <!-- Comments + files -->
+          <template v-if="task.commentCount">
+            <span style="color:var(--text-subtle);font-size:10px">·</span>
+            <div class="flex items-center gap-1">
+              <AppIconsax name="Messages2" color="var(--color-text-subtle)" :size="11" />
+              <AppText size="11" :style="`color:var(--text-subtle)`">{{ task.commentCount }}</AppText>
+            </div>
+          </template>
+          <template v-if="task.attachments?.length">
+            <span style="color:var(--text-subtle);font-size:10px">·</span>
+            <div class="flex items-center gap-1">
+              <AppIconsax name="Paperclip2" color="var(--color-text-subtle)" :size="11" />
+              <AppText size="11" :style="`color:var(--text-subtle)`">{{ task.attachments.length }}</AppText>
+            </div>
+          </template>
+
           <!-- Student submission state -->
           <template v-if="submissionState === 'none'">
             <span style="color:var(--text-subtle);font-size:10px">·</span>

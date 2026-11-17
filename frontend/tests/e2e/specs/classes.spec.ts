@@ -50,6 +50,69 @@ test.describe('student', () => {
     await visit(page, '/dashboard/classes/c1?tab=analytics')
     await expect(page.getByText('Subject-verb agreement')).toHaveCount(0)
   })
+
+  test('opens a task on its own page from the Tasks tab', async ({ page }) => {
+    await visit(page, '/dashboard/classes/c1?tab=tasks')
+    await page.getByText('Describe your weekend').click()
+    await expect(page).toHaveURL(/\/dashboard\/classes\/c1\/tasks\/t1$/)
+    await expect(page.getByRole('heading', { level: 1, name: 'Describe your weekend' })).toBeVisible()
+    await expect(page.getByText('Assigned', { exact: true })).toBeVisible()
+  })
+
+  test('images open in the viewer, documents open in a new tab, both download', async ({ page }) => {
+    await visit(page, '/dashboard/classes/c1/tasks/t1')
+    const doc = page.getByRole('link', { name: 'Open weekend-worksheet.pdf in a new tab' })
+    await expect(doc).toHaveAttribute('target', '_blank')
+    await expect(doc).toHaveAttribute('href', /ws\.pdf$/)
+
+    await page.getByRole('button', { name: 'View park-photo.png' }).click()
+    const viewer = page.getByRole('dialog')
+    await expect(viewer.getByRole('img', { name: 'park-photo.png' })).toBeVisible()
+    const link = page.waitForRequest((r) => r.url().endsWith('/tasks/t1/attachments/ta2/download'))
+    await viewer.getByRole('button', { name: 'Download' }).click()
+    await link
+  })
+
+  test('hands in written work with a file', async ({ page }) => {
+    await visit(page, '/dashboard/classes/c1/tasks/t1')
+    await expect(page.getByText('Assigned', { exact: true })).toBeVisible()
+    await page.getByLabel('Your answer').fill('On Saturday I visited my grandmother.')
+    await page.locator('section[aria-labelledby=task-work-title] input[type=file]')
+      .setInputFiles({ name: 'essay.txt', mimeType: 'text/plain', buffer: Buffer.from('My weekend') })
+    await expect(page.getByText('essay.txt')).toBeVisible()
+    const sent = page.waitForRequest((r) => r.url().endsWith('/tasks/t1/submissions') && r.method() === 'POST')
+    await page.getByRole('button', { name: 'Hand in', exact: true }).click()
+    const body = (await sent).postData() ?? ''
+    expect(body).toContain('On Saturday I visited my grandmother.')
+    expect(body).toContain('filename="essay.txt"')
+  })
+
+  test('reads the class comments on a task and posts one', async ({ page }) => {
+    await visit(page, '/dashboard/classes/c1/tasks/t1')
+    const main = page.locator('main')
+    await expect(main.getByText('weekend-worksheet.pdf')).toBeVisible()
+    await expect(main.getByText('Use the past simple, please.')).toBeVisible()
+    await expect(main.getByText('Teacher')).toBeVisible()
+    // The teacher's file can be downloaded but not removed; her comment has no menu at all
+    await expect(main.getByRole('button', { name: 'Download weekend-worksheet.pdf' })).toBeVisible()
+    await expect(main.getByRole('button', { name: /Options for weekend-worksheet/ })).toHaveCount(0)
+    await expect(main.getByRole('button', { name: "Options for Sarah Miller's comment" })).toHaveCount(0)
+    await expect(main.getByRole('button', { name: "Options for Ali Hassan's comment" })).toBeVisible()
+
+    const posted = page.waitForRequest((r) => r.url().endsWith('/tasks/t1/comments') && r.method() === 'POST')
+    await main.getByLabel('Class comment').fill('Thanks!')
+    await main.getByRole('button', { name: 'Post', exact: true }).click()
+    expect((await posted).postData()).toContain('Thanks!')
+    await expect(main.getByText('Posted from the test')).toBeVisible()
+  })
+
+  test('cannot comment when the teacher turned comments off', async ({ page }) => {
+    await visit(page, '/dashboard/classes/c1/tasks/t2')
+    const main = page.locator('main')
+    await expect(main.getByText('Your teacher turned off new comments.')).toBeVisible()
+    await expect(main.getByLabel('Class comment')).toHaveCount(0)
+    await expect(main.getByRole('switch')).toHaveCount(0)
+  })
 })
 
 test.describe('tutor', () => {
@@ -82,6 +145,17 @@ test.describe('tutor', () => {
     const posted = page.waitForRequest((r) => r.url().endsWith('/classes/c1/announcements') && r.method() === 'POST')
     await page.getByRole('button', { name: 'Post', exact: true }).click()
     expect((await posted).postDataJSON()).toMatchObject({ content: 'Quiz moved to Monday.' })
+  })
+
+  test('turns class comments off on a task', async ({ page }) => {
+    await visit(page, '/dashboard/classes/c1/tasks/t1')
+    const main = page.locator('main')
+    await expect(main.getByRole('button', { name: /Options for weekend-worksheet/ })).toBeVisible()
+    // A tutor may delete a student's comment
+    await expect(main.getByRole('button', { name: "Options for Ali Hassan's comment" })).toBeVisible()
+    const patched = page.waitForRequest((r) => r.url().endsWith('/tasks/t1') && r.method() === 'PATCH')
+    await main.getByRole('switch', { name: 'Allow students to comment' }).click()
+    expect((await patched).postDataJSON()).toEqual({ commentsEnabled: false })
   })
 
   test('creates a class', async ({ page }) => {

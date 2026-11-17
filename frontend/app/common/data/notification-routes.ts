@@ -11,6 +11,7 @@ export function notificationRoute(n: Notification): string {
       return '/dashboard/vocab'
     case 'TASK_ASSIGNED':
     case 'TASK_SUBMITTED':
+      if (n.data?.classId && n.data?.taskId) return `/dashboard/classes/${n.data.classId}/tasks/${n.data.taskId}`
       return n.data?.classId
         ? `/dashboard/classes/${n.data.classId}?tab=tasks`
         : '/dashboard/classes'

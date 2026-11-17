@@ -5487,6 +5487,523 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/tasks/{id}/comments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List a task's class comments, oldest first
+         * @description Any class member or admin. The whole class sees every comment.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    page?: number;
+                    limit?: number;
+                };
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Comments */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            success?: boolean;
+                            data?: components["schemas"]["TaskCommentItem"][];
+                            meta?: {
+                                page?: number;
+                                limit?: number;
+                                total?: number;
+                                totalPages?: number;
+                            };
+                        };
+                    };
+                };
+                /** @description Missing or invalid token */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Task not found or caller not in the class */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Post a comment, with optional files
+         * @description Any class member or admin. Students can only comment while the tutor has comments
+         *     switched on (`commentsEnabled`). Needs text, files, or both.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "multipart/form-data": components["schemas"]["TaskFilesUpload"] & {
+                        content?: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Comment posted */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            success?: boolean;
+                            data?: components["schemas"]["TaskCommentItem"];
+                        };
+                    };
+                };
+                /** @description File type not allowed or too many files */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Comments are turned off (students) */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Task not found or caller not in the class */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Class is archived */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description A file is over 15 MB */
+                413: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description No text and no files */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/tasks/{id}/comments/{commentId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete a comment and its files
+         * @description The author, a tutor of the class, or an admin.
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                    commentId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Comment deleted */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            success?: boolean;
+                            message?: string;
+                        };
+                    };
+                };
+                /** @description A student deleting someone else's comment */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Task or comment not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        /**
+         * Edit your own comment (text, add files, remove files)
+         * @description Author only. Students cannot edit while comments are turned off.
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                    commentId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "multipart/form-data": components["schemas"]["TaskFilesUpload"] & {
+                        /** @description Omit to keep the text; empty clears it */
+                        content?: string;
+                        /** @description Comma-separated ids of this comment's files to remove */
+                        removeAttachmentIds?: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Comment updated */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            success?: boolean;
+                            data?: components["schemas"]["TaskCommentItem"];
+                        };
+                    };
+                };
+                /** @description Not the author */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Task or comment not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Class is archived */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Would leave the comment empty */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/tasks/{id}/attachments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Attach files to the task (Tutor in class or Admin)
+         * @description Up to 10 files per task. Students attach files through comments.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "multipart/form-data": components["schemas"]["TaskFilesUpload"];
+                };
+            };
+            responses: {
+                /** @description Files attached */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            success?: boolean;
+                            data?: components["schemas"]["TaskAttachmentItem"][];
+                        };
+                    };
+                };
+                /** @description File type not allowed or too many files */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Caller is a student */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Task not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Class is archived */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description A file is over 15 MB */
+                413: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description No files */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/tasks/{id}/attachments/{attachmentId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Remove a file from the task (Tutor in class or Admin) */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                    attachmentId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description File removed */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            success?: boolean;
+                            message?: string;
+                        };
+                    };
+                };
+                /** @description Caller is a student */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Task or file not found (comment files are removed through their comment) */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/tasks/{id}/attachments/{attachmentId}/download": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get a short-lived download link for a task or comment file
+         * @description Any class member or admin. Returns a 5-minute link that makes the browser save the
+         *     file under its original name (the public `fileUrl` opens inline instead).
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                    attachmentId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Download link */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            success?: boolean;
+                            data?: {
+                                url?: string;
+                                fileName?: string;
+                            };
+                        };
+                    };
+                };
+                /** @description Task or file not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/classes/{id}/tasks": {
         parameters: {
             query?: never;
@@ -5779,6 +6296,8 @@ export interface paths {
                         /** Format: date-time */
                         deadline?: string | null;
                         closed?: boolean;
+                        /** @description Turn the class comments on this task on or off */
+                        commentsEnabled?: boolean;
                     };
                 };
             };
@@ -5908,7 +6427,9 @@ export interface paths {
         put?: never;
         /**
          * Submit a task (Student only)
-         * @description A student who is a class member submits text content or a file URL (or both).
+         * @description A student who is a class member hands in text, a link and/or up to 5 files
+         *     (multipart; JSON without files still works). At least one of the three is required.
+         *     Hand-in files are visible only to that student and the class's tutors/admins.
          *     One submission per student per task — 409 if already submitted.
          *     Closed tasks reject with 409.
          *     Fires a `TASK_SUBMITTED` notification to every tutor in the class.
@@ -5925,9 +6446,12 @@ export interface paths {
             };
             requestBody: {
                 content: {
-                    "application/json": {
+                    "multipart/form-data": components["schemas"]["TaskFilesUpload"] & {
                         content?: string;
-                        /** Format: uri */
+                        /**
+                         * Format: uri
+                         * @description A link to the work (e.g. a Google Doc)
+                         */
                         fileUrl?: string;
                     };
                 };
@@ -7748,6 +8272,62 @@ export interface components {
             totalUserMessages?: number;
             totalUserWords?: number;
         };
+        TaskAttachmentItem: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: uuid */
+            taskId?: string;
+            /**
+             * Format: uuid
+             * @description Set when the file belongs to a comment
+             */
+            commentId?: string | null;
+            /**
+             * Format: uuid
+             * @description Set when the file was handed in with a submission (private)
+             */
+            submissionId?: string | null;
+            /** Format: uuid */
+            uploadedById?: string;
+            /** @example worksheet.pdf */
+            fileName?: string;
+            /** @example https://pub-xxxx.r2.dev/tasks/task-id/uuid.pdf */
+            fileUrl?: string;
+            /** @example application/pdf */
+            mimeType?: string;
+            /** @description Bytes */
+            size?: number;
+            /** Format: date-time */
+            createdAt?: string;
+        };
+        TaskCommentItem: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: uuid */
+            taskId?: string;
+            /** @description null when the comment is only files */
+            content?: string | null;
+            /** Format: date-time */
+            editedAt?: string | null;
+            author?: {
+                /** Format: uuid */
+                id?: string;
+                displayName?: string;
+                avatarUrl?: string | null;
+                /**
+                 * @description Author's role in this class; ADMIN when an admin (not a member) wrote it
+                 * @enum {string}
+                 */
+                classRole?: "TUTOR" | "STUDENT" | "ADMIN";
+            };
+            attachments?: components["schemas"]["TaskAttachmentItem"][];
+            /** Format: date-time */
+            createdAt?: string;
+        };
+        TaskFilesUpload: {
+            /** @description Up to 5 files, 15 MB each: PDF, Word, PowerPoint, Excel, text, image (jpeg/png/webp/gif), audio (mp3/m4a/wav/webm/ogg) or video (mp4/webm/mov) */
+            files?: string[];
+        };
         TaskAuthor: {
             /** Format: uuid */
             id?: string;
@@ -7767,6 +8347,8 @@ export interface components {
             /** Format: date-time */
             feedbackAt?: string | null;
             student?: components["schemas"]["TaskAuthor"];
+            /** @description Files handed in with the work (private to the student and tutors) */
+            attachments?: components["schemas"]["TaskAttachmentItem"][];
             /** Format: date-time */
             createdAt?: string;
             /** Format: date-time */
@@ -7789,6 +8371,11 @@ export interface components {
             closedAt?: string | null;
             createdBy?: components["schemas"]["TaskAuthor"];
             submissionCount?: number;
+            /** @description Off = students can no longer comment; existing comments stay visible */
+            commentsEnabled?: boolean;
+            commentCount?: number;
+            /** @description Files the tutor attached to the task itself (comment files are not included) */
+            attachments?: components["schemas"]["TaskAttachmentItem"][];
             mySubmission?: components["schemas"]["TaskSubmissionItem"] | null;
             /** Format: date-time */
             createdAt?: string;

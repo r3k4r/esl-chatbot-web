@@ -171,6 +171,9 @@ Tailwind exposes them as `bg-surface-card`, `border-border-inner`, `text-text-he
   - Images → `<AppImage src="..." width height>`. Never use `<img>`.
   - Icons → `<AppIconsax name="..." color="..." :size="N">`. Never use raw SVG inline or other icon libraries unless the icon isn't in the Iconsax set.
   - Text inputs / textareas → `<FormInput id v-model label placeholder icon error ...>`. Never use `<input>` or `<textarea>` directly.
+  - Dates → `<FormDateInput id v-model label :min-date :max-date error>` (ported from visa-advisers, `@vuepic/vue-datepicker` themed in `assets/css/vue-datepicker.css`). v-model is a `'yyyy-MM-dd'` string, or an ISO string with `with-time`. Never `<FormInput type="date">`. Works inside `UiDialog` (it stops the teleported menu's clicks from closing the dialog).
+  - File pickers: a hidden `<input type="file">` behind an `AppButton` is fine; validate with `checkTaskFiles` from `lib/files.ts` (mirrors the backend's types and 15 MB limit).
+  - Showing files: images open in `<BlockImagePreviewDialog>` (after the UAE dashboard's ImagePreviewDialog); every other type opens in a new tab. Always offer Download. User-uploaded R2 images use a plain `<img>` (AppImage/IPX has no provider for them and throws), the one allowed exception to the AppImage rule.
   - Copy-to-clipboard → `useCopyToClipboard(value)` composable (direct call, no destructuring). Never use `navigator.clipboard` directly.
   - Modals / dialogs → `<UiDialog>` + `<UiDialogContent/Header/Title/Description/Footer/Close>`. Never build a custom fixed-overlay div.
   - Side drawers / panels → `<UiSheet side="right">` + `<UiSheetContent/Header/Title>`. Never build a custom fixed side panel.
@@ -318,6 +321,7 @@ All pages use `definePageMeta({ layout: 'dashboard', requiresAuth: true })`.
 | `/dashboard/classes/create` | `pages/dashboard/classes/create.vue` | Built (tutor/admin) |
 | `/dashboard/classes/[id]` | `pages/dashboard/classes/[id]/index.vue` | Built — full class detail page. **Archiving:** tutor/admin Archive/Unarchive button (PATCH `/classes/:id/archive`); when `cls.archived` the page is read-only (Edit, code Copy/Rotate, member-remove, announcement compose all hidden) and shows an archived banner with an Unarchive action. Admin & Tutor list views have an Active/Archived toggle. |
 | `/dashboard/classes/[id]/edit` | `pages/dashboard/classes/[id]/edit.vue` | Built — edit class (tutor/admin) |
+| `/dashboard/classes/[id]/tasks/[taskId]` | `pages/dashboard/classes/[id]/tasks/[taskId].vue` | Built — **task page, Google Classroom style** (state in `useTaskPage`): header (back link, title, status, due, tutor Edit + 3-dot Close/Reopen/Delete) → instructions + files card → class comments card; right panel = tutor "Student work" (handed in / not yet / to review + each submission with feedback) or student "Your work" (files, link, answer → Hand in). Opened from the Tasks tab and from task notifications. `tasks/index.vue` only redirects to the class's Tasks tab (for the breadcrumb). |
 
 ### Dashboard Component Folder (`components/Pages/Dashboard/`)
 
@@ -359,11 +363,19 @@ components/Pages/Dashboard/
 │  ├─ ClassesEmptyState.vue  # Empty state for the classes list
 │  ├─ JoinClassModal.vue     # Dialog to join a class by code
 │  ├─ Tasks/                 # Tasks tab — visible to all members, write access tutor/admin only
-│  │  ├─ ClassTasksTab.vue   # Tab root: list + pagination + create/edit/delete/toggle actions → <PagesDashboardClassesTasksClassTasksTab />
-│  │  ├─ TaskCard.vue        # Task row with status badge, deadline chip, submission-state chip, 3-dot menu
-│  │  ├─ TaskFormDialog.vue  # Create + edit task dialog (title / description / deadline)
-│  │  ├─ TaskDetailSheet.vue # Right sheet: tutor sees all submissions + feedback; student submits / views own feedback
-│  │  └─ SubmissionRow.vue   # Per-submission row with write/edit feedback (tutor only)
+│  │  ├─ ClassTasksTab.vue   # Tab root: list + pagination + create/edit/delete/toggle; clicking a task opens its page → <PagesDashboardClassesTasksClassTasksTab />
+│  │  ├─ TaskCard.vue        # Task row with status badge, deadline chip, submission-state chip, comment/file counts, 3-dot menu
+│  │  ├─ TaskFormDialog.vue  # Create + edit task dialog (title / instructions / deadline via FormDateInput / files on create)
+│  │  ├─ TaskPageHeader.vue  # Task page header: back link, title, status, due, tutor Edit + Close/Reopen/Delete
+│  │  ├─ TaskFiles.vue       # Files the tutor attached to the task (tutor: add / 3-dot remove; students: read only)
+│  │  ├─ TaskFileList.vue    # Saved files: image → BlockImagePreviewDialog, others → new tab; Download via a 5-min signed link
+│  │  ├─ TaskFileRow.vue     # One attachment card (thumbnail or type icon, "PDF · 48 KB", Download, 3-dot Remove); `draft` = not uploaded yet
+│  │  ├─ TaskSubmissions.vue # Tutor/admin "Student work": handed in / not yet / to review + SubmissionRow each
+│  │  ├─ SubmissionRow.vue   # One hand-in (text, link, files) with write/edit feedback (tutor only)
+│  │  ├─ TaskStudentWork.vue # Student "Your work": status (Assigned/Missing/Handed in/late/Reviewed), files + link + answer → Hand in
+│  │  ├─ TaskComments.vue    # Class comments list + tutor on/off switch + delete confirm + comment box (state from useTaskComments)
+│  │  ├─ TaskCommentItem.vue # One comment: avatar, Teacher badge, text, files, 3-dot Edit/Delete, inline edit
+│  │  └─ TaskCommentBox.vue  # Text + files box, used for new comments and for editing your own
 │  ├─ Admin/                 # ADMIN role view (rendered by classes/index.vue)
 │  │  ├─ AdminClassesView.vue # Manage-all-classes UI: stats, filters, grid/table, delete → <PagesDashboardClassesAdminClassesView />
 │  │  ├─ ClassGridCard.vue   # Grid card for admin manage view
@@ -417,7 +429,9 @@ Types are split by domain — never define them inline in a composable:
 | `useChatPage` / `useSessions` | [useChatPage.ts](app/composables/useChatPage.ts) | Chat page state/actions. The page opens on a **blank chat** (only `?session=` opens an existing one); `newSession()` just clears the thread and the session is created by the first message (`ensureSession`); `useSessions` is the raw session API layer it builds on. Voice actions are `startVoice` / `send` (sends the recording when one is live) / `cancelVoice`; `micDisabled` + `canSend` drive the composer |
 | `useVoiceChat` / `useVoiceLab` | [useVoiceChat.ts](app/composables/useVoiceChat.ts) | Voice pipeline state + Voice Lab |
 | `useVocabPage` / `useVocabulary` | [useVocabPage.ts](app/composables/useVocabPage.ts) | Vocab page state; `useVocabulary` is the raw vocab API layer |
-| `useTasks` | [useTasks.ts](app/composables/useTasks.ts) | `listClassTasks`, `getTask`, `createTask`, `updateTask`, `deleteTask`, `submitTask`, `listSubmissions`, `giveFeedback` |
+| `useTasks` | [useTasks.ts](app/composables/useTasks.ts) | `listClassTasks`, `getTask`, `createTask`, `updateTask` (incl. `commentsEnabled`), `deleteTask`, `submitTask`, `listSubmissions`, `giveFeedback`, `listComments`, `postComment`, `updateComment`, `deleteComment`, `addTaskFiles`, `deleteTaskFile`, `getTaskFileDownload` (signed link that saves the file under its name). `submitTask` and comment/file calls send multipart `FormData` |
+| `useTaskPage` | [useTaskPage.ts](app/composables/useTaskPage.ts) | Task page state: loads class + task, `canManage` (class tutor/admin, not archived) / `isStudent` / `studentCount`, `toggleClosed`, `toggleComments`, `remove`, breadcrumb titles (`useBreadcrumbs().setTitleFor` names the class crumb) |
+| `useTaskComments` | [useTaskComments.ts](app/composables/useTaskComments.ts) | Class comments for one task: `comments`, `post`, `edit`, `remove`, plus `canComment` / `canEdit(c)` / `canDelete(c)`. **Rules (backend enforces them too):** every class member reads every comment; students write only while `task.commentsEnabled`; only the author edits; author or class tutor/admin deletes; nothing new in an archived class |
 | `useGoals` | [useGoals.ts](app/composables/useGoals.ts) | Goals page data |
 | `useProfile` | [useProfile.ts](app/composables/useProfile.ts) | Profile page data |
 | `useNotifications` | [useNotifications.ts](app/composables/useNotifications.ts) | `fetchNotifications`, `markAllRead`, `markOneRead(id)`, `connectSocket`, `disconnectSocket` |

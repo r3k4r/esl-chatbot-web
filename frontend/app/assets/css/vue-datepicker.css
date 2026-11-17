@@ -1,0 +1,118 @@
+@import '@vuepic/vue-datepicker/dist/main.css';
+
+/*
+ * The date picker is themed only through its --dp-* variables, mapped onto the
+ * dashboard tokens. The menu is teleported to <body>, which still sits inside
+ * <html class="dark">, so the same mapping follows light and dark mode.
+ */
+:root {
+  --dp-font-family: inherit;
+  --dp-border-radius: 12px;
+  --dp-cell-border-radius: 8px;
+  --dp-common-transition: all 0.15s ease-out;
+
+  --dp-button-height: 36px;
+  --dp-month-year-row-height: 40px;
+  --dp-month-year-row-button-size: 32px;
+  --dp-button-icon-height: 18px;
+  --dp-cell-size: 36px;
+  --dp-cell-padding: 6px;
+  --dp-common-padding: 10px;
+  --dp-menu-min-width: 288px;
+  --dp-action-buttons-padding: 6px 12px;
+  --dp-row-margin: 4px 0;
+  --dp-calendar-header-cell-padding: 8px;
+  --dp-overlay-col-padding: 4px;
+  --dp-time-inc-dec-button-size: 32px;
+  --dp-menu-padding: 8px;
+
+  --dp-font-size: 14px;
+  --dp-preview-font-size: 14px;
+  --dp-time-font-size: 14px;
+
+  --dp-animation-duration: 0.15s;
+  --dp-transition-timing: ease-out;
+}
+
+.dp--theme-light,
+.dp--theme-dark {
+  --dp-background-color: var(--surface-card);
+  --dp-text-color: var(--text-heading);
+  --dp-hover-color: var(--surface-raised);
+  --dp-hover-text-color: var(--text-heading);
+  --dp-hover-icon-color: var(--text-muted);
+  --dp-primary-color: var(--color-brand-primary);
+  --dp-primary-disabled-color: color-mix(in oklch, var(--color-brand-primary) 45%, transparent);
+  --dp-primary-text-color: #fff;
+  --dp-secondary-color: var(--text-subtle);
+  --dp-border-color: var(--border-card);
+  --dp-menu-border-color: var(--border-card);
+  --dp-border-color-hover: var(--text-subtle);
+  --dp-border-color-focus: var(--color-brand-primary);
+  --dp-disabled-color: var(--surface-raised);
+  --dp-disabled-color-text: var(--text-subtle);
+  --dp-scroll-bar-background: var(--surface-raised);
+  --dp-scroll-bar-color: var(--border-card);
+  --dp-success-color: var(--color-brand-primary);
+  --dp-success-color-disabled: color-mix(in oklch, var(--color-brand-primary) 45%, transparent);
+  --dp-icon-color: var(--text-muted);
+  --dp-danger-color: var(--destructive);
+  --dp-marker-color: var(--color-brand-primary);
+  --dp-tooltip-color: var(--surface-card);
+  --dp-highlight-color: color-mix(in oklch, var(--color-brand-primary) 12%, transparent);
+  --dp-range-between-dates-background-color: var(--surface-raised);
+  --dp-range-between-dates-text-color: var(--text-heading);
+  --dp-range-between-border-color: var(--surface-raised);
+}
+
+/* An open modal sets pointer-events:none on <body>; the teleported menu must stay clickable. */
+.dp--menu-wrapper {
+  pointer-events: auto;
+}
+
+/* Floats above the page: the one place a shadow belongs. */
+.dp--menu {
+  box-shadow: 0 12px 32px -12px oklch(0 0 0 / 0.25);
+}
+
+.dp--calendar-header-item {
+  font-weight: 500;
+  color: var(--text-subtle);
+}
+
+/* No rule under the weekday row. */
+.dp--calendar-header-separator {
+  display: none;
+}
+
+/* Today is a ring, the chosen day a fill, so they never look alike. */
+.dp--today {
+  border-color: var(--color-brand-primary);
+}
+
+.dp--active {
+  font-weight: 600;
+}
+
+/* House rule: no pill buttons. */
+.dp--action-button,
+.dp--pm-am-button {
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.dp--action-row {
+  --dp-action-button-height: 32px;
+}
+
+/* The chosen date + time next to Cancel/Select was cut off at its fixed width. */
+.dp--selection-preview {
+  width: auto;
+  flex: 1;
+  color: var(--text-muted);
+}
+
+.dp--month-year-select {
+  font-weight: 600;
+  border-radius: 8px;
+}

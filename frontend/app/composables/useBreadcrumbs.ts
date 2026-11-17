@@ -10,8 +10,14 @@ export function useBreadcrumbs() {
   // Keyed by path, so a title never leaks onto the next page.
   const titles = useState<Record<string, string>>('breadcrumb-titles', () => ({}))
 
+  // One argument on purpose: pages pass setTitle straight to watch().
   function setTitle(title: string | null | undefined) {
-    if (title) titles.value = { ...titles.value, [route.path]: title }
+    setTitleFor(route.path, title)
+  }
+
+  /** Names a parent id segment, e.g. the class on a nested task page. */
+  function setTitleFor(path: string, title: string | null | undefined) {
+    if (title) titles.value = { ...titles.value, [path]: title }
   }
 
   const crumbs = computed<Breadcrumb[]>(() => {
@@ -27,5 +33,5 @@ export function useBreadcrumbs() {
     })
   })
 
-  return { crumbs, setTitle }
+  return { crumbs, setTitle, setTitleFor }
 }

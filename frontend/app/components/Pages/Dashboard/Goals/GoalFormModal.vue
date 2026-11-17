@@ -187,12 +187,11 @@ function submit() {
         </div>
 
         <!-- Target date -->
-        <FormInput
+        <FormDateInput
           id="goal-target-date"
           v-model="form.targetDate"
           label="Target date (optional)"
-          type="date"
-          :min="new Date().toISOString().slice(0, 10)"
+          :min-date="new Date()"
         />
 
         <!-- Action plan -->

@@ -152,25 +152,21 @@ const hasActiveFilters = computed(() =>
           <!-- Joined from -->
           <div>
             <p class="text-[14px] font-medium font-poppins mb-1.5" :style="`color:var(--text-heading)`">Joined from</p>
-            <FormInput
+            <FormDateInput
               id="filter-joined-from"
               v-model="draftAfter"
-              type="date"
-              placeholder="YYYY-MM-DD"
-              icon="Calendar"
-            />
+              placeholder="Any date"
+              :max-date="new Date()"/>
           </div>
 
           <!-- Joined to -->
           <div>
             <p class="text-[14px] font-medium font-poppins mb-1.5" :style="`color:var(--text-heading)`">Joined to</p>
-            <FormInput
+            <FormDateInput
               id="filter-joined-to"
               v-model="draftBefore"
-              type="date"
-              placeholder="YYYY-MM-DD"
-              icon="Calendar"
-            />
+              placeholder="Any date"
+              :max-date="new Date()"/>
           </div>
 
         </div>
