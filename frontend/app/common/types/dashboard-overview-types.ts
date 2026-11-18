@@ -1,85 +1,100 @@
-// ─── Dashboard Overview — API response types ─────────────────────────────────
-// These mirror backend/src/modules/dashboard/dashboard.types.ts exactly.
-// Never edit manually — update the backend type first, then mirror here.
+import type { SkillSnapshot } from '~/common/types/class-types'
+import type { SvgBasedIconName } from '~/common/types/iconsax-types'
 
-export interface OverviewGreetingHero {
+// GET /dashboard/overview — the learner's home dashboard. "Today" and "this week" are the
+// learner's own calendar days (their profile time zone).
+
+export interface LearnerToday {
+  /** YYYY-MM-DD */
+  date: string
+  minutes: number
+  dailyGoalMinutes: number
+  /** 0 once a whole day was missed */
   streak: number
-  doneMins: number
-  goalMins: number
-  dueVocabCount: number
+  longestStreak: number
 }
 
-export interface OverviewStatCards {
-  wordsMastered: number
-  wordsMasteredWeekDelta: number
-  practiceTimeMinutes: number
-  practiceTimeThisMonthMinutes: number
-  pronunciationScore: number
-  pronunciationDelta: number | null
-  currentLevel: string | null
-  levelPct: number
+export interface LearnerWeek {
+  /** Monday → Sunday; minutes null for days still to come */
+  days: { date: string; minutes: number | null }[]
+  minutes: number
+  weeklyGoalMinutes: number
 }
 
-export interface OverviewVocabChartPoint {
-  label: string // "May 5", "May 12", …
-  value: number // cumulative total at that week-end
+export interface LearnerSkills extends SkillSnapshot {
+  selfLevel: string | null
+  targetLevel: string | null
 }
 
-export interface OverviewVocabChart {
-  points: OverviewVocabChartPoint[]
-  totalWords: number
-  growthPct: number // % change vs 30 days ago; 0 if no prior data
+export interface LearnerVocab {
+  total: number
+  due: number
+  mastered: number
+  /** Added in the last 7 days */
+  addedThisWeek: number
+  dueWords: { word: string; definition: string }[]
 }
 
-export interface OverviewGoalItem {
+export interface LearnerTask {
   id: string
-  type: string         // GoalType enum value e.g. "VOCABULARY"
+  classId: string
+  className: string
+  title: string
+  deadline: string | null
+  state: 'ASSIGNED' | 'MISSING'
+}
+
+export interface LearnerGoal {
+  id: string
+  type: string
   description: string
   target: number
-  progress: number     // 0–100
-  difficulty: string | null
-  targetDate: string | null // ISO date-time
+  progress: number
+  targetDate: string | null
 }
 
-export interface OverviewNextUp {
-  primary: OverviewGoalItem | null
-  others: OverviewGoalItem[]
+export interface LearnerActivity {
+  /** 12 Monday-start weeks of minutes per day, oldest first; null = still to come */
+  weeks: (number | null)[][]
+  firstDay: string
+  activeDays: number
 }
 
-export interface OverviewHeatmapSession {
+export interface LearnerRecentChat {
   id: string
-  mode: 'TEXT' | 'VOICE'
+  title: string | null
   topic: string | null
-  startedAt: string           // ISO date-time
-  durationSeconds: number | null
+  mode: 'TEXT' | 'VOICE'
+  startedAt: string
   messageCount: number
-  avgOverallScore: number | null
-  avgPronunciationScore: number | null
-}
-
-export interface OverviewActivityHeatmap {
-  weeks: number[][]           // 12 rows × 7 cols, value 0–7 (clamped sessions/day)
-  activePct: number           // % of last 84 days where sessionsCount > 0
-  recentSessions: OverviewHeatmapSession[]
-}
-
-export interface OverviewDueWord {
-  word: string
-  definition: string
-  srsDue: string              // ISO — format on the frontend ("now", "in 1h", "tomorrow")
-}
-
-export interface OverviewDueWords {
-  words: OverviewDueWord[]
-  totalDue: number
-  levelPct: number            // 0–100 based on CEFR position (A1=0 … C2=100)
+  /** null while the chat is still open */
+  score: number | null
 }
 
 export interface DashboardOverviewData {
-  greetingHero: OverviewGreetingHero
-  statCards: OverviewStatCards
-  vocabChart: OverviewVocabChart
-  nextUp: OverviewNextUp
-  activityHeatmap: OverviewActivityHeatmap
-  dueWords: OverviewDueWords
+  today: LearnerToday
+  week: LearnerWeek
+  skills: LearnerSkills
+  vocab: LearnerVocab
+  tasks: LearnerTask[]
+  goals: LearnerGoal[]
+  activity: LearnerActivity
+  recentChats: LearnerRecentChat[]
+}
+
+/** The one thing the dashboard suggests doing next */
+export interface LearnerNextStep {
+  title: string
+  detail: string
+  action: string
+  to: string
+  icon: 'TaskSquare' | 'Book1' | 'Messages' | 'TickCircle'
+}
+
+/** One of the four stat cards under the learner's greeting */
+export interface LearnerStat {
+  label: string
+  value: string
+  sub: string
+  icon: SvgBasedIconName
 }

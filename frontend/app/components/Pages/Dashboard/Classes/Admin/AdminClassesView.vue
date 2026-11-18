@@ -79,7 +79,7 @@ async function handleConfirmDelete() {
 </script>
 
 <template>
-  <div class="h-full overflow-y-auto p-5 sm:p-7 space-y-6" :style="`background:var(--surface-page)`">
+  <div class="h-full overflow-y-auto page-padding space-y-6" :style="`background:var(--surface-page)`">
 
     <!-- Header -->
     <div class="flex items-center justify-between gap-4 animate-card-enter" style="--delay:0ms">

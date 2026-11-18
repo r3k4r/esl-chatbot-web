@@ -22,56 +22,6 @@ export interface DashboardNavItem {
   path: string
 }
 
-// ─── Overview – Stat Cards ────────────────────────────────────────────────────
-
-export interface StatCard {
-  label: string
-  value: string
-  delta: string
-  icon: string
-}
-
-// ─── Overview – Chart ─────────────────────────────────────────────────────────
-
-export type ChartRange = '7d' | '30d' | 'All'
-
-export interface ChartPoint {
-  label: string
-  value: number
-}
-
-// ─── Overview – Upcoming Lessons ──────────────────────────────────────────────
-
-export interface UpcomingLesson {
-  title: string
-  tag: string
-  minutes: number
-  level: string
-  icon: string
-}
-
-// ─── Overview – Recent Sessions ───────────────────────────────────────────────
-
-export interface RecentSession {
-  type: string
-  topic: string
-  time: string
-  meta: string
-  icon: string
-}
-
-// ─── Overview – Due Words ─────────────────────────────────────────────────────
-
-export interface DueWord {
-  word: string
-  meaning: string
-  due: string
-}
-
-// ─── Overview – Heatmap ───────────────────────────────────────────────────────
-
-export type HeatWeek = number[] // length 7, values 0-7
-
 // ─── Chat ─────────────────────────────────────────────────────────────────────
 
 export interface ChatSession {
@@ -141,3 +91,20 @@ export interface Breadcrumb {
   /** Absent on the last crumb (the current page). */
   to?: string
 }
+
+// ─── Shared dashboard widgets ─────────────────────────────────────────────────
+
+/** One number in the KeyFigures strip, with its comparison or a short hint */
+export interface KeyFigure {
+  label: string
+  value: string | number
+  hint?: string
+  /** Shows "+3 vs last week" when both are given */
+  now?: number
+  before?: number
+  /** For counts where going up is bad (e.g. missing work) */
+  upIsBad?: boolean
+}
+
+/** One bar in SkillBars; null value = no data yet */
+export interface SkillRow { key: string; value: number | null; help?: string }

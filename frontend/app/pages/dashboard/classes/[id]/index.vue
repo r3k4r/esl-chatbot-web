@@ -36,20 +36,21 @@ const myClassRole = computed(() =>
 )
 const isTutorOrAdmin = computed(() => myClassRole.value === 'TUTOR' || isAdmin.value)
 
-type Tab = 'members' | 'students' | 'analytics' | 'announcements' | 'tasks'
-const ALL_TABS: Tab[] = ['members', 'students', 'analytics', 'announcements', 'tasks']
+type Tab = 'people' | 'analytics' | 'announcements' | 'tasks'
+const ALL_TABS: Tab[] = ['people', 'analytics', 'announcements', 'tasks']
 function parseTab(raw: unknown): Tab | null {
+  // Members and Students were merged into People; old links still land there.
+  if (raw === 'members' || raw === 'students') return 'people'
   return ALL_TABS.includes(raw as Tab) ? (raw as Tab) : null
 }
-const activeTab = ref<Tab>(parseTab(route.query.tab) ?? 'members')
+const activeTab = ref<Tab>(parseTab(route.query.tab) ?? 'people')
 
 // Caller is a student in the class (drives submit UI — ADMIN is never a student)
 const isStudentInClass = computed(() => myClassRole.value === 'STUDENT' && !isAdmin.value)
 
 // `tutorOrAdmin` tabs are for tutors of the class + admins; `adminOnly` tabs only admins.
 const tabs = computed((): { key: Tab; label: string; icon: SvgBasedIconName; show: boolean }[] => [
-  { key: 'members', label: 'Members', icon: 'People', show: true },
-  { key: 'students', label: 'Students', icon: 'Teacher', show: isTutorOrAdmin.value },
+  { key: 'people', label: 'People', icon: 'People', show: true },
   { key: 'analytics', label: 'Analytics', icon: 'Chart21', show: isTutorOrAdmin.value },
   { key: 'tasks', label: 'Tasks', icon: 'TaskSquare', show: true },
   { key: 'announcements', label: 'Announcements', icon: 'Notification', show: true },
@@ -86,9 +87,9 @@ async function load() {
     return
   }
   cls.value = res.data?.data as ClassDetail
-  // After roles are known, reset to 'members' if the current tab isn't visible to this user
+  // After roles are known, reset to 'people' if the current tab isn't visible to this user
   if (!visibleTabs.value.some(t => t.key === activeTab.value)) {
-    activeTab.value = 'members'
+    activeTab.value = 'people'
   }
 }
 
@@ -166,7 +167,8 @@ onMounted(load)
 </script>
 
 <template>
-  <div class="h-full overflow-y-auto p-5 sm:p-7">
+  <!-- Column flex so the tabs card can grow to the bottom of the screen (flex-1 below). -->
+  <div class="flex h-full flex-col overflow-y-auto page-padding">
 
     <!-- Back + header -->
     <div class="flex items-center gap-3 mb-6 animate-card-enter" style="--delay:0ms">
@@ -198,12 +200,15 @@ onMounted(load)
           @click="handleArchive(false)" />
         <UiBadge v-if="isArchived" size="lg" :class="'uppercase'" style="background:var(--surface-well);color:var(--text-muted)">
           Archived</UiBadge>
-        <UiBadge :class="'uppercase'" size="lg" :style="cls.classStatus === 'ACTIVE'
+        <!-- Class status and own role are management info; students don't need them. -->
+        <UiBadge v-if="!isStudentInClass" :class="'uppercase'" size="lg" :style="cls.classStatus === 'ACTIVE'
           ? 'background:var(--status-active-bg);color:var(--status-active-text)'
           : 'background:var(--status-expired-bg);color:var(--status-expired-text)'">{{ cls.classStatus }}</UiBadge>
-        <UiBadge v-if="cls.myRole" size="lg" :class="['uppercase', roleColorClass[cls.myRole] || '']"
+        <UiBadge v-if="cls.myRole && !isStudentInClass" size="lg" :class="['uppercase', roleColorClass[cls.myRole] || '']"
           :style="!roleColorClass[cls.myRole] ? 'background:var(--surface-well);color:var(--text-muted)' : ''">{{
             cls.myRole }}</UiBadge>
+        <PagesDashboardClassesLeaveClassButton v-if="isStudentInClass" :class-id="cls.id" :class-name="cls.className"
+          :user-id="currentUserId" />
       </template>
     </div>
 
@@ -237,8 +242,8 @@ onMounted(load)
           @click="handleArchive(false)" />
       </div>
 
-      <!-- Stats row -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6 animate-card-enter" style="--delay:40ms">
+      <!-- Stats row: class management info, not for students -->
+      <div v-if="!isStudentInClass" class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6 animate-card-enter" style="--delay:40ms">
         <div class="dash-card p-4">
           <div class="flex items-center gap-2 mb-1">
             <AppIconsax name="People" color="var(--color-text-subtle)" :size="13" />
@@ -306,7 +311,7 @@ onMounted(load)
       </div>
 
       <!-- Tabs card -->
-      <div class="dash-card overflow-hidden animate-card-enter" style="--delay:120ms">
+      <div class="dash-card flex-1 overflow-hidden animate-card-enter" style="--delay:120ms">
         <div class="flex overflow-x-auto" style="border-bottom:1px solid var(--border-inner)">
           <button v-for="tab in visibleTabs" :key="tab.key"
             class="flex items-center gap-1.5 px-5 py-3.5 text-[13px] font-semibold font-poppins transition-colors relative shrink-0 cursor-pointer"
@@ -321,10 +326,9 @@ onMounted(load)
         </div>
 
         <div class="p-5">
-          <PagesDashboardClassesClassMembersTab v-if="activeTab === 'members'" :class-id="cls.id" :members="cls.members"
-            :is-tutor-or-admin="isTutorOrAdmin && !isArchived" :is-admin="isAdmin && !isArchived" :current-user-id="currentUserId"
-            @removed="handleMemberRemoved" @role-changed="handleRoleChanged" />
-          <PagesDashboardClassesClassStudentsTab v-else-if="activeTab === 'students'" :class-id="cls.id" />
+          <PagesDashboardClassesPeopleClassPeopleTab v-if="activeTab === 'people'" :class-id="cls.id" :members="cls.members"
+            :can-see-progress="isTutorOrAdmin" :can-manage="isTutorOrAdmin && !isArchived" :is-admin="isAdmin"
+            :current-user-id="currentUserId" @removed="handleMemberRemoved" @role-changed="handleRoleChanged" />
           <PagesDashboardClassesClassAnalyticsTab v-else-if="activeTab === 'analytics'" :class-id="cls.id" />
           <PagesDashboardClassesTasksClassTasksTab v-else-if="activeTab === 'tasks'" :class-id="cls.id"
             :can-manage="isTutorOrAdmin && !isArchived" :is-student="isStudentInClass" />

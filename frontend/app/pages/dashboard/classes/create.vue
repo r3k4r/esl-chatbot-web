@@ -37,7 +37,7 @@ async function handleSubmit(payload: {
 </script>
 
 <template>
-  <div class="h-full overflow-y-auto p-5 sm:p-7">
+  <div class="h-full overflow-y-auto page-padding">
     <div class="space-y-6">
 
       <!-- Header -->

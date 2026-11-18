@@ -366,6 +366,9 @@ a {
 	scroll-behavior: smooth;
 }
 
+@utility page-padding {
+  @apply p-4
+}
 
 
 @layer base {

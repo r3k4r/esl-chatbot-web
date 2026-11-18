@@ -59,7 +59,7 @@ async function handleRefresh(id: string) {
 </script>
 
 <template>
-  <div class="h-full overflow-y-auto p-5 sm:p-7 space-y-6">
+  <div class="h-full overflow-y-auto page-padding space-y-6">
 
     <!-- Page header -->
     <div class="flex items-center justify-between gap-4 animate-card-enter" style="--delay:0ms">

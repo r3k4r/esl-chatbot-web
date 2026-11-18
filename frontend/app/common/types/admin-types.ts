@@ -170,15 +170,26 @@ export interface AdminUserListMeta {
 
 // ── Admin dashboard stats (GET /admin/dashboard) ─────────────────────────────
 
+/** GET /admin/dashboard. Weeks are rolling 7 days compared with the 7 before. */
 export interface AdminDashboardData {
-  users: {
-    total: number
-    byRole: { STUDENT: number; TUTOR: number; ADMIN: number }
+  users: { total: number; students: number; tutors: number; admins: number; newThisWeek: number; newLastWeek: number }
+  /** Active = sent the AI tutor a message in the window */
+  activity: { active24h: number; activeThisWeek: number; activeLastWeek: number; messagesThisWeek: number; messagesLastWeek: number }
+  /** Students: signed up → verified → practised → paying now */
+  funnel: { signedUp: number; verified: number; practised: number; paying: number }
+  /** Paid plans only while their period hasn't ended */
+  plans: { FREE: number; GOLD: number; PREMIUM: number; expiredNotDowngraded: number }
+  revenue: {
+    /** FIB money from subscriptions activated this month (renewals aren't stored) */
+    fibThisMonthIQD: number
+    fibThisMonthCount: number
+    fibLastMonthIQD: number
+    payingByProvider: Record<string, number>
   }
-  subscriptions: { FREE: number; GOLD: number; PREMIUM: number }
-  activeUsers: { daily: number; weekly: number }
-  totalSessionsToday: number
-  revenueByProvider: Record<string, number>
+  expiringSoon: { userId: string; name: string; plan: 'FREE' | 'GOLD' | 'PREMIUM'; endsAt: string; cancelling: boolean }[]
+  /** Messages to the AI tutor in the last 7 days, by the sender's plan */
+  aiUsage: { FREE: number; GOLD: number; PREMIUM: number }
+  attention: { unverifiedOver24h: number; fibPaymentsStuck: number }
 }
 
 // ── Patch user (PATCH /admin/users/:id) ──────────────────────────────────────

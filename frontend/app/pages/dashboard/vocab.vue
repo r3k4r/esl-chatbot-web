@@ -25,7 +25,7 @@ const {
 </script>
 
 <template>
-  <div class="h-full overflow-y-auto p-5 sm:p-7 space-y-5">
+  <div class="h-full overflow-y-auto page-padding space-y-5">
     <!-- Header -->
     <div class="flex items-end justify-between flex-wrap gap-3 animate-card-enter" style="--delay:0ms">
       <div>

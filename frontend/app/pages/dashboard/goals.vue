@@ -78,7 +78,7 @@ const emptyMessage = computed(() =>
 </script>
 
 <template>
-  <div class="h-full overflow-y-auto p-5 sm:p-7 space-y-6">
+  <div class="h-full overflow-y-auto page-padding space-y-6">
 
     <!-- Header -->
     <div class="flex items-start justify-between gap-4 animate-card-enter" style="--delay:0ms">

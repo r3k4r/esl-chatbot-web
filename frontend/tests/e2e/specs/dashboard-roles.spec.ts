@@ -44,24 +44,27 @@ test.describe('role dashboards', () => {
   test('student sees the learning overview', async ({ page, loginAs }) => {
     await loginAs('student')
     await visit(page, '/dashboard')
-    await expect(page.getByText('Continue conversation')).toBeVisible()
+    await expect(page.getByText('Welcome back')).toBeVisible()
+    await expect(page.getByText('4 words ready to review')).toBeVisible()
     await expect(page.getByText('Words mastered')).toBeVisible()
+    await expect(page.getByText('Write about your weekend')).toBeVisible()
     await expect(page.getByText('resilient').first()).toBeVisible()
   })
 
   test('tutor sees the tutor dashboard', async ({ page, loginAs }) => {
     await loginAs('tutor')
     await visit(page, '/dashboard')
-    await expect(page.getByText('Tutor Dashboard')).toBeVisible()
-    await expect(page.getByText('Average class skills')).toBeVisible()
+    await expect(page.getByText('Your classes today')).toBeVisible()
+    await expect(page.getByText('Worth a nudge')).toBeVisible()
+    await expect(page.getByRole('link', { name: 'English B1 Evening' })).toBeVisible()
   })
 
   test('admin sees platform-wide stats', async ({ page, loginAs }) => {
     await loginAs('admin')
     await visit(page, '/dashboard')
-    await expect(page.getByText('Admin Dashboard')).toBeVisible()
-    await expect(page.getByText('Total users')).toBeVisible()
-    await expect(page.getByText('128').first()).toBeVisible()
+    await expect(page.getByText('This week', { exact: true })).toBeVisible()
+    await expect(page.getByText('Student funnel')).toBeVisible()
+    await expect(page.getByText('+3 vs last week')).toBeVisible()
   })
 
   test('a failed overview shows the error screen, and Try again recovers', async ({ page, loginAs }) => {
@@ -87,14 +90,14 @@ test.describe('role dashboards', () => {
 
   for (const [persona, url, title] of [
     ['tutor', '/tutor/dashboard', "We couldn't load your classes overview"],
-    ['admin', '/admin/dashboard', "We couldn't load the platform overview"],
+    ['admin', '/admin/dashboard', "We couldn't load the admin overview"],
   ] as const) {
     test(`${persona}: a failed dashboard keeps the header and shows the error screen`, async ({ page, loginAs, mockApi }) => {
       await loginAs(persona)
       await mockApi('GET', url, { status: 503, body: { success: false, message: 'Service unavailable' } })
       await visit(page, '/dashboard')
       await expect(page.getByRole('alert')).toContainText(title)
-      await expect(page.getByText(persona === 'tutor' ? 'Tutor Dashboard' : 'Admin Dashboard')).toBeVisible()
+      await expect(page.getByText(persona === 'tutor' ? 'Your classes today' : 'This week', { exact: true })).toBeVisible()
     })
   }
 })
@@ -103,7 +106,7 @@ test.describe('role dashboards', () => {
 const PAGES: Record<Persona, string[]> = {
   student: ['/dashboard/chat', '/dashboard/voice', '/dashboard/vocab', '/dashboard/goals', '/dashboard/classes', '/dashboard/classes/c1', '/dashboard/classes/c1/tasks/t1', '/dashboard/billing', '/dashboard/profile'],
   free: ['/dashboard/billing'],
-  tutor: ['/dashboard/classes', '/dashboard/classes/c1', '/dashboard/classes/c1/tasks/t1', '/dashboard/classes/create', '/dashboard/classes/c1/edit', '/dashboard/profile'],
+  tutor: ['/dashboard/classes', '/dashboard/classes/c1', '/dashboard/classes/c1/tasks/t1', '/dashboard/classes/c1/students/u-student', '/dashboard/classes/create', '/dashboard/classes/c1/edit', '/dashboard/profile'],
   admin: ['/dashboard/users', '/dashboard/users/u-student', '/dashboard/users/u-student/profile', '/dashboard/classes', '/dashboard/classes/c1', '/dashboard/profile'],
 }
 

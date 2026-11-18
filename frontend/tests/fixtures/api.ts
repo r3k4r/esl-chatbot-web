@@ -137,8 +137,8 @@ export function classDetail(id: string, viewer: Persona): ClassDetail {
 }
 
 export const classStudents: ClassStudentSummary[] = [
-  { userId: 'u-student', username: 'student_ali', displayName: 'Ali Hassan', avatarUrl: null, joinedAt: T, currentLevel: 'B1', targetLevel: 'C1', currentStreak: 6, estimatedLevel: 'B1', totalStudyTimeMinutes: 185, grammarSkill: 72, vocabularySkill: 68, vocabTotal: 3, vocabDueToday: 2 },
-  { userId: 'u-free', username: 'student_yuki', displayName: 'Yuki Tanaka', avatarUrl: null, joinedAt: T, currentLevel: 'A2', targetLevel: 'B2', currentStreak: 1, estimatedLevel: 'A2', totalStudyTimeMinutes: 40, grammarSkill: 51, vocabularySkill: 47, vocabTotal: 12, vocabDueToday: 5 },
+  { userId: 'u-student', username: 'student_ali', displayName: 'Ali Hassan', avatarUrl: null, joinedAt: T, currentLevel: 'B1', targetLevel: 'C1', currentStreak: 6, estimatedLevel: 'B1', totalStudyTimeMinutes: 185, grammarSkill: 72, vocabularySkill: 68, fluencySkill: 70, speakingSkill: 64, lastPracticeAt: T, tasks: { total: 2, handedIn: 1, late: 0, missing: 1, reviewed: 0 }, vocabTotal: 3, vocabDueToday: 2 },
+  { userId: 'u-free', username: 'student_yuki', displayName: 'Yuki Tanaka', avatarUrl: null, joinedAt: T, currentLevel: 'A2', targetLevel: 'B2', currentStreak: 1, estimatedLevel: 'A2', totalStudyTimeMinutes: 40, grammarSkill: 0, vocabularySkill: 0, fluencySkill: 0, speakingSkill: 0, lastPracticeAt: null, tasks: { total: 2, handedIn: 0, late: 0, missing: 0, reviewed: 0 }, vocabTotal: 12, vocabDueToday: 5 },
 ]
 
 export const classStudentDetail = (userId: string): ClassStudentDetail => {
@@ -148,12 +148,23 @@ export const classStudentDetail = (userId: string): ClassStudentDetail => {
     learnerProfile: { currentLevel: s.currentLevel, targetLevel: s.targetLevel, learningPurpose: 'WORK', topicsOfInterest: ['travel'], weeklyGoalMinutes: 150, timezone: 'Asia/Baghdad', aiPersonality: 'FRIENDLY' },
     metrics: { ...metrics, estimatedLevel: s.estimatedLevel },
     vocabTotal: s.vocabTotal, vocabDueToday: s.vocabDueToday,
+    skills: s.lastPracticeAt
+      ? { grammar: 72, vocabulary: 68, fluency: 70, speaking: 64, basedOnMessages: 40, basedOnSpoken: 6 }
+      : { grammar: null, vocabulary: null, fluency: null, speaking: null, basedOnMessages: 0, basedOnSpoken: 0 },
+    practice: { lastPracticeAt: s.lastPracticeAt, chats: s.lastPracticeAt ? 9 : 0, totalStudyTimeMinutes: s.totalStudyTimeMinutes, currentStreak: s.currentStreak, longestStreak: 8 },
+    tasks: [
+      { id: 't1', title: 'Describe your weekend', deadline: daysFrom(5), taskStatus: 'OPEN', state: 'HANDED_IN', handedInAt: T },
+      { id: 't2', title: 'Past tense quiz', deadline: daysFrom(-2), taskStatus: 'CLOSED', state: 'MISSING', handedInAt: null },
+    ],
+    taskSummary: s.tasks,
+    mistakes: s.lastPracticeAt ? [{ rule: 'Past simple of irregular verbs', count: 6, example: { said: 'I buyed bread', better: 'I bought bread' } }] : [],
   }
 }
 
 export const classAnalytics = (id: string): ClassAnalytics => ({
   classId: id, className: 'English B1 Evening', studentCount: 2,
-  averageSkills: { grammar: 62, vocabulary: 58, fluency: 60 },
+  averageSkills: { grammar: 62, vocabulary: 58, fluency: 60, speaking: 55 },
+  practisingStudents: 1,
   mostCommonGrammarErrors: [{ error: 'Subject-verb agreement', count: 7 }, { error: 'Article usage', count: 4 }],
   vocabularyCoverage: 54,
 })
@@ -183,22 +194,30 @@ export const submissions: TaskSubmissionItem[] = [
 // ── Staff dashboards ───────────────────────────────────────────────────────
 
 export const tutorDashboard: TutorDashboardData = {
-  classes: { total: 2, active: 2 },
-  students: { total: 5, activeToday: 2, activeThisWeek: 4 },
-  skills: { avgGrammar: 62, avgVocabulary: 58, avgFluency: 60, avgSpeaking: 55 },
-  sessionsToday: 3,
-  recentActivity: [
-    { userId: 'u-student', displayName: 'Ali Hassan', avatarUrl: null, sessionMode: 'TEXT', startedAt: T, avgOverallScore: 78, className: 'English B1 Evening' },
-    { userId: 'u-free', displayName: 'Yuki Tanaka', avatarUrl: null, sessionMode: 'VOICE', startedAt: T, avgOverallScore: null, className: 'Business English' },
+  totals: { classes: 2, students: 5, activeThisWeek: 3, toReview: 1, missing: 2 },
+  needsYou: {
+    toReview: [{ submissionId: 'sub1', taskId: 't1', classId: 'c1', taskTitle: 'Write about your weekend', className: 'English B1 Evening', studentName: 'Ali Hassan', handedInAt: T }],
+    dueSoon: [{ taskId: 't1', classId: 'c1', title: 'Write about your weekend', className: 'English B1 Evening', deadline: daysFrom(3), handedIn: 1, students: 3 }],
+    inactive: [{ userId: 'u-free', classId: 'c1', displayName: 'Yuki Tanaka', avatarUrl: null, className: 'English B1 Evening', lastPracticeAt: null }],
+    inactiveCount: 2,
+  },
+  classes: [
+    { id: 'c1', name: 'English B1 Evening', students: 3, activeThisWeek: 2, handInRate: 67, missing: 2, toReview: 1, avgSkill: 66 },
+    { id: 'c2', name: 'Business English', students: 2, activeThisWeek: 1, handInRate: null, missing: 0, toReview: 0, avgSkill: null },
   ],
+  skills: { grammar: 62, vocabulary: 58, fluency: 60, speaking: 55, practisingStudents: 3 },
+  commonMistakes: [{ rule: 'Past simple of irregular verbs', count: 7, example: { said: 'I goed home', better: 'I went home' } }],
 }
 
 export const adminDashboard: AdminDashboardData = {
-  users: { total: 128, byRole: { STUDENT: 118, TUTOR: 8, ADMIN: 2 } },
-  subscriptions: { FREE: 90, GOLD: 25, PREMIUM: 13 },
-  activeUsers: { daily: 34, weekly: 77 },
-  totalSessionsToday: 51,
-  revenueByProvider: { CASH: 450000, FIB: 1250000 },
+  users: { total: 128, students: 118, tutors: 8, admins: 2, newThisWeek: 9, newLastWeek: 6 },
+  activity: { active24h: 34, activeThisWeek: 77, activeLastWeek: 80, messagesThisWeek: 2140, messagesLastWeek: 1900 },
+  funnel: { signedUp: 118, verified: 96, practised: 80, paying: 38 },
+  plans: { FREE: 80, GOLD: 25, PREMIUM: 13, expiredNotDowngraded: 1 },
+  revenue: { fibThisMonthIQD: 1250000, fibThisMonthCount: 5, fibLastMonthIQD: 900000, payingByProvider: { CASH: 20, FIB: 18 } },
+  expiringSoon: [{ userId: 'u-student', name: 'Ali Hassan', plan: 'GOLD', endsAt: daysFrom(4), cancelling: false }],
+  aiUsage: { FREE: 600, GOLD: 1000, PREMIUM: 540 },
+  attention: { unverifiedOver24h: 3, fibPaymentsStuck: 0 },
 }
 
 export const adminUsers: AdminUserItem[] = (Object.keys(USERS) as Persona[]).map((p) => {

@@ -19,6 +19,7 @@ const APP_PAGES: [Persona, string][] = [
   ['tutor', '/dashboard'],
   ['tutor', '/dashboard/classes/c1'],
   ['student', '/dashboard/classes/c1/tasks/t1'],
+  ['tutor', '/dashboard/classes/c1/students/u-student'],
   ['admin', '/dashboard'],
   ['admin', '/dashboard/users'],
   ['admin', '/dashboard/classes'],

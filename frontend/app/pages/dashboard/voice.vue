@@ -28,7 +28,7 @@ const showCoaching = computed(() => inCall.value || turns.value.length > 0)
 </script>
 
 <template>
-  <div class="h-full overflow-y-auto p-5 sm:p-7">
+  <div class="h-full overflow-y-auto page-padding">
     <!-- Header -->
     <div class="animate-card-enter" style="--delay:0ms">
       <h1 class="font-poppins text-[28px] font-semibold tracking-[-0.02em] text-text-heading">Voice Lab</h1>

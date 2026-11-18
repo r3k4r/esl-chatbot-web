@@ -90,7 +90,6 @@ export const routes: Record<string, Handler> = {
 
   // ── Dashboards ────────────────────────────────────────────────────────────
   'GET /dashboard/overview': auth(() => ok(F.overviewFixture)),
-  'GET /dashboard/vocabulary-growth': auth(() => ok(F.overviewFixture.vocabChart)),
   'GET /tutor/dashboard': auth(() => ok(F.tutorDashboard), STAFF),
   'GET /admin/dashboard': auth(() => ok(F.adminDashboard), ['admin']),
 

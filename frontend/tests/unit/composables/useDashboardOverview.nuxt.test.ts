@@ -2,15 +2,63 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
 import { mockFetch, ok, fail } from '../helpers/fetch-mock'
 import { overviewFixture, FIXTURE_NOW } from '../../fixtures/overview'
+import { learnerNextStep, learnerStats } from '~/composables/useDashboardOverview'
+import type { DashboardOverviewData, LearnerTask } from '~/common/types/dashboard-overview-types'
 
 const base = () => useRuntimeConfig().public.baseUrl as string
+const NOW = FIXTURE_NOW.getTime()
+const hours = (h: number) => new Date(NOW + h * 3_600_000).toISOString()
+const task = (over: Partial<LearnerTask>): LearnerTask => ({ id: 't9', classId: 'c1', className: 'B1', title: 'Essay', deadline: null, state: 'ASSIGNED', ...over })
+const withData = (over: Partial<DashboardOverviewData>): DashboardOverviewData => ({ ...overviewFixture, ...over })
 
-async function loaded(data = overviewFixture) {
-  mockFetch({ 'GET /dashboard/overview': ok(data) }, base())
-  const overview = useDashboardOverview()
-  await overview.fetchOverview()
-  return overview
-}
+describe('learnerNextStep', () => {
+  it('puts missed class work first', () => {
+    const s = learnerNextStep(withData({ tasks: [task({ state: 'MISSING', title: 'Late one' }), task({ deadline: hours(3) })] }), NOW)
+    expect(s.title).toBe('"Late one" is past its deadline')
+    expect(s.to).toBe('/dashboard/classes/c1/tasks/t9')
+  })
+
+  it('counts several missed tasks', () => {
+    const s = learnerNextStep(withData({ tasks: [task({ state: 'MISSING' }), task({ id: 't8', state: 'MISSING' })] }), NOW)
+    expect(s.title).toBe('2 tasks are past their deadline')
+  })
+
+  it('then work due within two days', () => {
+    expect(learnerNextStep(withData({ tasks: [task({ deadline: hours(5) })] }), NOW).title).toBe('"Essay" is due in 5 h')
+    expect(learnerNextStep(withData({ tasks: [task({ deadline: hours(30) })] }), NOW).title).toBe('"Essay" is due tomorrow')
+  })
+
+  it('then words due for review (a deadline days away does not win)', () => {
+    const s = learnerNextStep(overviewFixture, NOW)
+    expect(s.title).toBe('4 words ready to review')
+    expect(s.to).toBe('/dashboard/vocab')
+  })
+
+  it("then the rest of today's goal", () => {
+    const d = withData({ tasks: [], vocab: { ...overviewFixture.vocab, due: 0 } })
+    expect(learnerNextStep(d, NOW).title).toBe("8 more minutes to reach today's goal")
+    expect(learnerNextStep(withData({ ...d, today: { ...d.today, minutes: 0 } }), NOW).title).toBe('Practise 20 minutes today')
+    expect(learnerNextStep(withData({ ...d, today: { ...d.today, minutes: 25 } }), NOW).title).toBe("You reached today's goal")
+  })
+})
+
+describe('learnerStats', () => {
+  it('says what each number is measured against', () => {
+    expect(learnerStats(overviewFixture).map(s => [s.label, s.value, s.sub])).toEqual([
+      ['Words mastered', '35', '120 saved · 6 new this week'],
+      ['Practice this week', '12 min', 'Goal 2 h 20 min'],
+      ['Speaking', '81', 'Good · 9 spoken messages'],
+      ['Level', 'B1', 'Aiming for B2'],
+    ])
+  })
+
+  it('shows no data as a dash with a hint, never as a zero score', () => {
+    const d = withData({ skills: { ...overviewFixture.skills, speaking: null, level: null, selfLevel: null, targetLevel: null, basedOnMessages: 0, basedOnSpoken: 0 } })
+    const [, , speaking, level] = learnerStats(d)
+    expect([speaking!.value, speaking!.sub]).toEqual(['–', 'Try a voice chat to get a score'])
+    expect([level!.value, level!.sub]).toEqual(['–', 'Shows after a few chats'])
+  })
+})
 
 describe('useDashboardOverview', () => {
   beforeEach(() => {
@@ -23,81 +71,22 @@ describe('useDashboardOverview', () => {
     vi.unstubAllGlobals()
   })
 
-  it('exposes safe defaults before data arrives', () => {
+  it('has no data or next step before loading', () => {
     const o = useDashboardOverview()
-    expect(o.greetingHeroProps.value).toEqual({ streak: 0, doneMins: 0, goalMins: 25 })
-    expect(o.statCards.value).toEqual([])
-    expect(o.vocabChartGrowth.value).toBe('+0%')
-    expect(o.nextUpPrimary.value).toBeNull()
+    expect(o.data.value).toBeNull()
+    expect(o.nextStep.value).toBeNull()
   })
 
-  it('formats the stat cards', async () => {
-    const o = await loaded()
-    expect(o.statCards.value.map((c) => [c.label, c.value, c.delta])).toEqual([
-      ['Words mastered', (1240).toLocaleString(), '+18 this week'],
-      ['Practice time', '3h', '45m this month'],
-      ['Pronunciation', '82%', '-3% vs last'],
-      ['Current level', 'B1', '60% to B2'],
-    ])
-  })
-
-  it.each([
-    [{ pronunciationDelta: null }, 'Pronunciation', 'voice sessions only'],
-    [{ pronunciationDelta: 4 }, 'Pronunciation', '+4% vs last'],
-    [{ currentLevel: 'C2' }, 'Current level', 'max level'],
-    [{ currentLevel: null }, 'Current level', 'max level'],
-  ])('stat card edge case %j', async (patch, label, delta) => {
-    const o = await loaded({ ...overviewFixture, statCards: { ...overviewFixture.statCards, ...patch } })
-    expect(o.statCards.value.find((c) => c.label === label)?.delta).toBe(delta)
-  })
-
-  it('labels goals and falls back for unknown types and missing difficulty', async () => {
-    const o = await loaded()
-    expect(o.nextUpPrimary.value).toMatchObject({ title: 'Hold a 5-minute conversation', tag: 'Speaking', level: 'HARD', icon: 'Microphone' })
-    expect(o.nextUpOthers.value.map((g) => [g.tag, g.level, g.icon])).toEqual([
-      ['Vocabulary', 'MEDIUM', 'Book1'],
-      ['UNKNOWN_TYPE', 'EASY', 'Flag'],
-    ])
-  })
-
-  it('describes recent sessions relative to now', async () => {
-    const o = await loaded()
-    expect(o.recentSessions.value).toEqual([
-      { type: 'Voice', topic: 'Ordering coffee', time: '30 min ago', meta: '12 turns · 88% accuracy', icon: 'Microphone' },
-      { type: 'Chat', topic: 'Untitled session', time: 'Yesterday', meta: '8 turns · 75%', icon: 'Messages' },
-      { type: 'Chat', topic: 'Job interview', time: '3 days ago', meta: '3 turns', icon: 'Messages' },
-    ])
-  })
-
-  it('labels when each due word is due', async () => {
-    const o = await loaded()
-    expect(o.dueWords.value.map((w) => w.due)).toEqual(['now', 'in 40m', 'in 5h', 'tomorrow', 'in 4d'])
-  })
-
-  it('keeps the error while a retry is in flight, then clears it on success', async () => {
-    let answer: (v: Response) => void = () => {}
-    const fail500 = () => new Response(JSON.stringify({ success: false, message: 'Database unavailable' }), { status: 500 })
-    const fetchMock = vi.fn()
-      .mockResolvedValueOnce(fail500())
-      .mockImplementationOnce(() => new Promise<Response>((r) => { answer = r }))
-    vi.stubGlobal('fetch', fetchMock)
+  it('loads the overview and works out the next step', async () => {
+    mockFetch({ 'GET /dashboard/overview': ok(overviewFixture) }, base())
     const o = useDashboardOverview()
-
     await o.fetchOverview()
-    expect(o.error.value).toBe('Database unavailable')
-
-    const retry = o.fetchOverview()
-    await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2))
-    expect(o.loading.value).toBe(true)
-    expect(o.error.value).toBe('Database unavailable')
-
-    answer(new Response(JSON.stringify({ success: true, data: overviewFixture })))
-    await retry
     expect(o.error.value).toBeNull()
-    expect(o.statCards.value).toHaveLength(4)
+    expect(o.data.value?.today.streak).toBe(6)
+    expect(o.nextStep.value?.action).toBe('Review words')
   })
 
-  it('reports the server message and stops loading on failure', async () => {
+  it('keeps the server message on failure', async () => {
     mockFetch({ 'GET /dashboard/overview': fail(500, 'Database unavailable') }, base())
     const o = useDashboardOverview()
     await o.fetchOverview()

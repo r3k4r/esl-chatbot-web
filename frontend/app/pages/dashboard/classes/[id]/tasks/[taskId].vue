@@ -14,7 +14,7 @@ const formOpen = ref(false)
 
 <template>
   <div class="h-full overflow-y-auto">
-    <div class="mx-auto max-w-6xl px-4 py-6 md:px-8 md:py-8">
+    <div class="page-padding">
       <div v-if="loading || !task" class="space-y-4">
         <UiSkeleton class="h-5 w-40" />
         <UiSkeleton class="h-8 w-2/3" />

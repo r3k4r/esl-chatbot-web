@@ -1,15 +1,17 @@
 <script setup lang="ts">
-import type { StatCard } from '~/common/types/dashboard-types'
-defineProps<{ card: StatCard }>()
+import type { LearnerStat } from '~/common/types/dashboard-overview-types'
+
+// One number under the greeting, with a line that says what it's measured against.
+defineProps<{ stat: LearnerStat }>()
 </script>
 
 <template>
-  <div class="dash-card p-4">
-    <div class="flex items-center justify-between">
-      <p class="text-[10px] uppercase tracking-[0.18em] text-zinc-400 font-semibold font-poppins">{{ card.label }}</p>
-      <AppIconsax :name="card.icon as any" color="#d4d4d8" :size="13" />
+  <div class="dash-card p-5">
+    <div class="flex items-center justify-between gap-3">
+      <AppText size="14" color="neutral-400">{{ stat.label }}</AppText>
+      <AppIconsax :name="stat.icon" :size="18" color="var(--color-text-subtle)" />
     </div>
-    <p class="mt-2 text-[26px] font-semibold tracking-[-0.02em] text-brand-ink dark:text-white font-poppins">{{ card.value }}</p>
-    <p class="text-[11px] text-zinc-400 mt-0.5 font-mono">{{ card.delta }}</p>
+    <AppText size="24" weight="semibold" font-family="poppins" class-list="mt-2 leading-tight tabular-nums">{{ stat.value }}</AppText>
+    <AppText size="13" color="neutral-400" class-list="mt-1">{{ stat.sub }}</AppText>
   </div>
 </template>

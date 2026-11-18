@@ -1,115 +1,93 @@
 <script setup lang="ts">
+import type { LearnerNextStep, LearnerToday } from '~/common/types/dashboard-overview-types'
+import type { SvgBasedIconName } from '~/common/types/iconsax-types'
 import { useAuthStore } from '~~/stores/auth'
 
-const props = defineProps<{
-  streak: number
-  doneMins: number
-  goalMins: number
-  dueVocabCount?: number
-}>()
+// The learner's welcome: greeting, how today's goal is going, the one next step as the main
+// button (plus two quick ways to practise), and the goal ring + live streak on the right.
+const props = defineProps<{ today: LearnerToday; next: LearnerNextStep; vocabDue: number }>()
 
-const emit = defineEmits<{
-  navChat: []
-  navVoice: []
-  navVocab: []
-}>()
-
-const authStore = useAuthStore()
-const name = computed(() => authStore.getUser?.username ?? 'there')
-
-const greetingTime = computed(() => {
-  const hour = new Date().getHours()
-  if (hour < 12) return 'morning'
-  if (hour < 18) return 'afternoon'
-  return 'evening'
+const user = computed(() => useAuthStore().getUser)
+const name = computed(() => user.value?.displayName?.split(' ')[0] || user.value?.username || '')
+const greeting = computed(() => {
+  const h = new Date().getHours()
+  return h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'
 })
+
+const goal = computed(() => props.today.dailyGoalMinutes)
+const left = computed(() => Math.max(0, goal.value - props.today.minutes))
+const goalLine = computed(() => {
+  if (!left.value) return "You reached today's goal. Anything more is a bonus."
+  if (!props.today.minutes) return `Your goal today is ${goal.value} minutes of practice.`
+  return `${left.value} more minutes to reach today's goal.`
+})
+
+// Quick actions, minus whatever the main button already does.
+const quick = computed(() => ([
+  { text: 'Start a chat', to: '/dashboard/chat', icon: 'Messages' },
+  { text: 'Practise speaking', to: '/dashboard/voice', icon: 'Microphone2' },
+  ...(props.vocabDue ? [{ text: `Review ${props.vocabDue} words`, to: '/dashboard/vocab', icon: 'Book1' }] : []),
+] as { text: string; to: string; icon: SvgBasedIconName }[]).filter(a => a.to !== props.next.to).slice(0, 2))
 
 const R = 48
 const circumference = 2 * Math.PI * R
-const displayDone = computed(() => Math.min(props.doneMins, props.goalMins))
-const goalPct = computed(() => Math.min(1, props.doneMins / Math.max(1, props.goalMins)))
-const offset = computed(() => circumference * (1 - goalPct.value))
-const goalMet = computed(() => props.doneMins >= props.goalMins)
-const minsLeft = computed(() => Math.max(0, props.goalMins - props.doneMins))
+const offset = computed(() => circumference * (1 - Math.min(1, props.today.minutes / Math.max(1, goal.value))))
 </script>
 
 <template>
-  <div class="dash-card relative overflow-hidden">
-    <!-- dot texture -->
-    <div class="dot-bg absolute inset-0 opacity-80 pointer-events-none" />
-    <!-- glow orb -->
-    <div class="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-brand-primary/10 blur-3xl pointer-events-none" />
+  <section aria-labelledby="hero-title" class="dash-card relative overflow-hidden">
+    <div class="dot-bg pointer-events-none absolute inset-0" aria-hidden="true" />
+    <div class="pointer-events-none absolute -end-14 -top-24 size-72 rounded-full bg-brand-primary/15 blur-3xl" aria-hidden="true" />
 
-    <div class="relative p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center gap-6 justify-between">
-      <!-- Text + CTA -->
-      <div>
-        <p class="text-[11px] uppercase tracking-[0.2em] text-zinc-400 font-semibold font-poppins">Good {{ greetingTime
-          }}</p>
-        <h1
-          class="mt-1 text-[32px] sm:text-[38px] font-semibold tracking-[-0.03em] text-brand-ink dark:text-white leading-[1.1] font-poppins">
-          Welcome back, {{ name }}.
-        </h1>
-        <p class="mt-2 text-[14px] text-zinc-500 dark:text-zinc-400 max-w-md font-poppins">
-          <template v-if="goalMet">
-            <span class="text-emerald-500 font-medium">Daily goal complete!</span> Great work today, keep the streak going.
-          </template>
-          <template v-else-if="doneMins === 0">
-            Start a session to begin your daily goal — <span class="text-brand-primary font-medium">{{ goalMins }} min</span> today.
-          </template>
-          <template v-else>
-            <span class="text-brand-primary font-medium">{{ minsLeft }} min left</span> to hit today's goal. Keep going!
-          </template>
-        </p>
+    <div class="relative flex flex-col gap-8 p-6 sm:p-8 md:flex-row md:items-center md:justify-between">
+      <div class="min-w-0">
+        <AppText size="14" color="neutral-400">{{ greeting }}</AppText>
+        <AppText id="hero-title" size="32" weight="semibold" font-family="poppins" class-list="mt-1 leading-tight tracking-tight">
+          Welcome back{{ name ? `, ${name}` : '' }}.
+        </AppText>
+        <AppText size="15" color="neutral-600" class-list="mt-2">{{ goalLine }}</AppText>
+
+        <div class="mt-5 flex max-w-xl items-start gap-3 rounded-xl border border-border-inner bg-surface-raised/60 px-4 py-3">
+          <AppIconsax :name="next.icon" :size="20" color="var(--color-brand-primary)" class="mt-0.5 shrink-0" />
+          <div class="min-w-0">
+            <AppText size="14" weight="semibold">{{ next.title }}</AppText>
+            <AppText size="14" color="neutral-400">{{ next.detail }}</AppText>
+          </div>
+        </div>
 
         <div class="mt-5 flex flex-wrap items-center gap-2">
-          <AppButton variant="primary" size="38" radius="8" icon="Messages" :icon-config="{ color: 'white' }"
-            text="Continue conversation" @click="emit('navChat')" />
-          <AppButton variant="secondary" size="38" radius="8" icon="Microphone" text="Practice speaking"
-            @click="emit('navVoice')" />
-          <AppButton variant="secondary" size="38" radius="8" icon="Book1" :text="`Review ${dueVocabCount ?? 0} words`"
-            @click="emit('navVocab')" />
+          <AppButton variant="primary" size="38" radius="8" :to="next.to" :text="next.action" :icon="next.icon" :icon-config="{ color: 'white', size: 18 }" class-list="px-4" />
+          <AppButton v-for="a in quick" :key="a.to" variant="secondary" size="38" radius="8" :to="a.to" :text="a.text" :icon="a.icon" :icon-config="{ size: 18 }" class-list="px-4" />
         </div>
       </div>
 
-      <!-- Ring + streak -->
-      <div class="flex items-center gap-5 shrink-0">
-        <!-- Goal progress ring with CSS draw-in -->
-        <div class="relative w-32 h-32">
-          <svg viewBox="0 0 120 120" class="w-full h-full -rotate-90">
-            <defs>
-              <linearGradient id="ringGrad" x1="0" x2="1" y1="0" y2="1">
-                <stop offset="0%" stop-color="var(--color-brand-accent)" />
-                <stop offset="100%" stop-color="var(--color-brand-primary)" />
-              </linearGradient>
-            </defs>
-            <!-- track -->
-            <circle cx="60" cy="60" :r="R" stroke="currentColor" class="text-zinc-200 dark:text-white/10"
-              stroke-width="10" fill="none" />
-            <!-- animated fill -->
-            <circle cx="60" cy="60" :r="R" stroke="url(#ringGrad)" stroke-width="10" fill="none" stroke-linecap="round"
-              :stroke-dasharray="circumference" :stroke-dashoffset="offset" class="ring-animate" />
+      <div class="flex shrink-0 items-center gap-6">
+        <div class="relative size-32" role="progressbar" :aria-valuenow="today.minutes" aria-valuemin="0" :aria-valuemax="goal" aria-label="Minutes practised today">
+          <svg viewBox="0 0 120 120" class="size-full -rotate-90" aria-hidden="true">
+            <circle cx="60" cy="60" :r="R" fill="none" stroke-width="10" style="stroke:var(--surface-well)" />
+            <circle cx="60" cy="60" :r="R" fill="none" stroke-width="10" stroke-linecap="round"
+              :stroke-dasharray="circumference" :stroke-dashoffset="offset"
+              class="transition-[stroke-dashoffset] duration-700 ease-out" style="stroke:var(--color-brand-primary)" />
           </svg>
           <div class="absolute inset-0 flex flex-col items-center justify-center">
-            <span
-              class="text-[26px] font-semibold tracking-tight text-brand-ink dark:text-white leading-none font-poppins">
-              {{ displayDone }}<span class="text-[13px] text-zinc-400 font-normal">/{{ goalMins }}</span>
-            </span>
-            <span class="text-[14px] uppercase tracking-wider text-zinc-400 mt-0.5 font-poppins">min today</span>
+            <AppText size="24" weight="semibold" font-family="poppins" class-list="leading-none tabular-nums">
+              {{ Math.min(today.minutes, goal) }}<span class="text-[14px] font-normal text-text-muted">/{{ goal }}</span>
+            </AppText>
+            <AppText size="13" color="neutral-400" class-list="mt-1">min today</AppText>
           </div>
         </div>
 
-        <!-- Streak flame -->
         <div class="text-center">
-          <div
-            class="relative inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-brand-primary/15 border border-brand-primary/20">
-            <AppIconsax name="Flash" color="var(--color-brand-primary)" :size="26" />
-          </div>
-          <div
-            class="mt-2 text-[22px] font-semibold tracking-tight text-brand-ink dark:text-white leading-none font-poppins">
-            {{ streak }}</div>
-          <div class="text-[10px] uppercase tracking-wider text-zinc-400 mt-1 font-poppins">day streak</div>
+          <span class="inline-grid size-16 place-items-center rounded-2xl border"
+            :class="today.streak ? 'border-brand-primary/20 bg-brand-primary/12' : 'border-border-inner bg-surface-well'">
+            <AppIconsax name="Flash" :size="26" :type="today.streak ? 'bold' : 'linear'"
+              :color="today.streak ? 'var(--color-brand-primary)' : 'var(--color-text-subtle)'" />
+          </span>
+          <AppText size="22" weight="semibold" font-family="poppins" class-list="mt-2 leading-none tabular-nums">{{ today.streak }}</AppText>
+          <AppText size="13" color="neutral-400" class-list="mt-1">day streak</AppText>
+          <AppText v-if="today.longestStreak > today.streak" size="13" color="neutral-400">best {{ today.longestStreak }}</AppText>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 </template>

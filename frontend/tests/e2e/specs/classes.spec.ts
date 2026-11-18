@@ -34,8 +34,11 @@ test.describe('student', () => {
 
   test('sees only member tabs and no management actions', async ({ page }) => {
     await visit(page, '/dashboard/classes/c1')
-    for (const name of ['Members', 'Tasks', 'Announcements']) await expect(tab(page, name)).toBeVisible()
-    for (const name of ['Students', 'Analytics']) await expect(tab(page, name)).toHaveCount(0)
+    for (const name of ['People', 'Tasks', 'Announcements']) await expect(tab(page, name)).toBeVisible()
+    await expect(tab(page, 'Analytics')).toHaveCount(0)
+    // Students see who is in the class, never anyone's progress
+    await expect(page.getByText('Teachers', { exact: true })).toBeVisible()
+    await expect(page.getByText('AI practice', { exact: true })).toHaveCount(0)
     await expect(page.getByRole('link', { name: 'Edit', exact: true })).toHaveCount(0)
     await expect(page.getByRole('button', { name: 'Archive', exact: true })).toHaveCount(0)
     await expect(page.getByPlaceholder(/Write an announcement/)).toHaveCount(0)
@@ -126,17 +129,29 @@ test.describe('tutor', () => {
 
   test('sees every tab plus edit and archive', async ({ page }) => {
     await visit(page, '/dashboard/classes/c1')
-    for (const name of ['Members', 'Students', 'Analytics', 'Tasks', 'Announcements']) await expect(tab(page, name)).toBeVisible()
+    for (const name of ['People', 'Analytics', 'Tasks', 'Announcements']) await expect(tab(page, name)).toBeVisible()
     await expect(page.getByRole('link', { name: 'Edit', exact: true })).toBeVisible()
     await expect(page.getByRole('button', { name: 'Archive', exact: true })).toBeVisible()
   })
 
-  test('monitors students and class analytics', async ({ page }) => {
+  test('sees each student\'s progress in People and class analytics', async ({ page }) => {
     await visit(page, '/dashboard/classes/c1')
-    await tab(page, 'Students').click()
-    await expect(page.getByText('Yuki Tanaka').first()).toBeVisible()
+    await expect(page.getByText('1 of 2 handed in')).toBeVisible()
+    await expect(page.getByText('No AI practice yet')).toBeVisible()
     await tab(page, 'Analytics').click()
     await expect(page.getByText('Subject-verb agreement')).toBeVisible()
+    await expect(page.getByText('Average of the 1 of 2 students who practise with the AI tutor.')).toBeVisible()
+  })
+
+  test('opens a student\'s progress page from People', async ({ page }) => {
+    await visit(page, '/dashboard/classes/c1?tab=people')
+    await page.getByRole('link', { name: /Ali Hassan/ }).click()
+    await expect(page).toHaveURL(/\/dashboard\/classes\/c1\/students\/u-student$/)
+    await expect(page.getByRole('heading', { level: 1, name: 'Ali Hassan' })).toBeVisible()
+    await expect(page.getByText('Average of their last 40 scored messages, 6 spoken', { exact: false })).toBeVisible()
+    await expect(page.getByText('Past simple of irregular verbs')).toBeVisible()
+    await expect(page.getByText('Missing', { exact: true }).first()).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Assign word' })).toBeVisible()
   })
 
   test('posts an announcement', async ({ page }) => {

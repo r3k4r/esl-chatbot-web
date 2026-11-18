@@ -134,13 +134,11 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Platform-wide admin dashboard stats — Admin only
-         * @description Returns a single aggregated snapshot of platform health:
-         *     - Total users by role (STUDENT/TUTOR/ADMIN)
-         *     - Active subscriptions by plan (FREE/GOLD/PREMIUM)
-         *     - Daily active users (had a session today) and weekly active users (last 7 days)
-         *     - Total sessions started today
-         *     - Active paid subscriptions grouped by payment provider (CASH/FIB/STRIPE)
+         * Admin home dashboard (Admin only)
+         * @description Growth (rolling 7 days vs the 7 before), the student funnel, plans (paid ones only
+         *     while their period hasn't ended), FIB revenue from subscriptions activated this
+         *     month, subscriptions ending in the next 7 days, AI messages by plan, and things that
+         *     need attention. Internal accounts never count.
          */
         get: {
             parameters: {
@@ -151,7 +149,7 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
-                /** @description Dashboard stats */
+                /** @description Dashboard data */
                 200: {
                     headers: {
                         [name: string]: unknown;
@@ -162,27 +160,57 @@ export interface paths {
                             data?: {
                                 users?: {
                                     total?: number;
-                                    byRole?: {
-                                        STUDENT?: number;
-                                        TUTOR?: number;
-                                        ADMIN?: number;
+                                    students?: number;
+                                    tutors?: number;
+                                    admins?: number;
+                                    newThisWeek?: number;
+                                    newLastWeek?: number;
+                                };
+                                activity?: {
+                                    active24h?: number;
+                                    activeThisWeek?: number;
+                                    activeLastWeek?: number;
+                                    messagesThisWeek?: number;
+                                    messagesLastWeek?: number;
+                                };
+                                funnel?: {
+                                    signedUp?: number;
+                                    verified?: number;
+                                    practised?: number;
+                                    paying?: number;
+                                };
+                                plans?: {
+                                    FREE?: number;
+                                    GOLD?: number;
+                                    PREMIUM?: number;
+                                    expiredNotDowngraded?: number;
+                                };
+                                revenue?: {
+                                    fibThisMonthIQD?: number;
+                                    fibThisMonthCount?: number;
+                                    fibLastMonthIQD?: number;
+                                    payingByProvider?: {
+                                        [key: string]: number;
                                     };
                                 };
-                                subscriptions?: {
+                                expiringSoon?: {
+                                    /** Format: uuid */
+                                    userId?: string;
+                                    name?: string;
+                                    /** @enum {string} */
+                                    plan?: "FREE" | "GOLD" | "PREMIUM";
+                                    /** Format: date-time */
+                                    endsAt?: string;
+                                    cancelling?: boolean;
+                                }[];
+                                aiUsage?: {
                                     FREE?: number;
                                     GOLD?: number;
                                     PREMIUM?: number;
                                 };
-                                activeUsers?: {
-                                    /** @description Users with a session today */
-                                    daily?: number;
-                                    /** @description Users with a session in the last 7 days */
-                                    weekly?: number;
-                                };
-                                totalSessionsToday?: number;
-                                /** @description Count of active paid subscriptions per payment provider */
-                                revenueByProvider?: {
-                                    [key: string]: number;
+                                attention?: {
+                                    unverifiedOver24h?: number;
+                                    fibPaymentsStuck?: number;
                                 };
                             };
                         };
@@ -197,7 +225,7 @@ export interface paths {
                         "application/json": components["schemas"]["ErrorResponse"];
                     };
                 };
-                /** @description Not an admin */
+                /** @description Caller is not an admin */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -2732,10 +2760,20 @@ export interface paths {
                                 /** @description AI-estimated CEFR level from session evaluations */
                                 estimatedLevel?: string | null;
                                 totalStudyTimeMinutes?: number;
-                                /** @description 0–100 skill score */
+                                /** @description 0–100, average of the latest 40 scored chat messages (0 = none yet) */
                                 grammarSkill?: number;
-                                /** @description 0–100 skill score */
+                                /** @description 0–100 */
                                 vocabularySkill?: number;
+                                /** @description 0–100 */
+                                fluencySkill?: number;
+                                /** @description 0–100 pronunciation; 0 = no voice practice yet */
+                                speakingSkill?: number;
+                                /**
+                                 * Format: date-time
+                                 * @description Last message to the AI tutor; null = never practised
+                                 */
+                                lastPracticeAt?: string | null;
+                                tasks?: components["schemas"]["TaskRecord"];
                                 /** @description Total vocabulary cards saved */
                                 vocabTotal?: number;
                                 /** @description SRS cards due for review today */
@@ -2829,7 +2867,11 @@ export interface paths {
                                     vocabulary?: number;
                                     /** @description 0–100 */
                                     fluency?: number;
+                                    /** @description 0–100 */
+                                    speaking?: number;
                                 };
+                                /** @description Students with at least one scored message; averages cover only them */
+                                practisingStudents?: number;
                                 mostCommonGrammarErrors?: {
                                     error?: string;
                                     count?: number;
@@ -2926,6 +2968,20 @@ export interface paths {
                                 metrics?: Record<string, never> | null;
                                 vocabTotal?: number;
                                 vocabDueToday?: number;
+                                skills?: components["schemas"]["SkillSnapshot"];
+                                practice?: {
+                                    /** Format: date-time */
+                                    lastPracticeAt?: string | null;
+                                    /** @description Chats with at least one message */
+                                    chats?: number;
+                                    totalStudyTimeMinutes?: number;
+                                    currentStreak?: number;
+                                    longestStreak?: number;
+                                };
+                                tasks?: components["schemas"]["StudentTaskItem"][];
+                                taskSummary?: components["schemas"]["TaskRecord"];
+                                /** @description Most frequent grammar mistakes in the last 30 days */
+                                mistakes?: components["schemas"]["StudentMistake"][];
                             };
                         };
                     };
@@ -3194,17 +3250,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get all dashboard overview data in one call
-         * @description Returns a single aggregated payload covering all six dashboard sections.
-         *     All six section queries run in parallel — typical response time is one DB round-trip.
-         *
-         *     **Sections:**
-         *     - `greetingHero` — streak, today's study minutes vs daily goal, due vocab count
-         *     - `statCards` — words mastered, practice time, pronunciation score, current CEFR level
-         *     - `vocabChart` — 6-week cumulative vocabulary growth points + growth %
-         *     - `nextUp` — primary active goal + up to 3 others (Goals replace Lessons until Lesson model is built)
-         *     - `activityHeatmap` — 12 × 7 day grid of session counts + 5 recent sessions
-         *     - `dueWords` — top 4 SRS cards due now + total due count + CEFR level progress %
+         * Learner home dashboard
+         * @description Everything on the learner's home page. "Today" and "this week" are the learner's own
+         *     calendar (their profile time zone). Practice is recorded per message, so numbers are
+         *     current without pressing End session. Cached 2 minutes, cleared on every message.
          */
         get: {
             parameters: {
@@ -3215,113 +3264,90 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
-                /** @description Dashboard overview data */
+                /** @description Dashboard data */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
                         "application/json": {
-                            /** @example true */
                             success?: boolean;
-                            message?: string;
                             data?: {
-                                greetingHero?: {
-                                    /** @example 7 */
+                                today?: {
+                                    /** @example 2026-11-18 */
+                                    date?: string;
+                                    minutes?: number;
+                                    dailyGoalMinutes?: number;
+                                    /** @description 0 once a whole day was missed */
                                     streak?: number;
-                                    /** @example 17 */
-                                    doneMins?: number;
-                                    /** @example 25 */
-                                    goalMins?: number;
-                                    /** @example 12 */
-                                    dueVocabCount?: number;
+                                    longestStreak?: number;
                                 };
-                                statCards?: {
-                                    /** @example 248 */
-                                    wordsMastered?: number;
-                                    /** @example 12 */
-                                    wordsMasteredWeekDelta?: number;
-                                    /** @example 2520 */
-                                    practiceTimeMinutes?: number;
-                                    /** @example 420 */
-                                    practiceTimeThisMonthMinutes?: number;
-                                    /** @example 82 */
-                                    pronunciationScore?: number;
-                                    /** @example 4 */
-                                    pronunciationDelta?: number | null;
-                                    /** @example B2 */
-                                    currentLevel?: string | null;
-                                    /** @example 60 */
-                                    levelPct?: number;
-                                };
-                                vocabChart?: {
-                                    points?: {
-                                        /** @example May 5 */
-                                        label?: string;
-                                        /** @example 120 */
-                                        value?: number;
+                                week?: {
+                                    /** @description Monday to Sunday; minutes null for days still to come */
+                                    days?: {
+                                        date?: string;
+                                        minutes?: number | null;
                                     }[];
-                                    /** @example 156 */
-                                    totalWords?: number;
-                                    /** @example 12.4 */
-                                    growthPct?: number;
+                                    minutes?: number;
+                                    weeklyGoalMinutes?: number;
                                 };
-                                nextUp?: {
-                                    primary?: {
-                                        /** Format: uuid */
-                                        id?: string;
-                                        /** @example VOCABULARY */
-                                        type?: string;
-                                        description?: string;
-                                        target?: number;
-                                        progress?: number;
-                                        difficulty?: string | null;
-                                        /** Format: date-time */
-                                        targetDate?: string | null;
-                                    } | null;
-                                    others?: {
-                                        /** Format: uuid */
-                                        id?: string;
-                                        type?: string;
-                                        description?: string;
-                                        target?: number;
-                                        progress?: number;
-                                        difficulty?: string | null;
-                                        /** Format: date-time */
-                                        targetDate?: string | null;
-                                    }[];
+                                skills?: components["schemas"]["SkillSnapshot"] & {
+                                    selfLevel?: string | null;
+                                    targetLevel?: string | null;
                                 };
-                                activityHeatmap?: {
-                                    /** @description 12 arrays of 7 integers (0–7), one per day */
-                                    weeks?: number[][];
-                                    /** @example 78 */
-                                    activePct?: number;
-                                    recentSessions?: {
-                                        /** Format: uuid */
-                                        id?: string;
-                                        /** @enum {string} */
-                                        mode?: "TEXT" | "VOICE";
-                                        topic?: string | null;
-                                        /** Format: date-time */
-                                        startedAt?: string;
-                                        durationSeconds?: number | null;
-                                        messageCount?: number;
-                                        avgOverallScore?: number | null;
-                                        avgPronunciationScore?: number | null;
-                                    }[];
-                                };
-                                dueWords?: {
-                                    words?: {
+                                vocab?: {
+                                    total?: number;
+                                    due?: number;
+                                    mastered?: number;
+                                    /** @description Last 7 days */
+                                    addedThisWeek?: number;
+                                    dueWords?: {
                                         word?: string;
                                         definition?: string;
-                                        /** Format: date-time */
-                                        srsDue?: string;
                                     }[];
-                                    /** @example 12 */
-                                    totalDue?: number;
-                                    /** @example 60 */
-                                    levelPct?: number;
                                 };
+                                /** @description Unfinished class work across the learner's classes, soonest deadline first */
+                                tasks?: {
+                                    /** Format: uuid */
+                                    id?: string;
+                                    /** Format: uuid */
+                                    classId?: string;
+                                    className?: string;
+                                    title?: string;
+                                    /** Format: date-time */
+                                    deadline?: string | null;
+                                    /** @enum {string} */
+                                    state?: "ASSIGNED" | "MISSING";
+                                }[];
+                                goals?: {
+                                    /** Format: uuid */
+                                    id?: string;
+                                    type?: string;
+                                    description?: string;
+                                    target?: number;
+                                    progress?: number;
+                                    /** Format: date-time */
+                                    targetDate?: string | null;
+                                }[];
+                                activity?: {
+                                    /** @description 12 Monday-start weeks of minutes per day; null = still to come */
+                                    weeks?: (number | null)[][];
+                                    firstDay?: string;
+                                    activeDays?: number;
+                                };
+                                recentChats?: {
+                                    /** Format: uuid */
+                                    id?: string;
+                                    title?: string | null;
+                                    topic?: string | null;
+                                    /** @enum {string} */
+                                    mode?: "TEXT" | "VOICE";
+                                    /** Format: date-time */
+                                    startedAt?: string;
+                                    messageCount?: number;
+                                    /** @description null while the chat is open */
+                                    score?: number | null;
+                                }[];
                             };
                         };
                     };
@@ -6615,13 +6641,11 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Tutor dashboard overview stats — Tutor or Admin only
-         * @description Returns an aggregated snapshot of the tutor's classes and student activity:
-         *     - Total and active classes the tutor teaches
-         *     - Total students across all classes, plus daily/weekly active counts
-         *     - Average skill scores (grammar, vocabulary, fluency, speaking) across all students
-         *     - Total sessions started today by the tutor's students
-         *     - 8 most recent student sessions with scores
+         * Tutor home dashboard
+         * @description What needs the tutor next across their (non-archived) classes: hand-ins to review
+         *     (oldest first), deadlines in the next 7 days, students with no AI practice for 7+ days,
+         *     per-class health and the most common mistakes. Skill averages cover only students who
+         *     have practised. "Active" = sent the AI tutor a message in the last 7 days.
          */
         get: {
             parameters: {
@@ -6632,56 +6656,81 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
-                /** @description Tutor dashboard stats */
+                /** @description Dashboard data */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
                         "application/json": {
-                            /** @example true */
                             success?: boolean;
-                            message?: string;
                             data?: {
-                                classes?: {
-                                    /** @example 3 */
-                                    total?: number;
-                                    /** @example 2 */
-                                    active?: number;
-                                };
-                                students?: {
-                                    /** @example 24 */
-                                    total?: number;
-                                    /** @example 6 */
-                                    activeToday?: number;
-                                    /** @example 18 */
+                                totals?: {
+                                    classes?: number;
+                                    students?: number;
                                     activeThisWeek?: number;
+                                    toReview?: number;
+                                    missing?: number;
                                 };
-                                skills?: {
-                                    /** @example 72 */
-                                    avgGrammar?: number;
-                                    /** @example 68 */
-                                    avgVocabulary?: number;
-                                    /** @example 65 */
-                                    avgFluency?: number;
-                                    /** @example 58 */
-                                    avgSpeaking?: number;
+                                needsYou?: {
+                                    toReview?: {
+                                        /** Format: uuid */
+                                        submissionId?: string;
+                                        /** Format: uuid */
+                                        taskId?: string;
+                                        /** Format: uuid */
+                                        classId?: string;
+                                        taskTitle?: string;
+                                        className?: string;
+                                        studentName?: string;
+                                        /** Format: date-time */
+                                        handedInAt?: string;
+                                    }[];
+                                    dueSoon?: {
+                                        /** Format: uuid */
+                                        taskId?: string;
+                                        /** Format: uuid */
+                                        classId?: string;
+                                        title?: string;
+                                        className?: string;
+                                        /** Format: date-time */
+                                        deadline?: string;
+                                        handedIn?: number;
+                                        students?: number;
+                                    }[];
+                                    inactive?: {
+                                        /** Format: uuid */
+                                        userId?: string;
+                                        /** Format: uuid */
+                                        classId?: string;
+                                        displayName?: string;
+                                        avatarUrl?: string | null;
+                                        className?: string;
+                                        /** Format: date-time */
+                                        lastPracticeAt?: string | null;
+                                    }[];
+                                    inactiveCount?: number;
                                 };
-                                /** @example 8 */
-                                sessionsToday?: number;
-                                recentActivity?: {
+                                classes?: {
                                     /** Format: uuid */
-                                    userId?: string;
-                                    displayName?: string;
-                                    /** Format: uri */
-                                    avatarUrl?: string | null;
-                                    /** @enum {string} */
-                                    sessionMode?: "TEXT" | "VOICE";
-                                    /** Format: date-time */
-                                    startedAt?: string;
-                                    avgOverallScore?: number | null;
-                                    className?: string;
+                                    id?: string;
+                                    name?: string;
+                                    students?: number;
+                                    activeThisWeek?: number;
+                                    /** @description % handed in over tasks past their deadline */
+                                    handInRate?: number | null;
+                                    missing?: number;
+                                    toReview?: number;
+                                    avgSkill?: number | null;
                                 }[];
+                                skills?: {
+                                    grammar?: number;
+                                    vocabulary?: number;
+                                    fluency?: number;
+                                    speaking?: number;
+                                    practisingStudents?: number;
+                                };
+                                commonMistakes?: components["schemas"]["StudentMistake"][];
                             };
                         };
                     };
@@ -6695,7 +6744,7 @@ export interface paths {
                         "application/json": components["schemas"]["ErrorResponse"];
                     };
                 };
-                /** @description Not a tutor or admin */
+                /** @description Caller is not a tutor or admin */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -8095,6 +8144,48 @@ export interface components {
             classCodeRefreshIntervalSeconds?: number | null;
             /** Format: date-time */
             classCodeRefreshedAt?: string;
+        };
+        TaskRecord: {
+            total?: number;
+            /** @description Includes late and reviewed hand-ins */
+            handedIn?: number;
+            late?: number;
+            /** @description Past the deadline and not handed in */
+            missing?: number;
+            reviewed?: number;
+        };
+        /** @description Averages of the student's latest 40 scored chat messages (typed or spoken); speaking = Azure pronunciation on spoken ones */
+        SkillSnapshot: {
+            grammar?: number | null;
+            vocabulary?: number | null;
+            fluency?: number | null;
+            /** @description null until the student has spoken in a voice chat */
+            speaking?: number | null;
+            basedOnMessages?: number;
+            basedOnSpoken?: number;
+            /** @description Most common CEFR level the AI gave their latest messages */
+            level?: string | null;
+        };
+        StudentTaskItem: {
+            /** Format: uuid */
+            id?: string;
+            title?: string;
+            /** Format: date-time */
+            deadline?: string | null;
+            /** @enum {string} */
+            taskStatus?: "OPEN" | "CLOSED";
+            /** @enum {string} */
+            state?: "ASSIGNED" | "MISSING" | "CLOSED" | "HANDED_IN" | "LATE" | "REVIEWED";
+            /** Format: date-time */
+            handedInAt?: string | null;
+        };
+        StudentMistake: {
+            rule?: string;
+            count?: number;
+            example?: {
+                said?: string;
+                better?: string;
+            } | null;
         };
         UserMetrics: {
             /** Format: uuid */
