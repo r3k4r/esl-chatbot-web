@@ -340,11 +340,13 @@ body {
 	-moz-osx-font-smoothing: grayscale;
 }
 
-/* RTL (Kurdish Sorani / Arabic) on the public pages: use an Arabic-script
-   friendly font stack with system fallbacks (no extra web-font request).
-   Scoped to [dir="rtl"], which is only set on the public layout root. */
-[dir="rtl"] {
-	font-family: "Noto Naskh Arabic", "Noto Sans Arabic", "Segoe UI", Tahoma, system-ui, sans-serif;
+/* RTL (Kurdish Sorani) on the public pages: Vazirmatn (full Sorani coverage: ێ ڵ ڕ ۆ ە),
+   then IBM Plex Sans Arabic, both loaded in nuxt.config.ts. Scoped to [dir="rtl"], which is
+   only set on the public layout root. The `*` part beats font utility classes inside
+   (unlayered CSS wins over Tailwind's layers); code keeps its monospace. */
+[dir="rtl"],
+[dir="rtl"] :not(code, pre, kbd, samp) {
+	font-family: "Vazirmatn", "IBM Plex Sans Arabic", "Noto Naskh Arabic", "Segoe UI", Tahoma, system-ui, sans-serif;
 }
 
 .sections-spacing { 

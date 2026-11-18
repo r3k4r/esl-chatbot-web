@@ -2,6 +2,7 @@
 import { Icon } from '@iconify/vue'
 import { nextTick, onMounted, onUnmounted, watch } from 'vue'
 import type { NavItemTypes } from '~/common/types/nav-links-type'
+import SiteSwitcher from './SiteSwitcher.vue'
 
 const props = defineProps<{
   navItems: NavItemTypes[]
@@ -130,8 +131,9 @@ onUnmounted(() => {
                 </ul>
               </nav>
 
-              <div class="mt-6 pt-6 border-t border-neutral-50/10">
+              <div class="mt-6 flex items-center justify-between gap-4 border-t border-neutral-50/10 pt-6">
                 <LayoutsNavbarLanguageSwitcher />
+                <SiteSwitcher />
               </div>
             </div>
           </div>

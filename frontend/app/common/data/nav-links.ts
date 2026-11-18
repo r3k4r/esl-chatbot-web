@@ -13,3 +13,5 @@ export const socialLinks: SocialLink[] = [
     { name: 'YouTube', link: 'https://www.youtube.com/@Moonlinetravelandtourism', class: '' },
     { name: 'LinkedIn', link: 'https://www.linkedin.com/company/moonline-travel-&-tourism-company', class: '' },
 ];
+/** The main Tutelage website, linked from the navbar's site switcher */
+export const TUTELAGE_MAIN_URL = 'https://www.tutelage.krd/'

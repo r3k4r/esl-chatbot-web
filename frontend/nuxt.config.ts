@@ -8,6 +8,16 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
   app: {
     head: {
+      // Kurdish (Sorani) fonts. Google Fonts splits them by unicode-range, so the files only
+      // download when Arabic-script text is on screen; English pages don't pay for them.
+      link: [
+        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
+        {
+          rel: 'stylesheet',
+          href: 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@100;200;300;400;500;600;700&family=Vazirmatn:wght@100..900&display=swap',
+        },
+      ],
       script: [
         {
           // Apply the saved theme before first paint so dark-mode users

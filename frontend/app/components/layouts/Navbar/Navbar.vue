@@ -28,6 +28,8 @@
             </nav>
 
             <div class="hidden md-lg:flex items-center gap-3">
+                <!-- From 1200px: below that, it lives in the menu so the links keep their room -->
+                <SiteSwitcher class="me-3 hidden lg:flex" />
                 <LayoutsNavbarLanguageSwitcher />
                 <AppButton to="/signin" variant="brand" size="38" class-list="px-3.5 text-[14px] gap-1.5">
                     <span>{{ t('nav.getStarted') }}</span>
@@ -50,6 +52,7 @@
 import { Icon } from '@iconify/vue'
 import { nextTick } from 'vue'
 import type { NavItemTypes } from '~/common/types/nav-links-type'
+import SiteSwitcher from './SiteSwitcher.vue'
 
 const scrolled = ref(false)
 const route = useRoute()
