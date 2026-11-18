@@ -314,7 +314,7 @@ All pages use `definePageMeta({ layout: 'dashboard', requiresAuth: true })`.
 | `/dashboard/goals` | `pages/dashboard/goals.vue` | Built (student) |
 | `/dashboard/lessons` | `pages/dashboard/lessons.vue` | Stub — not yet linked in nav (commented out) |
 | `/dashboard/profile` | `pages/dashboard/profile.vue` | Built |
-| `/dashboard/billing` | `pages/dashboard/billing.vue` | Built — subscription + FIB payment panel (student-only; hidden from staff) |
+| `/dashboard/billing` | `pages/dashboard/billing.vue` | Built — full width (student-only; hidden from staff): current plan \| `PlanComparison` \| `FibPaymentInfo` (passed into `SubscriptionPanel`'s `#beside` slot), then the change-plan checkout (choices left, order summary + Pay right), then `PaymentHistory` |
 | `/dashboard/users` | `pages/dashboard/users/index.vue` | Built — **ADMIN only** (`requiresAdmin: true`): user list, change role (`ChangeRoleDialog`, row 3-dot menu), active/banned toggle, assign/cancel subscription |
 | `/dashboard/users/[id]` | `pages/dashboard/users/[id]/index.vue` | Built — **ADMIN only** (`requiresAdmin: true`): full user detail, tabs under `Users/Detail/` |
 | `/dashboard/users/[id]/profile` | `pages/dashboard/users/[id]/profile.vue` | Built — **ADMIN only** (`requiresAdmin: true`): admin edit — avatar, basic profile, learner settings, plus **Account role** (`ChangeRoleDialog`) and Account status cards |
@@ -367,7 +367,10 @@ components/Pages/Dashboard/
 │  ├─ ClassMemberRow.vue     # One person row: avatar/name + optional link (`to`) + slot for extra columns + 3-dot menu (Make teacher/student, Remove/Leave)
 │  ├─ AssignVocabularyModal.vue # Tutor/admin assigns a vocab word to a student (POST /vocabulary { assignedToUserId })
 │  ├─ ClassAnalyticsTab.vue  # Class-wide skill averages + grammar errors
-│  ├─ AnnouncementsFeed.vue  # Paginated announcement feed + compose box (tutor/admin)
+│  ├─ Announcements/         # Announcements tab (state in useAnnouncementFeed / useAnnouncementComments)
+│  │  ├─ AnnouncementsFeed.vue    # Post box (tutor/admin, text + files) + stream, newest first → <PagesDashboardClassesAnnouncementsFeed />
+│  │  ├─ AnnouncementCard.vue     # Author, text, files, 3-dot Edit/Delete (author or admin) + comments on/off (class tutor/admin), its thread
+│  │  └─ AnnouncementComments.vue # Text-only class comments, closed by default ("N class comments"); reuses Tasks/TaskCommentItem + TaskCommentBox (`no-files`, `text-required`)
 │  ├─ ClassesEmptyState.vue  # Empty state for the classes list
 │  ├─ JoinClassModal.vue     # Dialog to join a class by code
 │  ├─ Tasks/                 # Tasks tab — visible to all members, write access tutor/admin only
@@ -429,7 +432,9 @@ Types are split by domain — never define them inline in a composable:
 | `useHttp` | [useHttp.ts](app/composables/useHttp.ts) | Single `useHttp(options)` function — **all API calls must go through this** |
 | `useRole` | [useRole.ts](app/composables/useRole.ts) | `isAdmin`, `isTutor`, `isStaff` — current user's **global account role**. Use for all role-gated UI (see [Roles & Permissions](#roles--permissions-read-before-gating-any-ui)) |
 | `useGlobalSearch` | [useGlobalSearch.ts](app/composables/useGlobalSearch.ts) | `search(q)` → `GET /search?q=` — role-aware global search (users/classes/vocab/goals/sessions). Backend scopes by role; powers the header command palette ([CommandPalette.vue](app/components/Layouts/Dashboard/CommandPalette.vue)) |
-| `useClasses` | [useClasses.ts](app/composables/useClasses.ts) | `listMyClasses` / `listAllClasses` (both accept `{ archived?: boolean }`), `getClass`, `joinClass`, `createClass`, `updateClass`, `refreshCode`, `updateCodeSettings`, `toggleBlock`, `archiveClass`, `getClassStudents`, `getClassStudentDetail`, `getClassAnalytics`, `removeMember`, `setMemberRole`, `listAnnouncements`, `createAnnouncement` |
+| `useClasses` | [useClasses.ts](app/composables/useClasses.ts) | `listMyClasses` / `listAllClasses` (both accept `{ archived?: boolean }`), `getClass`, `joinClass`, `createClass`, `updateClass`, `refreshCode`, `updateCodeSettings`, `toggleBlock`, `archiveClass`, `getClassStudents`, `getClassStudentDetail`, `getClassAnalytics`, `removeMember`, `setMemberRole` |
+| `useAnnouncements` | [useAnnouncements.ts](app/composables/useAnnouncements.ts) | Raw API: `listAnnouncements`, `createAnnouncement` (JSON, or multipart with files), `updateAnnouncement` (`content` and/or `commentsEnabled`), `deleteAnnouncement`, `addAnnouncementFiles`, `deleteAnnouncementFile`, `getAnnouncementFileDownload`, `listAnnouncementComments`, `postAnnouncementComment`, `updateAnnouncementComment`, `deleteAnnouncementComment` |
+| `useAnnouncementFeed` / `useAnnouncementComments` | [useAnnouncementFeed.ts](app/composables/useAnnouncementFeed.ts) | Announcements tab state. **Rules (backend enforces them too):** post + comments on/off = class tutor or admin; edit/delete/files = the author or an admin; comments are text only and on by default; students comment only while on; only the author edits a comment; author, class tutor or admin deletes one; nothing new in an archived class. New comments notify the author + earlier commenters (`ANNOUNCEMENT_COMMENT`) |
 | `useAdmin` | [useAdmin.ts](app/composables/useAdmin.ts) | Admin user/class management |
 | `useAdminDashboard` | [useAdminDashboard.ts](app/composables/useAdminDashboard.ts) | `data` (`AdminDashboardData`: week vs week before, funnel, plans, FIB revenue, expiring, attention), `loading`, `error`, `fetchAdminDashboard` |
 | `useTutorDashboard` | [useTutorDashboard.ts](app/composables/useTutorDashboard.ts) | `data` (`TutorDashboardData`: totals, needsYou, class health, skills, common mistakes), `loading`, `error`, `fetchTutorDashboard` |

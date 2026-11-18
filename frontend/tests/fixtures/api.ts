@@ -9,7 +9,7 @@ import type { Notification } from '../../app/common/model/notification'
 import type { SessionListItem, SessionDetail, ChatMessage } from '../../app/common/types/chat-types'
 import type { VocabularyItem, VocabularyStats } from '../../app/common/types/vocabulary-types'
 import type {
-  ClassItem, ClassDetail, AdminClassItem, ClassStudentSummary, ClassStudentDetail, ClassAnalytics, AnnouncementItem,
+  ClassItem, ClassDetail, AdminClassItem, ClassStudentSummary, ClassStudentDetail, ClassAnalytics, AnnouncementItem, AnnouncementCommentItem,
 } from '../../app/common/types/class-types'
 import type { TaskItem, TaskSubmissionItem, TaskCommentItem, TaskAttachment } from '../../app/common/types/task-types'
 import type { MyProfileData } from '../../app/common/types/profile-types'
@@ -170,7 +170,15 @@ export const classAnalytics = (id: string): ClassAnalytics => ({
 })
 
 export const announcements: AnnouncementItem[] = [
-  { id: 'an1', classId: 'c1', authorId: 'u-tutor', content: 'Welcome to the class! Homework is due Friday.', createdAt: T, author: { id: 'u-tutor', displayName: 'Sarah Miller', avatarUrl: '' } },
+  {
+    id: 'an1', classId: 'c1', authorId: 'u-tutor', content: 'Welcome to the class! Homework is due Friday.',
+    commentsEnabled: true, editedAt: null, createdAt: T, commentCount: 1, attachments: [],
+    author: { id: 'u-tutor', displayName: 'Sarah Miller', avatarUrl: '' },
+  },
+]
+
+export const announcementComments: AnnouncementCommentItem[] = [
+  { id: 'ac1', announcementId: 'an1', content: 'Is it the worksheet from Monday?', editedAt: null, createdAt: T, author: { id: 'u-student', displayName: 'Ali Hassan', avatarUrl: '', classRole: 'STUDENT' } },
 ]
 
 const author = { id: 'u-tutor', displayName: 'Sarah Miller', avatarUrl: '' }

@@ -163,27 +163,6 @@ export function useClasses() {
     })
   }
 
-  async function listAnnouncements(classId: string, params?: { page?: number; limit?: number }) {
-    const query = new URLSearchParams()
-    if (params?.page) query.set('page', String(params.page))
-    if (params?.limit) query.set('limit', String(params.limit))
-    const qs = query.toString()
-    return await useHttp<SingleResponse<{ data: AnnouncementItem[]; meta: ClassPaginationMeta }>>({
-      method: 'GET',
-      url: `/classes/${classId}/announcements${qs ? `?${qs}` : ''}`,
-      requireAuth: true,
-    })
-  }
-
-  async function createAnnouncement(classId: string, content: string) {
-    return await useHttp<SingleResponse<AnnouncementItem>>({
-      method: 'POST',
-      url: `/classes/${classId}/announcements`,
-      body: { content },
-      requireAuth: true,
-    })
-  }
-
   return {
     listMyClasses,
     listAllClasses,
@@ -200,7 +179,5 @@ export function useClasses() {
     getClassAnalytics,
     removeMember,
     setMemberRole,
-    listAnnouncements,
-    createAnnouncement,
   }
 }

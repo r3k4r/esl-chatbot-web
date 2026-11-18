@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import type { CommentDraft, TaskCommentItem } from '~/common/types/task-types'
+import type { ClassCommentLike, CommentDraft } from '~/common/types/task-types'
 
+// One class comment: task comments (with files) and announcement comments (text only).
 const props = defineProps<{
-  comment: TaskCommentItem
+  comment: ClassCommentLike
   canEdit: boolean
   canDelete: boolean
   saving: boolean
@@ -71,14 +72,15 @@ function onSave(draft: CommentDraft, done: (ok: boolean) => void) {
       </div>
 
       <PagesDashboardClassesTasksTaskCommentBox v-if="editing" :id="`edit-${comment.id}`" class="mt-2" editing
-        :busy="saving" :initial-content="comment.content" :initial-files="comment.attachments"
+        :busy="saving" :initial-content="comment.content" :initial-files="comment.attachments ?? []"
+        :no-files="!comment.attachments" :text-required="!comment.attachments"
         @submit="onSave" @cancel="editing = false" />
 
       <template v-else>
         <AppText v-if="comment.content" size="15" color="neutral-600" class-list="mt-0.5 whitespace-pre-wrap break-words leading-6">
           {{ comment.content }}
         </AppText>
-        <PagesDashboardClassesTasksTaskFileList v-if="comment.attachments.length" class="mt-2"
+        <PagesDashboardClassesTasksTaskFileList v-if="comment.attachments?.length" class="mt-2"
           :task-id="comment.taskId" :files="comment.attachments" />
       </template>
     </div>

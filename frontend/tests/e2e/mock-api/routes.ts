@@ -158,7 +158,14 @@ export const routes: Record<string, Handler> = {
   'DELETE /classes/:id/members/:userId': auth(() => ok(null, 'Member removed')),
   'PATCH /classes/:id/members/:userId/role': auth(({ body }) => ok({ role: body?.role }), STAFF),
   'GET /classes/:id/announcements': auth(({ query }) => page(F.announcements, query)), // backend: flat list + meta
-  'POST /classes/:id/announcements': auth(({ body }) => created({ ...F.announcements[0]!, id: 'an-new', content: body?.content }), STAFF),
+  'POST /classes/:id/announcements': auth(({ body }) => created({ ...F.announcements[0]!, id: 'an-new', content: body?.content, commentCount: 0 }), STAFF),
+  'PATCH /classes/:id/announcements/:announcementId': auth(({ body }) => ok({ ...F.announcements[0]!, ...body, editedAt: body?.content ? new Date().toISOString() : null }, 'Announcement updated'), STAFF),
+  'DELETE /classes/:id/announcements/:announcementId': auth(() => ok(null, 'Announcement deleted'), STAFF),
+  'GET /classes/:id/announcements/:announcementId/attachments/:attachmentId/download': auth(() => ok({ url: 'https://files.tutelage.test/a.pdf', fileName: 'a.pdf' })),
+  'GET /classes/:id/announcements/:announcementId/comments': auth(({ params, query }) => page(F.announcementComments.filter((c) => c.announcementId === params.announcementId), query)),
+  'POST /classes/:id/announcements/:announcementId/comments': auth(({ params, body }) => created({ ...F.announcementComments[0]!, id: 'ac-new', announcementId: params.announcementId, content: body?.content }, 'Comment posted')),
+  'PATCH /classes/:id/announcements/:announcementId/comments/:commentId': auth(({ body }) => ok({ ...F.announcementComments[0]!, content: body?.content, editedAt: new Date().toISOString() }, 'Comment updated')),
+  'DELETE /classes/:id/announcements/:announcementId/comments/:commentId': auth(() => ok(null, 'Comment deleted')),
 
   // ── Tasks ─────────────────────────────────────────────────────────────────
   'GET /classes/:id/tasks': auth(({ query, persona }) => page(F.tasks.map((t) => (persona === 'student' || persona === 'free' ? { ...t, submissionCount: undefined } : { ...t, mySubmission: undefined })), query)),

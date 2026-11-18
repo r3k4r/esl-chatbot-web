@@ -435,11 +435,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /**
-         * List announcements for a class
-         * @description Returns announcements for the class, newest first. Any class member
-         *     (tutor or student) can read announcements. Admins can read any class.
-         */
+        /** List a class's announcements, newest first */
         get: {
             parameters: {
                 query?: {
@@ -449,13 +445,13 @@ export interface paths {
                 header?: never;
                 path: {
                     /** @description Class ID */
-                    id: string;
+                    id: components["parameters"]["AnnouncementClassId"];
                 };
                 cookie?: never;
             };
             requestBody?: never;
             responses: {
-                /** @description Paginated list of announcements */
+                /** @description Announcements with their files and comment counts */
                 200: {
                     headers: {
                         [name: string]: unknown;
@@ -463,23 +459,7 @@ export interface paths {
                     content: {
                         "application/json": {
                             success?: boolean;
-                            data?: {
-                                /** Format: uuid */
-                                id?: string;
-                                /** Format: uuid */
-                                classId?: string;
-                                /** Format: uuid */
-                                authorId?: string;
-                                content?: string;
-                                /** Format: date-time */
-                                createdAt?: string;
-                                author?: {
-                                    /** Format: uuid */
-                                    id?: string;
-                                    displayName?: string;
-                                    avatarUrl?: string | null;
-                                };
-                            }[];
+                            data?: components["schemas"]["AnnouncementItem"][];
                             meta?: {
                                 page?: number;
                                 limit?: number;
@@ -487,15 +467,6 @@ export interface paths {
                                 totalPages?: number;
                             };
                         };
-                    };
-                };
-                /** @description Missing or invalid token */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
                     };
                 };
                 /** @description Class not found or caller not a member */
@@ -511,10 +482,8 @@ export interface paths {
         };
         put?: never;
         /**
-         * Post an announcement to a class (Tutor in class or Admin)
-         * @description Creates a new announcement visible to all class members.
-         *     Also creates a `CLASS_ANNOUNCEMENT` notification for every
-         *     student in the class.
+         * Post an announcement, optionally with files (tutor of the class or admin)
+         * @description Comments start switched on. Notifies every student in the class (CLASS_ANNOUNCEMENT).
          */
         post: {
             parameters: {
@@ -522,19 +491,23 @@ export interface paths {
                 header?: never;
                 path: {
                     /** @description Class ID */
-                    id: string;
+                    id: components["parameters"]["AnnouncementClassId"];
                 };
                 cookie?: never;
             };
             requestBody: {
                 content: {
+                    "multipart/form-data": {
+                        content: string;
+                        files?: string[];
+                    };
                     "application/json": {
                         content: string;
                     };
                 };
             };
             responses: {
-                /** @description Announcement created */
+                /** @description Announcement posted */
                 201: {
                     headers: {
                         [name: string]: unknown;
@@ -542,36 +515,11 @@ export interface paths {
                     content: {
                         "application/json": {
                             success?: boolean;
-                            data?: {
-                                /** Format: uuid */
-                                id?: string;
-                                /** Format: uuid */
-                                classId?: string;
-                                /** Format: uuid */
-                                authorId?: string;
-                                content?: string;
-                                /** Format: date-time */
-                                createdAt?: string;
-                                author?: {
-                                    /** Format: uuid */
-                                    id?: string;
-                                    displayName?: string;
-                                    avatarUrl?: string | null;
-                                };
-                            };
+                            data?: components["schemas"]["AnnouncementItem"];
                         };
                     };
                 };
-                /** @description Missing or invalid token */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Caller is a student (not tutor or admin) */
+                /** @description Caller is not a tutor of the class */
                 403: {
                     headers: {
                         [name: string]: unknown;
@@ -580,17 +528,8 @@ export interface paths {
                         "application/json": components["schemas"]["ErrorResponse"];
                     };
                 };
-                /** @description Class not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Validation error */
-                422: {
+                /** @description Class is archived */
+                409: {
                     headers: {
                         [name: string]: unknown;
                     };
@@ -604,6 +543,449 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/classes/{id}/announcements/{announcementId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete an announcement with its comments and files (author or admin) */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Class ID */
+                    id: components["parameters"]["AnnouncementClassId"];
+                    announcementId: components["parameters"]["AnnouncementId"];
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Deleted */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not the author */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Announcement not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        /** Edit the text (author or admin) and/or turn comments on or off (tutor of the class or admin) */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Class ID */
+                    id: components["parameters"]["AnnouncementClassId"];
+                    announcementId: components["parameters"]["AnnouncementId"];
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        content?: string;
+                        commentsEnabled?: boolean;
+                    };
+                };
+            };
+            responses: {
+                /** @description Updated announcement */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            success?: boolean;
+                            data?: components["schemas"]["AnnouncementItem"];
+                        };
+                    };
+                };
+                /** @description Not allowed for this change */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Announcement not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Class is archived */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/classes/{id}/announcements/{announcementId}/attachments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Attach files to an announcement (author or admin; up to 10 in total) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Class ID */
+                    id: components["parameters"]["AnnouncementClassId"];
+                    announcementId: components["parameters"]["AnnouncementId"];
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "multipart/form-data": {
+                        files?: string[];
+                    };
+                };
+            };
+            responses: {
+                /** @description The new files */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            success?: boolean;
+                            data?: components["schemas"]["AnnouncementAttachmentItem"][];
+                        };
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/classes/{id}/announcements/{announcementId}/attachments/{attachmentId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Remove a file from an announcement (author or admin) */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Class ID */
+                    id: components["parameters"]["AnnouncementClassId"];
+                    announcementId: components["parameters"]["AnnouncementId"];
+                    attachmentId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Removed */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/classes/{id}/announcements/{announcementId}/attachments/{attachmentId}/download": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** A 5-minute link that downloads the file under its name (any class member) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Class ID */
+                    id: components["parameters"]["AnnouncementClassId"];
+                    announcementId: components["parameters"]["AnnouncementId"];
+                    attachmentId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Download link */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            success?: boolean;
+                            data?: {
+                                url?: string;
+                                fileName?: string;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/classes/{id}/announcements/{announcementId}/comments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List an announcement's comments, oldest first (any class member) */
+        get: {
+            parameters: {
+                query?: {
+                    page?: number;
+                    limit?: number;
+                };
+                header?: never;
+                path: {
+                    /** @description Class ID */
+                    id: components["parameters"]["AnnouncementClassId"];
+                    announcementId: components["parameters"]["AnnouncementId"];
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Comments */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            success?: boolean;
+                            data?: components["schemas"]["AnnouncementCommentItem"][];
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Comment on an announcement (students only while comments are on)
+         * @description Notifies the announcement's author and everyone who already commented (ANNOUNCEMENT_COMMENT), never the commenter.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Class ID */
+                    id: components["parameters"]["AnnouncementClassId"];
+                    announcementId: components["parameters"]["AnnouncementId"];
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        content: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Comment posted */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            success?: boolean;
+                            data?: components["schemas"]["AnnouncementCommentItem"];
+                        };
+                    };
+                };
+                /** @description Comments are off */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Class is archived */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/classes/{id}/announcements/{announcementId}/comments/{commentId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete a comment (its author, a tutor of the class, or an admin) */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Class ID */
+                    id: components["parameters"]["AnnouncementClassId"];
+                    announcementId: components["parameters"]["AnnouncementId"];
+                    commentId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Deleted */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not allowed */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        /** Edit your own comment */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Class ID */
+                    id: components["parameters"]["AnnouncementClassId"];
+                    announcementId: components["parameters"]["AnnouncementId"];
+                    commentId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        content: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Updated comment */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            success?: boolean;
+                            data?: components["schemas"]["AnnouncementCommentItem"];
+                        };
+                    };
+                };
+                /** @description Not your comment */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
         trace?: never;
     };
     "/auth/register": {
@@ -4173,9 +4555,11 @@ export interface paths {
          *     - `CLASS_ANNOUNCEMENT` — new announcement in one of your classes
          *     - `TASK_ASSIGNED` — a new task was posted in one of your classes
          *     - `TASK_SUBMITTED` — a student submitted a task (tutor-facing)
+         *     - `ANNOUNCEMENT_COMMENT` — someone commented on an announcement you posted or commented on
          *
          *     The `data` field carries routing metadata when present (may be null for older notifications):
-         *     - `classId` — for CLASS_ANNOUNCEMENT, TASK_ASSIGNED, TASK_SUBMITTED
+         *     - `classId` — for CLASS_ANNOUNCEMENT, TASK_ASSIGNED, TASK_SUBMITTED, ANNOUNCEMENT_COMMENT
+         *     - `announcementId` — for ANNOUNCEMENT_COMMENT
          *     - `taskId` — for TASK_ASSIGNED, TASK_SUBMITTED
          *     - `goalId` — for GOAL_ASSIGNED, GOAL_COMPLETED
          *     - `vocabularyId` — for VOCABULARY_ASSIGNED
@@ -4206,7 +4590,7 @@ export interface paths {
                                 /** Format: uuid */
                                 id?: string;
                                 /** @enum {string} */
-                                type?: "STREAK_MILESTONE" | "GOAL_COMPLETED" | "GOAL_ASSIGNED" | "VOCABULARY_ASSIGNED" | "CLASS_ANNOUNCEMENT" | "TASK_ASSIGNED" | "TASK_SUBMITTED";
+                                type?: "STREAK_MILESTONE" | "GOAL_COMPLETED" | "GOAL_ASSIGNED" | "VOCABULARY_ASSIGNED" | "CLASS_ANNOUNCEMENT" | "TASK_ASSIGNED" | "TASK_SUBMITTED" | "ANNOUNCEMENT_COMMENT";
                                 message?: string;
                                 read?: boolean;
                                 data?: {
@@ -4342,7 +4726,7 @@ export interface paths {
                                 /** Format: uuid */
                                 id?: string;
                                 /** @enum {string} */
-                                type?: "STREAK_MILESTONE" | "GOAL_COMPLETED" | "GOAL_ASSIGNED" | "VOCABULARY_ASSIGNED" | "CLASS_ANNOUNCEMENT" | "TASK_ASSIGNED" | "TASK_SUBMITTED";
+                                type?: "STREAK_MILESTONE" | "GOAL_COMPLETED" | "GOAL_ASSIGNED" | "VOCABULARY_ASSIGNED" | "CLASS_ANNOUNCEMENT" | "TASK_ASSIGNED" | "TASK_SUBMITTED" | "ANNOUNCEMENT_COMMENT";
                                 message?: string;
                                 /** @example true */
                                 read?: boolean;
@@ -8090,6 +8474,61 @@ export interface components {
                 avatarUrl?: string | null;
             } | null;
         };
+        AnnouncementAttachmentItem: {
+            /** Format: uuid */
+            id?: string;
+            /** @example timetable.pdf */
+            fileName?: string;
+            fileUrl?: string;
+            /** @example application/pdf */
+            mimeType?: string;
+            /** @description Bytes */
+            size?: number;
+            /** Format: date-time */
+            createdAt?: string;
+        };
+        AnnouncementItem: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: uuid */
+            classId?: string;
+            /** Format: uuid */
+            authorId?: string;
+            content?: string;
+            /** @description Students can comment only while this is on */
+            commentsEnabled?: boolean;
+            /** Format: date-time */
+            editedAt?: string | null;
+            /** Format: date-time */
+            createdAt?: string;
+            author?: {
+                /** Format: uuid */
+                id?: string;
+                displayName?: string;
+                avatarUrl?: string | null;
+            };
+            attachments?: components["schemas"]["AnnouncementAttachmentItem"][];
+            commentCount?: number;
+        };
+        AnnouncementCommentItem: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: uuid */
+            announcementId?: string;
+            content?: string;
+            /** Format: date-time */
+            editedAt?: string | null;
+            /** Format: date-time */
+            createdAt?: string;
+            author?: {
+                /** Format: uuid */
+                id?: string;
+                displayName?: string;
+                avatarUrl?: string | null;
+                /** @enum {string} */
+                classRole?: "TUTOR" | "STUDENT" | "ADMIN";
+            };
+        };
         AuthUser: {
             /** Format: uuid */
             id?: string;
@@ -8587,7 +9026,11 @@ export interface components {
             };
         };
     };
-    parameters: never;
+    parameters: {
+        /** @description Class ID */
+        AnnouncementClassId: string;
+        AnnouncementId: string;
+    };
     requestBodies: never;
     headers: never;
     pathItems: never;

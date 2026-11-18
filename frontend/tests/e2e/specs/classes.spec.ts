@@ -41,12 +41,22 @@ test.describe('student', () => {
     await expect(page.getByText('AI practice', { exact: true })).toHaveCount(0)
     await expect(page.getByRole('link', { name: 'Edit', exact: true })).toHaveCount(0)
     await expect(page.getByRole('button', { name: 'Archive', exact: true })).toHaveCount(0)
-    await expect(page.getByPlaceholder(/Write an announcement/)).toHaveCount(0)
+    await expect(page.getByLabel('New announcement')).toHaveCount(0)
   })
 
   test('deep-links straight to a tab', async ({ page }) => {
     await visit(page, '/dashboard/classes/c1?tab=announcements')
     await expect(page.getByText('Welcome to the class! Homework is due Friday.')).toBeVisible()
+  })
+
+  test('opens an announcement thread and comments', async ({ page }) => {
+    await visit(page, '/dashboard/classes/c1?tab=announcements')
+    await page.getByRole('button', { name: '1 class comment' }).click()
+    await expect(page.getByText('Is it the worksheet from Monday?')).toBeVisible()
+    const posted = page.waitForRequest((r) => r.url().endsWith('/announcements/an1/comments') && r.method() === 'POST')
+    await page.getByLabel('Class comment').fill('Thanks!')
+    await page.getByRole('button', { name: 'Post', exact: true }).click()
+    expect((await posted).postDataJSON()).toMatchObject({ content: 'Thanks!' })
   })
 
   test('a student cannot force a tutor-only tab via the URL', async ({ page }) => {
@@ -156,7 +166,7 @@ test.describe('tutor', () => {
 
   test('posts an announcement', async ({ page }) => {
     await visit(page, '/dashboard/classes/c1?tab=announcements')
-    await page.getByPlaceholder(/Write an announcement/).fill('Quiz moved to Monday.')
+    await page.getByLabel('New announcement').fill('Quiz moved to Monday.')
     const posted = page.waitForRequest((r) => r.url().endsWith('/classes/c1/announcements') && r.method() === 'POST')
     await page.getByRole('button', { name: 'Post', exact: true }).click()
     expect((await posted).postDataJSON()).toMatchObject({ content: 'Quiz moved to Monday.' })

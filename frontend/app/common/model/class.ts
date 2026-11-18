@@ -29,6 +29,29 @@ export type Announcement = {
   classId: string;
   authorId: string;
   content: string;
+  /** Students can comment only while this is on (default on) */
+  commentsEnabled: boolean;
+  editedAt: string | null;
+  createdAt: string;
+};
+
+export type AnnouncementComment = {
+  id: string;
+  announcementId: string;
+  authorId: string;
+  content: string;
+  editedAt: string | null;
   createdAt: string;
   updatedAt: string;
+};
+
+export type AnnouncementAttachment = {
+  id: string;
+  announcementId: string;
+  uploadedById: string;
+  fileName: string;
+  fileUrl: string;
+  mimeType: string;
+  size: number;
+  createdAt: string;
 };

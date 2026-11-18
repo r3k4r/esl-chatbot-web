@@ -6,10 +6,12 @@ export type NotificationType =
   | 'CLASS_ANNOUNCEMENT'
   | 'TASK_ASSIGNED'
   | 'TASK_SUBMITTED'
+  | 'ANNOUNCEMENT_COMMENT'
 
 export interface NotificationData {
   classId?: string
   taskId?: string
+  announcementId?: string
   goalId?: string
   vocabularyId?: string
 }

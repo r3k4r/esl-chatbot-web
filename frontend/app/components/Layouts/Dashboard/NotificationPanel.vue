@@ -21,6 +21,7 @@ const TYPE_ICON: Record<NotificationType, string> = {
   CLASS_ANNOUNCEMENT: 'Notification',
   TASK_ASSIGNED: 'TaskSquare',
   TASK_SUBMITTED: 'DirectboxReceive',
+  ANNOUNCEMENT_COMMENT: 'MessageText',
 }
 
 const TYPE_COLOR: Record<NotificationType, string> = {
@@ -31,6 +32,7 @@ const TYPE_COLOR: Record<NotificationType, string> = {
   CLASS_ANNOUNCEMENT: 'bg-sky-500/15 text-sky-500',
   TASK_ASSIGNED: 'bg-brand-primary/15 text-brand-primary',
   TASK_SUBMITTED: 'bg-teal-500/15 text-teal-500',
+  ANNOUNCEMENT_COMMENT: 'bg-sky-500/15 text-sky-500',
 }
 
 const hasUnread = computed(() => props.notifications.some(n => !n.read))

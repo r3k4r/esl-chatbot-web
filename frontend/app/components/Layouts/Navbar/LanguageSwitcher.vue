@@ -34,17 +34,17 @@ function onOutside(e: PointerEvent) {
 
     <!-- Trigger -->
     <button type="button" :aria-expanded="open" aria-haspopup="listbox" aria-label="Select language"
-      class="group flex items-center gap-2 rounded-lg border border-neutral-50/12 bg-neutral-50/6 px-2.5 py-1.5 transition-all duration-200 hover:border-neutral-50/25 hover:bg-neutral-50/10"
+      class="group flex items-center gap-2 rounded-lg border border-neutral-50/12 bg-neutral-50/6 px-2.5 py-1.5 h-10 transition-all duration-200 hover:border-neutral-50/25 hover:bg-neutral-50/10"
       @click="toggle">
       <!-- Kurdish flag inline SVG -->
-      <span v-if="activeMeta.kurdish"
+      <!-- <span v-if="activeMeta.kurdish"
         class="size-4.5 shrink-0 rounded-full overflow-hidden ring-1 ring-neutral-50/15 block">
         <AppImage
           src="https://rlv.zcache.com/flag_of_kurdistan_kurd_kurdish_classic_round_sticker-r4fec51d88ab34e2b8ed2dfb693d04d7a_zg2qos_644.webp?rlvnet=1"
           alt="Kurdish flag" />
       </span>
       <Icon v-else :icon="activeMeta.iconify!" width="18" height="18"
-        class="rounded-full shrink-0 ring-1 ring-neutral-50/15" />
+        class="rounded-full shrink-0 ring-1 ring-neutral-50/15" /> -->
 
       <span
         class="text-[12px] font-semibold tracking-wide text-neutral-50/80 group-hover:text-neutral-50 transition-colors">
@@ -67,7 +67,7 @@ function onOutside(e: PointerEvent) {
               ? 'bg-brand-primary/15 text-neutral-50'
               : 'text-neutral-50/60 hover:bg-neutral-50/6 hover:text-neutral-50'" @click="pick(item.code)">
             <!-- Kurdish flag in dropdown -->
-            <span v-if="META[item.code]?.kurdish"
+            <!-- <span v-if="META[item.code]?.kurdish"
               class="size-5 shrink-0 rounded-full overflow-hidden ring-1 block transition-all duration-150"
               :class="locale === item.code ? 'ring-brand-primary/40' : 'ring-neutral-50/10 group-hover/opt:ring-neutral-50/20'">
               <AppImage
@@ -77,7 +77,7 @@ function onOutside(e: PointerEvent) {
             </span>
             <Icon v-else :icon="META[item.code]?.iconify ?? 'lucide:globe'" width="20" height="20"
               class="shrink-0 rounded-full ring-1 transition-all duration-150"
-              :class="locale === item.code ? 'ring-brand-primary/40' : 'ring-neutral-50/10 group-hover/opt:ring-neutral-50/20'" />
+              :class="locale === item.code ? 'ring-brand-primary/40' : 'ring-neutral-50/10 group-hover/opt:ring-neutral-50/20'" /> -->
 
             <div class="flex flex-col leading-tight min-w-0">
               <span class="text-[13px] font-medium truncate">

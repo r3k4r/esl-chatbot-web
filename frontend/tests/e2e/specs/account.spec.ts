@@ -83,7 +83,7 @@ test.describe('billing', () => {
   test('a paid student sees the FIB billing page', async ({ page, loginAs }) => {
     await loginAs('student')
     await visit(page, '/dashboard/billing')
-    await expect(page.getByText('Secure payment via FIB')).toBeVisible()
+    await expect(page.getByText('Paying with FIB')).toBeVisible()
   })
 
   test('a FREE student can pick a paid plan', async ({ page, loginAs }) => {

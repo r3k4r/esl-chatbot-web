@@ -262,8 +262,11 @@ const planBadgeStyle = computed(() => {
 <template>
   <div class="space-y-5">
 
+    <!-- Top row: current plan, then whatever the page puts beside it (plan comparison,
+         payment info). Each slot root becomes its own column on wide screens. -->
+    <div class="grid items-stretch gap-5 md-lg:grid-cols-2 xl:grid-cols-3">
     <!-- ── Current plan card ──────────────────────────────────────────────── -->
-    <div class="dash-card p-5">
+    <div class="dash-card p-5 md-lg:col-span-2 xl:col-span-1">
       <!-- Header row -->
       <div class="flex items-center justify-between gap-3 mb-4">
         <div class="flex items-center gap-3">
@@ -277,13 +280,13 @@ const planBadgeStyle = computed(() => {
             <AppText size="14" weight="semibold" class-list="block" :style="`color:var(--text-heading)`">
               Current plan
             </AppText>
-            <AppText size="12" :style="`color:var(--text-muted)`">
+            <AppText size="14" :style="`color:var(--text-muted)`">
               {{ isActive ? 'Active subscription' : 'No active subscription' }}
             </AppText>
           </div>
         </div>
         <span
-          class="text-[12px] font-bold uppercase tracking-wide px-3 py-1 rounded-full font-poppins"
+          class="text-[13px] font-bold uppercase tracking-wide px-3 py-1 rounded-md font-poppins"
           :style="planBadgeStyle"
         >
           {{ PLAN_META[currentPlan].name }}
@@ -293,8 +296,8 @@ const planBadgeStyle = computed(() => {
       <!-- Features grid -->
       <div class="grid grid-cols-2 gap-2 mb-4">
         <div v-for="feat in PLAN_META[currentPlan].features" :key="feat" class="flex items-center gap-2">
-          <AppIconsax name="TickCircle" color="var(--color-brand-primary)" :size="13" />
-          <AppText size="12" :style="`color:var(--text-body)`">{{ feat }}</AppText>
+          <AppIconsax name="TickCircle" color="var(--color-brand-primary)" :size="16" />
+          <AppText size="14" :style="`color:var(--text-body)`">{{ feat }}</AppText>
         </div>
       </div>
 
@@ -303,7 +306,7 @@ const planBadgeStyle = computed(() => {
         <div style="height:1px;background:var(--border-inner);margin-bottom:1rem" />
         <div class="flex items-center justify-between mb-4">
           <div>
-            <AppText size="11" :uppercase="true" class-list="tracking-widest block" :style="`color:var(--text-subtle)`">
+            <AppText size="13" :uppercase="true" class-list="tracking-widest block" :style="`color:var(--text-subtle)`">
               Renews / expires
             </AppText>
             <AppText size="13" weight="semibold" :style="`color:var(--text-heading)`">
@@ -311,7 +314,7 @@ const planBadgeStyle = computed(() => {
             </AppText>
           </div>
           <div class="text-right">
-            <AppText size="11" :uppercase="true" class-list="tracking-widest block" :style="`color:var(--text-subtle)`">
+            <AppText size="13" :uppercase="true" class-list="tracking-widest block" :style="`color:var(--text-subtle)`">
               Provider
             </AppText>
             <AppText size="13" weight="semibold" :style="`color:var(--text-heading)`">
@@ -331,7 +334,7 @@ const planBadgeStyle = computed(() => {
             <AppText size="13" weight="semibold" class-list="block" :style="`color:var(--status-blocked-text)`">
               Cancelled — active until {{ fmtDate(periodEnd) }}
             </AppText>
-            <AppText size="12" class-list="block mt-0.5" :style="`color:var(--text-muted)`">
+            <AppText size="14" class-list="block mt-0.5" :style="`color:var(--text-muted)`">
               You won't be charged again. You keep every {{ PLAN_META[currentPlan].name }} feature until
               then, and move to the Free plan afterwards.
             </AppText>
@@ -343,7 +346,7 @@ const planBadgeStyle = computed(() => {
           <div v-if="!showCancelConfirm">
             <AppButton
               variant="secondary" size="32" radius="8"
-              icon="CloseCircle" :icon-config="{ color: '#ef4444', size: 13 }"
+              icon="CloseCircle" :icon-config="{ color: '#ef4444', size: 16 }"
               text="Cancel subscription"
               style="color:#ef4444"
               @click="showCancelConfirm = true"
@@ -355,7 +358,7 @@ const planBadgeStyle = computed(() => {
             style="background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.2)"
           >
             <AppText size="13" weight="semibold" :style="`color:var(--text-heading)`">Cancel your subscription?</AppText>
-            <AppText size="12" :style="`color:var(--text-muted)`">
+            <AppText size="14" :style="`color:var(--text-muted)`">
               You'll keep access until {{ fmtDate(periodEnd) }}. This cannot be undone.
             </AppText>
             <div class="flex items-center gap-2">
@@ -366,7 +369,7 @@ const planBadgeStyle = computed(() => {
               />
               <AppButton
                 variant="secondary" size="32" radius="8"
-                icon="Trash" :icon-config="{ color: '#ef4444', size: 13 }"
+                icon="Trash" :icon-config="{ color: '#ef4444', size: 16 }"
                 text="Yes, cancel" class="flex-1"
                 style="color:#ef4444;border-color:rgba(239,68,68,0.4)"
                 :loading="cancelling"
@@ -383,11 +386,13 @@ const planBadgeStyle = computed(() => {
           style="background:var(--surface-raised);border:1px solid var(--border-inner)"
         >
           <AppIconsax name="InfoCircle" color="var(--color-text-muted)" :size="14" />
-          <AppText size="12" :style="`color:var(--text-muted)`">
+          <AppText size="14" :style="`color:var(--text-muted)`">
             This plan is managed by your admin. Contact support to make changes.
           </AppText>
         </div>
       </template>
+    </div>
+    <slot name="beside" />
     </div>
 
     <!-- ── Unfinished payment ─────────────────────────────────────────────── -->
@@ -424,6 +429,9 @@ const planBadgeStyle = computed(() => {
           </AppText>
         </div>
 
+        <!-- Checkout layout: choices on the left, the order summary on the right -->
+        <div class="grid gap-6 md-lg:grid-cols-[minmax(0,1fr)_22rem] md-lg:items-start xl:grid-cols-[minmax(0,1fr)_26rem]">
+        <div class="min-w-0 space-y-5">
         <!-- Plan selector -->
         <div class="grid grid-cols-2 gap-3">
           <button
@@ -450,14 +458,14 @@ const planBadgeStyle = computed(() => {
                 <div v-if="selectedPlan === p" class="size-2 rounded-full" style="background:var(--color-brand-primary)" />
               </div>
             </div>
-            <AppText size="11" :style="`color:var(--text-muted)`">{{ PLAN_META[p].model }}</AppText>
+            <AppText size="13" :style="`color:var(--text-muted)`">{{ PLAN_META[p].model }}</AppText>
             <ul class="space-y-1 mt-1">
               <li v-for="f in PLAN_META[p].features.slice(0, 3)" :key="f" class="flex items-center gap-1.5">
                 <AppIconsax
-                  name="TickCircle" :size="11"
+                  name="TickCircle" :size="14"
                   :color="selectedPlan === p ? 'var(--color-brand-primary)' : 'var(--color-text-subtle)'"
                 />
-                <AppText size="11" :style="`color:var(--text-muted)`">{{ f }}</AppText>
+                <AppText size="13" :style="`color:var(--text-muted)`">{{ f }}</AppText>
               </li>
             </ul>
           </button>
@@ -465,7 +473,7 @@ const planBadgeStyle = computed(() => {
 
         <!-- Interval selector -->
         <div>
-          <AppText size="12" weight="semibold" class-list="block mb-2" :style="`color:var(--text-body)`">
+          <AppText size="14" weight="semibold" class-list="block mb-2" :style="`color:var(--text-body)`">
             Billing period
           </AppText>
           <div class="grid grid-cols-4 gap-2">
@@ -473,7 +481,7 @@ const planBadgeStyle = computed(() => {
               v-for="m in INTERVALS"
               :key="m"
               type="button"
-              class="relative py-2 rounded-xl text-[12px] font-semibold font-poppins border text-center transition-all duration-200 cursor-pointer"
+              class="relative py-2 rounded-xl text-[14px] font-semibold font-poppins border text-center transition-all duration-200 cursor-pointer"
               :style="selectedInterval === m
                 ? 'border-color:var(--color-brand-primary);background:rgba(245,158,11,0.07);color:var(--color-brand-primary)'
                 : 'border-color:var(--border-card);background:var(--surface-raised);color:var(--text-muted)'"
@@ -483,7 +491,7 @@ const planBadgeStyle = computed(() => {
               <!-- savings badge -->
               <span
                 v-if="m > 1 && PLAN_PRICES_IQD[selectedPlan][1] * m > PLAN_PRICES_IQD[selectedPlan][m]"
-                class="absolute -top-2 -right-1 text-[9px] font-bold px-1 rounded-full"
+                class="absolute -top-2 -right-1 text-[11px] font-bold px-1.5 rounded-md"
                 style="background:var(--color-brand-primary);color:white"
               >
                 -{{ Math.round(((PLAN_PRICES_IQD[selectedPlan][1] * m - PLAN_PRICES_IQD[selectedPlan][m]) / (PLAN_PRICES_IQD[selectedPlan][1] * m)) * 100) }}%
@@ -492,13 +500,16 @@ const planBadgeStyle = computed(() => {
           </div>
         </div>
 
+        </div>
+
+        <div class="space-y-4 md-lg:rounded-xl md-lg:border md-lg:border-border-inner md-lg:p-4">
         <!-- Price display -->
         <div
           class="flex items-center justify-between px-4 py-3 rounded-xl"
           style="background:var(--surface-raised);border:1px solid var(--border-inner)"
         >
           <div>
-            <AppText size="11" :uppercase="true" class-list="tracking-[0.12em] block" :style="`color:var(--text-subtle)`">
+            <AppText size="13" :uppercase="true" class-list="tracking-[0.12em] block" :style="`color:var(--text-subtle)`">
               Total
             </AppText>
             <AppText size="20" weight="bold" :style="`color:var(--text-heading)`">
@@ -506,10 +517,10 @@ const planBadgeStyle = computed(() => {
             </AppText>
           </div>
           <div class="text-right">
-            <AppText size="12" weight="medium" :style="`color:var(--text-muted)`">
+            <AppText size="14" weight="medium" :style="`color:var(--text-muted)`">
               {{ INTERVAL_LABELS[selectedInterval] }}
             </AppText>
-            <AppText size="11" :style="`color:var(--text-subtle)`">via FIB Bank</AppText>
+            <AppText size="13" :style="`color:var(--text-subtle)`">via FIB Bank</AppText>
           </div>
         </div>
 
@@ -538,9 +549,11 @@ const planBadgeStyle = computed(() => {
           </AppText>
         </div>
 
-        <AppText size="12" class-list="text-center block" :style="`color:var(--text-subtle)`">
+        <AppText size="13" class-list="text-center block" :style="`color:var(--text-subtle)`">
           Paid securely via FIB Bank · IQD only
         </AppText>
+        </div>
+        </div>
       </div>
     </template>
 

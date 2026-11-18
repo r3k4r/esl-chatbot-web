@@ -101,6 +101,7 @@ export function useNotifications() {
         CLASS_ANNOUNCEMENT: '📢',
         TASK_ASSIGNED: '✅',
         TASK_SUBMITTED: '📝',
+        ANNOUNCEMENT_COMMENT: '💬',
       }
       const emoji = typeEmoji[item.type] || '🔔'
       toast.success(`${emoji} ${item.message}`)

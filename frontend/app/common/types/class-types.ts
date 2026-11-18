@@ -1,4 +1,4 @@
-import type { Class, ClassUser, Announcement } from '~/common/model/class'
+import type { Class, ClassUser, Announcement, AnnouncementAttachment, AnnouncementComment } from '~/common/model/class'
 import type { User } from '~/common/model/user'
 
 // ─── API list / detail shapes (extend the base model) ────────────────────────
@@ -145,8 +145,17 @@ export interface ClassAnalytics {
 
 // ─── Announcements ────────────────────────────────────────────────────────────
 
-export interface AnnouncementItem extends Pick<Announcement, 'id' | 'classId' | 'authorId' | 'content' | 'createdAt'> {
+export type AnnouncementFile = Pick<AnnouncementAttachment, 'id' | 'fileName' | 'fileUrl' | 'mimeType' | 'size' | 'createdAt'>
+
+export interface AnnouncementItem extends Announcement {
   author: Pick<User, 'id' | 'displayName' | 'avatarUrl'>
+  attachments: AnnouncementFile[]
+  commentCount: number
+}
+
+/** Text-only class comment under an announcement */
+export interface AnnouncementCommentItem extends Pick<AnnouncementComment, 'id' | 'announcementId' | 'content' | 'editedAt' | 'createdAt'> {
+  author: Pick<User, 'id' | 'displayName' | 'avatarUrl'> & { classRole: 'TUTOR' | 'STUDENT' | 'ADMIN' }
 }
 
 // ─── Pagination ───────────────────────────────────────────────────────────────

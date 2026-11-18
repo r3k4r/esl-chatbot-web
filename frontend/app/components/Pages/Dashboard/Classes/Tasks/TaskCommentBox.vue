@@ -1,18 +1,26 @@
 <script setup lang="ts">
 import { toast } from 'vue-sonner'
-import type { CommentDraft, TaskAttachment } from '~/common/types/task-types'
+import type { CommentDraft, FileListItem } from '~/common/types/task-types'
 import { TASK_FILE_ACCEPT, TASK_FILES_PER_UPLOAD, checkTaskFiles } from '~/lib/files'
 
 // Text + files. New comment: clears itself after a successful post.
 // Editing: starts from the comment's text and files; any of them can be removed.
+// Also used for announcements: `noFiles` for their text-only comments, `textRequired`
+// where the backend needs text (announcements and their comments).
 const props = withDefaults(defineProps<{
   id: string
   busy?: boolean
   placeholder?: string
   initialContent?: string | null
-  initialFiles?: TaskAttachment[]
+  initialFiles?: FileListItem[]
   editing?: boolean
-}>(), { placeholder: 'Add a class comment', initialFiles: () => [] })
+  noFiles?: boolean
+  textRequired?: boolean
+  submitText?: string
+  /** Taller box for longer writing (announcements) */
+  rows?: number
+  label?: string
+}>(), { placeholder: 'Add a class comment', initialFiles: () => [], rows: 1, label: 'Class comment' })
 
 const emit = defineEmits<{
   /** `done(ok)` lets the parent say whether to reset the box */
@@ -22,11 +30,12 @@ const emit = defineEmits<{
 
 const content = ref(props.initialContent ?? '')
 const files = ref<File[]>([])
-const kept = ref<TaskAttachment[]>([...props.initialFiles])
+const kept = ref<FileListItem[]>([...props.initialFiles])
 const picker = useTemplateRef<HTMLInputElement>('picker')
 
 const room = computed(() => TASK_FILES_PER_UPLOAD - kept.value.length - files.value.length)
-const canSend = computed(() => !props.busy && (!!content.value.trim() || files.value.length + kept.value.length > 0))
+const canSend = computed(() => !props.busy && (!!content.value.trim() ||
+  (!props.textRequired && files.value.length + kept.value.length > 0)))
 
 function onPick(e: Event) {
   const input = e.target as HTMLInputElement
@@ -53,8 +62,8 @@ function onKeydown(e: KeyboardEvent) {
 
 <template>
   <div class="rounded-xl border border-border-card bg-surface-card transition-colors duration-150 focus-within:border-text-subtle">
-    <UiTextarea :id="id" v-model="content" :placeholder="placeholder" rows="1" maxlength="2000"
-      :aria-label="editing ? 'Edit comment' : 'Class comment'"
+    <UiTextarea :id="id" v-model="content" :placeholder="placeholder" :rows="rows" maxlength="2000"
+      :aria-label="editing ? 'Edit comment' : label" :class="rows > 1 && 'min-h-24'"
       class="max-h-40 min-h-11 resize-none border-0 bg-transparent px-3.5 py-3 text-[15px] leading-6 shadow-none focus-visible:ring-0 dark:bg-transparent"
       @keydown="onKeydown" />
 
@@ -66,15 +75,16 @@ function onKeydown(e: KeyboardEvent) {
     </div>
 
     <div class="flex items-center justify-between gap-2 px-1.5 pb-1.5">
-      <input ref="picker" type="file" multiple :accept="TASK_FILE_ACCEPT" class="hidden" @change="onPick">
-      <AppButton variant="ghost" size="36" radius="8" icon="Paperclip2" text="Attach"
+      <input v-if="!noFiles" ref="picker" type="file" multiple :accept="TASK_FILE_ACCEPT" class="hidden" @change="onPick">
+      <span v-if="noFiles" />
+      <AppButton v-else variant="ghost" size="36" radius="8" icon="Paperclip2" text="Attach"
         :icon-config="{ color: 'currentColor', size: 18 }" class-list="text-[14px] text-text-muted"
         :disabled="room <= 0 || busy" :aria-label="`Attach files (up to ${TASK_FILES_PER_UPLOAD})`" @click="picker?.click()" />
       <div class="flex items-center gap-1.5">
         <AppButton v-if="editing" variant="ghost" size="36" radius="8" text="Cancel" class-list="text-[14px]"
           @click="emit('cancel')" />
         <AppButton variant="primary" size="36" radius="8" :icon="editing ? undefined : 'Send2'"
-          :icon-config="{ color: 'white', size: 16 }" :text="editing ? 'Save' : 'Post'" class-list="text-[14px] px-3.5"
+          :icon-config="{ color: 'white', size: 16 }" :text="editing ? 'Save' : (submitText ?? 'Post')" class-list="text-[14px] px-3.5"
           :loading="busy" :disabled="!canSend" @click="send" />
       </div>
     </div>

@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import { toast } from 'vue-sonner'
-import type { TaskAttachment } from '~/common/types/task-types'
+import type { FileListItem as TaskAttachment } from '~/common/types/task-types'
 import type { PreviewFile } from '~/common/types/file-types'
 
-// Saved files of a task, a comment or a hand-in: images open in the in-app viewer,
-// everything downloads under its own name. Removing is the parent's call (it confirms).
+type DownloadLink = { success: boolean; message?: string; data: any }
+
+// Saved files of a task, a comment, a hand-in or an announcement: images open in the
+// in-app viewer, everything downloads under its own name. Removing is the parent's call
+// (it confirms). Task files pass `taskId`; other owners pass their own `getDownload`.
 const props = withDefaults(defineProps<{
-  taskId: string
+  taskId?: string
+  getDownload?: (fileId: string) => Promise<DownloadLink>
   files: TaskAttachment[]
   removable?: boolean
   /** One column in narrow places (the Your work panel) */
@@ -32,7 +36,7 @@ function view(f: TaskAttachment) {
 async function download(f: TaskAttachment | null) {
   if (!f || downloading.value) return
   downloading.value = true
-  const res = await getTaskFileDownload(props.taskId, f.id)
+  const res = props.getDownload ? await props.getDownload(f.id) : await getTaskFileDownload(props.taskId ?? '', f.id)
   downloading.value = false
   const url = (res.data as any)?.data?.url as string | undefined
   if (!res.success || !url) { toast.error(res.message || 'Could not download the file'); return }

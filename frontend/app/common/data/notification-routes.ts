@@ -16,6 +16,7 @@ export function notificationRoute(n: Notification): string {
         ? `/dashboard/classes/${n.data.classId}?tab=tasks`
         : '/dashboard/classes'
     case 'CLASS_ANNOUNCEMENT':
+    case 'ANNOUNCEMENT_COMMENT':
       return n.data?.classId
         ? `/dashboard/classes/${n.data.classId}?tab=announcements`
         : '/dashboard/classes'

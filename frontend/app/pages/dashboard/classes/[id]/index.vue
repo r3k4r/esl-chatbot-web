@@ -333,7 +333,7 @@ onMounted(load)
           <PagesDashboardClassesTasksClassTasksTab v-else-if="activeTab === 'tasks'" :class-id="cls.id"
             :can-manage="isTutorOrAdmin && !isArchived" :is-student="isStudentInClass" />
           <PagesDashboardClassesAnnouncementsFeed v-else-if="activeTab === 'announcements'" :class-id="cls.id"
-            :can-post="isTutorOrAdmin && !isArchived" />
+            :can-manage="isTutorOrAdmin" :is-admin="isAdmin" :archived="isArchived" />
         </div>
       </div>
 

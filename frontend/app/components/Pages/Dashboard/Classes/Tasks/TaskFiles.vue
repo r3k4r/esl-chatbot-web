@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { toast } from 'vue-sonner'
-import type { TaskAttachment } from '~/common/types/task-types'
+import type { FileListItem, TaskAttachment } from '~/common/types/task-types'
 import { TASK_FILE_ACCEPT, TASK_FILES_PER_UPLOAD, checkTaskFiles } from '~/lib/files'
 
 // Files the teacher attached to the task itself. Hidden for students when there are none.
@@ -31,9 +31,9 @@ async function onPick(e: Event) {
   emit('change', [...props.files, ...((res.data as any)?.data ?? [])])
 }
 
-const toRemove = ref<TaskAttachment | null>(null)
+const toRemove = ref<FileListItem | null>(null)
 const removeOpen = ref(false)
-function askRemove(f: TaskAttachment) { toRemove.value = f; removeOpen.value = true }
+function askRemove(f: FileListItem) { toRemove.value = f; removeOpen.value = true }
 async function confirmRemove() {
   const f = toRemove.value
   if (!f) return

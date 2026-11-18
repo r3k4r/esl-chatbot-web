@@ -65,7 +65,7 @@ const isUnresolved = (p: FibPaymentRecord) => !p.wasCharged && p.awaitingConfirm
         <AppText size="14" weight="semibold" class-list="block" :style="`color:var(--text-heading)`">
           Payment history
         </AppText>
-        <AppText size="12" :style="`color:var(--text-muted)`">
+        <AppText size="13" :style="`color:var(--text-muted)`">
           Every payment you've started, and what happened to it
         </AppText>
       </div>
@@ -104,14 +104,14 @@ const isUnresolved = (p: FibPaymentRecord) => !p.wasCharged && p.awaitingConfirm
               {{ outcome(p).label }}
             </span>
           </div>
-          <AppText size="12" class-list="block mt-0.5" :style="`color:var(--text-muted)`">
+          <AppText size="13" class-list="block mt-0.5" :style="`color:var(--text-muted)`">
             Started {{ fmtDate(p.createdAt) }}
             <template v-if="p.activatedAt"> · Activated {{ fmtDate(p.activatedAt) }}</template>
             <template v-if="p.cancelledAt"> · Cancelled {{ fmtDate(p.cancelledAt) }}</template>
           </AppText>
           <AppText
             v-if="isUnresolved(p)"
-            size="12" class-list="block mt-1" :style="`color:var(--text-muted)`"
+            size="13" class-list="block mt-1" :style="`color:var(--text-muted)`"
           >
             If you paid this, don't pay again — FIB can take a day or two to confirm, and
             your plan activates automatically when it does.
