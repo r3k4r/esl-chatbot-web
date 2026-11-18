@@ -6,7 +6,7 @@
 import { test, expect, visit, type Persona } from '../support/fixtures'
 import { expectNoHorizontalOverflow, isPhone } from '../support/layout'
 
-const PUBLIC_PAGES = ['/', '/signin', '/signup', '/forgot-password']
+const PUBLIC_PAGES = ['/', '/signin', '/signup', '/forgot-password', '/features/ai-conversation', '/features/progress']
 
 const APP_PAGES: [Persona, string][] = [
   ['student', '/dashboard'],

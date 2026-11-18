@@ -30,6 +30,31 @@ test('guests are sent to sign up with the plan remembered', async ({ page }) => 
   await expect(page).toHaveURL(/\/signup\?redirect=/)
 })
 
+test('feature cards always show Learn more and open their own page', async ({ page }) => {
+  const cards = page.locator('#features a[href^="/features/"]')
+  await expect(cards).toHaveCount(6)
+  // No hover needed: phones must see it too
+  await expect(cards.first().getByText('Learn more')).toBeVisible()
+  await cards.nth(2).click()
+  await expect(page).toHaveURL(/\/features\/vocabulary$/)
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Words that')
+})
+
+test('a feature page tours the real screen: choosing a note marks it as the one shown', async ({ page }) => {
+  await visit(page, '/features/ai-conversation')
+  await expect(page.getByRole('heading', { name: 'How it works' })).toBeVisible()
+  const note = page.getByRole('button', { name: /^Session report/ })
+  await note.click()
+  await expect(note).toHaveAttribute('aria-pressed', 'true')
+  await expect(page.getByRole('button', { name: /^Your chats/ })).toHaveAttribute('aria-pressed', 'false')
+  await expect(page.getByRole('heading', { name: 'Questions' })).toBeVisible()
+})
+
+test('an unknown feature page is a 404', async ({ page }) => {
+  const res = await page.goto('/features/not-a-feature')
+  expect(res?.status()).toBe(404)
+})
+
 async function switchToKurdish(page: import('@playwright/test').Page) {
   await page.getByRole('button', { name: 'Select language' }).first().click()
   await page.getByRole('option', { name: /کوردی/ }).click()

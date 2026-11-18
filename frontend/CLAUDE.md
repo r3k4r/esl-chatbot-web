@@ -301,6 +301,16 @@ The authenticated dashboard uses a **fixed sidebar + scrollable body** pattern:
 - **Command palette / search:** [app/components/Layouts/Dashboard/CommandPalette.vue](app/components/Layouts/Dashboard/CommandPalette.vue) — the header search bar (`⌘K`). Debounced (250ms, min 2 chars) call to `useGlobalSearch` → `GET /search`, rendering role-scoped result groups (Users/Classes/Vocabulary/Goals/Sessions) plus a static role-filtered Navigation quick-jump. Backend enforces role scoping; the palette just renders + routes (users→`/dashboard/users/:id`, classes→`/dashboard/classes/:id`, the rest→their page). `Enter` opens the first result.
 - **User Avatar:** [app/components/Block/UserAvatar.vue](app/components/Block/UserAvatar.vue) — shadcn `DropdownMenu` showing user name, email, plan badge, then Profile / Settings links and a destructive Sign out item. Reads from `useAuthStore().getUser`.
 
+### Public feature pages (`/features/[slug]`)
+
+Each landing Features card is a link (its "Learn more" is always visible, phones have no hover) to `pages/features/[slug].vue` (default layout, public, unknown slug → 404). Slugs: `ai-conversation`, `voice-practice`, `vocabulary`, `pronunciation`, `goals`, `progress`.
+
+- **Structure** in [common/data/feature-pages.ts](app/common/data/feature-pages.ts) (types in `common/types/feature-page-types.ts`): slug, icon (also used by the landing card), `hero` + `tour` screenshots, one `boxes` entry per tour note (% of the screenshot), `faqCount`. **Words** in i18n under `featurePages` (en + ku, keyed `steps.s1…`, `notes.n1…`, `reasons.s1…`, `faq.q1…`; the parity test checks both).
+- **Sections** in `components/Pages/Features/`: `Masthead` (dark field, masked two-line headline, the screenshot), `Flow` (how it works: three steps, words only), `Tour` (the real screen; choosing a note spotlights its box, and on phones zooms to it), `Why` (orange field), `Faq` (run-in questions, no toggles), `More` (closing link, list of all other features).
+- **Screenshots** are real student screens in `public/features/` (light theme, 1552×777 CSS px at 100% zoom; `<name>.webp` 1×, `@2x`, `@3x`, served with `shotSrcset`). Retake all of them with `node scripts/capture-feature-shots.cjs` (dev app + API running), then re-check the tour `boxes`.
+- Entrances use the `v-reveal` directive ([plugins/reveal.ts](app/plugins/reveal.ts), styles in `animation.css`): elements already on screen are never hidden, reduced motion turns it off.
+- Content must match what the app really does (plan limits, Gold/Premium-only pronunciation, etc.). Change the page when the feature changes.
+
 ### Dashboard Pages (file-based routing under `pages/dashboard/`)
 
 All pages use `definePageMeta({ layout: 'dashboard', requiresAuth: true })`.

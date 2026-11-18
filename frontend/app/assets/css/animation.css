@@ -151,3 +151,15 @@
   animation: ring-draw 1s cubic-bezier(0.22, 1, 0.36, 1) both;
   animation-delay: 200ms;
 }
+/* ─── v-reveal (plugins/reveal.ts): rise into place once, when scrolled into view ── */
+.reveal-wait {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms);
+}
+.reveal-wait.is-in {
+  opacity: 1;
+  transform: none;
+}

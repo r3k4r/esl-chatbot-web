@@ -31,7 +31,7 @@
       </div>
 
       <!-- Messages -->
-      <div class="py-4 space-y-2.5 flex-1 min-h-0 overflow-y-auto pe-1">
+      <div class="py-4 space-y-2.5 flex-1 min-h-0 overflow-y-auto hide-scrollbar pe-1">
         <template v-for="(msg, i) in visibleMessages" :key="i">
           <div class="flex gap-2" :class="msg.who === 'user' ? 'justify-end' : 'justify-start'">
             <div

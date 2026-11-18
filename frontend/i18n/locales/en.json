@@ -6,7 +6,6 @@
     "pricing": "Pricing",
     "getStarted": "Get Started"
   },
-
   "hero": {
     "badgeNew": "New",
     "badgeText": "AI-Powered Learning, now in beta",
@@ -16,10 +15,13 @@
     "subtitle": "AI-powered conversations, voice practice, and intelligent progress tracking — all in one platform built for serious learners.",
     "ctaPrimary": "Get Started",
     "ctaSecondary": "See Pricing",
-    "checks": ["Free to start", "No credit card", "40+ topics"],
+    "checks": [
+      "Free to start",
+      "No credit card",
+      "40+ topics"
+    ],
     "trustedBy": "Trusted by 2,000+ learners worldwide"
   },
-
   "chatMockup": {
     "tutorName": "AI Tutor · Tutelage AI",
     "sessionLabel": "Session · B2 Intermediate",
@@ -33,7 +35,6 @@
       "I went to Erbil last summer. It was very hot but beautiful."
     ]
   },
-
   "features": {
     "eyebrow": "Features",
     "title": "Everything you need to master English.",
@@ -54,11 +55,11 @@
       },
       "pronunciation": {
         "title": "Pronunciation Score",
-        "description": "AI-powered accuracy scoring on individual phonemes so you know exactly what to work on."
+        "description": "Scores how clearly you say each word, so you know exactly which words to work on."
       },
       "goals": {
         "title": "Learning Goals",
-        "description": "Set weekly targets, track milestones, and get nudges when your streak is slipping."
+        "description": "Set targets for vocabulary, speaking, grammar or study time, and watch your progress toward each one."
       },
       "analytics": {
         "title": "Progress Analytics",
@@ -66,7 +67,6 @@
       }
     }
   },
-
   "howItWorks": {
     "eyebrow": "How it works",
     "title": "Three steps. Real fluency.",
@@ -86,7 +86,6 @@
       }
     }
   },
-
   "dashboardPreview": {
     "eyebrow": "Dashboard",
     "title": "Your learning command center.",
@@ -112,7 +111,6 @@
       "continue": "Continue"
     }
   },
-
   "pricing": {
     "eyebrow": "Pricing",
     "title": "Real Progress for Pocket Change",
@@ -161,7 +159,6 @@
       }
     }
   },
-
   "finalCta": {
     "badge": "Join 2,000+ learners",
     "titleLead": "Ready to transform ",
@@ -170,24 +167,548 @@
     "ctaPrimary": "Get Started Free",
     "ctaSecondary": "Watch 30s demo"
   },
-
   "footer": {
     "tagline": "An AI-powered English learning platform — conversations, voice, vocabulary and real progress in one place.",
     "columns": {
       "product": {
         "heading": "Product",
-        "links": ["Features", "AI Chat", "Voice Lab", "Vocabulary", "Pricing"]
+        "links": [
+          "Features",
+          "AI Chat",
+          "Voice Lab",
+          "Vocabulary",
+          "Pricing"
+        ]
       },
       "resources": {
         "heading": "Resources",
-        "links": ["Blog", "Guides", "Placement Test", "Changelog", "Status"]
+        "links": [
+          "Blog",
+          "Guides",
+          "Placement Test",
+          "Changelog",
+          "Status"
+        ]
       },
       "company": {
         "heading": "Company",
-        "links": ["About", "Careers", "Press", "Partners", "Contact"]
+        "links": [
+          "About",
+          "Careers",
+          "Press",
+          "Partners",
+          "Contact"
+        ]
       }
     },
     "rights": "© 2026 Tutelage AI. All rights reserved.",
     "status": "All systems normal"
+  },
+  "featurePages": {
+    "allFeatures": "All features",
+    "startFree": "Start free",
+    "seePricing": "See pricing",
+    "flowTitle": "How it works",
+    "tourHint": "Choose a note to light up that part of the screen.",
+    "whyTitle": "Why it helps",
+    "faqTitle": "Questions",
+    "closingLead": "Your first lesson takes a minute.",
+    "closingLink": "Start practising free",
+    "closingNote": "The Free plan is included. Verify your email and you can start right away.",
+    "otherFeatures": "More features",
+    "items": {
+      "conversation": {
+        "seoTitle": "AI conversation",
+        "line1": "A tutor that",
+        "line2": "always replies.",
+        "standfirst": "Write or speak to the AI tutor about anything. It answers in short, clear messages and corrects you gently as you go.",
+        "heroAlt": "A finished chat in Tutelage AI about planning a trip to Japan, with the session report underneath",
+        "flowText": "Every chat is a short session. You write or speak, the tutor answers at your level, and you leave with clear feedback.",
+        "steps": {
+          "s1": {
+            "name": "Start",
+            "text": "Open a new chat and type, tap the mic, or pick a topic. It is saved after your first message."
+          },
+          "s2": {
+            "name": "Talk",
+            "text": "The tutor answers at your level, points out good words and fixes mistakes without stopping the chat."
+          },
+          "s3": {
+            "name": "Review",
+            "text": "When you finish, you get a score, your level and one thing to practise next."
+          }
+        },
+        "tourTitle": "Inside a chat",
+        "notes": {
+          "n1": {
+            "name": "Your chats",
+            "text": "Every conversation is kept here with a title. Search, pin or delete them."
+          },
+          "n2": {
+            "name": "New chat",
+            "text": "Starts a blank chat. Nothing is saved until you send something."
+          },
+          "n3": {
+            "name": "Your message",
+            "text": "Type in English, or record your voice and send it."
+          },
+          "n4": {
+            "name": "Tutor reply",
+            "text": "Short and friendly, and it tells you when you used a good word."
+          },
+          "n5": {
+            "name": "Level",
+            "text": "The level the tutor hears in your English, from A1 to C2."
+          },
+          "n6": {
+            "name": "Session report",
+            "text": "Your score, your level, what went well and what to practise next."
+          }
+        },
+        "whyStatement": "You learn faster when you use English, not only when you read about it.",
+        "reasons": {
+          "s1": {
+            "name": "Always there",
+            "text": "Practise at any hour, as often as your plan allows."
+          },
+          "s2": {
+            "name": "No pressure",
+            "text": "Make mistakes freely. Corrections are short and kind."
+          },
+          "s3": {
+            "name": "A clear next step",
+            "text": "Each chat ends with what you did well and what to practise."
+          }
+        },
+        "faq": {
+          "q1": {
+            "q": "Do I need to be good at English already?",
+            "a": "No. The tutor matches your level, from beginner (A1) up, and keeps its answers short and simple."
+          },
+          "q2": {
+            "q": "Can I speak instead of typing?",
+            "a": "Yes. Tap the mic, record and send. The tutor answers in text, and out loud on Gold and Premium."
+          },
+          "q3": {
+            "q": "How many chats can I have?",
+            "a": "Free: 3 chats and 20 messages a day. Gold: 15 chats a day. Premium: 50 chats a day."
+          },
+          "q4": {
+            "q": "What if I forget to end a chat?",
+            "a": "Nothing is lost. A chat closes by itself after 24 hours without a message, and your practice still counts."
+          },
+          "q5": {
+            "q": "Which AI answers me?",
+            "a": "Free uses Gemini Flash Lite, Gold uses Gemini Flash, and Premium uses GPT-5 mini."
+          },
+          "q6": {
+            "q": "Can my teacher read my chats?",
+            "a": "If you join a class, your teacher sees your progress and common mistakes, with short examples from your chats."
+          }
+        }
+      },
+      "voice": {
+        "seoTitle": "Voice practice",
+        "line1": "Speak, and",
+        "line2": "be heard.",
+        "standfirst": "Voice Lab is a hands-free call with the AI tutor. You talk, it listens, answers out loud and scores how you did.",
+        "heroAlt": "The Voice Lab screen in Tutelage AI with the Start call button and the live scoring panel",
+        "flowText": "A call works like a phone call with a patient teacher. There is nothing to hold down and nothing to send.",
+        "steps": {
+          "s1": {
+            "name": "Call",
+            "text": "Press Start call and allow the microphone. One press, and you are talking."
+          },
+          "s2": {
+            "name": "Talk",
+            "text": "Speak naturally. When you pause, the tutor takes its turn and answers out loud."
+          },
+          "s3": {
+            "name": "See",
+            "text": "After each turn, your grammar, vocabulary and fluency scores update next to the call."
+          }
+        },
+        "tourTitle": "The Voice Lab",
+        "notes": {
+          "n1": {
+            "name": "Start call",
+            "text": "One press starts the call. Mute or hang up at any time."
+          },
+          "n2": {
+            "name": "How a call works",
+            "text": "Just talk. It replies on its own when you pause."
+          },
+          "n3": {
+            "name": "Live scoring",
+            "text": "Your scores update after every turn you speak."
+          },
+          "n4": {
+            "name": "Word by word",
+            "text": "On Gold and Premium, every word you say is scored too."
+          }
+        },
+        "whyStatement": "Speaking is the hardest skill to practise alone. Now you don’t have to.",
+        "reasons": {
+          "s1": {
+            "name": "Real conversation",
+            "text": "You answer in real time, like talking to a person."
+          },
+          "s2": {
+            "name": "Safe to try",
+            "text": "Only the tutor is listening, so try again as often as you like."
+          },
+          "s3": {
+            "name": "Feedback right away",
+            "text": "See what to fix while the call is still going."
+          }
+        },
+        "faq": {
+          "q1": {
+            "q": "What do I need?",
+            "a": "A phone or computer with a microphone, and a browser that is allowed to use it."
+          },
+          "q2": {
+            "q": "Do I need headphones?",
+            "a": "No, but they help the tutor hear you clearly in a noisy room."
+          },
+          "q3": {
+            "q": "Is the call saved?",
+            "a": "Yes. Each call is saved with your chats, so you can read it again later."
+          },
+          "q4": {
+            "q": "Is Voice Lab in the Free plan?",
+            "a": "Yes, once your email is verified. Word-by-word pronunciation scores need Gold or Premium."
+          },
+          "q5": {
+            "q": "Does a call count as practice?",
+            "a": "Yes. Your minutes, streak and skills update as you speak."
+          }
+        }
+      },
+      "vocab": {
+        "seoTitle": "Vocabulary review",
+        "line1": "Words that",
+        "line2": "stay with you.",
+        "standfirst": "Save new words, then review them as flashcards. The app brings each word back just before you would forget it.",
+        "heroAlt": "A vocabulary flashcard for the word reluctant in Tutelage AI, next to the mastery breakdown",
+        "flowText": "Your word list grows by itself as you chat, and a few minutes of review a day keeps it in your memory.",
+        "steps": {
+          "s1": {
+            "name": "Collect",
+            "text": "Words are added from your chats, by you, or by your teacher."
+          },
+          "s2": {
+            "name": "Review",
+            "text": "Flip the cards that are due today and say how well you knew each one."
+          },
+          "s3": {
+            "name": "Master",
+            "text": "Good answers send a word further away: 1 day, 3, 7, then 21 and more."
+          }
+        },
+        "tourTitle": "A review, card by card",
+        "notes": {
+          "n1": {
+            "name": "The card",
+            "text": "The word, its meaning, its type and an example sentence."
+          },
+          "n2": {
+            "name": "Your answer",
+            "text": "Again, Hard, Good or Easy. It decides when the card comes back."
+          },
+          "n3": {
+            "name": "Today",
+            "text": "New, due and learned cards at a glance."
+          },
+          "n4": {
+            "name": "Mastery",
+            "text": "Each word moves from Seen to Mastered as you review it."
+          },
+          "n5": {
+            "name": "Today’s progress",
+            "text": "How far you are through today’s cards."
+          },
+          "n6": {
+            "name": "Add word",
+            "text": "Save any word you meet, with your own example."
+          }
+        },
+        "whyStatement": "Reviewing at the right moment beats reviewing more.",
+        "reasons": {
+          "s1": {
+            "name": "Less time",
+            "text": "You only see the words that are due today."
+          },
+          "s2": {
+            "name": "Longer memory",
+            "text": "Every good answer moves the next review further away."
+          },
+          "s3": {
+            "name": "Your own words",
+            "text": "The list grows from your chats, so you learn words you really use."
+          }
+        },
+        "faq": {
+          "q1": {
+            "q": "Where do the words come from?",
+            "a": "From your AI chats, from words you add yourself, and from words your teacher gives you."
+          },
+          "q2": {
+            "q": "How is the next review chosen?",
+            "a": "The app uses the SM-2 spaced repetition method: your answer sets how many days pass before the card returns."
+          },
+          "q3": {
+            "q": "What if I miss a day?",
+            "a": "Nothing is lost. Cards stay due until you review them."
+          },
+          "q4": {
+            "q": "Can I add my own words?",
+            "a": "Yes. Press Add word and write the word, its meaning and an example."
+          },
+          "q5": {
+            "q": "When is a word mastered?",
+            "a": "When you keep answering well and the gap before its next review grows past 21 days."
+          }
+        }
+      },
+      "pronunciation": {
+        "seoTitle": "Pronunciation scores",
+        "line1": "Hear what",
+        "line2": "to fix.",
+        "standfirst": "When you speak, the app scores how you sound. On Gold and Premium it checks every word and tells you which ones need work.",
+        "heroAlt": "The Skills panel on the Tutelage AI dashboard, with the speaking score from spoken messages",
+        "flowText": "Your voice is compared word by word with clear speech, and the result comes back as scores and short tips.",
+        "steps": {
+          "s1": {
+            "name": "Speak",
+            "text": "Talk in Voice Lab, or send a voice message in a chat."
+          },
+          "s2": {
+            "name": "Score",
+            "text": "Each word is checked for how clearly and completely you said it."
+          },
+          "s3": {
+            "name": "Fix",
+            "text": "You see the words that need work, each with a short tip."
+          }
+        },
+        "tourTitle": "Your speaking score",
+        "notes": {
+          "n1": {
+            "name": "Skills",
+            "text": "Grammar, vocabulary, fluency and speaking, each with a plain word next to the number."
+          },
+          "n2": {
+            "name": "What it is based on",
+            "text": "Your latest scored messages, and how many of them were spoken."
+          },
+          "n3": {
+            "name": "Speaking",
+            "text": "The average of your pronunciation scores."
+          },
+          "n4": {
+            "name": "Voice chats",
+            "text": "Calls and voice messages are marked with a microphone."
+          }
+        },
+        "whyStatement": "Small sounds change how well people understand you.",
+        "reasons": {
+          "s1": {
+            "name": "Exact",
+            "text": "You learn which words to fix, not only that something was wrong."
+          },
+          "s2": {
+            "name": "Private",
+            "text": "Practise the hard sounds as often as you like."
+          },
+          "s3": {
+            "name": "Measured",
+            "text": "Watch your speaking score change over the weeks."
+          }
+        },
+        "faq": {
+          "q1": {
+            "q": "Which plans include it?",
+            "a": "Word-by-word scoring is in Gold and Premium. Premium also scores rhythm and intonation."
+          },
+          "q2": {
+            "q": "What do the scores mean?",
+            "a": "Accuracy is how close each word is to clear speech, fluency is how smoothly you speak, and completeness is how much of what you said was clear."
+          },
+          "q3": {
+            "q": "Will it try to change my accent?",
+            "a": "No. The goal is speech that is easy to understand, not sounding like someone else."
+          },
+          "q4": {
+            "q": "Where do I see my scores?",
+            "a": "Next to the call in Voice Lab, and as your speaking skill on the dashboard."
+          }
+        }
+      },
+      "goals": {
+        "seoTitle": "Learning goals",
+        "line1": "Set a goal,",
+        "line2": "watch it grow.",
+        "standfirst": "Choose what you want to improve and by when. Each goal shows its progress, and your teacher can set goals for you too.",
+        "heroAlt": "The Goals screen in Tutelage AI with goals, their progress and who set them",
+        "flowText": "A goal turns \"I want to get better\" into a target you can see, with a date and a plan.",
+        "steps": {
+          "s1": {
+            "name": "Choose",
+            "text": "Pick a type and a target, and add a date and a plan if you like."
+          },
+          "s2": {
+            "name": "Practise",
+            "text": "Your goals stay in view while you chat, speak and review words."
+          },
+          "s3": {
+            "name": "Finish",
+            "text": "Update your progress and complete goals to unlock achievements."
+          }
+        },
+        "tourTitle": "Your goals, at a glance",
+        "notes": {
+          "n1": {
+            "name": "A goal",
+            "text": "Its type, what you want to reach, and a short plan."
+          },
+          "n2": {
+            "name": "Progress",
+            "text": "How far you are, next to the difficulty you chose."
+          },
+          "n3": {
+            "name": "From your teacher",
+            "text": "Teachers can set goals for you. The goal shows who set it."
+          },
+          "n4": {
+            "name": "Filters",
+            "text": "Show active, completed or paused goals, or one type only."
+          },
+          "n5": {
+            "name": "Finished goals",
+            "text": "Completed goals stay on the list, marked as done."
+          },
+          "n6": {
+            "name": "New goal",
+            "text": "Add a goal in a few seconds."
+          }
+        },
+        "whyStatement": "A clear target makes it easier to start practising every day.",
+        "reasons": {
+          "s1": {
+            "name": "Focus",
+            "text": "You know what today’s practice is for."
+          },
+          "s2": {
+            "name": "Visible",
+            "text": "Progress is a number you can see, not a feeling."
+          },
+          "s3": {
+            "name": "Shared",
+            "text": "Your teacher can set goals with you, so you work on the same thing."
+          }
+        },
+        "faq": {
+          "q1": {
+            "q": "What kinds of goals can I set?",
+            "a": "Vocabulary, speaking, grammar, conversation and study time."
+          },
+          "q2": {
+            "q": "Can my teacher give me goals?",
+            "a": "Yes. If you are in a class, your teacher can set goals for you, and you get a notification."
+          },
+          "q3": {
+            "q": "What are achievements?",
+            "a": "Milestones such as a 7-day streak, 100 chats, 1,000 words or 5 finished goals."
+          },
+          "q4": {
+            "q": "Can I pause a goal?",
+            "a": "Yes. A goal can be active, paused or completed."
+          }
+        }
+      },
+      "analytics": {
+        "seoTitle": "Progress",
+        "line1": "See how far",
+        "line2": "you’ve come.",
+        "standfirst": "Your dashboard shows what to do next, how today is going, and how your skills and habits change over the weeks.",
+        "heroAlt": "The Tutelage AI dashboard with the next step, today’s goal ring and four stat cards",
+        "flowText": "Everything you do in the app feeds one dashboard, so you always know where you stand.",
+        "steps": {
+          "s1": {
+            "name": "Practise",
+            "text": "Every message you send counts toward today’s minutes and your streak."
+          },
+          "s2": {
+            "name": "Measure",
+            "text": "Your skills are worked out from your latest scored messages."
+          },
+          "s3": {
+            "name": "Decide",
+            "text": "The dashboard suggests one next step: a task, words to review, or a short chat."
+          }
+        },
+        "tourTitle": "Your dashboard",
+        "notes": {
+          "n1": {
+            "name": "Skills",
+            "text": "Four skills, a plain word for each score, and what they are based on."
+          },
+          "n2": {
+            "name": "This week",
+            "text": "Your minutes for each day, against your daily goal."
+          },
+          "n3": {
+            "name": "Class work",
+            "text": "Tasks from your classes, with missing ones first."
+          },
+          "n4": {
+            "name": "Recent chats",
+            "text": "Your latest chats and their scores. Open any of them again."
+          },
+          "n5": {
+            "name": "Last 12 weeks",
+            "text": "Every day you practised, shaded by how much."
+          },
+          "n6": {
+            "name": "Vocabulary",
+            "text": "Words waiting for review, and how your list is growing."
+          }
+        },
+        "whyStatement": "Seeing small progress is what keeps you going.",
+        "reasons": {
+          "s1": {
+            "name": "One next step",
+            "text": "You never open the app wondering what to do."
+          },
+          "s2": {
+            "name": "Your own days",
+            "text": "Days and streaks follow your time zone, not the server’s."
+          },
+          "s3": {
+            "name": "Honest numbers",
+            "text": "No score is shown until there is something to base it on."
+          }
+        },
+        "faq": {
+          "q1": {
+            "q": "How are my minutes counted?",
+            "a": "While you chat, the time between your messages counts, up to five minutes at a time."
+          },
+          "q2": {
+            "q": "When does my streak reset?",
+            "a": "When a whole day passes in your time zone without any practice."
+          },
+          "q3": {
+            "q": "Where do the skill scores come from?",
+            "a": "From the AI’s scores for your latest 40 messages. Speaking comes from the spoken ones."
+          },
+          "q4": {
+            "q": "Can my teacher see this?",
+            "a": "If you are in a class, your teacher sees your skills, practice and class work."
+          }
+        }
+      }
+    }
   }
 }
