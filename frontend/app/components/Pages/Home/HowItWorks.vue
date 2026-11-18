@@ -1,51 +1,42 @@
 <template>
-  <section id="how" class="bg-brand-muted/60 py-28 sm:py-32 border-y border-neutral-200/70">
-    <div class="container-lg layout-padding-lg">
-      <LayoutsSectionHeader
-        :eyebrow="t('howItWorks.eyebrow')"
-        :title="t('howItWorks.title')"
-        align="start"
-        wrapper-class="mb-14"
-      >
-        <template #action>
-          <AppLink to="#cta" class="text-[13px] font-medium text-brand-ink inline-flex items-center gap-1 hover:text-brand-primary transition-colors">
-            {{ t('howItWorks.seeInAction') }} <Icon icon="lucide:arrow-right" width="13" class="rtl:rotate-180" />
-          </AppLink>
-        </template>
-      </LayoutsSectionHeader>
-
-      <div class="relative grid md:grid-cols-3 gap-6">
-        <div class="hidden md:block absolute top-11.5 inset-x-[12%] h-px bg-[repeating-linear-gradient(90deg,var(--color-neutral-300)_0_6px,transparent_6px_12px)] opacity-70" />
-
-        <div
-          v-for="(step, i) in steps"
-          :key="i"
-          class="relative bg-neutral-50 border border-neutral-200/70 rounded-[14px] p-6 shadow-soft"
-        >
-          <div class="flex items-center gap-3 mb-6">
-            <div class="w-10 h-10 rounded-full bg-brand-primary text-brand-ink font-semibold flex items-center justify-center text-[13px] shadow-[0_8px_18px_-8px_rgba(245,158,11,0.7)]">
-              {{ step.n }}
-            </div>
-            <div class="flex-1 h-px bg-neutral-200" />
-            <Icon :icon="step.icon" width="18" class="text-brand-sub" />
-          </div>
-          <AppText size="20" weight="semibold" color="brand-ink" class-list="tracking-tight">{{ t(`howItWorks.steps.${step.key}.title`) }}</AppText>
-          <AppText size="14" color="brand-sub" class-list="mt-2 leading-relaxed">{{ t(`howItWorks.steps.${step.key}.description`) }}</AppText>
-        </div>
-      </div>
-    </div>
-  </section>
+  <!-- The app's real path, from sign-up to progress. Desktop: pinned horizontal timeline;
+       phones and reduced motion (and the server render): vertical timeline. -->
+  <MilestoneTrack v-if="desktop" id="how" :steps="steps" :counter="counter">
+    <template #header><HowItWorksHeader /></template>
+  </MilestoneTrack>
+  <MilestoneList v-else id="how" :steps="steps" :still="motion === 'reduce'">
+    <template #header><HowItWorksHeader /></template>
+  </MilestoneList>
 </template>
 
 <script setup lang="ts">
-import { Icon } from '@iconify/vue'
+import { useMediaQuery, usePreferredReducedMotion } from '@vueuse/core'
+import MilestoneTrack from './MilestoneTrack.vue'
+import MilestoneList from './MilestoneList.vue'
+import HowItWorksHeader from './HowItWorksHeader.vue'
 
 const { t } = useLocale()
 
-// Step number + icon are structural; `key` maps to the localized text.
-const steps = [
-  { n: '01', icon: 'lucide:message-circle', key: 'one' },
-  { n: '02', icon: 'lucide:mic',            key: 'two' },
-  { n: '03', icon: 'lucide:bar-chart-2',    key: 'three' },
+const wide = useMediaQuery('(min-width: 1024px)')
+const motion = usePreferredReducedMotion()
+const mounted = ref(false)
+onMounted(() => { mounted.value = true })
+const desktop = computed(() => mounted.value && wide.value && motion.value !== 'reduce')
+
+// The order a new learner really goes through. Icons are structural; words are localized.
+const STEPS = [
+  { key: 's1', icon: 'lucide:user-plus' },
+  { key: 's2', icon: 'lucide:badge-check' },
+  { key: 's3', icon: 'lucide:message-circle' },
+  { key: 's4', icon: 'lucide:mic' },
+  { key: 's5', icon: 'lucide:brain' },
+  { key: 's6', icon: 'lucide:bar-chart-2' },
 ] as const
+
+const steps = computed(() => STEPS.map(s => ({
+  icon: s.icon,
+  title: t(`howItWorks.steps.${s.key}.title`),
+  text: t(`howItWorks.steps.${s.key}.description`),
+})))
+const counter = (current: number, total: number) => t('howItWorks.stepOf', { current, total })
 </script>

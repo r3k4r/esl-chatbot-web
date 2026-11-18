@@ -69,22 +69,34 @@
   },
   "howItWorks": {
     "eyebrow": "How it works",
-    "title": "Three steps. Real fluency.",
-    "seeInAction": "See it in action",
+    "title": "From sign-up to real fluency.",
     "steps": {
-      "one": {
-        "title": "Start a Conversation",
-        "description": "Choose a topic — travel, work, interviews — and begin chatting with an AI tuned to your level."
+      "s1": {
+        "title": "Create your account",
+        "description": "Sign up with your email or with Google. It’s free."
       },
-      "two": {
-        "title": "Practice Speaking",
-        "description": "Switch on voice mode for real pronunciation practice with instant feedback on what you said."
+      "s2": {
+        "title": "Unlock your AI tutor",
+        "description": "Confirm your email with a 6-digit code, or link Google, and the Free plan switches on."
       },
-      "three": {
-        "title": "Track & Improve",
-        "description": "Watch your vocabulary, fluency and streak grow with analytics that celebrate real progress."
+      "s3": {
+        "title": "Chat with the tutor",
+        "description": "Pick a topic or just say hi. It answers at your level and corrects you gently."
+      },
+      "s4": {
+        "title": "Practise speaking",
+        "description": "Call the tutor in Voice Lab and get scored after every turn you speak."
+      },
+      "s5": {
+        "title": "Review your words",
+        "description": "New words from your chats become flashcards that come back at the right time."
+      },
+      "s6": {
+        "title": "Watch yourself improve",
+        "description": "Your dashboard shows today’s goal, your streak and how your skills grow."
       }
-    }
+    },
+    "stepOf": "Step {current} of {total}"
   },
   "dashboardPreview": {
     "eyebrow": "Dashboard",
