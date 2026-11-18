@@ -34,8 +34,9 @@ describe('useRole', () => {
 describe('useTheme', () => {
   beforeEach(() => localStorage.clear())
 
-  it('applies the theme to <html> and remembers it', () => {
+  it('applies the theme to <html> on dashboard pages and remembers it', () => {
     const { theme, applyTheme } = useTheme()
+    window.history.replaceState(null, '', '/dashboard')
     applyTheme('dark')
     expect(theme.value).toBe('dark')
     expect(document.documentElement.classList.contains('dark')).toBe(true)
@@ -43,6 +44,14 @@ describe('useTheme', () => {
 
     applyTheme('light')
     expect(document.documentElement.classList.contains('dark')).toBe(false)
+  })
+
+  it('keeps public pages light even when the saved theme is dark', () => {
+    const { applyTheme } = useTheme()
+    window.history.replaceState(null, '', '/')
+    applyTheme('dark')
+    expect(document.documentElement.classList.contains('dark')).toBe(false)
+    expect(localStorage.getItem('theme')).toBe('dark')
   })
 
   it('syncFromProfile ignores missing or unknown values', () => {
