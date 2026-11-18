@@ -193,7 +193,11 @@ export function useVoiceChat() {
   async function acquireStream(): Promise<boolean> {
     if (audioStream.value) { voiceState.value = 'ready'; return true }
     try {
-      audioStream.value = await navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+      // Noise suppression and auto gain help quiet speakers be understood.
+      audioStream.value = await navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true, channelCount: 1 },
+        video: false,
+      })
       voiceState.value = 'ready'
       return true
     } catch {

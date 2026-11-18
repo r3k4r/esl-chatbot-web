@@ -4045,6 +4045,226 @@ export interface paths {
         };
         trace?: never;
     };
+    "/live/calls": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Start a live call — creates a VOICE session and a one-use Gemini Live token
+         * @description Checks the same rules as `GET /sessions/usage`, then mints a one-use token locked
+         *     to the model and the tutor's instructions. The browser opens the Gemini Live
+         *     WebSocket (`BidiGenerateContentConstrained?access_token=<token>`) within 60 s;
+         *     the call may last up to `expiresAt` (30 min). Counts as one of today's conversations.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Call ready */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            success?: boolean;
+                            message?: string;
+                            data?: {
+                                /** Format: uuid */
+                                sessionId: string;
+                                /** @description One-use Gemini Live token (auth_tokens/...) */
+                                token: string;
+                                /** @example gemini-3.1-flash-live-preview */
+                                model: string;
+                                /** Format: date-time */
+                                expiresAt: string;
+                            };
+                        };
+                    };
+                };
+                /** @description Missing or invalid token */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Subscription not active */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Daily conversations or messages used up */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Live calls not configured or Google unavailable */
+                503: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/live/calls/{sessionId}/turns": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Save one exchange of a live call and score what the learner said
+         * @description The browser posts the live model's transcripts after each exchange. Saves the
+         *     learner's words (VOICE message, scored) and the tutor's answer, applies the plan's
+         *     message limits (429 = end the call), and returns the scores. `evaluation` is null
+         *     when the scorer was busy; the turn is saved either way.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    sessionId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        /** @description What the learner said */
+                        user: string;
+                        /** @description What the tutor answered */
+                        tutor?: string;
+                        /** @description The learner's audio for this answer, base64 raw PCM 16 kHz 16-bit mono, up to 30 s. Saved as the message recording; Gold/Premium also get Azure pronunciation scores. */
+                        audio?: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Turn saved */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            success?: boolean;
+                            message?: string;
+                            data?: {
+                                /** @description Gold/Premium with audio only */
+                                pronunciation: {
+                                    accuracyScore: number;
+                                    fluencyScore: number;
+                                    completenessScore: number;
+                                    prosodyScore: number | null;
+                                    overallScore: number;
+                                    issues: {
+                                        word: string;
+                                        issue: string;
+                                        suggestion: string;
+                                    }[];
+                                } | null;
+                                evaluation: {
+                                    grammarScore: number;
+                                    vocabularyScore: number;
+                                    fluencyScore: number;
+                                    overallScore: number;
+                                    detectedCefrLevel: string;
+                                    vocabularyLevel: string;
+                                    feedback: string;
+                                } | null;
+                                /** @description FREE messages left today; null = no cap */
+                                remainingMessages: number | null;
+                            };
+                        };
+                    };
+                };
+                /** @description Missing or invalid token */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Session not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Session already ended */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Invalid body */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Message limit reached — end the call */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/sessions/{sessionId}/messages": {
         parameters: {
             query?: never;
@@ -5179,6 +5399,75 @@ export interface paths {
                 };
                 /** @description Invalid query params */
                 422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/sessions/usage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Today's plan usage — can the caller start a conversation right now?
+         * @description Same rules as `POST /sessions` and sending a message: an ACTIVE subscription,
+         *     the daily session cap (all modes), and FREE's daily message cap. Pages use it
+         *     to show a locked state up front instead of failing mid-conversation.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Usage */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            success?: boolean;
+                            message?: string;
+                            data?: {
+                                /** @enum {string} */
+                                plan: "FREE" | "GOLD" | "PREMIUM";
+                                /** @description Subscription status is ACTIVE */
+                                active: boolean;
+                                sessionsToday: number;
+                                sessionsPerDay: number;
+                                messagesToday: number;
+                                /** @description FREE only; null = no daily cap */
+                                messagesPerDay: number | null;
+                                canStart: boolean;
+                                /** @enum {string|null} */
+                                reason: "INACTIVE" | "SESSION_LIMIT" | "MESSAGE_LIMIT" | null;
+                                /** @description Seconds until the daily counters reset */
+                                resetsInSeconds: number;
+                            };
+                        };
+                    };
+                };
+                /** @description Missing or invalid token */
+                401: {
                     headers: {
                         [name: string]: unknown;
                     };

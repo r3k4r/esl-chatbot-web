@@ -93,7 +93,7 @@ AI chatbot access is gated by `subscription.status === 'ACTIVE'`. **Verification
 | GOLD | 15 | 100 + 10 | — | 20 msgs | Gemini Flash (`gemini-flash-latest` alias) |
 | PREMIUM | 50 | 150 + 10 | — | 20 msgs | GPT-5 mini (OpenAI, auto-falls back to Gemini) |
 
-Dev environment always uses `gemini-flash-latest` regardless of plan. Plan limits are enforced in `src/modules/sessions/sessions.service.ts` and `src/modules/messages/messages.service.ts`. Frontend reads them from [frontend/app/common/data/plan-limits.ts](frontend/app/common/data/plan-limits.ts) — keep these two in sync manually when tier limits change.
+Dev environment always uses `gemini-flash-latest` regardless of plan, except spoken-mode scoring, which uses Lite (Flash on the free key is usually overloaded). The Voice Lab itself is a Gemini Live call (`gemini-3.1-flash-live-preview`, Premium `gemini-3.8-live`) that the browser opens with a one-use token from `POST /live/calls`. The Voice Lab and any page that starts conversations can ask `GET /sessions/usage` whether a conversation may start. Plan limits are enforced in `src/modules/sessions/sessions.service.ts` and `src/modules/messages/messages.service.ts`. Frontend reads them from [frontend/app/common/data/plan-limits.ts](frontend/app/common/data/plan-limits.ts) — keep these two in sync manually when tier limits change.
 
 ## Dashboard Layout Height Chain
 

@@ -76,3 +76,17 @@ export interface SessionDetail extends SessionListItem {
   messages: ChatMessage[]
   evaluation: SessionEvaluation | null
 }
+
+/** GET /sessions/usage — can a conversation (chat or call) start right now? */
+export interface SessionUsage {
+  plan: 'FREE' | 'GOLD' | 'PREMIUM'
+  active: boolean
+  sessionsToday: number
+  sessionsPerDay: number
+  messagesToday: number
+  /** FREE only; null = no daily message cap. */
+  messagesPerDay: number | null
+  canStart: boolean
+  reason: 'INACTIVE' | 'SESSION_LIMIT' | 'MESSAGE_LIMIT' | null
+  resetsInSeconds: number
+}

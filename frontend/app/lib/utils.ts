@@ -61,5 +61,7 @@ export function stripHtml(html: string): string {
     .replace(/&quot;/g, '"')
     .replace(/&#3?9;|&apos;/g, "'")
     .replace(/\s+/g, " ")
+    // "<strong>football</strong>." became "football ." — tags turn into spaces above.
+    .replace(/ ([.,!?;:])/g, "$1")
     .trim()
 }

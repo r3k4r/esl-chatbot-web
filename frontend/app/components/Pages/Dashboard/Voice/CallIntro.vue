@@ -1,59 +1,56 @@
 <script setup lang="ts">
-defineProps<{
-  disabled?: boolean
-  connecting?: boolean
-}>()
+// Before the call: what it is, one button, and words to start with (beginners freeze
+// most on the first sentence).
+defineProps<{ disabled?: boolean }>()
 const emit = defineEmits<{ start: [] }>()
 
-const tips = [
-  { icon: 'Microphone2', text: 'Just talk — it listens and replies on its own, like a phone call.' },
-  { icon: 'Sound', text: 'Pause when you finish a sentence; the AI takes its turn automatically.' },
-  { icon: 'Chart', text: 'Every turn is scored on grammar, vocabulary, and fluency.' },
-] as const
+const starters = ['Hi, my name is …', 'Can we talk about my day?', 'Help me practise for a job interview.']
+const steps = [
+  'The tutor says hello first and asks you a question.',
+  'Answer out loud. Talk over it any time, like a real call.',
+  'Your scores update after every answer.',
+]
 </script>
 
 <template>
-  <div class="dash-card relative flex min-h-[560px] flex-col items-center justify-center overflow-hidden p-6 text-center sm:p-8">
-    <div class="pointer-events-none absolute inset-0">
-      <div class="absolute left-1/2 top-1/3 size-80 -translate-x-1/2 rounded-full bg-brand-primary/10 blur-3xl" />
-      <div class="dot-bg absolute inset-0 opacity-50" />
+  <div class="dash-card flex h-full min-h-[540px] flex-col items-center justify-center px-6 py-10 text-center">
+    <PagesDashboardVoiceCallOrb />
+
+    <AppText size="24" weight="semibold" class-list="mt-6 tracking-tight">Call Tutelage AI</AppText>
+    <AppText size="15" color="neutral-400" class-list="mt-2 max-w-md">
+      A live English call with a patient tutor. It answers right away, in a real voice.
+    </AppText>
+
+    <AppButton
+      variant="primary"
+      size="48"
+      radius="12"
+      icon="Call"
+      :icon-config="{ color: 'white' }"
+      text="Start call"
+      :disabled="disabled"
+      class-list="mt-7 min-w-44 px-6 text-[15px]"
+      @click="emit('start')"
+    />
+
+    <div class="mt-9 w-full max-w-lg">
+      <AppText size="14" color="neutral-400">Not sure what to say? Try</AppText>
+      <ul class="mt-3 flex flex-wrap justify-center gap-2" dir="ltr">
+        <li
+          v-for="line in starters"
+          :key="line"
+          class="rounded-lg border border-border-inner bg-surface-raised px-3 py-1.5 text-[14px] text-text-body"
+        >
+          “{{ line }}”
+        </li>
+      </ul>
     </div>
 
-    <div class="relative flex flex-col items-center">
-      <!-- idle orb -->
-      <div class="relative grid size-36 place-content-center rounded-full bg-linear-to-br from-brand-primary to-brand-accent shadow-[0_20px_60px_-15px_rgba(245,158,11,0.55)]">
-        <div class="absolute inset-2 rounded-full bg-white/5" />
-        <AppIconsax name="Candle" color="#000" :size="52" class="relative" />
-      </div>
-
-      <h2 class="mt-7 font-poppins text-[24px] font-semibold tracking-tight text-text-heading">
-        Call Tutelage AI
-      </h2>
-      <AppText size="15" color="neutral-400" class-list="mt-1.5 max-w-md font-poppins">
-        A hands-free speaking call. Talk naturally, get spoken replies, and see how you sound.
-      </AppText>
-
-      <!-- start -->
-      <button
-        type="button"
-        :disabled="disabled || connecting"
-        class="group mt-7 flex items-center gap-2.5 rounded-full bg-brand-primary px-7 py-3.5 text-white transition hover:scale-[1.02] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
-        @click="emit('start')"
-      >
-        <span v-if="connecting" class="size-5 rounded-full border-2 border-white/40 border-t-white animate-spin" />
-        <AppIconsax v-else name="Call" color="white" :size="20" />
-        <span class="font-poppins text-[15px] font-semibold">{{ connecting ? 'Connecting…' : 'Start call' }}</span>
-      </button>
-
-      <!-- tips -->
-      <div class="mt-9 grid w-full max-w-md gap-3 text-left">
-        <div v-for="(tip, i) in tips" :key="i" class="flex items-center gap-3 rounded-xl bg-surface-raised px-3.5 py-3">
-          <div class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-brand-primary/10">
-            <AppIconsax :name="tip.icon" color="var(--color-brand-primary)" :size="17" />
-          </div>
-          <AppText size="14" color="neutral-600" class-list="font-poppins">{{ tip.text }}</AppText>
-        </div>
-      </div>
-    </div>
+    <ol class="mt-9 grid w-full max-w-2xl gap-4 border-t border-border-inner pt-6 text-start sm:grid-cols-3">
+      <li v-for="(step, i) in steps" :key="i" class="flex gap-3">
+        <span class="font-poppins text-[14px] font-semibold tabular-nums text-brand-primary">{{ i + 1 }}</span>
+        <AppText size="14" color="neutral-400">{{ step }}</AppText>
+      </li>
+    </ol>
   </div>
 </template>

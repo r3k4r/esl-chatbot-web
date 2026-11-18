@@ -10,10 +10,15 @@ const label = computed(() => (theme.value === 'dark' ? 'Switch to light mode' : 
   <!-- Students' choice is also saved on their profile; staff have none, so it stays on this device -->
   <button type="button" class="header-circle-btn overflow-hidden" :aria-label="label" :title="label"
     @click="toggleTheme(!isStaff)">
-    <Transition name="theme-icon" mode="out-in">
-      <AppIconsax v-if="theme === 'dark'" key="moon" name="Moon" color="currentColor" :size="18" />
-      <AppIconsax v-else key="sun" name="Sun1" color="currentColor" :size="18" />
-    </Transition>
+    <!-- The saved theme lives in this browser only, so the server can't know which icon to
+         draw; rendering it on the server half-patched the SVG into a bare circle on reload. -->
+    <ClientOnly>
+      <Transition name="theme-icon" mode="out-in">
+        <AppIconsax v-if="theme === 'dark'" key="moon" name="Moon" color="currentColor" :size="18" />
+        <AppIconsax v-else key="sun" name="Sun1" color="currentColor" :size="18" />
+      </Transition>
+      <template #fallback><span class="size-4.5" /></template>
+    </ClientOnly>
   </button>
 </template>
 

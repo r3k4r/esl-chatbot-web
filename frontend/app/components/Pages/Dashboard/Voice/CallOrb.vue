@@ -1,68 +1,49 @@
 <script setup lang="ts">
-import type { CallPhase, Speaker } from '~/composables/useVoiceLab'
+import type { CallSpeaker } from '~/common/types/voice-types'
 
-const props = defineProps<{
-  phase: CallPhase
-  speaker: Speaker
-  level: number // 0–1 live mic loudness
-}>()
+// The call's one visual. It follows whoever is talking: your voice moves the ring,
+// the tutor's voice moves the core and sends out soft waves.
+const props = defineProps<{ inCall?: boolean; connecting?: boolean; speaker?: CallSpeaker; level?: number }>()
 
-// The orb breathes with the AI while it speaks, and reacts to your voice while
-// it listens. A gentle idle pulse keeps it alive between turns.
-const scale = computed(() => {
-  if (props.phase === 'listening') return 1 + props.level * 0.22
-  if (props.phase === 'speaking') return 1.06
-  return 1
-})
-
-const aiSpeaking = computed(() => props.speaker === 'ai')
-const userTalking = computed(() => props.phase === 'listening')
-const connecting = computed(() => props.phase === 'connecting')
-const thinking = computed(() => props.phase === 'thinking')
+const tutor = computed(() => props.speaker === 'tutor')
+const ring = computed(() => 1 + (props.speaker === 'learner' ? (props.level ?? 0) * 0.45 : 0))
+const core = computed(() => 1 + (tutor.value ? (props.level ?? 0) * 0.12 : 0))
+const icon = computed(() => (!props.inCall ? 'Call' : tutor.value ? 'Sound' : 'Microphone2'))
 </script>
 
 <template>
-  <div class="relative flex items-center justify-center" style="width:240px;height:240px">
-    <!-- outer reactive halo -->
-    <div
-      class="absolute rounded-full bg-brand-primary/15 blur-2xl transition-transform duration-150 ease-out"
-      style="width:240px;height:240px"
-      :style="{ transform: `scale(${0.7 + level * 0.5})` }"
+  <div class="relative grid size-48 place-items-center" aria-hidden="true">
+    <span
+      class="absolute size-40 rounded-full bg-brand-primary/10 transition-transform duration-100 ease-out"
+      :style="{ transform: `scale(${ring})` }"
     />
-
-    <!-- listening ripple rings -->
-    <template v-if="userTalking">
-      <span class="absolute rounded-full border border-brand-primary/30" style="width:200px;height:200px"
-        :style="{ transform: `scale(${1 + level * 0.5})`, opacity: 0.2 + level * 0.6 }" />
+    <template v-if="tutor">
+      <span class="orb-wave absolute size-32 rounded-full bg-brand-primary/25" />
+      <span class="orb-wave absolute size-32 rounded-full bg-brand-primary/25 [animation-delay:900ms]" />
     </template>
-
-    <!-- AI speaking pulse -->
-    <span v-if="aiSpeaking" class="pulse-ring absolute rounded-full bg-brand-primary/40" style="width:170px;height:170px" />
-
-    <!-- core orb -->
-    <div
-      class="relative grid place-content-center rounded-full shadow-[0_20px_60px_-15px_rgba(245,158,11,0.55)] transition-transform duration-150 ease-out"
-      :class="aiSpeaking
-        ? 'bg-linear-to-br from-brand-primary to-brand-accent'
-        : 'bg-linear-to-br from-[#1a1a1e] to-[#2a2a30] dark:from-[#1a1a1e] dark:to-[#2a2a30]'"
-      style="width:150px;height:150px"
-      :style="{ transform: `scale(${scale})` }"
+    <span
+      class="relative grid size-32 place-items-center rounded-full bg-brand-primary transition-transform duration-100 ease-out"
+      :class="{ 'opacity-60': connecting }"
+      :style="{ transform: `scale(${core})` }"
     >
-      <!-- inner sheen -->
-      <div class="absolute inset-2 rounded-full bg-white/5" />
-
-      <AppIconsax
-        :name="userTalking ? 'Microphone2' : 'Candle'"
-        :color="aiSpeaking ? '#000' : '#f59e0b'"
-        :size="44"
-        class="relative"
-      />
-
-      <!-- connecting / thinking spinner ring -->
+      <AppIconsax :name="icon" :size="40" color="white" />
       <span
-        v-if="connecting || thinking"
-        class="absolute inset-0 rounded-full border-2 border-brand-primary/20 border-t-brand-primary animate-spin"
+        v-if="connecting"
+        class="absolute -inset-1.5 animate-spin rounded-full border-2 border-transparent border-t-brand-primary motion-reduce:animate-none"
       />
-    </div>
+    </span>
   </div>
 </template>
+
+<style scoped>
+.orb-wave {
+  animation: orb-wave 1.8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+@keyframes orb-wave {
+  from { transform: scale(1); opacity: 0.9; }
+  to { transform: scale(1.6); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .orb-wave { animation: none; opacity: 0.4; }
+}
+</style>

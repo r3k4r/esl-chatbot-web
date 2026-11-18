@@ -96,6 +96,7 @@ export const routes: Record<string, Handler> = {
   // ── Sessions / chat ───────────────────────────────────────────────────────
   'GET /sessions': auth(({ query }) => page(F.sessions, query)),
   'POST /sessions': auth(({ body }) => created({ ...F.sessions[0]!, id: 'sess-new', mode: body?.mode ?? 'TEXT', topic: body?.topic ?? null, endedAt: null, messageCount: 0, averageScore: null, summary: null, startedAt: new Date().toISOString() })),
+  'GET /sessions/usage': auth(() => ok({ plan: 'FREE', active: true, sessionsToday: 1, sessionsPerDay: 3, messagesToday: 4, messagesPerDay: 20, canStart: true, reason: null, resetsInSeconds: 3600 })),
   'GET /sessions/:id': auth(({ params }) => ok(F.sessionDetail(params.id!))),
   'PATCH /sessions/:id': auth(({ params, body }) => ok({ ...F.sessions.find((s) => s.id === params.id), ...body }, 'Session updated')),
   'DELETE /sessions/:id': auth(() => ok(null, 'Session deleted')),

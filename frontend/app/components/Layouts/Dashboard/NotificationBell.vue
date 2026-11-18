@@ -46,7 +46,10 @@ function onSelect(n: Notification) {
 <template>
   <UiDropdownMenu :open="open" @update:open="v => v ? onOpen() : onClose()">
     <UiDropdownMenuTrigger as-child>
-      <button class="header-circle-btn" aria-label="Notifications">
+      <button
+        class="header-circle-btn data-[state=open]:border-brand-primary data-[state=open]:bg-brand-primary data-[state=open]:text-white"
+        aria-label="Notifications"
+      >
         <AppIconsax name="Notification" color="currentColor" :size="18" />
         <span
           v-if="unreadCount > 0"

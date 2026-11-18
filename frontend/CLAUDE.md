@@ -84,7 +84,7 @@ app/
 │  │  └─ Dashboard/ # dashboard page sections, grouped by route
 │  │     ├─ Overview/   # UserDashboard, GreetingHero, StatCard, LearnerSkills, LearnerWeek, LearnerActivity, LearnerTasks, LearnerVocab, LearnerGoals, RecentChats
 │  │     ├─ Chat/       # SessionsSidebar, ThreadHeader, MessageThread, MessageBubble, Composer, CoachPane, SessionItem, ThinkingIndicator
-│  │     ├─ Voice/      # PromptCard, ScorePanel, PhonemeGrid
+│  │     ├─ Voice/      # CallIntro, CallStage, CallOrb, CallLocked, CallAllowance, ScorePanel, PronunciationCard, CallTranscript, TurnRow
 │  │     ├─ Vocab/      # Flashcard, DeckList
 │  │     ├─ Goals/      # GoalCard, AchievementGrid
 │  │     └─ Lessons/    # CategoryFilter, LessonCard
@@ -319,7 +319,7 @@ All pages use `definePageMeta({ layout: 'dashboard', requiresAuth: true })`.
 |---|---|---|
 | `/dashboard` | `pages/dashboard/index.vue` | Built — **thin role switch**: ADMIN→`Dashboard/Admin/AdminDashboard`, TUTOR→`Dashboard/Tutor/TutorDashboard`, STUDENT→`Dashboard/Overview/UserDashboard` |
 | `/dashboard/chat` | `pages/dashboard/chat.vue` | Built (student learner feature) |
-| `/dashboard/voice` | `pages/dashboard/voice.vue` | Built — voice-call learner feature (student) |
+| `/dashboard/voice` | `pages/dashboard/voice.vue` | Built — **Voice Lab**, a real-time call with Gemini Live (student): talk any time, the tutor answers in ~0.5 s and stops when you talk over it; only Mute and End call. Call on the left (intro → live stage), right rail: last-answer scores, pronunciation (Gold+), this call's transcript. Locked with a blurred overlay (`CallLocked`) when `GET /sessions/usage` says a call can't start (unverified, inactive plan, daily conversations or FREE's daily messages used up) |
 | `/dashboard/vocab` | `pages/dashboard/vocab.vue` | Built — SRS vocabulary (student) |
 | `/dashboard/goals` | `pages/dashboard/goals.vue` | Built (student) |
 | `/dashboard/lessons` | `pages/dashboard/lessons.vue` | Stub — not yet linked in nav (commented out) |
@@ -405,10 +405,16 @@ components/Pages/Dashboard/
 │  │  └─ TutorClassesView.vue # → <PagesDashboardClassesTutorClassesView />
 │  └─ Student/               # STUDENT role view — enrolled classes + join
 │     └─ StudentClassesView.vue # → <PagesDashboardClassesStudentClassesView />
-├─ Voice/
-│  ├─ PromptCard.vue
-│  ├─ ScorePanel.vue
-│  └─ PhonemeGrid.vue
+├─ Voice/                    # Voice Lab call (state in useVoiceLab)
+│  ├─ CallIntro.vue          # Before a call: orb, Start call, starter sentences, 3 steps
+│  ├─ CallStage.vue          # On a call: Live + clock, orb, who is talking, both sides' captions, Mute · End call (nothing else, like a phone call)
+│  ├─ CallOrb.vue            # The one visual: ring follows your voice, core + waves follow the tutor's, arc while connecting
+│  ├─ CallLocked.vue         # Blurred overlay + reason + action when a call can't start
+│  ├─ CallAllowance.vue      # "2 of 3 conversations left today · 16 messages left"
+│  ├─ ScorePanel.vue         # Last answer: overall, grammar/vocab/fluency, tutor tip
+│  ├─ PronunciationCard.vue  # Gold/Premium word-level scores; Free sees the upgrade
+│  ├─ CallTranscript.vue     # This call's turns (TurnRow each: your words + score, the tutor's answer)
+│  └─ TurnRow.vue
 ├─ Vocab/
 │  ├─ Flashcard.vue
 │  └─ DeckList.vue
@@ -451,7 +457,8 @@ Types are split by domain — never define them inline in a composable:
 | `useDashboardOverview` | [useDashboardOverview.ts](app/composables/useDashboardOverview.ts) | `data`, `loading`, `error`, `fetchOverview`, `nextStep`, `stats`; plus pure `learnerStats(data)` and `learnerNextStep(data, now)`: missing task → due within 2 days → words due → rest of today's goal → goal reached |
 | `useSubscription` | [useSubscription.ts](app/composables/useSubscription.ts) | `getMySubscription`, `initiateFib`, `getFibStatus`, `cancelFib` |
 | `useChatPage` / `useSessions` | [useChatPage.ts](app/composables/useChatPage.ts) | Chat page state/actions. The page opens on a **blank chat** (only `?session=` opens an existing one); `newSession()` just clears the thread and the session is created by the first message (`ensureSession`); `useSessions` is the raw session API layer it builds on. Voice actions are `startVoice` / `send` (sends the recording when one is live) / `cancelVoice`; `micDisabled` + `canSend` drive the composer |
-| `useVoiceChat` / `useVoiceLab` | [useVoiceChat.ts](app/composables/useVoiceChat.ts) | Voice pipeline state + Voice Lab |
+| `useVoiceChat` | [useVoiceChat.ts](app/composables/useVoiceChat.ts) | Voice messages in AI Chat over the /chat socket (record → stream chunks → `voice:end` → `message:response` + `voice:tts`). Not used by the Voice Lab |
+| `useLiveCall` / `useLiveAudio` | [useLiveCall.ts](app/composables/useLiveCall.ts) | Voice Lab live call. `POST /live/calls` gives a session + one-use token; the browser opens Gemini Live's WebSocket itself (`BidiGenerateContentConstrained?access_token=`), streams the mic as 16 kHz PCM (`realtimeInput.audio`) and plays the tutor's 24 kHz PCM. Google detects when the learner stops and sends `interrupted` when they talk over the tutor (`useLiveAudio.flush()`). The tutor speaks first (a kickoff text after `setupComplete`). On each `turnComplete` the two transcripts + the learner's audio for that answer go to `POST /live/calls/:id/turns` (saved, scored, limits; 429 or `remainingMessages: 0` ends the call once the tutor finishes). `lock` comes from `GET /sessions/usage`. `useLiveAudio` = one Web Audio context opened in the Start tap: an inline AudioWorklet (`lib/pcm.ts`) for the mic, a gap-free queue for the tutor |
 | `useVocabPage` / `useVocabulary` | [useVocabPage.ts](app/composables/useVocabPage.ts) | Vocab page state; `useVocabulary` is the raw vocab API layer |
 | `useTasks` | [useTasks.ts](app/composables/useTasks.ts) | `listClassTasks`, `getTask`, `createTask`, `updateTask` (incl. `commentsEnabled`), `deleteTask`, `submitTask`, `listSubmissions`, `giveFeedback`, `listComments`, `postComment`, `updateComment`, `deleteComment`, `addTaskFiles`, `deleteTaskFile`, `getTaskFileDownload` (signed link that saves the file under its name). `submitTask` and comment/file calls send multipart `FormData` |
 | `useClassStudentPage` | [useClassStudentPage.ts](app/composables/useClassStudentPage.ts) | Student progress page: loads the student detail + class name (breadcrumbs), `assignWord`, `assignGoal`; 403/404 → back to the class People tab |

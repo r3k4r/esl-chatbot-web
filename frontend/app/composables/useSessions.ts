@@ -5,7 +5,9 @@ import type {
   MessageEvaluation,
   SessionEvaluation,
   SessionMode,
+  SessionUsage,
 } from '~/common/types/chat-types'
+import type { LiveCallStart, LiveTurnSaved } from '~/common/types/voice-types'
 
 interface ListResponse<T> {
   success: boolean
@@ -57,6 +59,21 @@ export function useSessions() {
     })
   }
 
+  /** Today's usage: whether a chat or call can start now, and why not. */
+  async function getUsage() {
+    return await useHttp<SingleResponse<SessionUsage>>({ method: 'GET', url: '/sessions/usage', requireAuth: true, showToast: false })
+  }
+
+  /** Voice Lab: a VOICE session + one-use Gemini Live token (same limits as a new session). */
+  async function startLiveCall() {
+    return await useHttp<SingleResponse<LiveCallStart>>({ method: 'POST', url: '/live/calls', requireAuth: true, showToast: false })
+  }
+
+  /** Save one call exchange (and the learner's PCM audio) and get its scores back. */
+  async function saveLiveTurn(sessionId: string, body: { user: string; tutor: string; audio?: string }) {
+    return await useHttp<SingleResponse<LiveTurnSaved>>({ method: 'POST', url: `/live/calls/${sessionId}/turns`, body, requireAuth: true, showToast: false })
+  }
+
   async function endSession(id: string) {
     return await useHttp<SingleResponse<SessionListItem & { evaluation: SessionEvaluation }>>({
       method: 'POST',
@@ -104,5 +121,5 @@ export function useSessions() {
     })
   }
 
-  return { listSessions, createSession, getSession, endSession, updateSession, deleteSession, sendMessage, listMessages }
+  return { listSessions, createSession, getSession, getUsage, startLiveCall, saveLiveTurn, endSession, updateSession, deleteSession, sendMessage, listMessages }
 }
