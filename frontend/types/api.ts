@@ -7814,6 +7814,16 @@ export interface paths {
                         aiPersonality?: "FRIENDLY" | "FORMAL" | "CASUAL" | "ENCOURAGING" | "STRICT" | "PATIENT" | null;
                         voiceSpeed?: number;
                         autoSpeak?: boolean;
+                        /**
+                         * @description The tutor's accent (spoken replies, live calls, spelling). Default US.
+                         * @enum {string}
+                         */
+                        tutorAccent?: "US" | "GB";
+                        /**
+                         * @description The tutor's voice. Default FEMALE.
+                         * @enum {string}
+                         */
+                        tutorVoice?: "FEMALE" | "MALE";
                         /** @example en */
                         uiLanguage?: string;
                         /** @enum {string} */
@@ -9021,6 +9031,16 @@ export interface components {
             timezone?: string;
             /** @example true */
             emailDigestEnabled?: boolean;
+            /**
+             * @example US
+             * @enum {string}
+             */
+            tutorAccent?: "US" | "GB";
+            /**
+             * @example FEMALE
+             * @enum {string}
+             */
+            tutorVoice?: "FEMALE" | "MALE";
         } | null;
         MyProfile: {
             /** Format: uuid */

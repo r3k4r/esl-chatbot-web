@@ -51,7 +51,7 @@ export function profileFor(p: Persona): MyProfileData {
     role: u.role, isActive: true, authProvider: 'LOCAL', createdAt: T, updatedAt: T,
     subscription: { plan: u.subscription.plan, status: 'ACTIVE', currentPeriodEnd: u.subscription.plan === 'FREE' ? null : daysFrom(20) },
     learnerProfile: u.role === 'STUDENT'
-      ? { id: `lp-${p}`, currentLevel: 'B1', targetLevel: 'C1', learningPurpose: 'WORK', topicsOfInterest: ['travel', 'business'], aiPersonality: 'FRIENDLY', voiceSpeed: 1, autoSpeak: false, uiLanguage: 'en', theme: 'light', weeklyGoalMinutes: 150, timezone: 'Asia/Baghdad', emailDigestEnabled: true }
+      ? { id: `lp-${p}`, currentLevel: 'B1', targetLevel: 'C1', learningPurpose: 'WORK', topicsOfInterest: ['travel', 'business'], aiPersonality: 'FRIENDLY', voiceSpeed: 1, autoSpeak: false, uiLanguage: 'en', theme: 'light', weeklyGoalMinutes: 150, timezone: 'Asia/Baghdad', emailDigestEnabled: true, tutorAccent: 'US', tutorVoice: 'FEMALE' }
       : null,
   }
 }

@@ -122,6 +122,9 @@ function onKeydown(e: KeyboardEvent) {
           @keydown="onKeydown"
         />
 
+        <!-- The tutor's voice for spoken replies, beside the mic (like a model picker) -->
+        <BlockTutorVoicePicker v-if="!isRecording && !isReviewing" inline />
+
         <!-- Stop genuinely stops: it holds the take for playback, it does not send -->
         <AppButton
           v-if="isRecording"
@@ -130,7 +133,7 @@ function onKeydown(e: KeyboardEvent) {
           radius="8"
           aspect="square"
           icon="Stop"
-          :icon-config="{ color: '#ef4444', size: 18 }"
+          :icon-config="{ color: 'var(--color-brand-primary)', size: 18 }"
           class-list="shrink-0"
           aria-label="Stop recording and listen back"
           @click="emit('stop')"

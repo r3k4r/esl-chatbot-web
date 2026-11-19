@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { releasePlayback, takePlayback } from '~/lib/playback'
+
 // Shown between stopping the mic and sending: play the take back, then decide.
 // Nothing has been sent to the AI at this point — the server is holding the
 // buffered audio and only acts when Send emits `voice:end`.
@@ -38,6 +40,7 @@ function stop() {
   if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null }
   audio?.pause()
   audio = null
+  releasePlayback(stop)
   isPlaying.value = false
   elapsed.value = 0
 }
@@ -46,6 +49,7 @@ function toggle() {
   if (isPlaying.value) { stop(); return }
   if (!props.url) return
   stop()
+  takePlayback(stop) // stops any chat voice that is playing
   audio = new Audio(props.url)
   audio.onended = stop
   audio.onerror = stop
@@ -120,8 +124,8 @@ onBeforeUnmount(stop)
       size="32"
       radius="8"
       icon="Trash"
-      :icon-config="{ color: '#ef4444', size: 16 }"
-      class-list="shrink-0 gap-2 px-2.5 text-red-500 hover:bg-red-500/10"
+      :icon-config="{ color: 'var(--color-text-muted)', size: 16 }"
+      class-list="shrink-0 gap-2 px-2.5 text-text-muted"
       aria-label="Discard recording"
       @click="emit('discard')"
     >

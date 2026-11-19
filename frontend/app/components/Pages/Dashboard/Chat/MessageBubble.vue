@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ChatMessage } from '~/common/types/dashboard-types'
+import { realDuration, releasePlayback, takePlayback } from '~/lib/playback'
 
 const props = defineProps<{ message: ChatMessage; userInitial?: string }>()
 
@@ -23,6 +24,7 @@ let audio: HTMLAudioElement | null = null
 let rafId: number | null = null
 
 function fmt(s: number) {
+  if (!Number.isFinite(s) || s < 0) return '0:00'
   const m = Math.floor(s / 60)
   const sec = Math.floor(s % 60)
   return `${m}:${String(sec).padStart(2, '0')}`
@@ -31,8 +33,8 @@ function fmt(s: number) {
 function tick() {
   if (!audio) return
   elapsed.value = audio.currentTime
-  duration.value = audio.duration || 0
-  progress.value = duration.value ? (audio.currentTime / duration.value) * 100 : 0
+  if (Number.isFinite(audio.duration) && audio.duration > 0) duration.value = audio.duration
+  progress.value = duration.value ? Math.min(100, (audio.currentTime / duration.value) * 100) : 0
   rafId = requestAnimationFrame(tick)
 }
 
@@ -40,20 +42,25 @@ function stopAudio() {
   if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null }
   audio?.pause()
   audio = null
+  releasePlayback(stopAudio)
   isPlaying.value = false
   progress.value = 0
   elapsed.value = 0
 }
 
-function toggleAudio() {
+async function toggleAudio() {
   if (isPlaying.value) { stopAudio(); return }
   if (!audioSrc.value) return
   stopAudio()
-  audio = new Audio(audioSrc.value)
-  audio.onloadedmetadata = () => { duration.value = audio?.duration || 0 }
-  audio.onended = () => { stopAudio() }
-  audio.play().catch(() => { })
+  takePlayback(stopAudio) // stops any other voice on the page
+  const el = new Audio(audioSrc.value)
+  audio = el
   isPlaying.value = true
+  el.onended = stopAudio
+  el.onerror = stopAudio
+  duration.value = await realDuration(el)
+  if (audio !== el) return // stopped (or another voice started) while measuring
+  el.play().catch(stopAudio)
   rafId = requestAnimationFrame(tick)
 }
 
@@ -83,11 +90,10 @@ onBeforeUnmount(stopAudio)
     </div>
 
     <!-- The tutor's turn: plain reading text, no bubble (like a document, easy on the eyes).
-         v-html is safe: the backend allowlist-sanitizes replies (p strong em ul ol li br). -->
+         v-html is safe: the backend allowlist-sanitizes replies (p strong em ul ol li br, and
+         a only to tutelage.krd, opening in a new tab). -->
     <div v-else class="flex w-full gap-3">
-      <div class="mt-0.5 grid size-7 shrink-0 place-content-center rounded-lg bg-brand-primary/12" aria-hidden="true">
-        <AppIconsax name="Candle" color="var(--color-brand-primary)" type="bold" :size="16" />
-      </div>
+      <AppImage src="/only-logo-black-border-yellow-bg.svg" alt="" width="28" height="28" class="mt-0.5 size-7 shrink-0" aria-hidden="true" />
       <div class="ai-prose min-w-0 flex-1 text-[15px] leading-7 text-text-body font-poppins break-words"
         v-html="message.text" />
     </div>
@@ -156,6 +162,15 @@ onBeforeUnmount(stopAudio)
   padding-inline: 0.1em;
 }
 .ai-prose :deep(em) { font-style: italic; color: var(--text-heading); }
+/* Links (only tutelage.krd survives the backend sanitizer): brand colour, always underlined */
+.ai-prose :deep(a) {
+  font-weight: 600;
+  color: var(--text-heading);
+  text-decoration: underline 2px var(--color-brand-primary);
+  text-underline-offset: 4px;
+  overflow-wrap: anywhere;
+}
+.ai-prose :deep(a:hover) { color: var(--color-brand-primary); }
 .ai-prose :deep(ul),
 .ai-prose :deep(ol) { padding-inline-start: 1.3em; margin-bottom: 0.6em; }
 .ai-prose :deep(ul) { list-style-type: disc; }

@@ -91,13 +91,13 @@ function doEnd() {
 
       <AppButton
         v-if="!isSessionEnded"
-        variant="outline"
+        variant="primary"
         size="36"
         radius="8"
         :loading="ending"
         icon="CloseCircle"
-        :icon-config="{ color: 'currentColor', size: 16 }"
-        class-list="gap-2 px-2.5 sm:px-3"
+        :icon-config="{ color: 'white', size: 16 }"
+        class-list="gap-2 px-2.5 sm:px-3 font-medium"
         @click="confirmEnd = true"
       >
         <span class="hidden sm:inline text-[14px]">End session</span>

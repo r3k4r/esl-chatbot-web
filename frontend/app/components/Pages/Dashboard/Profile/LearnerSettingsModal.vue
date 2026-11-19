@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onClickOutside } from '@vueuse/core'
-import type { MyLearnerProfile, UpdateLearnerProfileInput } from '~/common/types/profile-types'
+import type { MyLearnerProfile, TutorAccent, TutorVoiceGender, UpdateLearnerProfileInput } from '~/common/types/profile-types'
+import { TUTOR_ACCENTS, TUTOR_VOICES } from '~/common/data/tutor-voice'
 
 const props = defineProps<{
   open: boolean
@@ -36,6 +37,8 @@ const theme = ref<'light' | 'dark'>('light')
 const emailDigestEnabled = ref(true)
 const topicInput = ref('')
 const topics = ref<string[]>([])
+const tutorAccent = ref<TutorAccent>('US')
+const tutorVoice = ref<TutorVoiceGender>('FEMALE')
 
 const tzSearch = ref('')
 const tzOpen = ref(false)
@@ -67,6 +70,8 @@ watch(() => props.open, (v) => {
   theme.value = (lp?.theme as 'light' | 'dark') ?? 'light'
   emailDigestEnabled.value = lp?.emailDigestEnabled ?? true
   topics.value = Array.isArray(lp?.topicsOfInterest) ? [...lp!.topicsOfInterest] : []
+  tutorAccent.value = lp?.tutorAccent ?? 'US'
+  tutorVoice.value = lp?.tutorVoice ?? 'FEMALE'
   tzSearch.value = ''
 }, { immediate: true })
 
@@ -96,6 +101,8 @@ function submit() {
     theme: theme.value,
     emailDigestEnabled: emailDigestEnabled.value,
     topicsOfInterest: topics.value,
+    tutorAccent: tutorAccent.value,
+    tutorVoice: tutorVoice.value,
   })
 }
 
@@ -144,6 +151,28 @@ const voiceSpeedLabel = computed(() => `${voiceSpeed.value.toFixed(1)}×`)
               <UiSelectContent>
                 <UiSelectItem value="NONE">Default</UiSelectItem>
                 <UiSelectItem v-for="p in PERSONALITIES" :key="p" :value="p">{{ PERSONALITY_LABEL[p] }}</UiSelectItem>
+              </UiSelectContent>
+            </UiSelect>
+          </div>
+        </div>
+
+        <!-- Tutor voice: accent + gender (spoken replies, Voice Lab, and the English it writes) -->
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <p class="text-[14px] font-medium font-poppins mb-1.5" :style="`color:var(--text-heading)`">Tutor accent</p>
+            <UiSelect v-model="tutorAccent">
+              <UiSelectTrigger class="text-[14px]"><UiSelectValue /></UiSelectTrigger>
+              <UiSelectContent>
+                <UiSelectItem v-for="a in TUTOR_ACCENTS" :key="a.value" :value="a.value">{{ a.label }}</UiSelectItem>
+              </UiSelectContent>
+            </UiSelect>
+          </div>
+          <div>
+            <p class="text-[14px] font-medium font-poppins mb-1.5" :style="`color:var(--text-heading)`">Tutor voice</p>
+            <UiSelect v-model="tutorVoice">
+              <UiSelectTrigger class="text-[14px]"><UiSelectValue /></UiSelectTrigger>
+              <UiSelectContent>
+                <UiSelectItem v-for="g in TUTOR_VOICES" :key="g.value" :value="g.value">{{ g.label }}</UiSelectItem>
               </UiSelectContent>
             </UiSelect>
           </div>

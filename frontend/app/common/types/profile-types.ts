@@ -1,5 +1,13 @@
 export type ThemePreference = 'light' | 'dark'
 
+/** The tutor's voice when it speaks (chat voice replies, Voice Lab) and the English it writes. */
+export type TutorAccent = 'US' | 'GB'
+export type TutorVoiceGender = 'FEMALE' | 'MALE'
+export interface TutorVoiceChoice {
+  accent: TutorAccent
+  gender: TutorVoiceGender
+}
+
 export interface MyLearnerProfile {
   id: string
   currentLevel: string | null
@@ -14,6 +22,8 @@ export interface MyLearnerProfile {
   weeklyGoalMinutes: number
   timezone: string
   emailDigestEnabled: boolean
+  tutorAccent: TutorAccent
+  tutorVoice: TutorVoiceGender
 }
 
 export interface MyProfileData {
@@ -52,4 +62,6 @@ export interface UpdateLearnerProfileInput {
   weeklyGoalMinutes?: number
   timezone?: string
   emailDigestEnabled?: boolean
+  tutorAccent?: TutorAccent
+  tutorVoice?: TutorVoiceGender
 }

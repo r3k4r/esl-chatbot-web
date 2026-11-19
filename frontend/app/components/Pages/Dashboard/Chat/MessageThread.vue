@@ -41,9 +41,7 @@ defineExpose({ scrollEl })
         v-if="!messages.length"
         class="flex flex-col items-center justify-center h-full text-center animate-card-enter pb-4"
       >
-        <div class="mb-4 grid size-12 place-content-center rounded-xl bg-brand-primary/12">
-          <AppIconsax name="Candle" color="var(--color-brand-primary)" type="bold" :size="24" />
-        </div>
+        <AppImage src="/only-logo-black-border-yellow-bg.svg" alt="Tutelage AI" width="48" height="48" class="mb-4 size-12" />
 
         <AppText size="20" weight="semibold" class-list="mb-1.5">
           Hi{{ getUser?.displayName ? ` ${getUser.displayName.split(' ')[0]}` : '' }}, what shall we practise?

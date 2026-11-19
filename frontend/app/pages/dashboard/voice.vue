@@ -23,7 +23,11 @@ const {
           Practise speaking English on a live call with Tutelage AI.
         </AppText>
       </div>
-      <CallAllowance :usage="usage" />
+      <div class="flex flex-wrap items-center gap-3">
+        <CallAllowance :usage="usage" />
+        <!-- The voice is set when a call starts, so it can't change mid-call -->
+        <BlockTutorVoicePicker :disabled="inCall" disabled-hint="Change the voice after this call" />
+      </div>
     </header>
 
     <!-- Built in the browser (mic + live audio only work there), so the row layout never

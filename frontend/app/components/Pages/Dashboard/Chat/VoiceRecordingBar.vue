@@ -61,24 +61,25 @@ onBeforeUnmount(stop)
 </script>
 
 <template>
-  <div class="mb-2 flex items-center gap-2 sm:gap-3 px-3 py-2 rounded-xl border bg-red-500/8 border-red-500/20">
-    <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse shrink-0" aria-hidden="true" />
+  <!-- Brand orange, not alarm red: recording is a normal, friendly action here -->
+  <div class="mb-2 flex items-center gap-2 sm:gap-3 px-3 py-2 rounded-xl border bg-brand-primary/8 border-brand-primary/25">
+    <span class="w-2 h-2 rounded-full bg-brand-primary animate-pulse shrink-0" aria-hidden="true" />
 
     <!-- Waveform — fixed 28px box, bars grow from the baseline -->
     <div class="hidden xs:flex items-end gap-0.5 h-7 shrink-0" aria-hidden="true">
       <span
         v-for="(h, i) in bars"
         :key="i"
-        class="w-0.75 rounded-full bg-red-500"
+        class="w-0.75 rounded-full bg-brand-primary"
         :style="{ height: `${h}px`, maxHeight: '28px' }"
       />
     </div>
 
-    <AppText size="13" font-family="mono" class-list="text-red-500 shrink-0">
+    <AppText size="14" font-family="mono" weight="medium" class-list="text-brand-primary shrink-0">
       {{ clock }}
     </AppText>
 
-    <AppText size="13" class-list="truncate text-red-500/90 flex-1 min-w-0">
+    <AppText size="14" class-list="truncate text-text-body flex-1 min-w-0">
       {{ partialTranscript || 'Listening… press Send when you\'re done' }}
     </AppText>
 
@@ -87,11 +88,12 @@ onBeforeUnmount(stop)
       size="32"
       radius="8"
       icon="Trash"
-      :icon-config="{ color: '#ef4444', size: 16 }"
-      class-list="shrink-0 gap-2 px-2.5 text-red-500 hover:bg-red-500/10"
+      :icon-config="{ color: 'var(--color-text-muted)', size: 16 }"
+      class-list="shrink-0 gap-2 px-2.5 text-text-muted"
+      aria-label="Discard recording"
       @click="emit('discard')"
     >
-      <span class="hidden sm:inline text-[13px]">Discard</span>
+      <span class="hidden sm:inline text-[14px]">Discard</span>
     </AppButton>
   </div>
 </template>
