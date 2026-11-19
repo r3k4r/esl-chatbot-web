@@ -3968,7 +3968,7 @@ export interface paths {
         post?: never;
         /**
          * Delete a goal
-         * @description Students can delete their own goals. Tutors can delete goals they assigned. Admins can delete any goal.
+         * @description Students can delete goals they set themselves (not ones a teacher or admin gave them). Tutors can delete goals they assigned. Admins can delete any goal.
          */
         delete: {
             parameters: {
@@ -4038,8 +4038,21 @@ export interface paths {
                     };
                 };
                 401: components["responses"]["Unauthorized"];
-                403: components["responses"]["Forbidden"];
+                /** @description No access, or a student editing (not just progress/status) a goal a teacher or admin gave them */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
                 404: components["responses"]["NotFound"];
+                /** @description The goal is completed; only an admin can change it */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
                 422: components["responses"]["ValidationError"];
             };
         };
@@ -8225,6 +8238,245 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/classes/{classId}/vocabulary-lists": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Word lists assigned to this class, with progress (class tutor or admin) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    classId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Lists, newest first */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            success?: boolean;
+                            message?: string;
+                            data?: components["schemas"]["ClassWordList"][];
+                        };
+                    };
+                };
+                /** @description Not a tutor of this class */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Class not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Assign a word list to students of this class (class tutor or admin)
+         * @description `target.mode`: ALL students, ONLY the listed `studentIds`, or everyone EXCEPT them.
+         *     Each student gets their own copy of each word (source ASSIGNED). A word a student
+         *     already has is skipped so their progress on it is kept. Each student gets one
+         *     VOCABULARY_ASSIGNED notification. Not allowed in an archived class.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    classId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        /** @description Optional. Empty = the words are given on their own, without a list name */
+                        title?: string;
+                        words: {
+                            word: string;
+                            definition: string;
+                            example?: string;
+                            partOfSpeech?: string;
+                        }[];
+                        target: {
+                            /** @enum {string} */
+                            mode: "ALL" | "ONLY" | "EXCEPT";
+                            studentIds?: string[];
+                        };
+                    };
+                };
+            };
+            responses: {
+                /** @description Words assigned */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            success?: boolean;
+                            message?: string;
+                            data?: {
+                                /** Format: uuid */
+                                id: string;
+                                title: string;
+                                /** Format: date-time */
+                                createdAt: string;
+                                wordCount: number;
+                                studentCount: number;
+                                added: number;
+                                /** @description Copies skipped because the student already had the word */
+                                skipped: number;
+                            };
+                        };
+                    };
+                };
+                /** @description Not a tutor of this class */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Class not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Invalid body or no students chosen */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/classes/{classId}/vocabulary-lists/{listId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Edit a class word list — rename, fix cards, add words (class tutor or admin)
+         * @description `words` are cards to save. A word already in the list updates every student's
+         *     copy (meaning, example, part of speech; their progress stays). A new word is given
+         *     to the students who have the list, with one notification each. Words left out are
+         *     untouched: lists never shrink. Up to 30 words per list. Not allowed in an archived class.
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    classId: string;
+                    listId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        title?: string;
+                        words?: {
+                            word: string;
+                            definition: string;
+                            example?: string;
+                            partOfSpeech?: string;
+                        }[];
+                    };
+                };
+            };
+            responses: {
+                /** @description The list after the change */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            success?: boolean;
+                            message?: string;
+                            data?: components["schemas"]["ClassWordList"] & {
+                                /** @description New words given to the list's students */
+                                addedWords: number;
+                            };
+                        };
+                    };
+                };
+                /** @description Not a tutor of this class */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Class or list not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Invalid body or more than 30 words */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
     "/vocabulary/stats": {
         parameters: {
             query?: never;
@@ -8459,6 +8711,79 @@ export interface paths {
         };
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/vocabulary/enrich": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * AI writes meaning, example and part of speech for words (tutor/admin)
+         * @description For the teacher to check before assigning a word list. Written for Kurdish
+         *     learners at A1–B1. A field the AI skipped comes back empty for the teacher to fill.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        words: string[];
+                    };
+                };
+            };
+            responses: {
+                /** @description One card per word, in the same order */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            success?: boolean;
+                            message?: string;
+                            data?: {
+                                word: string;
+                                definition: string;
+                                example: string;
+                                partOfSpeech: string;
+                            }[];
+                        };
+                    };
+                };
+                /** @description Students can't use this */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description AI busy or not configured */
+                503: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
         delete?: never;
         options?: never;
         head?: never;
@@ -9200,6 +9525,31 @@ export interface components {
             createdAt?: string;
             /** Format: date-time */
             updatedAt?: string;
+        };
+        ClassWordList: {
+            /** Format: uuid */
+            id: string;
+            /** @example Unit 3 verbs */
+            title: string;
+            /** Format: date-time */
+            createdAt: string;
+            createdBy: {
+                /** Format: uuid */
+                id: string;
+                displayName: string;
+            } | null;
+            words: {
+                word: string;
+                definition: string;
+                example: string | null;
+                partOfSpeech: string | null;
+            }[];
+            /** @description Students who received at least one word of the list */
+            studentCount: number;
+            /** @description % of the students' copies reviewed at least once */
+            practisedPct: number;
+            /** @description % of the students' copies mastered (level 5) */
+            masteredPct: number;
         };
         VocabularyItem: {
             /** Format: uuid */

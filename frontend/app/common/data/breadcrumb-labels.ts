@@ -13,4 +13,6 @@ export const breadcrumbLabels: Record<string, string> = {
   classes: 'Classes',
   create: 'New class',
   edit: 'Edit',
+  vocabulary: 'Vocabulary',
+  assign: 'Assign words',
 }

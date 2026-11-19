@@ -33,6 +33,9 @@ export type Vocabulary = {
   source: VocabSource
   assignedByTutorId: string | null
   assignedByTutor: VocabAssigner | null
+  // Set when the word came from a class word list (common/model/vocabulary-list.ts).
+  listId: string | null
+  list: { id: string; title: string } | null
   createdAt: string
   updatedAt: string
 }

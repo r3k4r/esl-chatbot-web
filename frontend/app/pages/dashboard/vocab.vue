@@ -12,14 +12,12 @@ const {
   listLoading,
   search,
   sourceFilter,
-  addOpen,
-  adding,
+  listFilter,
   currentCard,
   reviewDone,
   dueCount,
   rate,
   restartReview,
-  submitWord,
   removeWord,
 } = useVocabPage()
 </script>
@@ -33,9 +31,6 @@ const {
         <p class="text-[14px] text-zinc-500 dark:text-zinc-400 mt-1 font-poppins">
           <span class="text-brand-primary font-medium">{{ dueCount }} card{{ dueCount === 1 ? '' : 's' }}</span> due · spaced repetition
         </p>
-      </div>
-      <div class="flex items-center gap-2">
-        <AppButton variant="secondary" size="36" radius="8" icon="Add" text="Add word" @click="addOpen = true" />
       </div>
     </div>
 
@@ -70,7 +65,7 @@ const {
             <p class="text-[13px] text-zinc-500 dark:text-zinc-400 mt-1 max-w-xs font-poppins">
               {{ reviewDone
                 ? 'You cleared every card due today. Come back later for the next batch.'
-                : 'Your cards are scheduled. Add words or chat with the AI to grow your list.' }}
+                : 'Your cards are scheduled. New words come from your teacher and your chats with the AI tutor.' }}
             </p>
             <AppButton
               v-if="reviewDone"
@@ -99,14 +94,14 @@ const {
           :loading="listLoading"
           :search="search"
           :source="sourceFilter"
+          :list="listFilter"
           @update:search="search = $event"
           @update:source="sourceFilter = $event"
+          @update:list="listFilter = $event"
           @delete="removeWord"
         />
       </div>
     </template>
 
-    <!-- Add word modal -->
-    <PagesDashboardVocabAddWordModal v-model:open="addOpen" :adding="adding" @submit="submitWord" />
   </div>
 </template>

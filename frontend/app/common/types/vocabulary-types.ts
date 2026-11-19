@@ -72,8 +72,63 @@ export interface ListVocabularyParams {
   limit?: number
   due?: 'true' | 'false'
   source?: VocabSource
+  listId?: string
   category?: string
   search?: string
+}
+
+// ─── Class word lists (tutor/admin) ───────────────────────────────────────────
+
+// One card of a list: written by the teacher, or filled by POST /vocabulary/enrich.
+export interface WordCardDraft {
+  word: string
+  definition: string
+  example: string
+  partOfSpeech: string
+}
+
+// Who gets a list: every student, only the chosen ones, or everyone except them.
+export type WordListTargetMode = 'ALL' | 'ONLY' | 'EXCEPT'
+
+// POST /classes/:classId/vocabulary-lists
+export interface CreateClassWordListInput {
+  title: string
+  words: { word: string; definition: string; example?: string; partOfSpeech?: string }[]
+  target: { mode: WordListTargetMode; studentIds: string[] }
+}
+export interface ClassWordListCreated {
+  id: string
+  title: string
+  createdAt: string
+  wordCount: number
+  studentCount: number
+  added: number
+  skipped: number
+}
+
+// PATCH /classes/:classId/vocabulary-lists/:listId — rename, fix cards, add words (never removes)
+export interface UpdateClassWordListInput {
+  title?: string
+  words?: CreateClassWordListInput['words']
+}
+
+/** A list's name, or its words when it has none (words given on their own). */
+export function wordListLabel(list: Pick<ClassWordList, 'title' | 'words'>): string {
+  if (list.title) return list.title
+  const words = list.words.map((w) => w.word)
+  return words.length > 3 ? `${words.slice(0, 3).join(', ')} +${words.length - 3}` : words.join(', ')
+}
+
+// GET /classes/:classId/vocabulary-lists
+export interface ClassWordList {
+  id: string
+  title: string
+  createdAt: string
+  createdBy: { id: string; displayName: string } | null
+  words: { word: string; definition: string; example: string | null; partOfSpeech: string | null }[]
+  studentCount: number
+  practisedPct: number
+  masteredPct: number
 }
 
 // SM-2 quality rating: 0=blackout … 5=perfect recall

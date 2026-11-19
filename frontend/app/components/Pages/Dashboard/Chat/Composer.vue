@@ -116,7 +116,7 @@ function onKeydown(e: KeyboardEvent) {
           rows="1"
           :placeholder="placeholder"
           :disabled="inputDisabled"
-          class="flex-1 min-h-9 max-h-32 resize-none border-0 bg-transparent shadow-none focus-visible:ring-0 px-1 py-2 text-[15px]! font-poppins disabled:cursor-not-allowed disabled:opacity-60"
+          class="flex-1 min-h-9 max-h-32 resize-none border-0 bg-transparent! shadow-none focus-visible:ring-0 px-1 py-2 text-[15px]! font-poppins disabled:cursor-not-allowed disabled:opacity-60"
           style="color:var(--text-heading)"
           @update:model-value="emit('update:modelValue', String($event))"
           @keydown="onKeydown"

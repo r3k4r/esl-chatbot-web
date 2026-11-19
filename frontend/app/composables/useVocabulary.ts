@@ -7,6 +7,11 @@ import type {
   ListVocabularyParams,
   ReviewQuality,
   VocabPaginationMeta,
+  WordCardDraft,
+  ClassWordList,
+  ClassWordListCreated,
+  CreateClassWordListInput,
+  UpdateClassWordListInput,
 } from '~/common/types/vocabulary-types'
 
 export type {
@@ -34,6 +39,7 @@ export function useVocabulary() {
     if (params?.limit) query.set('limit', String(params.limit))
     if (params?.due) query.set('due', params.due)
     if (params?.source) query.set('source', params.source)
+    if (params?.listId) query.set('listId', params.listId)
     if (params?.category) query.set('category', params.category)
     if (params?.search) query.set('search', params.search)
     const qs = query.toString()
@@ -113,7 +119,28 @@ export function useVocabulary() {
     })
   }
 
+  /** Tutor/admin: the AI writes meaning, example and part of speech (Kurdish A1–B1 learners). */
+  function enrichWords(words: string[]) {
+    return useHttp<ListResponse<WordCardDraft>>({ method: 'POST', url: '/vocabulary/enrich', body: { words }, requireAuth: true, showToast: false })
+  }
+
+  function listClassWordLists(classId: string) {
+    return useHttp<ListResponse<ClassWordList>>({ method: 'GET', url: `/classes/${classId}/vocabulary-lists`, requireAuth: true, showToast: false })
+  }
+
+  function createClassWordList(classId: string, input: CreateClassWordListInput) {
+    return useHttp<SingleResponse<ClassWordListCreated>>({ method: 'POST', url: `/classes/${classId}/vocabulary-lists`, body: input, requireAuth: true, showToast: false })
+  }
+
+  function updateClassWordList(classId: string, listId: string, input: UpdateClassWordListInput) {
+    return useHttp<SingleResponse<ClassWordList & { addedWords: number }>>({ method: 'PATCH', url: `/classes/${classId}/vocabulary-lists/${listId}`, body: input, requireAuth: true, showToast: false })
+  }
+
   return {
+    enrichWords,
+    updateClassWordList,
+    listClassWordLists,
+    createClassWordList,
     listVocabulary,
     getStats,
     getDueCards,

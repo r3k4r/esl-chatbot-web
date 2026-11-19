@@ -114,6 +114,7 @@ export const routes: Record<string, Handler> = {
     return page(items, query)
   }),
   'GET /vocabulary/stats': auth(() => ok(F.vocabularyStats)),
+  'POST /vocabulary/enrich': auth(({ body }) => ok((body?.words ?? []).map((word: string) => ({ word, definition: `Meaning of ${word}.`, example: `I use ${word} every day.`, partOfSpeech: 'noun' }))), STAFF),
   'GET /vocabulary/due': auth(() => ok(F.vocabulary.filter((v) => new Date(v.srsDue) <= new Date()))),
   'POST /vocabulary': auth(({ body }) =>
     F.vocabulary.some((v) => v.word === String(body?.word).toLowerCase())
@@ -156,6 +157,9 @@ export const routes: Record<string, Handler> = {
   'GET /classes/:id/students': auth(() => ok(F.classStudents), STAFF),
   'GET /classes/:id/students/:studentId': auth(({ params }) => ok(F.classStudentDetail(params.studentId!)), STAFF),
   'GET /classes/:id/analytics': auth(({ params }) => ok(F.classAnalytics(params.id!)), STAFF),
+  'GET /classes/:id/vocabulary-lists': auth(() => ok([{ id: 'wl1', title: 'Unit 3 verbs', createdAt: '2026-06-15T09:00:00.000Z', createdBy: { id: 'u-tutor', displayName: 'Sarah Johnson' }, words: [{ word: 'borrow', definition: 'To take something and give it back later.', example: 'Can I borrow your pen?', partOfSpeech: 'verb' }], studentCount: 2, practisedPct: 50, masteredPct: 0 }]), STAFF),
+  'PATCH /classes/:id/vocabulary-lists/:listId': auth(({ params, body }) => ok({ id: params.listId, title: body?.title ?? 'Unit 3 verbs', createdAt: '2026-06-15T09:00:00.000Z', createdBy: null, words: body?.words ?? [], studentCount: 2, practisedPct: 50, masteredPct: 0, addedWords: 0 }, 'Word list updated'), STAFF),
+  'POST /classes/:id/vocabulary-lists': auth(({ body }) => created({ id: 'wl-new', title: body?.title ?? 'List', createdAt: '2026-06-15T09:00:00.000Z', wordCount: body?.words?.length ?? 0, studentCount: 2, added: body?.words?.length ?? 0, skipped: 0 }, 'Words assigned'), STAFF),
   'DELETE /classes/:id/members/:userId': auth(() => ok(null, 'Member removed')),
   'PATCH /classes/:id/members/:userId/role': auth(({ body }) => ok({ role: body?.role }), STAFF),
   'GET /classes/:id/announcements': auth(({ query }) => page(F.announcements, query)), // backend: flat list + meta

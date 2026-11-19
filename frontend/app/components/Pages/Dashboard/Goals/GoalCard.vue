@@ -39,9 +39,15 @@ const typeMeta = computed(() => TYPE_META[props.goal.type] ?? TYPE_META.VOCABULA
 const diffMeta = computed(() => props.goal.difficulty ? DIFFICULTY_META[props.goal.difficulty] : null)
 const statusMeta = computed(() => STATUS_META[props.goal.status])
 const isCompleted = computed(() => props.goal.status === 'COMPLETED')
+// Same rules as the backend: a teacher's or admin's goal can't be edited or deleted by the
+// student (they can still work on it), and a finished goal is no longer edited at all.
+const isAssigned = computed(() => !!props.goal.assignedByTutorId && props.goal.assignedByTutorId !== props.goal.userId)
+const canEdit = computed(() => !isCompleted.value && !isAssigned.value)
+const canDelete = computed(() => !isAssigned.value)
+const hasActions = computed(() => canEdit.value || canDelete.value || !isCompleted.value)
 
 const dueDateLabel = computed(() => {
-  if (!props.goal.targetDate) return null
+  if (!props.goal.targetDate || isCompleted.value) return null
   const diff = new Date(props.goal.targetDate).getTime() - Date.now()
   const days = Math.round(diff / 86_400_000)
   if (days < 0) return { text: `${Math.abs(days)}d overdue`, urgent: true }
@@ -80,14 +86,14 @@ const barColor = computed(() => {
         </div>
 
         <!-- 3-dot actions menu -->
-        <UiDropdownMenu>
+        <UiDropdownMenu v-if="hasActions">
           <UiDropdownMenuTrigger as-child>
             <AppButton aria-label="Goal actions" variant="secondary" size="28" radius="8" aspect="square" icon="More"
               :icon-config="{ color: 'var(--color-text-subtle)', size: 14 }"
               class-list="border-0! shadow-none! bg-transparent! hover:bg-surface-raised!" />
           </UiDropdownMenuTrigger>
           <UiDropdownMenuContent align="end" class="w-44 font-poppins">
-            <UiDropdownMenuItem class="gap-2 cursor-pointer" @click="emit('edit', goal)">
+            <UiDropdownMenuItem v-if="canEdit" class="gap-2 cursor-pointer" @click="emit('edit', goal)">
               <AppIconsax name="Edit" color="currentColor" :size="13" />
               Edit goal
             </UiDropdownMenuItem>
@@ -102,12 +108,14 @@ const barColor = computed(() => {
                 {{ goal.status === 'PAUSED' ? 'Resume' : 'Pause' }}
               </UiDropdownMenuItem>
             </template>
-            <UiDropdownMenuSeparator />
-            <UiDropdownMenuItem variant="destructive" class="gap-2 cursor-pointer"
-              @click="emit('delete', goal.id)">
-              <AppIconsax name="Trash" color="currentColor" :size="16" />
-              Delete
-            </UiDropdownMenuItem>
+            <template v-if="canDelete">
+              <UiDropdownMenuSeparator v-if="canEdit || !isCompleted" />
+              <UiDropdownMenuItem variant="destructive" class="gap-2 cursor-pointer"
+                @click="emit('delete', goal.id)">
+                <AppIconsax name="Trash" color="currentColor" :size="16" />
+                Delete
+              </UiDropdownMenuItem>
+            </template>
           </UiDropdownMenuContent>
         </UiDropdownMenu>
       </div>

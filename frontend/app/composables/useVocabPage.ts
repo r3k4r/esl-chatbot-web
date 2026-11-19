@@ -2,7 +2,6 @@ import { toast } from 'vue-sonner'
 import type {
   VocabularyItem,
   VocabularyStats,
-  AddVocabularyInput,
   ReviewQuality,
   SrsRating,
 } from '~/common/types/vocabulary-types'
@@ -13,7 +12,6 @@ export function useVocabPage() {
     listVocabulary,
     getStats,
     getDueCards,
-    addVocabulary,
     deleteVocabulary,
     reviewVocabulary,
   } = useVocabulary()
@@ -32,9 +30,8 @@ export function useVocabPage() {
 
   const search = ref('')
   const sourceFilter = ref<'ALL' | 'MANUAL' | 'SESSION' | 'ASSIGNED'>('ALL')
-
-  const addOpen = ref(false)
-  const adding = ref(false)
+  // One of the teacher's word lists (picked from a word's list chip), or every word.
+  const listFilter = ref<{ id: string; title: string } | null>(null)
 
   // ─── Derived ───────────────────────────────────────────────────────────────
   const currentCard = computed(() => dueCards.value[reviewIndex.value] ?? null)
@@ -61,6 +58,7 @@ export function useVocabPage() {
       limit: 50,
       search: search.value.trim() || undefined,
       source: sourceFilter.value === 'ALL' ? undefined : sourceFilter.value,
+      listId: listFilter.value?.id,
     })
     listLoading.value = false
     if (res.success && res.data?.data) {
@@ -81,7 +79,7 @@ export function useVocabPage() {
     if (searchHandle) clearTimeout(searchHandle)
     searchHandle = setTimeout(loadWords, 300)
   })
-  watch(sourceFilter, loadWords)
+  watch([sourceFilter, listFilter], loadWords)
 
   // ─── Review flow ─────────────────────────────────────────────────────────────
   async function rate(rating: SrsRating) {
@@ -106,23 +104,7 @@ export function useVocabPage() {
     loadDue()
   }
 
-  // ─── Add word ──────────────────────────────────────────────────────────────
-  async function submitWord(input: AddVocabularyInput) {
-    if (adding.value) return
-    adding.value = true
-    const res = await addVocabulary(input)
-    adding.value = false
-
-    if (!res.success) {
-      if (res.status === 409) toast.error(res.message || 'That word is already in your list.')
-      else toast.error(res.message || 'Could not add word')
-      return
-    }
-    toast.success(`"${input.word}" added to your vocabulary.`)
-    addOpen.value = false
-    await Promise.all([loadWords(), loadStats(), loadDue()])
-  }
-
+  // Words come from the teacher (ASSIGNED) or the AI tutor (SESSION); students don't add them.
   // ─── Delete word ─────────────────────────────────────────────────────────────
   async function removeWord(item: VocabularyItem) {
     const res = await deleteVocabulary(item.id)
@@ -151,8 +133,7 @@ export function useVocabPage() {
     listLoading,
     search,
     sourceFilter,
-    addOpen,
-    adding,
+    listFilter,
     // derived
     currentCard,
     reviewDone,
@@ -160,7 +141,6 @@ export function useVocabPage() {
     // actions
     rate,
     restartReview,
-    submitWord,
     removeWord,
     loadWords,
   }

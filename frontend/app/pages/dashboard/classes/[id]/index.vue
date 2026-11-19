@@ -3,6 +3,7 @@ import { toast } from 'vue-sonner'
 import { useAuthStore } from '~~/stores/auth'
 import type { ClassDetail } from '~/common/types/class-types'
 import type { SvgBasedIconName } from '~/common/types/iconsax-types'
+import ClassVocabularyTab from '~/components/Pages/Dashboard/Classes/Vocabulary/ClassVocabularyTab.vue'
 
 definePageMeta({ layout: 'dashboard', requiresAuth: true })
 
@@ -36,8 +37,8 @@ const myClassRole = computed(() =>
 )
 const isTutorOrAdmin = computed(() => myClassRole.value === 'TUTOR' || isAdmin.value)
 
-type Tab = 'people' | 'analytics' | 'announcements' | 'tasks'
-const ALL_TABS: Tab[] = ['people', 'analytics', 'announcements', 'tasks']
+type Tab = 'people' | 'analytics' | 'announcements' | 'tasks' | 'vocabulary'
+const ALL_TABS: Tab[] = ['people', 'analytics', 'announcements', 'tasks', 'vocabulary']
 function parseTab(raw: unknown): Tab | null {
   // Members and Students were merged into People; old links still land there.
   if (raw === 'members' || raw === 'students') return 'people'
@@ -54,6 +55,7 @@ const tabs = computed((): { key: Tab; label: string; icon: SvgBasedIconName; sho
   { key: 'analytics', label: 'Analytics', icon: 'Chart21', show: isTutorOrAdmin.value },
   { key: 'tasks', label: 'Tasks', icon: 'TaskSquare', show: true },
   { key: 'announcements', label: 'Announcements', icon: 'Notification', show: true },
+  { key: 'vocabulary', label: 'Vocabulary', icon: 'Book1', show: isTutorOrAdmin.value },
 ])
 
 const visibleTabs = computed(() => tabs.value.filter(t => t.show))
@@ -108,7 +110,8 @@ async function handleRefresh() {
   refreshing.value = false
   if (!res.success) { toast.error(res.message || 'Could not rotate code'); return }
   toast.success('Class code rotated!')
-  await load()
+  const fresh = res.data?.data
+  if (fresh) cls.value = { ...cls.value, classCode: fresh.classCode, classCodeExpiresAt: fresh.classCodeExpiresAt }
 }
 
 async function handleArchive(archived: boolean) {
@@ -295,17 +298,32 @@ onMounted(load)
           </div>
         </div>
         <div class="p-5 flex items-center gap-4">
-          <AppText size="22" weight="bold" font-family="mono" class-list="tracking-[0.4em] select-all flex-1"
-            :style="`color:var(--text-heading)`">
-            {{ cls.classCode }}
-          </AppText>
+          <!-- A new code slides in when rotated; only this line changes. -->
+          <div class="relative flex-1 overflow-hidden">
+            <Transition name="code-swap" mode="out-in">
+              <AppText :key="cls.classCode" size="22" weight="bold" font-family="mono"
+                class-list="tracking-[0.4em] select-all" :style="`color:var(--text-heading)`">
+                {{ cls.classCode }}
+              </AppText>
+            </Transition>
+          </div>
           <div class="flex items-center gap-2 shrink-0">
-            <AppButton variant="secondary" size="36" radius="8" :icon="copying ? 'TickCircle' : 'Copy'"
-              :icon-config="{ color: copying ? 'var(--color-brand-primary)' : 'currentColor', size: 14 }" text="Copy"
-              @click="handleCopy" />
-            <AppButton variant="secondary" size="36" radius="8" icon="Refresh2"
-              :icon-config="{ color: 'currentColor', size: 14 }" text="Rotate" :loading="refreshing"
-              @click="handleRefresh" />
+            <AppButton variant="secondary" size="36" radius="8" :aria-label="copying ? 'Copied' : 'Copy class code'"
+              class-list="min-w-24" @click="handleCopy">
+              <span class="relative me-2 grid size-4 place-items-center">
+                <Transition name="icon-swap" mode="out-in">
+                  <AppIconsax v-if="copying" key="done" name="TickCircle" color="var(--color-brand-primary)" :size="16" />
+                  <AppIconsax v-else key="copy" name="Copy" color="currentColor" :size="16" />
+                </Transition>
+              </span>
+              <span>{{ copying ? 'Copied' : 'Copy' }}</span>
+            </AppButton>
+            <AppButton variant="secondary" size="36" radius="8" :disabled="refreshing" aria-label="Rotate class code"
+              @click="handleRefresh">
+              <AppIconsax name="Refresh2" color="currentColor" :size="16" class="me-2"
+                :class="{ 'animate-spin motion-reduce:animate-none': refreshing }" />
+              <span>Rotate</span>
+            </AppButton>
           </div>
         </div>
       </div>
@@ -334,6 +352,8 @@ onMounted(load)
             :can-manage="isTutorOrAdmin && !isArchived" :is-student="isStudentInClass" />
           <PagesDashboardClassesAnnouncementsFeed v-else-if="activeTab === 'announcements'" :class-id="cls.id"
             :can-manage="isTutorOrAdmin" :is-admin="isAdmin" :archived="isArchived" />
+          <ClassVocabularyTab v-else-if="activeTab === 'vocabulary'" :class-id="cls.id"
+            :can-manage="isTutorOrAdmin && !isArchived" />
         </div>
       </div>
 
@@ -373,3 +393,23 @@ onMounted(load)
 
   </div>
 </template>
+
+<style scoped>
+/* Copy → tick: the icon turns and settles; 200 ms, ease-out-quart. */
+.icon-swap-enter-active,
+.icon-swap-leave-active { transition: transform 200ms cubic-bezier(0.25, 1, 0.5, 1), opacity 200ms cubic-bezier(0.25, 1, 0.5, 1); }
+.icon-swap-enter-from { opacity: 0; transform: scale(0.5) rotate(-45deg); }
+.icon-swap-leave-to { opacity: 0; transform: scale(0.5) rotate(45deg); }
+
+/* Rotated code: the old one leaves upward, the new one rises in. */
+.code-swap-enter-active,
+.code-swap-leave-active { transition: transform 260ms cubic-bezier(0.25, 1, 0.5, 1), opacity 260ms cubic-bezier(0.25, 1, 0.5, 1); }
+.code-swap-enter-from { opacity: 0; transform: translateY(60%); }
+.code-swap-leave-to { opacity: 0; transform: translateY(-60%); }
+
+@media (prefers-reduced-motion: reduce) {
+  .icon-swap-enter-active, .icon-swap-leave-active,
+  .code-swap-enter-active, .code-swap-leave-active { transition: opacity 120ms linear; }
+  .icon-swap-enter-from, .icon-swap-leave-to, .code-swap-enter-from, .code-swap-leave-to { transform: none; }
+}
+</style>

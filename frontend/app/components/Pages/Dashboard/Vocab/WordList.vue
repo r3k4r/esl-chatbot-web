@@ -10,11 +10,13 @@ defineProps<{
   loading?: boolean
   search: string
   source: SourceFilter
+  list: { id: string; title: string } | null
 }>()
 
 const emit = defineEmits<{
   'update:search': [val: string]
   'update:source': [val: SourceFilter]
+  'update:list': [val: { id: string; title: string } | null]
   delete: [item: VocabularyItem]
 }>()
 
@@ -53,6 +55,19 @@ function confirmDelete() {
         <p class="text-[16px] font-semibold font-poppins" style="color:var(--text-heading)">All words</p>
         <p class="text-[14px] font-poppins" style="color:var(--text-muted)">{{ total }} total</p>
       </div>
+      <!-- Showing one of the teacher's lists: the chip says which and clears it -->
+      <AppButton
+        v-if="list"
+        variant="secondary"
+        size="32"
+        radius="8"
+        icon="CloseCircle"
+        icon-position="end"
+        :text="list.title"
+        :aria-label="`Show all words, not only ${list.title}`"
+        class-list="me-auto text-[14px]"
+        @click="emit('update:list', null)"
+      />
       <div class="flex items-center gap-2">
         <FormInput
           id="vocab-search"
@@ -89,7 +104,7 @@ function confirmDelete() {
       <UiEmptyContent>
         <UiEmptyTitle>No words yet</UiEmptyTitle>
         <UiEmptyDescription>
-          Add a word manually or chat with the AI tutor — words it detects are added automatically when you end a session.
+          Words from your teacher, and new words the AI tutor finds in your chats, show up here.
         </UiEmptyDescription>
       </UiEmptyContent>
     </UiEmpty>
@@ -105,7 +120,18 @@ function confirmDelete() {
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-2">
             <p class="text-[16px] font-semibold font-poppins truncate" style="color:var(--text-heading)">{{ w.word }}</p>
-            <span v-if="w.partOfSpeech" class="text-[14px] font-mono shrink-0" style="color:var(--text-subtle)">{{ w.partOfSpeech }}</span>
+            <span v-if="w.partOfSpeech" class="text-[14px] shrink-0" style="color:var(--text-subtle)">{{ w.partOfSpeech }}</span>
+            <!-- The teacher's list this word came from; choosing it shows only that list -->
+            <AppButton
+              v-if="w.list?.title && w.list.id !== list?.id"
+              variant="ghost"
+              size="24"
+              radius="4"
+              :text="w.list.title"
+              :title="`Show only ${w.list.title}`"
+              class-list="h-6 shrink-0 bg-brand-primary/8 px-2 text-[13px] font-medium text-brand-primary hover:bg-brand-primary/14 hover:text-brand-primary"
+              @click="emit('update:list', w.list)"
+            />
           </div>
           <p class="text-[14px] font-poppins truncate mt-0.5" style="color:var(--text-muted)">{{ w.definition }}</p>
         </div>
@@ -125,8 +151,9 @@ function confirmDelete() {
           <span class="truncate">{{ vocabSourceLabel(w).label }}</span>
         </span>
 
-        <!-- Delete -->
-        <AppButton aria-label="Delete word"
+        <!-- Delete: words from the teacher stay; the space keeps rows aligned -->
+        <span v-if="w.source === 'ASSIGNED'" class="size-8 shrink-0" aria-hidden="true" />
+        <AppButton v-else aria-label="Delete word"
           variant="outline"
           size="32"
           radius="8"

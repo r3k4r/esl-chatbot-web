@@ -79,6 +79,7 @@ export function useLiveCall() {
   let tutorReplying = false
   let endWhenQuiet = false
   const saving = new Set<Promise<unknown>>()
+  let turnSeq = 0 // turn keys; crypto.randomUUID is missing on plain-http LAN addresses
 
   // ─── Live connection ───────────────────────────────────────────────────────
   function onMessage(m: LiveMessage) {
@@ -115,7 +116,7 @@ export function useLiveCall() {
       if (tutor && !turns.value.length) turns.value.push({ id: 'greeting', transcript: '', reply: tutor, evaluation: null, pronunciation: null, scoring: false })
       return
     }
-    const turn = reactive<VoiceTurn>({ id: crypto.randomUUID(), transcript: user, reply: tutor, evaluation: null, pronunciation: null, scoring: true })
+    const turn = reactive<VoiceTurn>({ id: `turn-${turnSeq++}`, transcript: user, reply: tutor, evaluation: null, pronunciation: null, scoring: true })
     turns.value.push(turn)
     const pcm = answerAudio
     answerAudio = null
@@ -158,6 +159,11 @@ export function useLiveCall() {
   // ─── Controls ──────────────────────────────────────────────────────────────
   async function startCall() {
     if (inCall.value || lock.value) return
+    // Browsers only allow the mic on https or localhost (not a plain-http LAN address).
+    if (!window.isSecureContext || !navigator.mediaDevices) {
+      toast.error('Calls need a secure address. Open the app over https (or on localhost).')
+      return
+    }
     audio.open() // inside the tap, before any await
     phase.value = 'connecting'
     turns.value = []
