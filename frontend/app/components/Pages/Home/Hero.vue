@@ -47,8 +47,8 @@
           </AppText>
 
           <div class="mt-9 flex flex-col sm:flex-row items-center gap-3 justify-center lg:justify-start">
-            <AppButton to="/signin" variant="brand" size="52" radius="12" class-list="text-[14px] gap-2 px-5">
-              <span>{{ t('hero.ctaPrimary') }}</span>
+            <AppButton :to="signedIn ? '/dashboard' : '/signin'" variant="brand" size="52" radius="12" class-list="text-[14px] gap-2 px-5">
+              <span>{{ signedIn ? t('nav.goToDashboard') : t('hero.ctaPrimary') }}</span>
               <Icon icon="lucide:arrow-right" width="14" class="rtl:rotate-180" />
             </AppButton>
             <AppButton to="#pricing" variant="dark-ghost" size="52" radius="12" class-list="text-[14px] gap-2 px-5">
@@ -100,16 +100,22 @@
 import { Icon } from '@iconify/vue'
 
 const { t, ta } = useLocale()
+const signedIn = useSignedIn() // signed-in visitors go to their dashboard
 
 const checks = computed(() => ta('hero.checks'))
 
-const particles = Array.from({ length: 200 }, () => ({
-  left:   Math.random() * 100,
-  bottom: Math.random() * 30,
-  delay:  Math.random() * 8,
-  dur:    8 + Math.random() * 10,
-  op:     0.2 + Math.random() * 0.5,
-}))
+// Random, so made in the browser only: drawn on the server too, they never matched the
+// browser's numbers and caused 200 hydration mismatches on every load.
+const particles = ref<{ left: number; bottom: number; delay: number; dur: number; op: number }[]>([])
+onMounted(() => {
+  particles.value = Array.from({ length: 200 }, () => ({
+    left:   Math.random() * 100,
+    bottom: Math.random() * 30,
+    delay:  Math.random() * 8,
+    dur:    8 + Math.random() * 10,
+    op:     0.2 + Math.random() * 0.5,
+  }))
+})
 
 const brands = [
   { name: 'Lumen',     icon: 'lucide:sparkles' },

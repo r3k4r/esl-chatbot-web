@@ -31,10 +31,10 @@ export type Persona = 'student' | 'free' | 'tutor' | 'admin'
 export const PASSWORD = 'password123'
 
 export const USERS: Record<Persona, User> = {
-  student: { id: 'u-student', username: 'student_ali', email: 'ali@tutelage.test', displayName: 'Ali Hassan', role: 'STUDENT', avatarUrl: '', isActive: true, emailVerified: true, subscription: { plan: 'PREMIUM', status: 'ACTIVE' } },
-  free: { id: 'u-free', username: 'student_yuki', email: 'yuki@tutelage.test', displayName: 'Yuki Tanaka', role: 'STUDENT', avatarUrl: '', isActive: true, emailVerified: true, subscription: { plan: 'FREE', status: 'ACTIVE' } },
-  tutor: { id: 'u-tutor', username: 'tutor_sarah', email: 'sarah@tutelage.test', displayName: 'Sarah Miller', role: 'TUTOR', avatarUrl: '', isActive: true, emailVerified: true, subscription: { plan: 'FREE', status: 'ACTIVE' } },
-  admin: { id: 'u-admin', username: 'admin_main', email: 'admin@tutelage.test', displayName: 'Admin Main', role: 'ADMIN', avatarUrl: '', isActive: true, emailVerified: true, subscription: { plan: 'FREE', status: 'ACTIVE' } },
+  student: { id: 'u-student', username: 'student_ali', email: 'ali@tutelage.test', displayName: 'Ali Hassan', role: 'STUDENT', avatarUrl: '', isActive: true, emailVerified: true, guideSeenAt: '2026-01-01T00:00:00.000Z', subscription: { plan: 'PREMIUM', status: 'ACTIVE' } },
+  free: { id: 'u-free', username: 'student_yuki', email: 'yuki@tutelage.test', displayName: 'Yuki Tanaka', role: 'STUDENT', avatarUrl: '', isActive: true, emailVerified: true, guideSeenAt: '2026-01-01T00:00:00.000Z', subscription: { plan: 'FREE', status: 'ACTIVE' } },
+  tutor: { id: 'u-tutor', username: 'tutor_sarah', email: 'sarah@tutelage.test', displayName: 'Sarah Miller', role: 'TUTOR', avatarUrl: '', isActive: true, emailVerified: true, guideSeenAt: '2026-01-01T00:00:00.000Z', subscription: { plan: 'FREE', status: 'ACTIVE' } },
+  admin: { id: 'u-admin', username: 'admin_main', email: 'admin@tutelage.test', displayName: 'Admin Main', role: 'ADMIN', avatarUrl: '', isActive: true, emailVerified: true, guideSeenAt: '2026-01-01T00:00:00.000Z', subscription: { plan: 'FREE', status: 'ACTIVE' } },
 }
 
 export const tokenFor = (p: Persona) => `e2e-${p}`

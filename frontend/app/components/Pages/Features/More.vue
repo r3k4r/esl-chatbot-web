@@ -7,6 +7,7 @@ import type { FeaturePage } from '~/common/types/feature-page-types'
 // every other feature.
 const props = defineProps<{ feature: FeaturePage }>()
 const { t } = useLocale()
+const signedIn = useSignedIn() // signed-in visitors go to their dashboard
 
 const others = computed(() => {
   const i = FEATURE_PAGES.findIndex(f => f.key === props.feature.key)
@@ -23,8 +24,8 @@ const title = (f: FeaturePage) => t(`features.items.${f.key}.title`)
           {{ t('featurePages.closingLead') }}
         </h2>
         <p v-reveal="80" class="mt-4 font-poppins text-[20px] font-semibold">
-          <AppLink to="/signup" class="underline decoration-brand-primary decoration-4 underline-offset-[6px] transition-colors hover:text-brand-primary">
-            {{ t('featurePages.closingLink') }}
+          <AppLink :to="signedIn ? '/dashboard' : '/signup'" class="underline decoration-brand-primary decoration-4 underline-offset-[6px] transition-colors hover:text-brand-primary">
+            {{ signedIn ? t('nav.goToDashboard') : t('featurePages.closingLink') }}
           </AppLink>
         </p>
         <p v-reveal="140" class="mt-8 max-w-[52ch] font-poppins text-[16px] leading-[1.6] text-neutral-50/70">{{ t('featurePages.closingNote') }}</p>

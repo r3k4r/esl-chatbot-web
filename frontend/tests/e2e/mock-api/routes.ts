@@ -79,6 +79,7 @@ export const routes: Record<string, Handler> = {
   // ── Me ────────────────────────────────────────────────────────────────────
   'GET /users/me': auth(({ persona }) => ok(F.profileFor(persona!))),
   'PATCH /users/me': auth(({ persona, body }) => ok({ ...F.profileFor(persona!), ...body }, 'Profile updated')),
+  'POST /users/me/guide-seen': auth(() => ok({ guideSeenAt: new Date().toISOString() }, 'Guide marked as seen')),
   'PATCH /users/me/learner-profile': auth(({ persona, body }) => ok({ ...F.profileFor(persona!).learnerProfile, ...body }, 'Preferences saved')),
   'POST /users/me/avatar': auth(() => ok({ avatarUrl: '' }, 'Avatar updated')),
   'GET /users/me/subscription': auth(({ persona }) => ok(F.subscriptionFor(persona!))),

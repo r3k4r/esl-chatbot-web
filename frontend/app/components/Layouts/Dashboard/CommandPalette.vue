@@ -139,7 +139,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
 
 <template>
   <!-- Trigger (search bar, md+) -->
-  <div class="hidden md:flex items-center gap-2 flex-1 max-w-md mx-8">
+  <div class="hidden md:flex items-center gap-2 flex-1 max-w-md mx-8" data-guide="search">
     <button
       class="w-full flex items-center gap-2 px-3 py-1.5 rounded-lg text-[13px] bg-zinc-100 dark:bg-white/4 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-200/60 dark:hover:bg-white/7 transition"
       @click="openPalette">

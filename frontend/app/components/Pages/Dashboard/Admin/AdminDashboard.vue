@@ -42,12 +42,12 @@ const figures = computed<KeyFigure[]>(() => {
       />
 
       <template v-else-if="data">
-        <PagesDashboardSharedKeyFigures :items="figures" />
+        <PagesDashboardSharedKeyFigures data-guide="admin-figures" :items="figures" />
         <AppText size="13" color="neutral-400" class-list="-mt-2">Compared with the 7 days before.</AppText>
         <div class="grid items-start gap-5 md-lg:grid-cols-2 xl:grid-cols-3">
-          <PagesDashboardAdminFunnel :funnel="data.funnel" />
-          <PagesDashboardAdminFollowUps :expiring="data.expiringSoon" :attention="data.attention" :expired-not-downgraded="data.plans.expiredNotDowngraded" />
-          <PagesDashboardAdminPlans class="md-lg:col-span-2 xl:col-span-1" :plans="data.plans" :revenue="data.revenue" :ai-usage="data.aiUsage" />
+          <PagesDashboardAdminFunnel data-guide="admin-funnel" :funnel="data.funnel" />
+          <PagesDashboardAdminFollowUps data-guide="admin-followups" :expiring="data.expiringSoon" :attention="data.attention" :expired-not-downgraded="data.plans.expiredNotDowngraded" />
+          <PagesDashboardAdminPlans data-guide="admin-plans" class="md-lg:col-span-2 xl:col-span-1" :plans="data.plans" :revenue="data.revenue" :ai-usage="data.aiUsage" />
         </div>
       </template>
 

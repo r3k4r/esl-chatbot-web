@@ -31,15 +31,15 @@
                 <!-- From 1200px: below that, it lives in the menu so the links keep their room -->
                 <SiteSwitcher class="me-3 hidden lg:flex" />
                 <LayoutsNavbarLanguageSwitcher />
-                <AppButton to="/signin" variant="brand" size="38" class-list="px-3.5 text-[14px] gap-1.5">
-                    <span>{{ t('nav.getStarted') }}</span>
+                <AppButton :to="signedIn ? '/dashboard' : '/signin'" variant="brand" size="38" class-list="px-3.5 text-[14px] gap-1.5">
+                    <span>{{ signedIn ? t('nav.goToDashboard') : t('nav.getStarted') }}</span>
                     <Icon icon="lucide:arrow-right" width="16" class="rtl:rotate-180" />
                 </AppButton>
             </div>
 
             <div class="md-lg:hidden flex items-center gap-2">
-                <AppButton to="/#cta" variant="brand" size="38" class-list="px-3 sm:px-3.5 text-[14px] gap-1.5">
-                    <span>{{ t('nav.getStarted') }}</span>
+                <AppButton :to="signedIn ? '/dashboard' : '/#cta'" variant="brand" size="38" class-list="px-3 sm:px-3.5 text-[14px] gap-1.5">
+                    <span>{{ signedIn ? t('nav.goToDashboard') : t('nav.getStarted') }}</span>
                     <Icon icon="lucide:arrow-right" width="16" class="rtl:rotate-180" />
                 </AppButton>
                 <LayoutsNavbarMenu :nav-items="navLinks" :active-link="activeLink" @select="handleLinkClick" />
@@ -58,6 +58,7 @@ const scrolled = ref(false)
 const route = useRoute()
 const activeLink = ref('')
 const { t } = useLocale()
+const signedIn = useSignedIn() // signed-in visitors go to their dashboard
 
 let sectionObserver: IntersectionObserver | null = null
 

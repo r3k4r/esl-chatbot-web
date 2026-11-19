@@ -7,6 +7,7 @@ import { shotSrcset } from '~/common/data/feature-pages'
 // the actions, then the real screen of the feature rising from the bottom like an open window.
 const props = defineProps<{ feature: FeaturePage }>()
 const { t } = useLocale()
+const signedIn = useSignedIn() // signed-in visitors go to their dashboard
 const k = computed(() => `featurePages.items.${props.feature.key}`)
 
 // The one moving picture: the screen drifts up a little as the page scrolls.
@@ -40,8 +41,8 @@ onMounted(() => {
       <div class="masthead-after mt-8 flex flex-col gap-8 md-lg:mt-10 md-lg:flex-row md-lg:items-end md-lg:justify-between">
         <p class="max-w-[46ch] font-poppins text-[20px] leading-[1.5] text-neutral-50/75">{{ t(`${k}.standfirst`) }}</p>
         <div class="flex shrink-0 flex-wrap items-center gap-3">
-          <AppButton to="/signup" variant="brand" size="48" radius="12" class-list="gap-2 px-5 text-[15px] max-sm:w-full">
-            <span>{{ t('featurePages.startFree') }}</span>
+          <AppButton :to="signedIn ? '/dashboard' : '/signup'" variant="brand" size="48" radius="12" class-list="gap-2 px-5 text-[15px] max-sm:w-full">
+            <span>{{ signedIn ? t('nav.goToDashboard') : t('featurePages.startFree') }}</span>
             <Icon icon="lucide:arrow-right" width="16" class="rtl:rotate-180" />
           </AppButton>
           <AppButton to="/#pricing" variant="dark-ghost" size="48" radius="12" class-list="px-5 text-[15px] max-sm:w-full" :text="t('featurePages.seePricing')" />

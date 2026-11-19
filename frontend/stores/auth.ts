@@ -298,6 +298,7 @@ export const useAuthStore = defineStore("useAuthStore", {
         avatarUrl: user.avatarUrl,
         isActive: user.isActive,
         emailVerified: user.emailVerified,
+        guideSeenAt: user.guideSeenAt ?? null,
         subscription: {
           plan: user.subscription?.plan,
           status: user.subscription?.status,

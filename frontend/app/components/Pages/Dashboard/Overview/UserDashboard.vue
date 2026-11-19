@@ -18,9 +18,9 @@ onMounted(fetchOverview)
       />
 
       <template v-else-if="data && nextStep">
-        <PagesDashboardOverviewGreetingHero class="animate-card-enter" :today="data.today" :next="nextStep" :vocab-due="data.vocab.due" />
+        <PagesDashboardOverviewGreetingHero data-guide="student-hero" class="animate-card-enter" :today="data.today" :next="nextStep" :vocab-due="data.vocab.due" />
 
-        <div class="grid grid-cols-2 gap-5 md-lg:grid-cols-4">
+        <div class="grid grid-cols-2 gap-5 md-lg:grid-cols-4" data-guide="student-stats">
           <PagesDashboardOverviewStatCard
             v-for="(s, i) in stats" :key="s.label" :stat="s"
             class="animate-card-enter" :style="`--delay:${60 + i * 50}ms`"
@@ -30,7 +30,7 @@ onMounted(fetchOverview)
         <div class="grid items-start gap-5 md-lg:grid-cols-[minmax(0,1fr)_20rem] lg:grid-cols-[minmax(0,1fr)_24rem] xl:grid-cols-[minmax(0,1fr)_26rem]">
           <div class="min-w-0 space-y-5">
             <div class="grid gap-5 xl:grid-cols-2">
-              <PagesDashboardOverviewLearnerSkills :skills="data.skills" />
+              <PagesDashboardOverviewLearnerSkills data-guide="student-skills" :skills="data.skills" />
               <PagesDashboardOverviewLearnerWeek :week="data.week" :daily-goal-minutes="data.today.dailyGoalMinutes" :today-date="data.today.date" />
             </div>
             <div class="grid gap-5 xl:grid-cols-2">

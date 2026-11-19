@@ -18,6 +18,12 @@ watch(
   { immediate: true },
 )
 
+// The dashboard guide: once for a new account, and again from "Take the tour" (?tour=1).
+const { startIfDue } = useDashboardGuide()
+onMounted(() => {
+  watch(() => route.fullPath, () => startIfDue(route.path, route.query), { immediate: true })
+})
+
 function toggle() {
   collapsed.value = !collapsed.value
   if (!route.meta.collapseSidebar) pinnedCollapsed.value = collapsed.value

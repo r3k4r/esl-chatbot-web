@@ -7,6 +7,8 @@ export type User = {
   avatarUrl: string;
   isActive: boolean;
   emailVerified: boolean;
+  /** when the dashboard guide was finished or skipped; null = show it */
+  guideSeenAt: string | null;
   subscription: {
     plan: 'FREE' | 'GOLD' | 'PREMIUM';
     status: 'ACTIVE' | 'INACTIVE' | 'CANCELED' | 'PAST_DUE';

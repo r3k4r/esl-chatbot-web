@@ -9,7 +9,7 @@ const { crumbs } = useBreadcrumbs()
     <div class="flex min-w-0 items-center gap-2">
       <AppButton variant="ghost" size="36" radius="8" aspect="square" icon="HambergerMenu"
         :icon-config="{ color: 'var(--color-text-body)', size: 20 }"
-        class-list="md:hidden shrink-0 hover:bg-surface-raised dark:hover:bg-surface-raised" aria-label="Open menu"
+        class-list="md:hidden shrink-0 hover:bg-surface-raised dark:hover:bg-surface-raised" aria-label="Open menu" data-guide="menu"
         @click="emit('open-sidebar')" />
 
       <UiBreadcrumb class="min-w-0">
@@ -39,8 +39,9 @@ const { crumbs } = useBreadcrumbs()
 
     <div class="flex shrink-0 items-center gap-2">
       <LayoutsDashboardThemeToggle />
-      <LayoutsDashboardNotificationBell />
-      <BlockUserAvatar />
+      <!-- Wrapped so the dashboard guide can point at them (data-guide) -->
+      <div data-guide="bell" class="flex"><LayoutsDashboardNotificationBell /></div>
+      <div data-guide="account" class="flex"><BlockUserAvatar /></div>
     </div>
   </header>
 </template>

@@ -53,10 +53,10 @@ const skillRows = computed(() => {
       />
 
       <template v-else-if="data">
-        <PagesDashboardSharedKeyFigures :items="figures" />
-        <PagesDashboardTutorNeedsYou :needs="data.needsYou" />
+        <PagesDashboardSharedKeyFigures data-guide="tutor-figures" :items="figures" />
+        <PagesDashboardTutorNeedsYou data-guide="tutor-needs" :needs="data.needsYou" />
         <div class="grid gap-5 xl:grid-cols-3">
-          <PagesDashboardTutorClassTable class="xl:col-span-2" :classes="data.classes" />
+          <PagesDashboardTutorClassTable data-guide="tutor-classes" class="xl:col-span-2" :classes="data.classes" />
           <section aria-labelledby="tutor-skills" class="dash-card p-5 md:p-6">
             <AppText id="tutor-skills" size="16" weight="semibold">Class skills</AppText>
             <AppText size="14" color="neutral-400" class-list="mt-1">

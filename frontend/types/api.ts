@@ -7855,6 +7855,53 @@ export interface paths {
         };
         trace?: never;
     };
+    "/users/me/guide-seen": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Mark the dashboard guide as finished or skipped
+         * @description The guide (product tour) starts by itself on the dashboard while the user's guideSeenAt is null. Called when it is finished or skipped; it can still be replayed from the account menu. Any role.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Saved */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            success?: boolean;
+                            message?: string;
+                            data?: {
+                                /** Format: date-time */
+                                guideSeenAt?: string;
+                            };
+                        };
+                    };
+                };
+                401: components["responses"]["Unauthorized"];
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/users": {
         parameters: {
             query?: never;
@@ -9176,6 +9223,11 @@ export interface components {
             isActive?: boolean;
             /** @description True once the user has verified their email via OTP, or linked a Google account (Google emails are pre-verified). Verifying activates the FREE subscription. */
             emailVerified?: boolean;
+            /**
+             * Format: date-time
+             * @description When the dashboard guide was finished or skipped; null shows it on the next dashboard visit.
+             */
+            guideSeenAt?: string | null;
             /** @description FREE + INACTIVE = no AI access (unverified email, no Google link). FREE + ACTIVE = AI access (email verified OR Google linked). PREMIUM + ACTIVE = full AI chatbot access. */
             subscription?: {
                 /** @enum {string} */

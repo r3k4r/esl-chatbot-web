@@ -112,7 +112,7 @@ function onRailClick() {
     </div>
 
     <nav class="flex-1 space-y-1 overflow-y-auto overflow-x-hidden px-3 py-3">
-      <LayoutsDashboardSidebarItem v-for="item in primaryNav" :key="item.id" :to="item.path" :label="item.label"
+      <LayoutsDashboardSidebarItem v-for="item in primaryNav" :key="item.id" :data-guide="`nav-${item.id}`" :to="item.path" :label="item.label"
         :icon="item.icon" :badge="item.badge" :active="isActive(item.path)" :collapsed="collapsed" />
     </nav>
 

@@ -5,7 +5,7 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
   ssr: true,
-  css: ['~/assets/css/main.css'],
+  css: ['~/assets/css/main.css', '~/assets/css/guide.css'],
   app: {
     head: {
       // Kurdish (Sorani) fonts. Google Fonts splits them by unicode-range, so the files only

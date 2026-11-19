@@ -152,6 +152,14 @@ async function handleSignOut() {
         </NuxtLink>
       </UiDropdownMenuItem>
 
+      <!-- Replays the dashboard guide (useDashboardGuide), any role -->
+      <UiDropdownMenuItem as-child class="group">
+        <NuxtLink :to="{ path: '/dashboard', query: { tour: '1' } }" class="flex items-center gap-2.5 cursor-pointer">
+          <AppIconsax name="Routing2" color="currentColor" :size="16" class="text-text-muted group-focus:text-text-heading" />
+          <span class="text-[14px]">Take the tour</span>
+        </NuxtLink>
+      </UiDropdownMenuItem>
+
       <UiDropdownMenuSeparator />
 
       <!-- Sign out (destructive) -->
