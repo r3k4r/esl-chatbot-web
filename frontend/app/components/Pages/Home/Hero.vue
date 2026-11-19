@@ -70,6 +70,7 @@
         </div>
 
         <div class="lg:col-span-5 flex justify-center lg:justify-end relative">
+          <!-- The AI Chat as it looks today (dark), playing a short lesson on a loop -->
           <PagesHomeChatMockup />
         </div>
       </div>

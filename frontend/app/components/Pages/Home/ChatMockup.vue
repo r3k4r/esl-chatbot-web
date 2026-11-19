@@ -1,204 +1,109 @@
 <template>
   <div class="relative">
-    <div class="absolute -inset-10 rounded-4xl bg-[radial-gradient(closest-side,rgba(245,158,11,0.35),transparent_70%)] blur-2xl pointer-events-none" />
-    <div class="relative rounded-2xl p-4 sm:p-5 w-90 sm:w-105 h-125 sm:h-135 flex flex-col overflow-hidden animate-[float-anim_6s_ease-in-out_infinite] bg-linear-to-b from-brand-dark2/85 to-brand-ink/90 border border-neutral-50/8 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,255,255,0.02)_inset,0_0_80px_-20px_rgba(245,158,11,0.3)] backdrop-blur-lg">
-
-      <!-- Header -->
-      <div class="flex items-center justify-between pb-3 border-b border-neutral-50/5">
-        <div class="flex items-center gap-2.5">
-          <div class="relative">
-            <div class="w-9 h-9 rounded-full bg-linear-to-br from-brand-primary to-brand-accent flex items-center justify-center text-brand-ink">
-              <Icon icon="lucide:sparkles" width="16" />
-            </div>
-            <span class="absolute -bottom-0.5 -end-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 ring-2 ring-brand-dark" />
-          </div>
-          <div class="leading-tight">
-            <AppText size="14" weight="semibold" color="white" class-list="text-sm">{{ t('chatMockup.tutorName') }}</AppText>
-            <div class="text-neutral-50/50 text-[11px] flex items-center gap-1.5">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-              <AppText size="11" color="white" class-list="text-neutral-50/50">{{ t('chatMockup.sessionLabel') }}</AppText>
-            </div>
-          </div>
+    <div class="pointer-events-none absolute -inset-10 rounded-4xl bg-[radial-gradient(closest-side,rgba(245,158,11,0.35),transparent_70%)] blur-2xl" />
+    <!-- The real AI Chat in dark mode, drawn with the dashboard's own dark tokens (the .dark scope) -->
+    <div class="chat-float dark relative flex h-128 w-[min(100%,360px)] flex-col overflow-hidden rounded-2xl border border-border-card bg-surface-page text-start shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6),0_0_80px_-20px_rgba(245,158,11,0.3)] sm:h-136 sm:w-105" dir="ltr" aria-hidden="true">
+      <!-- Thread header -->
+      <div class="flex items-center gap-2.5 border-b border-border-inner px-4 py-3">
+        <Icon icon="lucide:messages-square" width="16" class="text-text-muted" />
+        <div class="min-w-0 flex-1 leading-tight">
+          <div class="truncate text-[14px] font-semibold text-text-heading">{{ t('chatMockup.title') }}</div>
+          <div class="text-[12px] text-text-muted">{{ t('chatMockup.level') }} · {{ clock }}</div>
         </div>
-        <div class="flex items-center gap-1.5">
-          <button class="w-8 h-8 rounded-lg bg-neutral-50/5 border border-neutral-50/5 flex items-center justify-center text-neutral-50/70 hover:text-neutral-50">
-            <Icon icon="lucide:mic" width="14" />
-          </button>
-          <button class="w-8 h-8 rounded-lg bg-neutral-50/5 border border-neutral-50/5 flex items-center justify-center text-neutral-50/70 hover:text-neutral-50">
-            <Icon icon="lucide:chevron-down" width="14" />
-          </button>
-        </div>
+        <span class="grid size-8 place-items-center rounded-lg bg-brand-primary text-neutral-50"><Icon icon="lucide:circle-x" width="15" /></span>
       </div>
 
-      <!-- Messages -->
-      <div class="py-4 space-y-2.5 flex-1 min-h-0 overflow-y-auto hide-scrollbar pe-1">
-        <template v-for="(msg, i) in visibleMessages" :key="i">
-          <div class="flex gap-2" :class="msg.who === 'user' ? 'justify-end' : 'justify-start'">
-            <div
-              v-if="msg.who === 'ai'"
-              class="w-6 h-6 rounded-full bg-linear-to-br from-brand-primary to-brand-accent flex items-center justify-center shrink-0 mt-0.5"
-            >
-              <Icon icon="lucide:sparkles" width="11" />
-            </div>
-            <div
-              class="max-w-[78%] text-[13px] leading-relaxed px-3 py-2 rounded-[12px]"
-              :class="msg.who === 'user' ? userBubbleClasses : aiBubbleClasses"
-            >
-              <div
-                v-if="msg.tip"
-                class="text-[10px] font-semibold uppercase tracking-wider text-brand-primary mb-1 flex items-center gap-1"
-              >
-                <Icon icon="lucide:sparkles" width="10" /> Phrasing tip
+      <!-- Messages: newest at the bottom, older ones slide up and out -->
+      <div class="flex min-h-0 flex-1 flex-col justify-end gap-3 overflow-hidden px-4 pb-3">
+        <TransitionGroup name="msg">
+          <template v-for="(m, i) in shown" :key="i">
+            <div v-if="m.who === 'user'" class="flex flex-col items-end gap-1.5">
+              <div class="max-w-[82%] rounded-2xl bg-surface-raised px-3.5 py-2.5 text-[13.5px] leading-relaxed text-text-heading">{{ m.text }}</div>
+              <div v-if="m.voice" class="flex w-44 items-center gap-2 rounded-xl border border-border-card bg-surface-card px-2 py-1.5">
+                <span class="grid size-6 place-items-center rounded-lg bg-surface-raised text-text-body"><Icon icon="lucide:play" width="11" /></span>
+                <span class="h-1 flex-1 rounded-full bg-surface-well" />
+                <span class="text-[11px] tabular-nums text-text-subtle">0:04</span>
               </div>
-              {{ msg.text }}
-              <div class="text-[10px] mt-1" :class="msg.who === 'user' ? 'text-brand-ink/50' : 'text-neutral-50/40'">
-                {{ msg.t }}
+              <div v-if="m.fix" class="max-w-[82%] rounded-xl border border-border-card bg-surface-card px-3 py-2 text-[12.5px] text-text-body">
+                <span class="me-1 inline-flex items-center gap-1 font-medium text-brand-primary"><Icon icon="lucide:wand-sparkles" width="12" />{{ t('chatMockup.better') }}</span>
+                {{ m.fix[0] }}<strong class="font-semibold text-text-heading">{{ m.fix[1] }}</strong>{{ m.fix[2] }}
               </div>
             </div>
-          </div>
-        </template>
-
-        <!-- Typing indicator -->
-        <div v-if="typing" class="flex items-center gap-2">
-          <div class="w-6 h-6 rounded-full bg-linear-to-br from-brand-primary to-brand-accent flex items-center justify-center shrink-0">
-            <Icon icon="lucide:sparkles" width="11" />
-          </div>
-          <div :class="`${aiBubbleClasses} px-3 py-2.5 rounded-[12px] rounded-bs-sm`">
-            <div class="flex gap-1">
-              <span class="w-1.5 h-1.5 rounded-full bg-neutral-50/50 animate-bounce" style="animation-delay: 0ms" />
-              <span class="w-1.5 h-1.5 rounded-full bg-neutral-50/50 animate-bounce" style="animation-delay: 120ms" />
-              <span class="w-1.5 h-1.5 rounded-full bg-neutral-50/50 animate-bounce" style="animation-delay: 240ms" />
+            <div v-else class="flex gap-2.5">
+              <AppImage src="/only-logo-black-border-yellow-bg.svg" alt="" width="24" height="24" class="mt-0.5 size-6 shrink-0" />
+              <div class="min-w-0">
+                <div class="text-[13.5px] leading-relaxed text-text-body">{{ m.text }}</div>
+                <div v-if="m.voice" class="mt-1.5 flex w-44 items-center gap-2 rounded-xl border border-border-card bg-surface-card px-2 py-1.5">
+                  <span class="grid size-6 place-items-center rounded-lg bg-brand-primary text-neutral-50"><Icon icon="lucide:pause" width="11" /></span>
+                  <span class="h-1 flex-1 overflow-hidden rounded-full bg-surface-well"><span class="voice-progress block h-full rounded-full bg-brand-primary" /></span>
+                  <span class="text-[11px] tabular-nums text-text-subtle">0:06</span>
+                </div>
+              </div>
             </div>
+          </template>
+          <div v-if="thinking" key="thinking" class="flex items-center gap-2.5">
+            <AppImage src="/only-logo-black-border-yellow-bg.svg" alt="" width="24" height="24" class="size-6 shrink-0" />
+            <span class="flex gap-1"><span v-for="d in 3" :key="d" class="size-1.5 animate-bounce rounded-full bg-text-subtle" :style="{ animationDelay: `${d * 120}ms` }" /></span>
+            <span class="text-[13px] text-text-muted">{{ t('chatMockup.thinking') }}</span>
           </div>
-        </div>
+        </TransitionGroup>
       </div>
 
-      <!-- Input -->
-      <div class="mt-1 pt-3 border-t border-neutral-50/5">
-        <div class="flex items-center gap-2 bg-neutral-50/3 border border-neutral-50/5 rounded-xl px-3 py-2">
-          <div class="flex items-end gap-0.5 h-5">
-            <span
-              v-for="(h, i) in waveBars"
-              :key="i"
-              class="w-0.75 rounded-full bg-brand-primary/80 animate-[wave_1.1s_ease-in-out_infinite]"
-              style="height: 100%"
-              :style="{ transform: `scaleY(${h})`, animationDelay: `${i * 120}ms` }"
-            />
-          </div>
-          <div class="flex-1 text-[13px] text-neutral-50/60">
-            {{ t('chatMockup.listening') }}<span class="animate-[blink_1s_steps(1)_infinite]">…</span>
-          </div>
-          <button class="w-8 h-8 rounded-lg bg-brand-primary text-brand-ink flex items-center justify-center shadow">
-            <Icon icon="lucide:send" width="14" />
-          </button>
-        </div>
-        <div class="flex items-center justify-between mt-2 px-1">
-          <div class="flex items-center gap-3 text-[10px] text-neutral-50/40">
-            <span class="flex items-center gap-1">
-              <Icon icon="lucide:mic" width="10" /> {{ t('chatMockup.voiceMode') }}
+      <!-- Composer: the orange recording strip while a voice message is recorded -->
+      <div class="px-3 pb-3">
+        <Transition name="msg">
+          <div v-if="recording" class="mb-2 flex items-center gap-2.5 rounded-xl border border-brand-primary/25 bg-brand-primary/8 px-3 py-2">
+            <span class="size-2 animate-pulse rounded-full bg-brand-primary" />
+            <span class="flex h-5 items-end gap-0.5">
+              <span v-for="(h, i) in WAVE" :key="i" class="wave w-0.75 rounded-full bg-brand-primary" :style="{ height: '100%', transform: `scaleY(${h})`, animationDelay: `${i * 110}ms` }" />
             </span>
-            <span>·</span>
-            <span>{{ t('chatMockup.pronunciation') }} <span class="text-emerald-400 font-medium">92%</span></span>
+            <span class="text-[12px] tabular-nums text-brand-primary">0:04</span>
+            <span class="truncate text-[12.5px] text-text-body">{{ t('chatMockup.listening') }}</span>
           </div>
-          <span class="text-[10px] text-neutral-50/40 font-mono">Session 14:22</span>
+        </Transition>
+        <div class="flex items-end gap-1.5 rounded-2xl border border-border-card bg-surface-card p-2 ps-3">
+          <div class="min-h-9 flex-1 py-2 text-[13.5px]" :class="draft ? 'text-text-heading' : 'text-text-subtle'">
+            {{ draft || t('chatMockup.placeholder') }}<span v-if="typingText" class="caret">|</span>
+          </div>
+          <span class="grid size-9 place-items-center text-text-body"><Icon icon="lucide:audio-lines" width="16" /></span>
+          <span class="grid size-9 place-items-center" :class="recording ? 'text-brand-primary' : 'text-text-body'"><Icon :icon="recording ? 'lucide:square' : 'lucide:mic'" width="16" /></span>
+          <span class="grid size-9 place-items-center rounded-lg bg-brand-primary text-neutral-50"><Icon icon="lucide:send-horizontal" width="15" /></span>
         </div>
       </div>
-
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
+import { useChatMockupScript } from '~/composables/useChatMockupScript'
 
-type ConvoMessage = {
-  who: 'ai' | 'user'
-  text: string
-  t: string
-  tip?: boolean
-}
-
-const { t, ta } = useLocale()
-
-// Structural metadata (speaker + timestamp) stays here; the message text is
-// pulled from the active locale by index, so the demo translates live.
-const convoMeta: { who: 'ai' | 'user'; t: string }[] = [
-  { who: 'ai',   t: '10:04' },
-  { who: 'user', t: '10:04' },
-  { who: 'ai',   t: '10:05' },
-  { who: 'user', t: '10:05' },
-]
-
-const convo = computed<ConvoMessage[]>(() => {
-  const messages = ta('chatMockup.messages')
-  return convoMeta.map((meta, i) => ({
-    who: meta.who,
-    t: meta.t,
-    text: messages[i] ?? '',
-  }))
-})
-
-const waveBars = [0.3, 0.7, 0.5, 0.9, 0.4, 0.8, 0.5]
-
-const userBubbleClasses = 'bg-linear-to-br from-brand-primary to-brand-accent text-brand-ink rounded-be-sm rounded-es-[12px] rounded-ss-[12px]'
-const aiBubbleClasses = 'bg-neutral-50/4 border border-neutral-50/8 text-neutral-100 rounded-be-sm'
-
-const visible = ref(0)
-const typing  = ref(false)
-
-const visibleMessages = computed(() => convo.value.slice(0, visible.value))
-
-onMounted(() => {
-  const timers: ReturnType<typeof setTimeout>[] = []
-
-  function step(i: number) {
-    if (i >= convo.value.length) {
-      timers.push(setTimeout(() => { visible.value = 0; step(0) }, 3500))
-      return
-    }
-    const current = convo.value[i]
-    if (!current) return
-
-    typing.value = current.who === 'ai' && i > 0
-    timers.push(setTimeout(() => {
-      typing.value = false
-      visible.value = i + 1
-      timers.push(setTimeout(() => step(i + 1), 1400))
-    }, i === 0 ? 400 : 900))
-  }
-
-  step(0)
-
-  onUnmounted(() => timers.forEach(clearTimeout))
-})
+const { t } = useLocale()
+const WAVE = [0.35, 0.8, 0.5, 1, 0.45, 0.9, 0.55, 0.7]
+const { shown, thinking, recording, draft, typingText, clock } = useChatMockupScript()
 </script>
 
 <style scoped>
-@keyframes float-anim {
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
+.chat-float { animation: chat-float 6s ease-in-out infinite; }
+@keyframes chat-float { 50% { transform: translateY(-8px); } }
 
-  50% {
-    transform: translateY(-6px);
-  }
-}
+.msg-enter-active { transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1); }
+.msg-leave-active { transition: opacity 0.25s ease; }
+.msg-enter-from { opacity: 0; transform: translateY(10px); }
+.msg-leave-to { opacity: 0; }
+.msg-move { transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1); }
 
-@keyframes blink {
-  50% {
-    opacity: 0;
-  }
-}
+.wave { transform-origin: bottom; animation: wave 1s ease-in-out infinite; }
+@keyframes wave { 0%, 100% { transform: scaleY(0.3); } 50% { transform: scaleY(1); } }
 
-@keyframes wave {
-  0%,
-  100% {
-    transform: scaleY(0.3);
-  }
+.voice-progress { width: 0; animation: voice 6s linear forwards; }
+@keyframes voice { to { width: 100%; } }
 
-  50% {
-    transform: scaleY(1);
-  }
+.caret { animation: blink 1s steps(1) infinite; margin-inline-start: 1px; }
+@keyframes blink { 50% { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-float, .wave, .caret { animation: none; }
+  .voice-progress { animation: none; width: 40%; }
 }
 </style>

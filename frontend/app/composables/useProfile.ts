@@ -12,7 +12,6 @@ interface ApiResponse<T> { success: boolean; message?: string; data: T }
 export function useProfile() {
   const profile = ref<MyProfileData | null>(null)
   const loading = ref(false)
-  const { syncFromProfile } = useTheme()
 
   async function fetchProfile() {
     loading.value = true
@@ -24,7 +23,6 @@ export function useProfile() {
     })
     if (res.success && res.data?.data) {
       profile.value = res.data.data
-      syncFromProfile(res.data.data.learnerProfile?.theme)
     }
     loading.value = false
     return res
@@ -36,7 +34,7 @@ export function useProfile() {
       url: '/users/me',
       body: input,
       requireAuth: true,
-      showToast: true,
+      showToast: false,
     })
     if (res.success && res.data?.data) {
       profile.value = res.data.data
@@ -50,11 +48,10 @@ export function useProfile() {
       url: '/users/me/learner-profile',
       body: input,
       requireAuth: true,
-      showToast: true,
+      showToast: false,
     })
     if (res.success && res.data?.data) {
       if (profile.value) profile.value = { ...profile.value, learnerProfile: res.data.data }
-      syncFromProfile(res.data.data.theme)
     }
     return res
   }
@@ -67,7 +64,7 @@ export function useProfile() {
       url: '/users/me/avatar',
       body: form,
       requireAuth: true,
-      showToast: true,
+      showToast: false,
     })
     if (res.success && res.data?.data && profile.value) {
       profile.value = { ...profile.value, avatarUrl: res.data.data.avatarUrl }
@@ -99,11 +96,6 @@ export function useProfile() {
     return name.charAt(0).toUpperCase()
   })
 
-  const dailyGoalMins = computed(() => {
-    const weekly = profile.value?.learnerProfile?.weeklyGoalMinutes ?? 210
-    return Math.round(weekly / 7)
-  })
-
   return {
     profile,
     loading,
@@ -115,6 +107,5 @@ export function useProfile() {
     planLabel,
     planColor,
     initials,
-    dailyGoalMins,
   }
 }

@@ -80,7 +80,7 @@ const inputClasses = computed(() => {
     defaultClasses += ' ps-12'
   }
   if (props.type === 'tel') {
-    defaultClasses += ' ps-22'
+    defaultClasses += ' ps-28' // room for CountryCode's flag, dial code and arrow
   }
   if ((props.icon && props.iconPosition === 'end')) {
     defaultClasses += ' pe-12'

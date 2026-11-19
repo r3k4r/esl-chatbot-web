@@ -1,9 +1,11 @@
 import type { ThemePreference } from '~/common/types/profile-types'
 
 const THEME_STORAGE_KEY = 'theme'
+const DARK_QUERY = '(prefers-color-scheme: dark)'
 
-// Module-level so every consumer shares one state. Only ever mutated on the
-// client, so the server-rendered default ('light') never leaks between users.
+// The theme belongs to the device, not the account: the learner's own choice (the header toggle)
+// is kept in localStorage; without one, the system's light/dark setting is followed, live.
+// Module-level so every consumer shares one state; only mutated on the client.
 const theme = ref<ThemePreference>('light')
 let initialized = false
 
@@ -15,16 +17,30 @@ function paint(path = window.location.pathname) {
   document.documentElement.classList.toggle('dark', theme.value === 'dark' && isDashboardPath(path))
 }
 
+function storedTheme(): ThemePreference | null {
+  try {
+    const stored = localStorage.getItem(THEME_STORAGE_KEY)
+    return stored === 'dark' || stored === 'light' ? stored : null
+  } catch { return null } // storage unavailable (private mode)
+}
+
+function systemTheme(): ThemePreference {
+  try { return window.matchMedia(DARK_QUERY).matches ? 'dark' : 'light' } catch { return 'light' }
+}
+
 function ensureInit() {
   if (initialized || !import.meta.client) return
   initialized = true
-  // The inline head script in nuxt.config.ts already applied the class before
-  // first paint; here we just bring the ref in line with it.
-  try {
-    const stored = localStorage.getItem(THEME_STORAGE_KEY)
-    if (stored === 'dark' || stored === 'light') theme.value = stored
-  } catch { /* storage unavailable (private mode) — keep default */ }
+  // The inline head script already applied the class before first paint; bring the ref in line.
+  theme.value = storedTheme() ?? systemTheme()
   paint()
+  try {
+    window.matchMedia(DARK_QUERY).addEventListener('change', () => {
+      if (storedTheme()) return // the learner chose a theme; keep it
+      theme.value = systemTheme()
+      paint()
+    })
+  } catch { /* old browser: no live follow */ }
 }
 
 export function useTheme() {
@@ -38,35 +54,7 @@ export function useTheme() {
     try { localStorage.setItem(THEME_STORAGE_KEY, next) } catch { /* ignore */ }
   }
 
-  /**
-   * Sync from the learner profile's `theme` field (backend is the
-   * cross-device source of truth). Ignores absent/unknown values, so calling
-   * it with a staff account that has no learner profile is a no-op.
-   */
-  function syncFromProfile(profileTheme: string | null | undefined) {
-    if (profileTheme === 'light' || profileTheme === 'dark') applyTheme(profileTheme)
-  }
+  const toggleTheme = () => applyTheme(theme.value === 'dark' ? 'light' : 'dark')
 
-  /**
-   * Flip light/dark. `persist` (students) also saves it on the learner profile,
-   * otherwise the next profile fetch would sync it straight back.
-   */
-  async function toggleTheme(persist: boolean) {
-    const next: ThemePreference = theme.value === 'dark' ? 'light' : 'dark'
-    applyTheme(next)
-    if (!persist) return
-    const res = await useHttp({
-      method: 'PATCH',
-      url: '/users/me/learner-profile',
-      body: { theme: next },
-      requireAuth: true,
-      showToast: false,
-    })
-    if (!res.success) {
-      const { toast } = await import('vue-sonner')
-      toast.error('Could not save your theme. It will only apply on this device.')
-    }
-  }
-
-  return { theme: readonly(theme), applyTheme, toggleTheme, syncFromProfile, paint }
+  return { theme: readonly(theme), applyTheme, toggleTheme, paint }
 }

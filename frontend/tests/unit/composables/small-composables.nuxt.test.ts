@@ -54,14 +54,14 @@ describe('useTheme', () => {
     expect(localStorage.getItem('theme')).toBe('dark')
   })
 
-  it('syncFromProfile ignores missing or unknown values', () => {
-    const { theme, applyTheme, syncFromProfile } = useTheme()
+  it('toggles between light and dark and remembers the choice on this device', () => {
+    const { theme, applyTheme, toggleTheme } = useTheme()
     applyTheme('light')
-    syncFromProfile(null)
-    syncFromProfile('sepia')
-    expect(theme.value).toBe('light')
-    syncFromProfile('dark')
+    toggleTheme()
     expect(theme.value).toBe('dark')
+    expect(localStorage.getItem('theme')).toBe('dark')
+    toggleTheme()
+    expect(theme.value).toBe('light')
   })
 })
 

@@ -68,14 +68,17 @@ function onRailClick() {
 
 <template>
   <Transition name="backdrop-fade">
-    <div v-if="mobileOpen" class="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm md:hidden"
+    <!-- No backdrop blur: blurring the whole page while the drawer slides makes phones drop frames -->
+    <div v-if="mobileOpen" class="fixed inset-0 z-40 bg-black/45 md:hidden"
       @click="emit('close-mobile')" />
   </Transition>
 
+  <!-- Tailwind 4's translate-x-* sets the CSS `translate` property (not `transform`), so the
+       transition lists `translate`; transitioning `transform` left the phone drawer jumping open. -->
   <aside
     :class="[
       'fixed inset-y-0 left-0 z-50 flex w-64 flex-col shrink-0 border-r border-border-card bg-surface-card',
-      'transition-[width,transform] duration-200 ease-out md:relative md:z-auto md:translate-x-0',
+      'sidebar-slide transition-[width,translate] md:relative md:z-auto md:translate-x-0',
       collapsed ? 'md:w-17 md:cursor-e-resize' : 'md:w-60',
       mobileOpen ? 'translate-x-0' : '-translate-x-full',
     ]"
@@ -135,9 +138,24 @@ function onRailClick() {
 </template>
 
 <style scoped>
+/* Phone drawer: a quick, soft-landing slide (iOS sheet curve). Desktop collapse stays brisk. */
+.sidebar-slide {
+  transition-duration: 300ms;
+  transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+}
+@media (min-width: 768px) {
+  .sidebar-slide { transition-duration: 200ms; }
+}
+
 .backdrop-fade-enter-active,
 .backdrop-fade-leave-active {
-  transition: opacity 0.2s ease;
+  transition: opacity 300ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-slide,
+  .backdrop-fade-enter-active,
+  .backdrop-fade-leave-active { transition-duration: 0ms; }
 }
 
 .backdrop-fade-enter-from,

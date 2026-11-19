@@ -1,5 +1,6 @@
 <script setup lang="ts">
-// The form's action bar, pinned to the bottom of the page: the content scrolls under it.
+// A full-page form's action bar (the word list form), pinned to the bottom of the page: the
+// content scrolls under it.
 defineProps<{ submitLabel: string; submitting: boolean }>()
 const emit = defineEmits<{ cancel: [] }>()
 </script>

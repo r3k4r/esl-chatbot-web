@@ -23,19 +23,6 @@
     ],
     "trustedBy": "Trusted by 2,000+ learners worldwide"
   },
-  "chatMockup": {
-    "tutorName": "AI Tutor · Tutelage AI",
-    "sessionLabel": "Session · B2 Intermediate",
-    "listening": "Listening",
-    "voiceMode": "Voice mode",
-    "pronunciation": "Pronunciation:",
-    "messages": [
-      "Hi! I'm your English tutor. What would you like to practice today?",
-      "I want to practice talking about travel.",
-      "Great choice! Tell me about a place you've visited recently.",
-      "I went to Erbil last summer. It was very hot but beautiful."
-    ]
-  },
   "features": {
     "eyebrow": "Features",
     "title": "Everything you need to master English.",
@@ -102,27 +89,7 @@
   "dashboardPreview": {
     "eyebrow": "Dashboard",
     "title": "Your learning command center.",
-    "description": "Streaks, vocabulary, minutes and level — all in one calm view, so you always know what to do next.",
-    "mockup": {
-      "greeting": "Good morning",
-      "welcome": "Welcome back, Aram 👋",
-      "newSession": "New session",
-      "dailyGoal": "Daily goal",
-      "statLessons": "Lessons",
-      "statLessonsSub": "+8 this week",
-      "statStudyTime": "Study time",
-      "statStudyTimeSub": "this month",
-      "statStreak": "Streak",
-      "statStreakSub": "days · keep going",
-      "statLevel": "Level",
-      "statLevelSub": "Upper-Intermediate",
-      "wordsLearned": "Words learned",
-      "consistency": "Practice consistency",
-      "recentSession": "Recent session",
-      "minutesAgo": "8 min ago",
-      "turnsAccuracy": "12 turns · 94% accuracy",
-      "continue": "Continue"
-    }
+    "description": "Streaks, vocabulary, minutes and level — all in one calm view, so you always know what to do next."
   },
   "pricing": {
     "eyebrow": "Pricing",
@@ -234,7 +201,7 @@
         "seoTitle": "AI conversation",
         "line1": "A tutor that",
         "line2": "always replies.",
-        "standfirst": "Write or speak to the AI tutor about anything. It answers in short, clear messages and corrects you gently as you go.",
+        "standfirst": "Write or speak to the AI tutor about anything. It remembers what you tell it, answers in short, clear messages and corrects you gently as you go.",
         "heroAlt": "A finished chat in Tutelage AI about planning a trip to Japan, with the session report underneath",
         "flowText": "Every chat is a short session. You write or speak, the tutor answers at your level, and you leave with clear feedback.",
         "steps": {
@@ -300,7 +267,7 @@
           },
           "q2": {
             "q": "Can I speak instead of typing?",
-            "a": "Yes. Tap the mic, record and send. The tutor answers in text, and out loud on Gold and Premium."
+            "a": "Yes. Tap the mic, record and send. The tutor answers in text and out loud, in the American or British voice you choose."
           },
           "q3": {
             "q": "How many chats can I have?",
@@ -324,7 +291,7 @@
         "seoTitle": "Voice practice",
         "line1": "Speak, and",
         "line2": "be heard.",
-        "standfirst": "Voice Lab is a hands-free call with the AI tutor. You talk, it listens, answers out loud and scores how you did.",
+        "standfirst": "Voice Lab is a live call with the AI tutor. You talk, it answers out loud right away in the American or British voice you choose, and scores how you did.",
         "heroAlt": "The Voice Lab screen in Tutelage AI with the Start call button and the live scoring panel",
         "flowText": "A call works like a phone call with a patient teacher. There is nothing to hold down and nothing to send.",
         "steps": {
@@ -402,13 +369,13 @@
         "seoTitle": "Vocabulary review",
         "line1": "Words that",
         "line2": "stay with you.",
-        "standfirst": "Save new words, then review them as flashcards. The app brings each word back just before you would forget it.",
-        "heroAlt": "A vocabulary flashcard for the word reluctant in Tutelage AI, next to the mastery breakdown",
-        "flowText": "Your word list grows by itself as you chat, and a few minutes of review a day keeps it in your memory.",
+        "standfirst": "Your teacher and the AI tutor add new words for you, then you review them as flashcards. The app brings each word back just before you would forget it.",
+        "heroAlt": "A vocabulary flashcard for the word perseverance in Tutelage AI, next to the mastery breakdown",
+        "flowText": "Your word list grows as you chat and as your teacher gives you words, and a few minutes of review a day keeps it in your memory.",
         "steps": {
           "s1": {
             "name": "Collect",
-            "text": "Words are added from your chats, by you, or by your teacher."
+            "text": "The AI tutor adds words from your chats, and your teacher gives words or whole lists to your class."
           },
           "s2": {
             "name": "Review",
@@ -442,8 +409,8 @@
             "text": "How far you are through today’s cards."
           },
           "n6": {
-            "name": "Add word",
-            "text": "Save any word you meet, with your own example."
+            "name": "Due today",
+            "text": "How many cards are waiting for you today."
           }
         },
         "whyStatement": "Reviewing at the right moment beats reviewing more.",
@@ -458,13 +425,13 @@
           },
           "s3": {
             "name": "Your own words",
-            "text": "The list grows from your chats, so you learn words you really use."
+            "text": "The list grows from your chats and your class, so you learn words you really use."
           }
         },
         "faq": {
           "q1": {
             "q": "Where do the words come from?",
-            "a": "From your AI chats, from words you add yourself, and from words your teacher gives you."
+            "a": "From your AI chats, and from your teacher, who can give words or whole word lists to the class."
           },
           "q2": {
             "q": "How is the next review chosen?",
@@ -476,7 +443,7 @@
           },
           "q4": {
             "q": "Can I add my own words?",
-            "a": "Yes. Press Add word and write the word, its meaning and an example."
+            "a": "No. Words come from the AI tutor and your teacher, so every word has a checked meaning and example. You can remove words the AI added."
           },
           "q5": {
             "q": "When is a word mastered?",
@@ -550,7 +517,7 @@
           },
           "q3": {
             "q": "Will it try to change my accent?",
-            "a": "No. The goal is speech that is easy to understand, not sounding like someone else."
+            "a": "No. The goal is speech that is easy to understand. You choose American or British English, and your speech is scored against the one you chose."
           },
           "q4": {
             "q": "Where do I see my scores?",
@@ -723,5 +690,13 @@
         }
       }
     }
+  },
+  "chatMockup": {
+    "title": "Weekend in Erbil",
+    "level": "Level B1",
+    "thinking": "Thinking…",
+    "listening": "Listening…",
+    "placeholder": "Ask anything in English, or just say hi.",
+    "better": "Better:"
   }
 }

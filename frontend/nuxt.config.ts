@@ -20,10 +20,10 @@ export default defineNuxtConfig({
       ],
       script: [
         {
-          // Apply the saved theme before first paint so dark-mode users
-          // don't get a flash of the light UI. Dashboard only — public pages are
-          // always light. Same rule as paint() in composables/useTheme.ts.
-          innerHTML: "try{var p=location.pathname;if(localStorage.getItem('theme')==='dark'&&(p==='/dashboard'||p.indexOf('/dashboard/')===0))document.documentElement.classList.add('dark')}catch(e){}",
+          // Apply the theme before first paint so dark-mode users don't get a flash
+          // of the light UI: the learner's saved choice, otherwise the system setting.
+          // Dashboard only — public pages are always light. Same rule as composables/useTheme.ts.
+          innerHTML: "try{var p=location.pathname,s=localStorage.getItem('theme');if((s==='dark'||(s!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches))&&(p==='/dashboard'||p.indexOf('/dashboard/')===0))document.documentElement.classList.add('dark')}catch(e){}",
         },
       ],
     },

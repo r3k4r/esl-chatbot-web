@@ -1,15 +1,14 @@
 <script setup lang="ts">
-// Round light/dark switch in the dashboard header.
-const { isStaff } = useRole()
+// Round light/dark switch in the dashboard header. The choice stays on this device;
+// until it is used, the system's light/dark setting applies.
 const { theme, toggleTheme } = useTheme()
 
 const label = computed(() => (theme.value === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'))
 </script>
 
 <template>
-  <!-- Students' choice is also saved on their profile; staff have none, so it stays on this device -->
   <button type="button" class="header-circle-btn overflow-hidden" :aria-label="label" :title="label"
-    @click="toggleTheme(!isStaff)">
+    @click="toggleTheme">
     <!-- The saved theme lives in this browser only, so the server can't know which icon to
          draw; rendering it on the server half-patched the SVG into a bare circle on reload. -->
     <ClientOnly>

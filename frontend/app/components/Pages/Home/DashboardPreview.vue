@@ -6,12 +6,13 @@
         :title="t('dashboardPreview.title')"
         :description="t('dashboardPreview.description')"
         align="center"
+        content-class="max-w-4xl"
+        description-class="max-w-xl"
         wrapper-class="mb-14"
       />
-      <div class="relative">
-        <PagesHomeDashboardMockup />
-        <div class="absolute inset-x-0 -bottom-10 h-32 bg-linear-to-t from-neutral-50 via-neutral-50/80 to-transparent pointer-events-none" />
-      </div>
+      <!-- Today's dashboard, coded with demo data, at a fixed angle in a browser window.
+           No fade over its foot: a flat band can't follow the angled window and shows as a box. -->
+      <PagesHomeDashboardMockup />
     </div>
   </section>
 </template>

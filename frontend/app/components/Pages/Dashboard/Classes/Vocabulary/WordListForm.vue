@@ -3,7 +3,7 @@ import { useAssignWordsPage } from '~/composables/useAssignWordsPage'
 import WordFormCard from './WordFormCard.vue'
 import WordRowsInput from './WordRowsInput.vue'
 import WordListTargets from './WordListTargets.vue'
-import WordListActions from './WordListActions.vue'
+import FormActions from '~/components/Block/FormActions.vue'
 
 // Assign words to a class (no listId) or edit a list (listId): a plain form, checked on submit.
 const props = defineProps<{ classId: string; listId?: string }>()
@@ -69,7 +69,7 @@ const {
           />
         </div>
 
-        <WordListActions :submit-label="editing ? 'Save changes' : 'Assign words'" :submitting="submitting" @cancel="back" />
+        <FormActions :submit-label="editing ? 'Save changes' : 'Assign words'" :submitting="submitting" @cancel="back" />
       </template>
     </Form>
   </div>

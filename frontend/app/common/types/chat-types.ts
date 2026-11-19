@@ -90,3 +90,13 @@ export interface SessionUsage {
   reason: 'INACTIVE' | 'SESSION_LIMIT' | 'MESSAGE_LIMIT' | null
   resetsInSeconds: number
 }
+
+/** One line of the landing page's animated chat (Pages/Home/ChatMockup). */
+export interface ChatMockupMessage {
+  who: 'user' | 'ai'
+  text: string
+  /** sent or answered as a voice message (shows a player) */
+  voice?: boolean
+  /** the tutor's correction under a learner message: [before, the fixed words, after] */
+  fix?: [string, string, string]
+}

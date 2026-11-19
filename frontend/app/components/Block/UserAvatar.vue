@@ -52,8 +52,8 @@ async function toggleEmailDigest(val: boolean) {
   }
 }
 
-// Fetch profile on mount to sync the toggle + theme (cross-device)
-const { syncFromProfile } = useTheme()
+// Fetch the learner profile on mount: the digest toggle, and the time zone. Days, streaks and
+// the weekly email follow the learner's own time zone, taken from this browser (no setting).
 onMounted(async () => {
   const res = await useHttp({
     method: 'GET',
@@ -61,9 +61,12 @@ onMounted(async () => {
     requireAuth: true,
     showToast: false,
   })
-  if (res.success && res.data?.data?.learnerProfile) {
-    emailDigestEnabled.value = res.data.data.learnerProfile.emailDigestEnabled ?? true
-    syncFromProfile(res.data.data.learnerProfile.theme)
+  const lp = res.success ? res.data?.data?.learnerProfile : null
+  if (!lp) return
+  emailDigestEnabled.value = lp.emailDigestEnabled ?? true
+  const zone = Intl.DateTimeFormat().resolvedOptions().timeZone
+  if (zone && zone !== lp.timezone) {
+    await useHttp({ method: 'PATCH', url: '/users/me/learner-profile', body: { timezone: zone }, requireAuth: true, showToast: false })
   }
 })
 
@@ -81,7 +84,7 @@ async function handleSignOut() {
         aria-label="User menu">
         <!-- Avatar circle -->
         <div
-          class="w-8 h-8 rounded-full bg-linear-to-br from-brand-primary to-[#b45309] text-white flex items-center justify-center text-[12px] font-semibold font-poppins shrink-0">
+          class="size-9 rounded-full bg-linear-to-br from-brand-primary to-[#b45309] text-white flex items-center justify-center text-[14px] font-semibold font-poppins shrink-0">
           <AppImage v-if="user?.avatarUrl" :src="user.avatarUrl" :alt="user.displayName"
             class="w-full h-full rounded-full object-cover" />
           <span v-else>{{ initials }}</span>
@@ -89,10 +92,10 @@ async function handleSignOut() {
 
         <!-- Name + plan (lg+) -->
         <div class="hidden lg:block leading-tight text-left">
-          <AppText size="12" weight="medium" color="brand-ink">
+          <AppText size="16" weight="medium" color="brand-ink">
             {{ user?.username ?? 'User' }}
           </AppText>
-          <AppText size="10" color="neutral-400" class="font-mono">{{ isStaff ? roleLabel : plan }}</AppText>
+          <AppText size="14" color="neutral-400">{{ isStaff ? roleLabel : plan }}</AppText>
         </div>
       </button>
     </UiDropdownMenuTrigger>
@@ -107,12 +110,12 @@ async function handleSignOut() {
           <span v-else>{{ initials }}</span>
         </div>
         <div class="min-w-0">
-          <p class="text-[13px] font-semibold font-poppins text-brand-ink dark:text-white truncate">
+          <p class="text-[15px] font-semibold font-poppins text-brand-ink dark:text-white truncate">
             {{ user?.displayName ?? user?.username ?? 'User' }}
           </p>
-          <p class="text-[11px] text-zinc-400 font-mono truncate">{{ user?.email }}</p>
+          <p class="text-[13px] text-text-muted truncate">{{ user?.email }}</p>
           <span
-            class="inline-block mt-0.5 text-[10px] font-semibold font-poppins px-1.5 py-0.5 rounded-sm bg-brand-primary text-white">
+            class="inline-block mt-1 text-[12px] font-semibold font-poppins px-1.5 py-0.5 rounded-sm bg-brand-primary text-white">
             {{ isStaff ? roleLabel : plan }}
           </span>
         </div>
@@ -124,8 +127,8 @@ async function handleSignOut() {
         <!-- Email digest toggle (learner feature) -->
         <div class="px-3 py-2 flex items-center justify-between cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-sm transition-colors" @click.stop>
           <div>
-            <p class="text-[13px] font-medium text-zinc-900 dark:text-white">Email digests</p>
-            <p class="text-[11px] text-zinc-500 dark:text-zinc-400">Weekly summary</p>
+            <p class="text-[14px] font-medium text-text-heading">Email digests</p>
+            <p class="text-[13px] text-text-muted">Weekly summary</p>
           </div>
           <UiSwitch :model-value="emailDigestEnabled" :disabled="togglingDigest" @update:model-value="toggleEmailDigest($event)" />
         </div>
