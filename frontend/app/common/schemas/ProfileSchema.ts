@@ -19,3 +19,12 @@ export const profileFormSchema = z.object({
 })
 
 export type ProfileFormValues = z.infer<typeof profileFormSchema>
+
+// An admin editing someone's profile (users/[id]/profile): the same fields, plus their current
+// level (students can't set their own). Voice and weekly email aren't on the admin endpoint.
+export const adminUserFormSchema = profileFormSchema.extend({
+  displayName: z.string().trim().min(1, 'Enter a name').max(100, 'Use 100 characters or fewer'),
+  currentLevel: z.string(),
+})
+
+export type AdminUserFormValues = z.infer<typeof adminUserFormSchema>

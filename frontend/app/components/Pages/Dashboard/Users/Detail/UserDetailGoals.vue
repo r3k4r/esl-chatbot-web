@@ -38,7 +38,7 @@ function fmt(d: string | null | undefined) {
               <!-- Type -->
               <span class="text-[14px] font-semibold px-2.5 py-0.5 rounded-md font-poppins"
                 style="background:var(--surface-card);color:var(--text-muted)">
-                {{ goal.type }}
+                {{ (goal.type.charAt(0) + goal.type.slice(1).toLowerCase()).replace(/_/g, ' ') }}
               </span>
               <!-- Difficulty -->
               <span v-if="goal.difficulty" class="text-[14px] font-semibold px-2.5 py-0.5 rounded-md font-poppins"
@@ -55,7 +55,7 @@ function fmt(d: string | null | undefined) {
           </div>
           <div class="text-right shrink-0">
             <p class="text-[14px] font-poppins" :style="`color:var(--text-muted)`">Target date</p>
-            <p class="text-[14px] font-mono" :style="`color:var(--text-subtle)`">{{ fmt(goal.targetDate) }}</p>
+            <p class="text-[14px] font-poppins tabular-nums" :style="`color:var(--text-subtle)`">{{ fmt(goal.targetDate) }}</p>
           </div>
         </div>
 
@@ -63,7 +63,7 @@ function fmt(d: string | null | undefined) {
         <div>
           <div class="flex items-center justify-between mb-1">
             <p class="text-[14px] font-poppins" :style="`color:var(--text-muted)`">Progress</p>
-            <p class="text-[14px] font-semibold font-poppins" style="color:var(--color-brand-primary)">{{ goal.progress }}%</p>
+            <p class="text-[14px] font-semibold font-poppins" :style="`color:var(--text-heading)`">{{ goal.progress }}%</p>
           </div>
           <div class="h-2 rounded-md overflow-hidden" style="background:var(--surface-card)">
             <div class="h-full rounded-md" style="background:var(--color-brand-primary)"

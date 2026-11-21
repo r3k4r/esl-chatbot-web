@@ -1,0 +1,155 @@
+{
+  "files": [
+    {
+      "file": "Dxxo8j6PP2D_kU2muijlE8WWIGroe7ll.woff2",
+      "family": "Vazirmatn",
+      "rawFamily": "Vazirmatn",
+      "subfamily": "Regular",
+      "postscript": "Vazirmatn-Regular",
+      "weight": 400,
+      "style": "normal",
+      "variationAxes": [
+        "wght"
+      ],
+      "identified": true,
+      "isIcon": false
+    },
+    {
+      "file": "Dxxo8j6PP2D_kU2muijlGMWWIGroe7ll.woff2",
+      "family": "Vazirmatn",
+      "rawFamily": "Vazirmatn",
+      "subfamily": "Regular",
+      "postscript": "Vazirmatn-Regular",
+      "weight": 400,
+      "style": "normal",
+      "variationAxes": [
+        "wght"
+      ],
+      "identified": true,
+      "isIcon": false
+    },
+    {
+      "file": "Dxxo8j6PP2D_kU2muijlHcWWIGroew.woff2",
+      "family": "Vazirmatn",
+      "rawFamily": "Vazirmatn",
+      "subfamily": "Regular",
+      "postscript": "Vazirmatn-Regular",
+      "weight": 400,
+      "style": "normal",
+      "variationAxes": [
+        "wght"
+      ],
+      "identified": true,
+      "isIcon": false
+    },
+    {
+      "file": "Qw3MZRtWPQCuHme67tEYUIx3Kh0PHR9N6YNe7PezeetDIgw.woff2",
+      "family": "IBM Plex Sans Arabic",
+      "rawFamily": "IBM Plex Sans Arabic Thin",
+      "subfamily": "Regular",
+      "postscript": "IBMPlexSansArabic-Thin",
+      "weight": 100,
+      "style": "normal",
+      "variationAxes": [],
+      "identified": true,
+      "isIcon": false
+    },
+    {
+      "file": "Qw3MZRtWPQCuHme67tEYUIx3Kh0PHR9N6YNe7PKzeetDIgzVWA.woff2",
+      "family": "IBM Plex Sans Arabic",
+      "rawFamily": "IBM Plex Sans Arabic Thin",
+      "subfamily": "Regular",
+      "postscript": "IBMPlexSansArabic-Thin",
+      "weight": 100,
+      "style": "normal",
+      "variationAxes": [],
+      "identified": true,
+      "isIcon": false
+    },
+    {
+      "file": "Qw3MZRtWPQCuHme67tEYUIx3Kh0PHR9N6YNe7PmzeetDIgzVWA.woff2",
+      "family": "IBM Plex Sans Arabic",
+      "rawFamily": "IBM Plex Sans Arabic Thin",
+      "subfamily": "Regular",
+      "postscript": "IBMPlexSansArabic-Thin",
+      "weight": 100,
+      "style": "normal",
+      "variationAxes": [],
+      "identified": true,
+      "isIcon": false
+    },
+    {
+      "file": "Qw3MZRtWPQCuHme67tEYUIx3Kh0PHR9N6YNe7PqzeetDIgzVWA.woff2",
+      "family": "IBM Plex Sans Arabic",
+      "rawFamily": "IBM Plex Sans Arabic Thin",
+      "subfamily": "Regular",
+      "postscript": "IBMPlexSansArabic-Thin",
+      "weight": 100,
+      "style": "normal",
+      "variationAxes": [],
+      "identified": true,
+      "isIcon": false
+    },
+    {
+      "file": "Qw3NZRtWPQCuHme67tEYUIx3Kh0PHR9N6YPy_eCRXMRrKATtYV0.woff2",
+      "family": "IBM Plex Sans Arabic",
+      "rawFamily": "IBM Plex Sans Arabic ExtraLight",
+      "subfamily": "Regular",
+      "postscript": "IBMPlexSansArabic-ExtraLight",
+      "weight": 200,
+      "style": "normal",
+      "variationAxes": [],
+      "identified": true,
+      "isIcon": false
+    },
+    {
+      "file": "Qw3NZRtWPQCuHme67tEYUIx3Kh0PHR9N6YPy_eCZXMRrKATtYV0.woff2",
+      "family": "IBM Plex Sans Arabic",
+      "rawFamily": "IBM Plex Sans Arabic ExtraLight",
+      "subfamily": "Regular",
+      "postscript": "IBMPlexSansArabic-ExtraLight",
+      "weight": 200,
+      "style": "normal",
+      "variationAxes": [],
+      "identified": true,
+      "isIcon": false
+    }
+  ],
+  "families": [
+    {
+      "family": "IBM Plex Sans Arabic",
+      "weights": [
+        100,
+        200
+      ],
+      "variable": false,
+      "fileCount": 6,
+      "files": [
+        "Qw3MZRtWPQCuHme67tEYUIx3Kh0PHR9N6YNe7PKzeetDIgzVWA.woff2",
+        "Qw3MZRtWPQCuHme67tEYUIx3Kh0PHR9N6YNe7PezeetDIgw.woff2",
+        "Qw3MZRtWPQCuHme67tEYUIx3Kh0PHR9N6YNe7PmzeetDIgzVWA.woff2",
+        "Qw3MZRtWPQCuHme67tEYUIx3Kh0PHR9N6YNe7PqzeetDIgzVWA.woff2",
+        "Qw3NZRtWPQCuHme67tEYUIx3Kh0PHR9N6YPy_eCRXMRrKATtYV0.woff2",
+        "Qw3NZRtWPQCuHme67tEYUIx3Kh0PHR9N6YPy_eCZXMRrKATtYV0.woff2"
+      ]
+    },
+    {
+      "family": "Vazirmatn",
+      "weights": [
+        400
+      ],
+      "variable": true,
+      "fileCount": 3,
+      "files": [
+        "Dxxo8j6PP2D_kU2muijlE8WWIGroe7ll.woff2",
+        "Dxxo8j6PP2D_kU2muijlGMWWIGroe7ll.woff2",
+        "Dxxo8j6PP2D_kU2muijlHcWWIGroew.woff2"
+      ]
+    }
+  ],
+  "unidentified": [],
+  "meta": {
+    "generatedAt": "2026-11-21T07:40:24.203Z",
+    "tool": "fontkit"
+  }
+}

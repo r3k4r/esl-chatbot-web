@@ -32,7 +32,7 @@ function fmt(d: string) {
             class="transition-colors hover:bg-surface-raised"
             style="border-bottom:1px solid var(--border-inner)">
             <td class="px-4 py-3">
-              <p class="text-[14px] font-mono" :style="`color:var(--text-heading)`">{{ fmt(p.date) }}</p>
+              <p class="text-[14px] font-poppins tabular-nums" :style="`color:var(--text-heading)`">{{ fmt(p.date) }}</p>
             </td>
             <td class="px-4 py-3">
               <p class="text-[14px] font-poppins" :style="`color:var(--text-heading)`">{{ p.sessionsCount }}</p>
@@ -44,7 +44,7 @@ function fmt(d: string) {
               <p class="text-[14px] font-poppins" :style="`color:var(--text-heading)`">{{ p.messagesCount }}</p>
             </td>
             <td class="px-4 py-3 hidden md:table-cell">
-              <p class="text-[14px] font-mono" :style="`color:var(--text-subtle)`">{{ p.wordsTyped.toLocaleString() }}</p>
+              <p class="text-[14px] font-poppins tabular-nums" :style="`color:var(--text-subtle)`">{{ p.wordsTyped.toLocaleString() }}</p>
             </td>
             <td class="px-4 py-3 hidden lg:table-cell">
               <p class="text-[14px] font-poppins" :style="`color:var(--text-heading)`">{{ p.vocabularyPracticed }}</p>

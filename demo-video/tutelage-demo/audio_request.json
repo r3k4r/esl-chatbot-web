@@ -1,0 +1,66 @@
+{
+  "lines": [
+    {
+      "id": "01",
+      "sfx": [
+        "soft keyboard typing",
+        "gentle backspace click"
+      ]
+    },
+    {
+      "id": "02",
+      "sfx": [
+        "warm soft whoosh",
+        "gentle shimmer"
+      ]
+    },
+    {
+      "id": "03",
+      "sfx": [
+        "soft message pop",
+        "soft message pop",
+        "soft message pop"
+      ]
+    },
+    {
+      "id": "04",
+      "sfx": [
+        "soft whoosh push-in",
+        "gentle chime",
+        "soft message pop"
+      ]
+    },
+    {
+      "id": "05",
+      "sfx": [
+        "soft call ring",
+        "gentle soundwave swell",
+        "soft score tick"
+      ]
+    },
+    {
+      "id": "06",
+      "sfx": [
+        "soft card flips",
+        "light whoosh"
+      ]
+    },
+    {
+      "id": "07",
+      "sfx": [
+        "soft rising tick",
+        "gentle riser into the last bar"
+      ]
+    },
+    {
+      "id": "08",
+      "sfx": [
+        "warm logo sting",
+        "soft button click"
+      ]
+    }
+  ],
+  "bgm": {
+    "mode": "none"
+  }
+}

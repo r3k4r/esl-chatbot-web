@@ -1,7 +1,9 @@
 import type { AdminDashboardData } from '~/common/types/admin-types'
 
+// One answer feeds three admin pages (Dashboard, Learning, Revenue). It's shared state, so moving
+// between them shows the last numbers at once while a fresh copy loads.
 export function useAdminDashboard() {
-  const data = ref<AdminDashboardData | null>(null)
+  const data = useState<AdminDashboardData | null>('admin-dashboard', () => null)
   const loading = ref(false)
   // Kept until the next answer arrives, so a retry keeps the error screen (spinning button) up.
   const error = ref<string | null>(null)

@@ -1,0 +1,212 @@
+[div] Tutelage
+[a] Features
+[a] How It Works
+[a] Dashboard
+[a] Tutelage
+[span] Tutelage AI
+[span] Get Started
+[span] Get Started
+[div] New
+[div] AI-Powered Learning, now in beta
+[div] Learn English
+[span] smarter
+[span] with AI.
+[div] AI-powered conversations, voice practice, and intelligent progress tracking — all in one platform built for serious learners.
+[span] Get Started
+[span] Watch a demo
+[div] Free to start
+[div] No credit card
+[div] 40+ topics
+[div] Weekend in Erbil
+[div] Level B1 · 03:47
+[div] I went to Erbil last weekend with my family.
+[div] Erbil is lovely this time of year! Did you visit the citadel, or spend time in the bazaar?
+[div] Yes, we go to the citadel and eat kebab.
+[span] 0:04
+[span] Better:
+[strong] went
+[div] to the citadel.
+[div] Kebab after the citadel sounds perfect! What did you like most there?
+[span] 0:06
+[div] Ask anything in English, or just say hi.
+[div] Trusted by 2,000+ learners worldwide
+[div] Lumen
+[div] Northwind
+[div] Halcyon
+[div] Veritas
+[div] Meridian
+[div] Atlas Edu
+[div] Forum
+[div] Polyglot
+[div] Lumen
+[div] Northwind
+[div] Halcyon
+[div] Veritas
+[div] Meridian
+[div] Atlas Edu
+[div] Forum
+[div] Polyglot
+[div] Lumen
+[div] Northwind
+[div] Halcyon
+[div] Veritas
+[div] Meridian
+[div] Atlas Edu
+[div] Forum
+[div] Polyglot
+[div] Lumen
+[div] Northwind
+[div] Halcyon
+[div] Veritas
+[div] Meridian
+[div] Atlas Edu
+[div] Forum
+[div] Polyglot
+[div] Features
+[div] Everything you need to master English.
+[div] A complete toolkit — designed together, not bolted on. Every session feeds your goals, your vocabulary, and your analytics.
+[div] AI Conversation
+[div] Session-based chat with an AI tutor that adapts to your level, goals, and the topics you care about.
+[div] Learn more
+[div] Voice Practice
+[div] Real-time speaking with live pronunciation feedback and natural back-and-forth dialogue.
+[div] Learn more
+[div] Vocabulary SRS
+[div] A spaced repetition system that schedules reviews so new words actually stick long-term.
+[div] Learn more
+[div] Pronunciation Score
+[div] Scores how clearly you say each word, so you know exactly which words to work on.
+[div] Learn more
+[div] Learning Goals
+[div] Set targets for vocabulary, speaking, grammar or study time, and watch your progress toward each one.
+[div] Learn more
+[div] Progress Analytics
+[div] Clear visual insights into time, vocabulary growth, fluency, and accuracy over time.
+[div] Learn more
+[div] How it works
+[div] From sign-up to real fluency.
+[p] Step 1 of 6
+[p] Create your account
+[p] Sign up with your email or with Google. It’s free.
+[p] Unlock your AI tutor
+[p] Confirm your email with a 6-digit code, or link Google, and the Free plan switches on.
+[p] Chat with the tutor
+[p] Pick a topic or just say hi. It answers at your level and corrects you gently.
+[p] Practise speaking
+[p] Call the tutor in Voice Lab and get scored after every turn you speak.
+[p] Review your words
+[p] New words from your chats become flashcards that come back at the right time.
+[p] Watch yourself improve
+[p] Your dashboard shows today’s goal, your streak and how your skills grow.
+[span] Create your account
+[span] Unlock your AI tutor
+[span] Chat with the tutor
+[span] Practise speaking
+[span] Review your words
+[span] Watch yourself improve
+[div] Dashboard
+[div] Your learning command center.
+[div] Streaks, vocabulary, minutes and level — all in one calm view, so you always know what to do next.
+[span] ai.tutelage.krd/dashboard
+[span] Tutelage
+[span] Dashboard
+[span] Classes
+[span] AI Chat
+[span] Voice Lab
+[span] Vocabulary
+[span] Goals
+[span] Dashboard
+[span] Search users, classes, words…
+[div] Good morning
+[div] Welcome back, Aram.
+[div] 8 more minutes to reach today's goal.
+[div] 12 words are ready to review
+[div] A short review keeps them in your memory.
+[span] Review words
+[span] Start a chat
+[span] Practise speaking
+[span] /25
+[span] min today
+[div] day streak
+[div] Words mastered
+[div] 126 saved · 9 new
+[div] Practice this week
+[div] 2 h 10 min
+[div] Goal 2 h 55 min
+[div] Speaking
+[div] Good · 23 spoken
+[div] Level
+[div] Aiming for B2
+[div] Skills
+[div] From your last 40 messages, 23 spoken.
+[span] Grammar
+[span] Vocabulary
+[span] Fluency
+[span] Speaking
+[span] This week
+[span] 2 h 10 min
+[span] Mon
+[span] Tue
+[span] Wed
+[span] Thu
+[span] Fri
+[span] Sat
+[span] Sun
+[div] Class work
+[div] Describe your neighbourhood
+[div] Sarah’s class · Due Tue
+[div] Café roleplay recording
+[div] Sarah’s class · Was due Mon
+[span] Missing
+[div] Weekend reading: The Market
+[div] Sarah’s class · Due Sun
+[div] Pricing
+[div] Real Progress for Pocket Change
+[div] Starter
+[div] Free
+[div] Try the core experience and see how Tutelage fits into your routine.
+[div] 3 sessions/day
+[div] 20 msgs/session
+[div] Gemini Flash-Lite AI
+[div] Basic vocabulary SRS
+[div] Progress tracking
+[span] Start Free
+[div] Gold
+[span] Most Popular
+[div] 25,000
+[div] IQD/month
+[div] Serious learners who want more sessions, smarter AI, and full analytics.
+[div] 15 sessions/day
+[div] 100 msgs/session
+[div] Gemini 2.5 Flash AI
+[div] Full vocabulary SRS
+[div] Progress analytics
+[span] Get Gold
+[div] Premium
+[div] 45,000
+[div] IQD/month
+[div] Everything you need to go all-in on the full Tutelage experience.
+[div] 50 sessions/day
+[div] 150 msgs/session
+[div] GPT-5 mini AI
+[div] Priority voice TTS
+[div] Advanced analytics
+[span] Get Premium
+[div] Cancel anytime · Team & school plans on request
+[div] Join 2,000+ learners
+[div] Ready to transform
+[div] your English learning?
+[div] Your AI tutor, your voice lab, your progress — all in one place. Start your first session in under a minute.
+[span] Get Started Free
+[span] Watch 30s demo
+[div] Tutelage
+[div] An AI-powered English learning platform — conversations, voice, vocabulary and real progress in one place.
+[a] Features
+[a] Voice Lab
+[a] Vocabulary
+[div] Resources
+[a] Placement Test
+[a] Changelog
+[a] Partners
+[div] © 2026 Tutelage AI. All rights reserved.
+[div] All systems normal

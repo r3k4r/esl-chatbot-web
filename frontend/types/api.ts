@@ -212,6 +212,101 @@ export interface paths {
                                     unverifiedOver24h?: number;
                                     fibPaymentsStuck?: number;
                                 };
+                                people?: {
+                                    newest?: {
+                                        /** Format: uuid */
+                                        id?: string;
+                                        name?: string;
+                                        username?: string;
+                                        /** @enum {string} */
+                                        role?: "STUDENT" | "TUTOR" | "ADMIN";
+                                        verified?: boolean;
+                                        /** @enum {string} */
+                                        plan?: "FREE" | "GOLD" | "PREMIUM";
+                                        /** Format: date-time */
+                                        joinedAt?: string;
+                                    }[];
+                                    /** @description Students with the most practice minutes in the last 7 days */
+                                    mostActive?: {
+                                        /** Format: uuid */
+                                        id?: string;
+                                        name?: string;
+                                        minutes?: number;
+                                        messages?: number;
+                                        /** @enum {string} */
+                                        plan?: "FREE" | "GOLD" | "PREMIUM";
+                                    }[];
+                                    /** @description Students who practised before but not in the last 7 days, most recently quiet first */
+                                    goneQuiet?: {
+                                        /** Format: uuid */
+                                        id?: string;
+                                        name?: string;
+                                        /** Format: date-time */
+                                        lastPracticeAt?: string;
+                                        /** @enum {string} */
+                                        plan?: "FREE" | "GOLD" | "PREMIUM";
+                                    }[];
+                                    goneQuietCount?: number;
+                                };
+                                /** @description Every class that isn't archived, biggest first (same numbers as the tutor dashboard) */
+                                classes?: {
+                                    /** Format: uuid */
+                                    id?: string;
+                                    name?: string;
+                                    students?: number;
+                                    activeThisWeek?: number;
+                                    handInRate?: number | null;
+                                    missing?: number;
+                                    toReview?: number;
+                                    avgSkill?: number | null;
+                                    teacher?: {
+                                        /** Format: uuid */
+                                        id?: string;
+                                        name?: string;
+                                    } | null;
+                                }[];
+                                /** @description The last 30 UTC days, oldest first */
+                                trend?: {
+                                    /** @example 2026-11-21 */
+                                    date?: string;
+                                    signUps?: number;
+                                    activeLearners?: number;
+                                    messages?: number;
+                                }[];
+                                learning?: {
+                                    skills?: {
+                                        grammar?: number;
+                                        vocabulary?: number;
+                                        fluency?: number;
+                                        speaking?: number;
+                                        practisingStudents?: number;
+                                    };
+                                    /** @description Students by the level the AI hears; NONE = not measured yet */
+                                    levels?: {
+                                        [key: string]: number;
+                                    };
+                                    commonMistakes?: {
+                                        rule?: string;
+                                        count?: number;
+                                        example?: {
+                                            said?: string;
+                                            better?: string;
+                                        } | null;
+                                    }[];
+                                    modes?: {
+                                        chat?: number;
+                                        voice?: number;
+                                        voiceMinutes?: number;
+                                    };
+                                    heavyUsers?: {
+                                        /** Format: uuid */
+                                        id?: string;
+                                        name?: string;
+                                        messages?: number;
+                                        /** @enum {string} */
+                                        plan?: "FREE" | "GOLD" | "PREMIUM";
+                                    }[];
+                                };
                             };
                         };
                     };

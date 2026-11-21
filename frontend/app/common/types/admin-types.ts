@@ -1,3 +1,7 @@
+import type { TutorAccent, TutorVoiceGender } from './profile-types'
+import type { StudentMistake } from './class-types'
+import type { TutorClassHealth } from './tutor-types'
+
 export type UserRole = 'STUDENT' | 'TUTOR' | 'ADMIN'
 export type SubStatus = 'ACTIVE' | 'INACTIVE' | 'CANCELLED' | 'PAST_DUE'
 export type PlanId = 'FREE' | 'GOLD' | 'PREMIUM'
@@ -18,6 +22,9 @@ export interface AdminLearnerProfile {
   theme: string
   weeklyGoalMinutes: number
   timezone: string
+  emailDigestEnabled?: boolean
+  tutorAccent?: TutorAccent
+  tutorVoice?: TutorVoiceGender
 }
 
 export interface AdminUserGoal {
@@ -190,6 +197,37 @@ export interface AdminDashboardData {
   /** Messages to the AI tutor in the last 7 days, by the sender's plan */
   aiUsage: { FREE: number; GOLD: number; PREMIUM: number }
   attention: { unverifiedOver24h: number; fibPaymentsStuck: number }
+  people: {
+    newest: { id: string; name: string; username: string; role: UserRole; verified: boolean; plan: PlanId; joinedAt: string }[]
+    /** Most practice minutes in the last 7 days */
+    mostActive: { id: string; name: string; minutes: number; messages: number; plan: PlanId }[]
+    /** Practised before, not in the last 7 days; most recently quiet first */
+    goneQuiet: { id: string; name: string; lastPracticeAt: string; plan: PlanId }[]
+    goneQuietCount: number
+  }
+  /** Every class that isn't archived, biggest first (same numbers as the tutor dashboard) */
+  classes: AdminClassRow[]
+  /** Last 30 UTC days, oldest first */
+  trend: { date: string; signUps: number; activeLearners: number; messages: number }[]
+  learning: {
+    skills: { grammar: number; vocabulary: number; fluency: number; speaking: number; practisingStudents: number }
+    /** Students by the level the AI hears; NONE = not measured yet */
+    levels: Record<string, number>
+    commonMistakes: StudentMistake[]
+    /** Conversations started in the last 7 days */
+    modes: { chat: number; voice: number; voiceMinutes: number }
+    heavyUsers: { id: string; name: string; messages: number; plan: PlanId }[]
+  }
+}
+
+export type AdminClassRow = TutorClassHealth & { teacher: { id: string; name: string } | null }
+
+/** One row in an admin people list (Admin/AdminPeopleList) */
+export interface AdminPeopleRow {
+  id: string
+  name: string
+  meta: string
+  badge?: { text: string; class?: string; style?: string } | null
 }
 
 // ── Patch user (PATCH /admin/users/:id) ──────────────────────────────────────

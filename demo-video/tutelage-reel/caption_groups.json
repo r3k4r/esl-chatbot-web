@@ -1,0 +1,589 @@
+{
+  "total_duration_s": 28.433,
+  "width": 1920,
+  "height": 1080,
+  "groups": [
+    {
+      "id": "caption-group-0",
+      "frame": 1,
+      "start": 0.237,
+      "end": 0.79,
+      "text": "Scared to",
+      "words": [
+        {
+          "id": "caption-word-0-0",
+          "text": "Scared",
+          "start": 0.237,
+          "end": 0.593
+        },
+        {
+          "id": "caption-word-0-1",
+          "text": "to",
+          "start": 0.671,
+          "end": 0.751
+        }
+      ]
+    },
+    {
+      "id": "caption-group-1",
+      "frame": 1,
+      "start": 0.79,
+      "end": 1.694,
+      "text": "speak English?",
+      "words": [
+        {
+          "id": "caption-word-1-0",
+          "text": "speak",
+          "start": 0.79,
+          "end": 0.908
+        },
+        {
+          "id": "caption-word-1-1",
+          "text": "English?",
+          "start": 0.988,
+          "end": 1.574
+        }
+      ]
+    },
+    {
+      "id": "caption-group-2",
+      "frame": 2,
+      "start": 2.251,
+      "end": 3.556,
+      "text": "Meet Tutelage AI",
+      "words": [
+        {
+          "id": "caption-word-2-0",
+          "text": "Meet",
+          "start": 2.251,
+          "end": 2.448
+        },
+        {
+          "id": "caption-word-2-1",
+          "text": "Tutelage",
+          "start": 2.567,
+          "end": 3.041
+        },
+        {
+          "id": "caption-word-2-2",
+          "text": "AI",
+          "start": 3.159,
+          "end": 3.436
+        }
+      ]
+    },
+    {
+      "id": "caption-group-3",
+      "frame": 2,
+      "start": 3.752,
+      "end": 4.267,
+      "text": "your English",
+      "words": [
+        {
+          "id": "caption-word-3-0",
+          "text": "your",
+          "start": 3.752,
+          "end": 3.91
+        },
+        {
+          "id": "caption-word-3-1",
+          "text": "English",
+          "start": 3.989,
+          "end": 4.147
+        }
+      ]
+    },
+    {
+      "id": "caption-group-4",
+      "frame": 2,
+      "start": 4.344,
+      "end": 4.938,
+      "text": "tutor,",
+      "words": [
+        {
+          "id": "caption-word-4-0",
+          "text": "tutor,",
+          "start": 4.344,
+          "end": 4.818
+        }
+      ]
+    },
+    {
+      "id": "caption-group-5",
+      "frame": 2,
+      "start": 4.977,
+      "end": 5.787,
+      "text": "any time.",
+      "words": [
+        {
+          "id": "caption-word-5-0",
+          "text": "any",
+          "start": 4.977,
+          "end": 5.174
+        },
+        {
+          "id": "caption-word-5-1",
+          "text": "time.",
+          "start": 5.293,
+          "end": 5.667
+        }
+      ]
+    },
+    {
+      "id": "caption-group-6",
+      "frame": 3,
+      "start": 6.563,
+      "end": 7.848,
+      "text": "Chat about anything.",
+      "words": [
+        {
+          "id": "caption-word-6-0",
+          "text": "Chat",
+          "start": 6.563,
+          "end": 6.761
+        },
+        {
+          "id": "caption-word-6-1",
+          "text": "about",
+          "start": 6.879,
+          "end": 6.998
+        },
+        {
+          "id": "caption-word-6-2",
+          "text": "anything.",
+          "start": 7.116,
+          "end": 7.728
+        }
+      ]
+    },
+    {
+      "id": "caption-group-7",
+      "frame": 3,
+      "start": 8.143,
+      "end": 8.617,
+      "text": "It talks",
+      "words": [
+        {
+          "id": "caption-word-7-0",
+          "text": "It",
+          "start": 8.143,
+          "end": 8.262
+        },
+        {
+          "id": "caption-word-7-1",
+          "text": "talks",
+          "start": 8.302,
+          "end": 8.499
+        }
+      ]
+    },
+    {
+      "id": "caption-group-8",
+      "frame": 3,
+      "start": 8.617,
+      "end": 9.052,
+      "text": "back like",
+      "words": [
+        {
+          "id": "caption-word-8-0",
+          "text": "back",
+          "start": 8.617,
+          "end": 8.815
+        },
+        {
+          "id": "caption-word-8-1",
+          "text": "like",
+          "start": 8.933,
+          "end": 9.012
+        }
+      ]
+    },
+    {
+      "id": "caption-group-9",
+      "frame": 3,
+      "start": 9.052,
+      "end": 10.152,
+      "text": "a real person.",
+      "words": [
+        {
+          "id": "caption-word-9-0",
+          "text": "a",
+          "start": 9.052,
+          "end": 9.131
+        },
+        {
+          "id": "caption-word-9-1",
+          "text": "real",
+          "start": 9.17,
+          "end": 9.328
+        },
+        {
+          "id": "caption-word-9-2",
+          "text": "person.",
+          "start": 9.447,
+          "end": 10.032
+        }
+      ]
+    },
+    {
+      "id": "caption-group-10",
+      "frame": 4,
+      "start": 10.849,
+      "end": 11.384,
+      "text": "Oops,",
+      "words": [
+        {
+          "id": "caption-word-10-0",
+          "text": "Oops,",
+          "start": 10.849,
+          "end": 11.264
+        }
+      ]
+    },
+    {
+      "id": "caption-group-11",
+      "frame": 4,
+      "start": 11.48,
+      "end": 12.273,
+      "text": "a mistake?",
+      "words": [
+        {
+          "id": "caption-word-11-0",
+          "text": "a",
+          "start": 11.48,
+          "end": 11.56
+        },
+        {
+          "id": "caption-word-11-1",
+          "text": "mistake?",
+          "start": 11.599,
+          "end": 12.153
+        }
+      ]
+    },
+    {
+      "id": "caption-group-12",
+      "frame": 4,
+      "start": 12.428,
+      "end": 12.903,
+      "text": "It fixes",
+      "words": [
+        {
+          "id": "caption-word-12-0",
+          "text": "It",
+          "start": 12.428,
+          "end": 12.547
+        },
+        {
+          "id": "caption-word-12-1",
+          "text": "fixes",
+          "start": 12.587,
+          "end": 12.863
+        }
+      ]
+    },
+    {
+      "id": "caption-group-13",
+      "frame": 4,
+      "start": 12.903,
+      "end": 13.141,
+      "text": "it",
+      "words": [
+        {
+          "id": "caption-word-13-0",
+          "text": "it",
+          "start": 12.903,
+          "end": 13.021
+        }
+      ]
+    },
+    {
+      "id": "caption-group-14",
+      "frame": 4,
+      "start": 13.298,
+      "end": 13.869,
+      "text": "nicely.",
+      "words": [
+        {
+          "id": "caption-word-14-0",
+          "text": "nicely.",
+          "start": 13.298,
+          "end": 13.749
+        }
+      ]
+    },
+    {
+      "id": "caption-group-15",
+      "frame": 5,
+      "start": 14.638,
+      "end": 14.956,
+      "text": "Then",
+      "words": [
+        {
+          "id": "caption-word-15-0",
+          "text": "Then",
+          "start": 14.638,
+          "end": 14.836
+        }
+      ]
+    },
+    {
+      "id": "caption-group-16",
+      "frame": 5,
+      "start": 15.073,
+      "end": 15.784,
+      "text": "say it",
+      "words": [
+        {
+          "id": "caption-word-16-0",
+          "text": "say",
+          "start": 15.073,
+          "end": 15.626
+        },
+        {
+          "id": "caption-word-16-1",
+          "text": "it",
+          "start": 15.666,
+          "end": 15.744
+        }
+      ]
+    },
+    {
+      "id": "caption-group-17",
+      "frame": 5,
+      "start": 15.784,
+      "end": 16.298,
+      "text": "out loud",
+      "words": [
+        {
+          "id": "caption-word-17-0",
+          "text": "out",
+          "start": 15.784,
+          "end": 15.902
+        },
+        {
+          "id": "caption-word-17-1",
+          "text": "loud",
+          "start": 15.941,
+          "end": 16.178
+        }
+      ]
+    },
+    {
+      "id": "caption-group-18",
+      "frame": 5,
+      "start": 16.337,
+      "end": 16.614,
+      "text": "in the",
+      "words": [
+        {
+          "id": "caption-word-18-0",
+          "text": "in",
+          "start": 16.337,
+          "end": 16.455
+        },
+        {
+          "id": "caption-word-18-1",
+          "text": "the",
+          "start": 16.495,
+          "end": 16.574
+        }
+      ]
+    },
+    {
+      "id": "caption-group-19",
+      "frame": 5,
+      "start": 16.614,
+      "end": 17.264,
+      "text": "Voice Lab.",
+      "words": [
+        {
+          "id": "caption-word-19-0",
+          "text": "Voice",
+          "start": 16.614,
+          "end": 16.771
+        },
+        {
+          "id": "caption-word-19-1",
+          "text": "Lab.",
+          "start": 16.89,
+          "end": 17.144
+        }
+      ]
+    },
+    {
+      "id": "caption-group-20",
+      "frame": 6,
+      "start": 17.984,
+      "end": 18.834,
+      "text": "New words?",
+      "words": [
+        {
+          "id": "caption-word-20-0",
+          "text": "New",
+          "start": 17.984,
+          "end": 18.141
+        },
+        {
+          "id": "caption-word-20-1",
+          "text": "words?",
+          "start": 18.221,
+          "end": 18.714
+        }
+      ]
+    },
+    {
+      "id": "caption-group-21",
+      "frame": 6,
+      "start": 19.051,
+      "end": 20.412,
+      "text": "Instant flashcards.",
+      "words": [
+        {
+          "id": "caption-word-21-0",
+          "text": "Instant",
+          "start": 19.051,
+          "end": 19.445
+        },
+        {
+          "id": "caption-word-21-1",
+          "text": "flashcards.",
+          "start": 19.525,
+          "end": 20.292
+        }
+      ]
+    },
+    {
+      "id": "caption-group-22",
+      "frame": 7,
+      "start": 21.094,
+      "end": 21.608,
+      "text": "And watch",
+      "words": [
+        {
+          "id": "caption-word-22-0",
+          "text": "And",
+          "start": 21.094,
+          "end": 21.252
+        },
+        {
+          "id": "caption-word-22-1",
+          "text": "watch",
+          "start": 21.331,
+          "end": 21.489
+        }
+      ]
+    },
+    {
+      "id": "caption-group-23",
+      "frame": 7,
+      "start": 21.608,
+      "end": 22.083,
+      "text": "your skills",
+      "words": [
+        {
+          "id": "caption-word-23-0",
+          "text": "your",
+          "start": 21.608,
+          "end": 21.687
+        },
+        {
+          "id": "caption-word-23-1",
+          "text": "skills",
+          "start": 21.726,
+          "end": 21.963
+        }
+      ]
+    },
+    {
+      "id": "caption-group-24",
+      "frame": 7,
+      "start": 22.121,
+      "end": 22.854,
+      "text": "go up,",
+      "words": [
+        {
+          "id": "caption-word-24-0",
+          "text": "go",
+          "start": 22.121,
+          "end": 22.279
+        },
+        {
+          "id": "caption-word-24-1",
+          "text": "up,",
+          "start": 22.358,
+          "end": 22.734
+        }
+      ]
+    },
+    {
+      "id": "caption-group-25",
+      "frame": 7,
+      "start": 22.872,
+      "end": 23.581,
+      "text": "and up!",
+      "words": [
+        {
+          "id": "caption-word-25-0",
+          "text": "and",
+          "start": 22.872,
+          "end": 23.148
+        },
+        {
+          "id": "caption-word-25-1",
+          "text": "up!",
+          "start": 23.227,
+          "end": 23.461
+        }
+      ]
+    },
+    {
+      "id": "caption-group-26",
+      "frame": 8,
+      "start": 24.31,
+      "end": 25.674,
+      "text": "Tutelage AI.",
+      "words": [
+        {
+          "id": "caption-word-26-0",
+          "text": "Tutelage",
+          "start": 24.31,
+          "end": 24.784
+        },
+        {
+          "id": "caption-word-26-1",
+          "text": "AI.",
+          "start": 24.902,
+          "end": 25.554
+        }
+      ]
+    },
+    {
+      "id": "caption-group-27",
+      "frame": 8,
+      "start": 25.851,
+      "end": 27.211,
+      "text": "Start free today.",
+      "words": [
+        {
+          "id": "caption-word-27-0",
+          "text": "Start",
+          "start": 25.851,
+          "end": 26.206
+        },
+        {
+          "id": "caption-word-27-1",
+          "text": "free",
+          "start": 26.325,
+          "end": 26.522
+        },
+        {
+          "id": "caption-word-27-2",
+          "text": "today.",
+          "start": 26.68,
+          "end": 27.091
+        }
+      ]
+    }
+  ]
+}

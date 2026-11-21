@@ -5,7 +5,6 @@ import type { AdminUserItem } from '~/common/types/admin-types'
 definePageMeta({ layout: 'dashboard', requiresAuth: true, requiresAdmin: true })
 
 const route = useRoute()
-const router = useRouter()
 const { getUser } = useAdmin()
 
 const userId = computed(() => route.params.id as string)
@@ -13,7 +12,7 @@ const user = ref<AdminUserItem | null>(null)
 // Names the id crumb in the header breadcrumb.
 const { setTitle } = useBreadcrumbs()
 watch(() => user.value?.displayName || user.value?.username, setTitle, { immediate: true })
-const loading = ref(false)
+const loading = ref(true)
 const activeTab = ref('overview')
 
 async function load() {
@@ -50,44 +49,24 @@ const tabs = computed(() => {
 <template>
   <div class="h-full overflow-y-auto">
 
-    <!-- Top bar -->
-    <div class="sticky top-0 z-10 flex items-center justify-between gap-3 px-6 py-4"
-      style="background:var(--surface-page);border-bottom:1px solid var(--border-inner)">
-      <div class="flex items-center gap-3 min-w-0">
-        <AppButton variant="secondary" size="36" radius="8" icon="ArrowLeft" text="Users"
-          @click="router.push('/dashboard/users')" />
-        <div v-if="user" class="flex items-center gap-2 ml-2 min-w-0">
-          <p class="text-[16px] font-semibold font-poppins truncate" :style="`color:var(--text-heading)`">
-            {{ user.displayName || user.username }}
-          </p>
-        </div>
+    <!-- Loading (the header's shape, then a card) -->
+    <div v-if="loading" class="space-y-6 p-4 md:p-6">
+      <div class="flex items-center gap-4">
+        <UiSkeleton class="size-16 rounded-full" />
+        <div class="space-y-2"><UiSkeleton class="h-6 w-48 rounded-md" /><UiSkeleton class="h-4 w-64 rounded-md" /></div>
       </div>
-      <AppButton
-        v-if="user"
-        variant="primary"
-        size="36"
-        radius="8"
-        icon="Edit"
-        text="Edit Profile"
-        :icon-config="{ color: 'white', size: 16 }"
-        :to="`/dashboard/users/${userId}/profile`"
-      />
-    </div>
-
-    <!-- Loading -->
-    <div v-if="loading" class="p-6 space-y-5">
-      <UiSkeleton class="h-40 rounded-2xl" />
-      <UiSkeleton class="h-64 rounded-2xl" />
-      <UiSkeleton class="h-48 rounded-2xl" />
+      <UiSkeleton class="h-10 w-96 max-w-full rounded-lg" />
+      <UiSkeleton class="h-64 rounded-xl" />
     </div>
 
     <template v-else-if="user">
-      <div class="p-6 space-y-5">
+      <div class="space-y-5 p-4 md:p-6">
+        <PagesDashboardUsersDetailUserDetailHeader :user="user" />
 
-        <!-- Tabs -->
         <UiTabs v-model="activeTab">
-          <UiTabsList class="flex-wrap h-auto gap-1">
-            <UiTabsTrigger v-for="tab in tabs" :key="tab.id" :value="tab.id" class="text-[14px] font-poppins">
+          <!-- One row that scrolls sideways on phones, instead of wrapping into uneven rows -->
+          <UiTabsList class="h-auto max-w-full justify-start gap-1 overflow-x-auto [scrollbar-width:none]">
+            <UiTabsTrigger v-for="tab in tabs" :key="tab.id" :value="tab.id" class="flex-none px-3 text-[14px] font-poppins">
               {{ tab.label }}
             </UiTabsTrigger>
           </UiTabsList>
@@ -132,15 +111,17 @@ const tabs = computed(() => {
     </template>
 
     <!-- Not found -->
-    <div v-else class="p-6">
+    <div v-else class="p-4 md:p-6">
       <UiEmpty>
         <UiEmptyMedia>
           <AppIconsax name="Profile" color="var(--color-text-subtle)" :size="32" />
         </UiEmptyMedia>
         <UiEmptyContent>
           <UiEmptyTitle>User not found</UiEmptyTitle>
-          <UiEmptyDescription>This user may have been deleted or the ID is invalid.</UiEmptyDescription>
+          <UiEmptyDescription>This account may have been deleted, or the link is wrong.</UiEmptyDescription>
         </UiEmptyContent>
+        <AppButton variant="secondary" size="38" radius="8" icon="ArrowLeft" :icon-config="{ color: 'currentColor', size: 16 }"
+          text="All users" to="/dashboard/users" />
       </UiEmpty>
     </div>
 

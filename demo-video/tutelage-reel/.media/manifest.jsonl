@@ -1,0 +1,24 @@
+{"id":"bgm_001","type":"bgm","path":"assets/bgm/track.mp3","source":"search","description":"upbeat modern pop electronic, bright and playful, 120–128 bpm, punchy drums, clean ending","duration":29,"provenance":{"provider":"heygen","prompt":"upbeat modern pop electronic, bright and playful, 120–128 bpm, punchy drums, clean ending"}}
+{"id":"voice_001","type":"voice","path":"assets/voice/01.wav","source":"generated","description":"Scared to speak English?","duration":1.7,"provenance":{"provider":"heygen","prompt":"Scared to speak English?"}}
+{"id":"voice_002","type":"voice","path":"assets/voice/02.wav","source":"generated","description":"Meet Tutelage AI — your English tutor, any time.","duration":4,"provenance":{"provider":"heygen","prompt":"Meet Tutelage AI — your English tutor, any time."}}
+{"id":"voice_003","type":"voice","path":"assets/voice/03.wav","source":"generated","description":"Chat about anything. It talks back like a real person.","duration":4.1,"provenance":{"provider":"heygen","prompt":"Chat about anything. It talks back like a real person."}}
+{"id":"voice_004","type":"voice","path":"assets/voice/04.wav","source":"generated","description":"Oops, a mistake? It fixes it — nicely.","duration":3.5,"provenance":{"provider":"heygen","prompt":"Oops, a mistake? It fixes it — nicely."}}
+{"id":"voice_005","type":"voice","path":"assets/voice/05.wav","source":"generated","description":"Then say it out loud in the Voice Lab.","duration":3.1,"provenance":{"provider":"heygen","prompt":"Then say it out loud in the Voice Lab."}}
+{"id":"voice_006","type":"voice","path":"assets/voice/06.wav","source":"generated","description":"New words? Instant flashcards.","duration":2.9,"provenance":{"provider":"heygen","prompt":"New words? Instant flashcards."}}
+{"id":"voice_007","type":"voice","path":"assets/voice/07.wav","source":"generated","description":"And watch your skills go up, and up!","duration":2.9,"provenance":{"provider":"heygen","prompt":"And watch your skills go up, and up!"}}
+{"id":"voice_008","type":"voice","path":"assets/voice/08.wav","source":"generated","description":"Tutelage AI. Start free today.","duration":3.4,"provenance":{"provider":"heygen","prompt":"Tutelage AI. Start free today."}}
+{"id":"sfx_001","type":"sfx","path":"assets/sfx/impact-hit.mp3","source":"search","description":"impact hit","duration":3.6,"provenance":{"provider":"heygen","prompt":"impact hit"}}
+{"id":"sfx_002","type":"sfx","path":"assets/sfx/pop.mp3","source":"search","description":"pop","duration":0.3,"provenance":{"provider":"heygen","prompt":"pop"}}
+{"id":"sfx_003","type":"sfx","path":"assets/sfx/whoosh.mp3","source":"search","description":"whoosh","duration":1.6,"provenance":{"provider":"heygen","prompt":"whoosh"}}
+{"id":"sfx_004","type":"sfx","path":"assets/sfx/shimmer-sparkle.mp3","source":"search","description":"shimmer sparkle","duration":3.3,"provenance":{"provider":"heygen","prompt":"shimmer sparkle"}}
+{"id":"sfx_005","type":"sfx","path":"assets/sfx/swoosh.mp3","source":"search","description":"swoosh","duration":1.4,"provenance":{"provider":"heygen","prompt":"swoosh"}}
+{"id":"sfx_006","type":"sfx","path":"assets/sfx/message-pop.mp3","source":"search","description":"message pop","duration":0.6,"provenance":{"provider":"heygen","prompt":"message pop"}}
+{"id":"sfx_007","type":"sfx","path":"assets/sfx/boing-pop.mp3","source":"search","description":"boing pop","duration":1.6,"provenance":{"provider":"heygen","prompt":"boing pop"}}
+{"id":"sfx_008","type":"sfx","path":"assets/sfx/pen-swipe.mp3","source":"search","description":"pen swipe","duration":0.9,"provenance":{"provider":"heygen","prompt":"pen swipe"}}
+{"id":"sfx_009","type":"sfx","path":"assets/sfx/success-chime.mp3","source":"search","description":"success chime","duration":4.8,"provenance":{"provider":"heygen","prompt":"success chime"}}
+{"id":"sfx_010","type":"sfx","path":"assets/sfx/soundwave-swell.mp3","source":"search","description":"soundwave swell","duration":7.3,"provenance":{"provider":"heygen","prompt":"soundwave swell"}}
+{"id":"sfx_011","type":"sfx","path":"assets/sfx/card-flips.mp3","source":"search","description":"card flips","duration":1,"provenance":{"provider":"heygen","prompt":"card flips"}}
+{"id":"sfx_012","type":"sfx","path":"assets/sfx/riser.mp3","source":"search","description":"riser","duration":5,"provenance":{"provider":"heygen","prompt":"riser"}}
+{"id":"sfx_013","type":"sfx","path":"assets/sfx/confetti-pop.mp3","source":"search","description":"confetti pop","duration":2.8,"provenance":{"provider":"heygen","prompt":"confetti pop"}}
+{"id":"sfx_014","type":"sfx","path":"assets/sfx/logo-sting.mp3","source":"search","description":"logo sting","duration":7.3,"provenance":{"provider":"heygen","prompt":"logo sting"}}
+{"id":"sfx_015","type":"sfx","path":"assets/sfx/button-click.mp3","source":"search","description":"button click","duration":0.2,"provenance":{"provider":"heygen","prompt":"button click"}}

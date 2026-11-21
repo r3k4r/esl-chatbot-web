@@ -28,12 +28,14 @@ const navActions: NavAction[] = [
   { label: 'Profile', icon: 'Profile', to: '/dashboard/profile', keywords: ['profile', 'account', 'me', 'settings', 'preferences', 'avatar', 'level'] },
   { label: 'Billing', icon: 'Wallet2', to: '/dashboard/billing', keywords: ['billing', 'subscription', 'payment', 'pay', 'plan', 'upgrade', 'pro', 'premium', 'gold', 'invoice', 'fib'] },
   { label: 'Users', icon: 'People', to: '/dashboard/users', keywords: ['users', 'members', 'accounts', 'people', 'manage', 'admin', 'roles'] },
+  { label: 'Learning', icon: 'Teacher', to: '/dashboard/learning', keywords: ['learning', 'classes', 'skills', 'levels', 'mistakes', 'grammar', 'most active', 'teachers'] },
+  { label: 'Revenue', icon: 'MoneyRecive', to: '/dashboard/revenue', keywords: ['revenue', 'money', 'plans', 'funnel', 'fib', 'payments', 'paying', 'ai use', 'cost'] },
 ]
 
 const STAFF_HIDDEN = ['/dashboard/billing', '/dashboard/chat', '/dashboard/voice', '/dashboard/vocab', '/dashboard/goals']
 const availableNav = computed(() =>
   navActions.filter((a) => {
-    if (a.to === '/dashboard/users') return isAdmin.value
+    if (['/dashboard/users', '/dashboard/learning', '/dashboard/revenue'].includes(a.to)) return isAdmin.value
     if (isStaff.value) return !STAFF_HIDDEN.includes(a.to)
     return true
   }),

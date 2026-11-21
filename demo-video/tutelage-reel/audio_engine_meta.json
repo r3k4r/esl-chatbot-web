@@ -1,0 +1,602 @@
+{
+  "tts_provider": "heygen",
+  "voice_id": "9cc364c4dadc444b87b4230e1923b151",
+  "bgm": {
+    "path": "assets/bgm/track.mp3",
+    "volume": 0.12,
+    "query": "upbeat modern pop electronic, bright and playful, 120–128 bpm, punchy drums, clean ending",
+    "mode": "retrieve",
+    "duration_s": 29
+  },
+  "bgm_pending": false,
+  "bgm_provider": "heygen",
+  "bgm_pid": null,
+  "bgm_log": null,
+  "bgm_mode": "retrieve",
+  "bgm_target_duration_s": null,
+  "bgm_seed_duration_s": null,
+  "bgm_loop_count": null,
+  "voices": [
+    {
+      "id": "01",
+      "path": "assets/voice/01.wav",
+      "duration_s": 1.724,
+      "words": [
+        {
+          "id": "w0",
+          "text": "Scared",
+          "start": 0.23703703703703702,
+          "end": 0.5925925925925926
+        },
+        {
+          "id": "w1",
+          "text": "to",
+          "start": 0.6712962962962962,
+          "end": 0.7509259259259259
+        },
+        {
+          "id": "w2",
+          "text": "speak",
+          "start": 0.7898148148148147,
+          "end": 0.9083333333333332
+        },
+        {
+          "id": "w3",
+          "text": "English?",
+          "start": 0.9879629629629628,
+          "end": 1.574074074074074
+        }
+      ]
+    },
+    {
+      "id": "02",
+      "path": "assets/voice/02.wav",
+      "duration_s": 4.023,
+      "words": [
+        {
+          "id": "w0",
+          "text": "Meet",
+          "start": 0.2768518518518518,
+          "end": 0.47407407407407404
+        },
+        {
+          "id": "w1",
+          "text": "Tutelage",
+          "start": 0.5925925925925926,
+          "end": 1.0666666666666664
+        },
+        {
+          "id": "w2",
+          "text": "AI",
+          "start": 1.1851851851851851,
+          "end": 1.4620370370370368
+        },
+        {
+          "id": "w3",
+          "text": "—",
+          "start": 1.5666666666666664,
+          "end": 1.672222222222222
+        },
+        {
+          "id": "w4",
+          "text": "your",
+          "start": 1.7777777777777775,
+          "end": 1.9361111111111111
+        },
+        {
+          "id": "w5",
+          "text": "English",
+          "start": 2.0148148148148146,
+          "end": 2.173148148148148
+        },
+        {
+          "id": "w6",
+          "text": "tutor,",
+          "start": 2.3703703703703702,
+          "end": 2.844444444444444
+        },
+        {
+          "id": "w7",
+          "text": "any",
+          "start": 3.0027777777777773,
+          "end": 3.1999999999999997
+        },
+        {
+          "id": "w8",
+          "text": "time.",
+          "start": 3.3185185185185184,
+          "end": 3.692592592592592
+        }
+      ]
+    },
+    {
+      "id": "03",
+      "path": "assets/voice/03.wav",
+      "duration_s": 4.075,
+      "words": [
+        {
+          "id": "w0",
+          "text": "Chat",
+          "start": 0.3157407407407407,
+          "end": 0.513611111111111
+        },
+        {
+          "id": "w1",
+          "text": "about",
+          "start": 0.6324074074074074,
+          "end": 0.7506481481481481
+        },
+        {
+          "id": "w2",
+          "text": "anything.",
+          "start": 0.8694444444444442,
+          "end": 1.4814814814814814
+        },
+        {
+          "id": "w3",
+          "text": "It",
+          "start": 1.8962962962962961,
+          "end": 2.0148148148148146
+        },
+        {
+          "id": "w4",
+          "text": "talks",
+          "start": 2.054629629629629,
+          "end": 2.2518518518518515
+        },
+        {
+          "id": "w5",
+          "text": "back",
+          "start": 2.3703703703703702,
+          "end": 2.567592592592592
+        },
+        {
+          "id": "w6",
+          "text": "like",
+          "start": 2.6861111111111104,
+          "end": 2.7654629629629626
+        },
+        {
+          "id": "w7",
+          "text": "a",
+          "start": 2.804629629629629,
+          "end": 2.8839814814814813
+        },
+        {
+          "id": "w8",
+          "text": "real",
+          "start": 2.923148148148148,
+          "end": 3.081481481481481
+        },
+        {
+          "id": "w9",
+          "text": "person.",
+          "start": 3.1999999999999997,
+          "end": 3.7851851851851848
+        }
+      ]
+    },
+    {
+      "id": "04",
+      "path": "assets/voice/04.wav",
+      "duration_s": 3.5,
+      "words": [
+        {
+          "id": "w0",
+          "text": "Oops,",
+          "start": 0.2768518518518518,
+          "end": 0.6916666666666665
+        },
+        {
+          "id": "w1",
+          "text": "a",
+          "start": 0.9083333333333332,
+          "end": 0.987685185185185
+        },
+        {
+          "id": "w2",
+          "text": "mistake?",
+          "start": 1.0268518518518517,
+          "end": 1.5805555555555555
+        },
+        {
+          "id": "w3",
+          "text": "It",
+          "start": 1.8564814814814812,
+          "end": 1.9749999999999999
+        },
+        {
+          "id": "w4",
+          "text": "fixes",
+          "start": 2.0148148148148146,
+          "end": 2.2913888888888887
+        },
+        {
+          "id": "w5",
+          "text": "it",
+          "start": 2.3305555555555553,
+          "end": 2.449074074074074
+        },
+        {
+          "id": "w6",
+          "text": "—",
+          "start": 2.5416666666666665,
+          "end": 2.633333333333333
+        },
+        {
+          "id": "w7",
+          "text": "nicely.",
+          "start": 2.7259259259259254,
+          "end": 3.176828756193835
+        }
+      ]
+    },
+    {
+      "id": "05",
+      "path": "assets/voice/05.wav",
+      "duration_s": 3.135,
+      "words": [
+        {
+          "id": "w0",
+          "text": "Then",
+          "start": 0.3157407407407407,
+          "end": 0.513611111111111
+        },
+        {
+          "id": "w1",
+          "text": "say",
+          "start": 0.7509259259259259,
+          "end": 1.3037037037037036
+        },
+        {
+          "id": "w2",
+          "text": "it",
+          "start": 1.3435185185185183,
+          "end": 1.422222222222222
+        },
+        {
+          "id": "w3",
+          "text": "out",
+          "start": 1.4620370370370368,
+          "end": 1.5802777777777777
+        },
+        {
+          "id": "w4",
+          "text": "loud",
+          "start": 1.6194444444444445,
+          "end": 1.8564814814814812
+        },
+        {
+          "id": "w5",
+          "text": "in",
+          "start": 2.0148148148148146,
+          "end": 2.133333333333333
+        },
+        {
+          "id": "w6",
+          "text": "the",
+          "start": 2.173148148148148,
+          "end": 2.2518518518518515
+        },
+        {
+          "id": "w7",
+          "text": "Voice",
+          "start": 2.2916666666666665,
+          "end": 2.449074074074074
+        },
+        {
+          "id": "w8",
+          "text": "Lab.",
+          "start": 2.567592592592592,
+          "end": 2.8220794490635757
+        }
+      ]
+    },
+    {
+      "id": "06",
+      "path": "assets/voice/06.wav",
+      "duration_s": 2.9,
+      "words": [
+        {
+          "id": "w0",
+          "text": "New",
+          "start": 0.2768518518518518,
+          "end": 0.4342592592592592
+        },
+        {
+          "id": "w1",
+          "text": "words?",
+          "start": 0.5138888888888888,
+          "end": 1.0074074074074073
+        },
+        {
+          "id": "w2",
+          "text": "Instant",
+          "start": 1.3435185185185183,
+          "end": 1.7379629629629627
+        },
+        {
+          "id": "w3",
+          "text": "flashcards.",
+          "start": 1.8175925925925924,
+          "end": 2.5851851851851846
+        }
+      ]
+    },
+    {
+      "id": "07",
+      "path": "assets/voice/07.wav",
+      "duration_s": 2.926,
+      "words": [
+        {
+          "id": "w0",
+          "text": "And",
+          "start": 0.23703703703703702,
+          "end": 0.39509259259259255
+        },
+        {
+          "id": "w1",
+          "text": "watch",
+          "start": 0.47407407407407404,
+          "end": 0.6321296296296295
+        },
+        {
+          "id": "w2",
+          "text": "your",
+          "start": 0.7509259259259259,
+          "end": 0.8296296296296296
+        },
+        {
+          "id": "w3",
+          "text": "skills",
+          "start": 0.8694444444444442,
+          "end": 1.1062037037037036
+        },
+        {
+          "id": "w4",
+          "text": "go",
+          "start": 1.2638888888888888,
+          "end": 1.422222222222222
+        },
+        {
+          "id": "w5",
+          "text": "up,",
+          "start": 1.5009259259259258,
+          "end": 1.8768518518518518
+        },
+        {
+          "id": "w6",
+          "text": "and",
+          "start": 2.0148148148148146,
+          "end": 2.2913888888888887
+        },
+        {
+          "id": "w7",
+          "text": "up!",
+          "start": 2.3703703703703702,
+          "end": 2.603703703703703
+        }
+      ]
+    },
+    {
+      "id": "08",
+      "path": "assets/voice/08.wav",
+      "duration_s": 3.37,
+      "words": [
+        {
+          "id": "w0",
+          "text": "Tutelage",
+          "start": 0.2768518518518518,
+          "end": 0.7506481481481481
+        },
+        {
+          "id": "w1",
+          "text": "AI.",
+          "start": 0.8694444444444442,
+          "end": 1.5212962962962961
+        },
+        {
+          "id": "w2",
+          "text": "Start",
+          "start": 1.8175925925925924,
+          "end": 2.17287037037037
+        },
+        {
+          "id": "w3",
+          "text": "free",
+          "start": 2.2916666666666665,
+          "end": 2.488888888888889
+        },
+        {
+          "id": "w4",
+          "text": "today.",
+          "start": 2.6472222222222217,
+          "end": 3.058333333333333
+        }
+      ]
+    }
+  ],
+  "sfx": [
+    {
+      "id": "01",
+      "name": "impact hit",
+      "file": "assets/sfx/impact-hit.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 3.603,
+      "volume": 0.35
+    },
+    {
+      "id": "01",
+      "name": "pop",
+      "file": "assets/sfx/pop.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 0.312,
+      "volume": 0.35
+    },
+    {
+      "id": "02",
+      "name": "whoosh",
+      "file": "assets/sfx/whoosh.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 1.58,
+      "volume": 0.35
+    },
+    {
+      "id": "02",
+      "name": "shimmer sparkle",
+      "file": "assets/sfx/shimmer-sparkle.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 3.329,
+      "volume": 0.35
+    },
+    {
+      "id": "03",
+      "name": "swoosh",
+      "file": "assets/sfx/swoosh.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 1.423,
+      "volume": 0.35
+    },
+    {
+      "id": "03",
+      "name": "message pop",
+      "file": "assets/sfx/message-pop.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 0.576,
+      "volume": 0.35
+    },
+    {
+      "id": "04",
+      "name": "boing pop",
+      "file": "assets/sfx/boing-pop.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 1.557,
+      "volume": 0.35
+    },
+    {
+      "id": "04",
+      "name": "pen swipe",
+      "file": "assets/sfx/pen-swipe.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 0.936,
+      "volume": 0.35
+    },
+    {
+      "id": "04",
+      "name": "success chime",
+      "file": "assets/sfx/success-chime.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 4.755,
+      "volume": 0.35
+    },
+    {
+      "id": "05",
+      "name": "whoosh",
+      "file": "assets/sfx/whoosh.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 1.58,
+      "volume": 0.35
+    },
+    {
+      "id": "05",
+      "name": "soundwave swell",
+      "file": "assets/sfx/soundwave-swell.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 7.263,
+      "volume": 0.35
+    },
+    {
+      "id": "05",
+      "name": "pop",
+      "file": "assets/sfx/pop.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 0.312,
+      "volume": 0.35
+    },
+    {
+      "id": "06",
+      "name": "card flips",
+      "file": "assets/sfx/card-flips.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 1.008,
+      "volume": 0.35
+    },
+    {
+      "id": "06",
+      "name": "pop",
+      "file": "assets/sfx/pop.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 0.312,
+      "volume": 0.35
+    },
+    {
+      "id": "07",
+      "name": "riser",
+      "file": "assets/sfx/riser.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 4.97,
+      "volume": 0.35
+    },
+    {
+      "id": "07",
+      "name": "impact hit",
+      "file": "assets/sfx/impact-hit.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 3.603,
+      "volume": 0.35
+    },
+    {
+      "id": "07",
+      "name": "confetti pop",
+      "file": "assets/sfx/confetti-pop.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 2.811,
+      "volume": 0.35
+    },
+    {
+      "id": "08",
+      "name": "whoosh",
+      "file": "assets/sfx/whoosh.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 1.58,
+      "volume": 0.35
+    },
+    {
+      "id": "08",
+      "name": "logo sting",
+      "file": "assets/sfx/logo-sting.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 7.315,
+      "volume": 0.35
+    },
+    {
+      "id": "08",
+      "name": "button click",
+      "file": "assets/sfx/button-click.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 0.24,
+      "volume": 0.35
+    }
+  ],
+  "total_duration_s": 25.653
+}

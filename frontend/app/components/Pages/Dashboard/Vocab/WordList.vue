@@ -68,7 +68,7 @@ function confirmDelete() {
         class-list="me-auto text-[14px]"
         @click="emit('update:list', null)"
       />
-      <div class="flex items-center gap-2">
+      <div class="flex flex-wrap items-center gap-2">
         <FormInput
           id="vocab-search"
           :model-value="search"
@@ -83,7 +83,6 @@ function confirmDelete() {
           </UiSelectTrigger>
           <UiSelectContent>
             <UiSelectItem value="ALL">All sources</UiSelectItem>
-            <UiSelectItem value="MANUAL">Added by me</UiSelectItem>
             <UiSelectItem value="SESSION">From chat AI</UiSelectItem>
             <UiSelectItem value="ASSIGNED">From my tutor</UiSelectItem>
           </UiSelectContent>

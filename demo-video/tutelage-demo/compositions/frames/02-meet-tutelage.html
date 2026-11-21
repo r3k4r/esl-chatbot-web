@@ -1,0 +1,192 @@
+<template>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    @font-face { font-family: "Poppins"; src: url("assets/fonts/Poppins-400.woff2") format("woff2"); font-weight: 400; font-style: normal; }
+    @font-face { font-family: "Poppins"; src: url("assets/fonts/Poppins-500.woff2") format("woff2"); font-weight: 500; font-style: normal; }
+
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Poppins", sans-serif;
+      color: #F2F2F2;
+    }
+    /* Living background: ink ground + drifting orange light + swirl behind the lockup + parallax dot grid */
+    [id="02-meet-tutelage-bg"] { position: absolute; inset: 0; background: #1C1B1B; overflow: hidden; }
+    [id="02-meet-tutelage-light"] {
+      position: absolute; left: 0; top: 0; width: 1200px; height: 1200px; opacity: 0.11;
+      background: radial-gradient(circle, rgba(245,158,11,1) 0%, rgba(245,158,11,0.35) 30%, rgba(245,158,11,0) 60%);
+    }
+    [id="02-meet-tutelage-swirl"] {
+      position: absolute; left: 460px; top: -120px; width: 1000px; height: 1000px;
+      background:
+        radial-gradient(circle at 30% 36%, rgba(245,158,11,0.9) 0%, rgba(245,158,11,0) 30%),
+        radial-gradient(circle at 70% 66%, rgba(245,158,11,0.7) 0%, rgba(245,158,11,0) 28%);
+    }
+    [id="02-meet-tutelage-grid"] {
+      position: absolute; left: -48px; top: -48px; width: 2016px; height: 1176px; opacity: 0.05;
+      background-image: radial-gradient(circle, #F2F2F2 1.4px, rgba(242,242,242,0) 1.8px);
+      background-size: 48px 48px;
+    }
+
+    [id="02-meet-tutelage-camera"] { position: absolute; inset: 0; perspective: 1600px; perspective-origin: 960px 440px; }
+    [id="02-meet-tutelage-stage"] { position: absolute; inset: 0; transform-origin: 960px 440px; transform-style: preserve-3d; }
+    [id="02-meet-tutelage-markgroup"] { position: absolute; inset: 0; }
+    [id="02-meet-tutelage-glow"] {
+      position: absolute; left: 580px; top: 0; width: 760px; height: 760px;
+      background: radial-gradient(circle, rgba(245,158,11,0.34) 0%, rgba(245,158,11,0.12) 34%, rgba(245,158,11,0) 68%);
+    }
+    .ray-02-meet-tutelage { position: absolute; left: 960px; top: 380px; width: 0; height: 0; }
+    .ray-02-meet-tutelage i { position: absolute; left: 0; top: -1.5px; height: 3px; background: #F59E0B; transform-origin: 0 50%; display: block; }
+    [id="02-meet-tutelage-outline"] { position: absolute; left: 840px; top: 237.6px; width: 240px; height: 284.8px; overflow: visible; }
+    [id="02-meet-tutelage-outline"] path { fill: none; stroke: #F59E0B; stroke-width: 4; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+    [id="02-meet-tutelage-mark"] {
+      position: absolute; left: 847.7px; top: 250px; width: 224.6px; height: 260px; transform-origin: 50% 50%;
+      filter: drop-shadow(0 34px 44px rgba(0,0,0,0.5));
+    }
+    [id="02-meet-tutelage-wordmark"] { position: absolute; left: 779px; top: 331.5px; width: 640px; height: 97px; overflow: hidden; }
+    [id="02-meet-tutelage-wordmark"] img { position: absolute; left: -248.7px; top: -54.8px; width: 888.7px; height: auto; }
+    /* Glint: an orange light band masked to the TUTELAGE letters (same crop as the img) */
+    [id="02-meet-tutelage-glintwrap"] {
+      position: absolute; inset: 0;
+      -webkit-mask-image: url("assets/logo-with-text-only-white.svg"); mask-image: url("assets/logo-with-text-only-white.svg");
+      -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+      -webkit-mask-size: 888.7px auto; mask-size: 888.7px auto;
+      -webkit-mask-position: -248.7px -54.8px; mask-position: -248.7px -54.8px;
+    }
+    [id="02-meet-tutelage-glint"] {
+      position: absolute; left: 0; top: 0; width: 220px; height: 97px;
+      background: linear-gradient(105deg, rgba(245,158,11,0) 20%, rgba(245,158,11,0.95) 50%, rgba(245,158,11,0) 80%);
+    }
+    [id="02-meet-tutelage-rule"] { position: absolute; left: 942px; top: 582px; width: 36px; height: 2px; background: #F59E0B; transform-origin: 50% 50%; }
+    [id="02-meet-tutelage-line"] {
+      position: absolute; left: 0; top: 618px; width: 1920px; text-align: center;
+      font-size: 42px; font-weight: 400; line-height: 1.3; white-space: pre;
+    }
+    [id="02-meet-tutelage-line"] .ch { display: inline-block; }
+    [id="02-meet-tutelage-tail"] { display: inline-block; margin-left: 28px; font-weight: 500; }
+    [id="02-meet-tutelage-talk"] { display: inline-block; }
+    [id="02-meet-tutelage-anytime"] { display: inline-block; position: relative; color: #F59E0B; transform-origin: 50% 60%; }
+    [id="02-meet-tutelage-underline"] {
+      position: absolute; left: 0; bottom: -4px; width: 100%; height: 4px; background: #F59E0B; transform-origin: 0 50%;
+    }
+  </style>
+
+  <div data-hf-id="hf-beqc" id="root" data-composition-id="02-meet-tutelage" data-width="1920" data-height="1080" data-duration="6.21">
+    <div data-hf-id="hf-3r5f" id="02-meet-tutelage-bg" class="clip" data-start="0" data-duration="6.21" data-track-index="0">
+      <div id="02-meet-tutelage-light"></div>
+      <div id="02-meet-tutelage-swirl"></div>
+      <div id="02-meet-tutelage-grid"></div>
+    </div>
+    <div id="02-meet-tutelage-camera">
+      <div data-hf-id="hf-462m" id="02-meet-tutelage-stage">
+        <div data-hf-id="hf-7dzo" id="02-meet-tutelage-markgroup">
+          <div data-hf-id="hf-l3db" id="02-meet-tutelage-glow"></div>
+          <div id="02-meet-tutelage-rays"></div>
+          <svg data-hf-id="hf-csky" id="02-meet-tutelage-outline" viewBox="0 0 81.97 97.29" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <path data-hf-id="hf-or2w" d="M76.86,0H5.1C2.29,0,0,2.29,0,5.11v43.53c0,32.44,33.15,48.65,40.98,48.65s40.99-16.21,40.99-48.65V5.11c0-2.83-2.3-5.11-5.11-5.11Z" />
+          </svg>
+          <img data-hf-id="hf-k5s7" id="02-meet-tutelage-mark" src="assets/only-logo-black-border-yellow-bg.svg" alt="Tutelage">
+        </div>
+        <div data-hf-id="hf-2fwv" id="02-meet-tutelage-wordmark">
+          <img data-hf-id="hf-kb6h" src="assets/logo-with-text-only-white.svg" alt="">
+          <div id="02-meet-tutelage-glintwrap"><div id="02-meet-tutelage-glint"></div></div>
+        </div>
+        <div data-hf-id="hf-asn2" id="02-meet-tutelage-rule"></div>
+        <div data-hf-id="hf-o4tm" id="02-meet-tutelage-line"><span data-hf-id="hf-5t35" id="02-meet-tutelage-typed">Your patient English tutor.</span><span data-hf-id="hf-equ3" id="02-meet-tutelage-tail"><span data-hf-id="hf-9ek1" id="02-meet-tutelage-talk">Talk&#160;</span><span data-hf-id="hf-g08t" id="02-meet-tutelage-anytime">any time.<span id="02-meet-tutelage-underline"></span></span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const FID = "02-meet-tutelage";
+      const DUR = 5.46;
+      const host = document.querySelector('[data-composition-id="' + FID + '"]');
+      const el = (n) => host.querySelector('[id="' + FID + "-" + n + '"]');
+
+      // Split the typed line into per-character spans (transform/opacity only, no reflow).
+      const typed = el("typed");
+      const text = typed.textContent;
+      typed.textContent = "";
+      const chars = [...text].map((c) => {
+        const s = document.createElement("span");
+        s.className = "ch";
+        s.textContent = c;
+        typed.appendChild(s);
+        return s;
+      });
+
+      // 8 burst rays around the mark center; the wrapper holds the angle, the inner bar animates.
+      const raysHost = el("rays");
+      const rays = [];
+      for (let i = 0; i < 8; i++) {
+        const w = document.createElement("div");
+        w.className = "ray-" + FID;
+        w.style.transform = "rotate(" + (i * 45 + 22.5) + "deg)";
+        const bar = document.createElement("i");
+        bar.style.width = (i % 2 ? 110 : 170) + "px";
+        w.appendChild(bar);
+        raysHost.appendChild(w);
+        rays.push(bar);
+      }
+
+      const path = el("outline").querySelector("path");
+      const len = path.getTotalLength() || 330;
+      path.style.strokeDasharray = String(len);
+
+      // Three depth layers: background (outside camera), lockup (mid), supporting line (front).
+      gsap.set([el("markgroup"), el("wordmark"), el("rule")], { z: 40 });
+      gsap.set(el("line"), { z: 90 });
+
+      const tl = gsap.timeline({ paused: true });
+
+      // Background: one slow continuous move each, across the full frame.
+      tl.fromTo(el("light"), { x: -300, y: -320 }, { x: 1000, y: 80, duration: DUR, ease: "sine.inOut" }, 0);
+      tl.fromTo(el("grid"), { x: 0, y: 0 }, { x: 36, y: 18, duration: DUR, ease: "none" }, 0);
+      tl.fromTo(el("swirl"), { rotation: 0 }, { rotation: 220, duration: DUR, ease: "none" }, 0);
+      tl.fromTo(el("swirl"), { opacity: 0, scale: 0.6 }, { opacity: 0.2, scale: 1, duration: 0.9, ease: "expo.out" }, 0.6);
+
+      // Camera: 3D dolly that swings on the lockup cue ("AI"), then creeps in to the end.
+      tl.fromTo(el("stage"), { rotationY: -8, rotationX: 6, scale: 1 }, { rotationY: -5, rotationX: 4, scale: 1.015, duration: 1.32, ease: "sine.inOut" }, 0);
+      tl.fromTo(el("stage"), { rotationY: -5, rotationX: 4, scale: 1.015 }, { rotationY: 5, rotationX: -2, scale: 1.04, duration: 1.2, ease: "power3.inOut", immediateRender: false }, 1.32);
+      tl.fromTo(el("stage"), { rotationY: 5, rotationX: -2, scale: 1.04 }, { rotationY: 2, rotationX: 0, scale: 1.06, duration: DUR - 2.52, ease: "sine.inOut", immediateRender: false }, 2.52);
+
+      // Scene 1 — "Meet Tutelage": outline self-draws, the real mark spring-blooms on "Tutelage" with a ray burst.
+      tl.fromTo(path, { strokeDashoffset: len }, { strokeDashoffset: 0, duration: 0.55, ease: "power2.inOut" }, 0.05);
+      tl.fromTo(el("glow"), { opacity: 0, scale: 0.5 }, { opacity: 0.35, scale: 0.7, duration: 0.5, ease: "power2.out" }, 0.05);
+      tl.fromTo(el("mark"), { scale: 0, opacity: 0, rotation: -14 }, { scale: 1, opacity: 1, rotation: 0, duration: 0.7, ease: "back.out(1.7)" }, 0.6);
+      tl.fromTo(el("glow"), { opacity: 0.35, scale: 0.7 }, { opacity: 1, scale: 1.05, duration: 0.5, ease: "expo.out", immediateRender: false }, 0.6);
+      tl.fromTo(path, { opacity: 1 }, { opacity: 0.35, duration: 0.4, ease: "power1.out" }, 0.95);
+      rays.forEach((bar, i) => {
+        const t = 0.64 + i * 0.018;
+        tl.fromTo(bar, { x: 150, scaleX: 0, opacity: 1 }, { x: 170, scaleX: 1, duration: 0.22, ease: "expo.out" }, t);
+        tl.fromTo(bar, { x: 170, scaleX: 1, opacity: 1 }, { x: 320, scaleX: 0.2, opacity: 0, duration: 0.36, ease: "power2.in", immediateRender: false }, t + 0.22);
+      });
+
+      // Scene 2 — on "AI": mark whips left (short motion blur), wordmark wipes in beside it, glint sweeps the letters.
+      tl.fromTo(el("markgroup"), { x: 0 }, { x: -348, duration: 0.75, ease: "power3.inOut" }, 1.32);
+      tl.fromTo(el("markgroup"), { filter: "blur(0px)" }, { filter: "blur(5px)", duration: 0.32, ease: "power2.in" }, 1.36);
+      tl.fromTo(el("markgroup"), { filter: "blur(5px)" }, { filter: "blur(0px)", duration: 0.38, ease: "power2.out", immediateRender: false }, 1.68);
+      tl.fromTo(el("wordmark"), { clipPath: "inset(0% 100% 0% 0%)", x: -40 }, { clipPath: "inset(0% 0% 0% 0%)", x: 0, duration: 0.6, ease: "expo.out" }, 1.5);
+      tl.fromTo(el("glint"), { x: -240 }, { x: 680, duration: 0.75, ease: "power2.inOut" }, 2.15);
+      tl.fromTo(el("glow"), { opacity: 1, scale: 1.05 }, { opacity: 0.6, scale: 0.88, duration: 0.9, ease: "power2.inOut", immediateRender: false }, 2.0);
+
+      // Scene 3 — rule stub on "a", the line types on "patient … tutor", "Talk" and "any time." pop on their words.
+      tl.fromTo(el("rule"), { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "back.out(1.8)" }, 2.13);
+      chars.forEach((s, i) => tl.fromTo(s, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.18, ease: "back.out(1.6)" }, 2.26 + i * 0.031));
+      tl.fromTo(el("talk"), { opacity: 0, y: 20, scale: 0.85 }, { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: "back.out(1.6)" }, 3.8);
+      tl.fromTo(el("anytime"), { opacity: 0, y: 20, scale: 0.7 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: "back.out(1.8)" }, 4.57);
+      tl.fromTo(el("underline"), { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "expo.out" }, 4.86);
+
+      // Micro-life in the hold: one finite glow pulse behind the mark.
+      tl.fromTo(el("glow"), { opacity: 0.6, scale: 0.88 }, { opacity: 0.9, scale: 0.98, duration: 0.25, ease: "sine.out", immediateRender: false }, 4.95);
+      tl.fromTo(el("glow"), { opacity: 0.9, scale: 0.98 }, { opacity: 0.65, scale: 0.9, duration: DUR - 5.2, ease: "sine.inOut", immediateRender: false }, 5.2);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import type { KeyFigure } from '~/common/types/dashboard-types'
+import { newestRows, quietRows } from '~/lib/admin-people'
 
-// Admin home: this week against the week before, where students drop off, plans and money,
-// and what to follow up on. "Active" = sent the AI tutor a message.
+// Admin home, one screen: this week against the week before, the last 30 days as three charts,
+// then what needs a look (follow-ups, newest accounts, who went quiet). Classes, skills and
+// mistakes live on /dashboard/learning; the funnel, plans, money and AI use on /dashboard/revenue.
+// "Active" = sent the AI tutor a message.
 const { data, loading, error, fetchAdminDashboard } = useAdminDashboard()
 onMounted(fetchAdminDashboard)
 
@@ -18,23 +21,50 @@ const figures = computed<KeyFigure[]>(() => {
     { label: 'Paying now', value: d.funnel.paying, hint: `${d.activity.active24h} active in the last 24 h` },
   ]
 })
+
+const sum = (xs: number[]) => xs.reduce((a, b) => a + b, 0)
+const charts = computed(() => {
+  const t = data.value?.trend ?? []
+  const learners = t.map(d => d.activeLearners)
+  const messages = t.map(d => d.messages)
+  const signUps = t.map(d => d.signUps)
+  // Accounts at the end of each day: today's total, walked back through the sign-ups.
+  const total = data.value?.users.total ?? 0
+  let running = total - sum(signUps)
+  const accounts = signUps.map(n => (running += n))
+  const plural = (n: number, w: string) => `${n.toLocaleString()} ${w}${n === 1 ? '' : 's'}`
+  return [
+    {
+      title: 'Active learners per day', kind: 'bars' as const, values: learners,
+      value: String(Math.max(0, ...learners)), context: 'on the busiest day',
+      tip: (v: number) => plural(v, 'learner'),
+    },
+    {
+      title: 'AI messages', kind: 'area' as const, values: messages,
+      value: sum(messages).toLocaleString(), context: `in 30 days · ${sum(messages.slice(-7)).toLocaleString()} this week`,
+      tip: (v: number) => plural(v, 'message'),
+    },
+    {
+      title: 'Accounts', kind: 'line' as const, values: accounts,
+      value: total.toLocaleString(), context: `+${sum(signUps)} in 30 days`,
+      tip: (v: number, i: number) => `${plural(v, 'account')}${signUps[i] ? ` (+${signUps[i]})` : ''}`,
+    },
+  ]
+})
 </script>
 
 <template>
   <div class="h-full overflow-y-auto page-padding md:p-6">
     <div class="space-y-5">
-      <header class="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <AppText size="24" weight="semibold" font-family="poppins" class-list="tracking-tight">This week</AppText>
-          <AppText size="14" color="neutral-400" class-list="mt-0.5">
-            {{ today }}<template v-if="data"> · {{ data.users.total.toLocaleString() }} accounts ({{ data.users.students }} students, {{ data.users.tutors }} tutors)</template>
-          </AppText>
-        </div>
-        <AppButton variant="secondary" size="36" radius="8" icon="People" text="Users" :icon-config="{ size: 16 }" to="/dashboard/users" class-list="px-4" />
+      <header>
+        <AppText size="24" weight="semibold" font-family="poppins" class-list="tracking-tight">This week</AppText>
+        <AppText size="14" color="neutral-400" class-list="mt-0.5">
+          {{ today }}<template v-if="data"> · {{ data.users.total.toLocaleString() }} accounts ({{ data.users.students }} students, {{ data.users.tutors }} teachers)</template>
+        </AppText>
       </header>
 
       <BlockLoadError
-        v-if="error"
+        v-if="error && !data"
         title="We couldn't load the admin overview"
         :detail="error"
         :retrying="loading"
@@ -43,20 +73,27 @@ const figures = computed<KeyFigure[]>(() => {
 
       <template v-else-if="data">
         <PagesDashboardSharedKeyFigures data-guide="admin-figures" :items="figures" />
-        <AppText size="13" color="neutral-400" class-list="-mt-2">Compared with the 7 days before.</AppText>
-        <div class="grid items-start gap-5 md-lg:grid-cols-2 xl:grid-cols-3">
-          <PagesDashboardAdminFunnel data-guide="admin-funnel" :funnel="data.funnel" />
+
+        <div data-guide="admin-trend" class="grid gap-5 md-lg:grid-cols-3">
+          <PagesDashboardAdminDayChart
+            v-for="c in charts" :key="c.title"
+            :title="c.title" :value="c.value" :context="c.context" :kind="c.kind"
+            :dates="data.trend.map(d => d.date)" :values="c.values" :tip="c.tip"
+          />
+        </div>
+
+        <div class="grid gap-5 md-lg:grid-cols-3">
           <PagesDashboardAdminFollowUps data-guide="admin-followups" :expiring="data.expiringSoon" :attention="data.attention" :expired-not-downgraded="data.plans.expiredNotDowngraded" />
-          <PagesDashboardAdminPlans data-guide="admin-plans" class="md-lg:col-span-2 xl:col-span-1" :plans="data.plans" :revenue="data.revenue" :ai-usage="data.aiUsage" />
+          <PagesDashboardAdminPeopleList data-guide="admin-people" title="Newest accounts" :rows="newestRows(data.people).slice(0, 4)" :total="data.people.newest.length > 4 ? data.users.total : undefined" empty="No accounts yet." />
+          <PagesDashboardAdminPeopleList
+            title="Gone quiet" hint="Practised before, nothing in the last 7 days."
+            :rows="quietRows(data.people).slice(0, 4)" :total="data.people.goneQuietCount"
+            empty="Everyone who practised came back this week."
+          />
         </div>
       </template>
 
-      <template v-else>
-        <UiSkeleton class="h-24 rounded-xl" />
-        <div class="grid gap-5 md-lg:grid-cols-2 xl:grid-cols-3">
-          <UiSkeleton v-for="n in 3" :key="n" class="h-72 rounded-xl" />
-        </div>
-      </template>
+      <SkeletonsAdminDashboardSkeleton v-else />
     </div>
   </div>
 </template>

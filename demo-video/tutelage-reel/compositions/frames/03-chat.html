@@ -1,0 +1,53 @@
+<template>
+<style>
+@font-face{font-family:"Poppins";font-weight:700;font-style:normal;font-display:block;src:url("assets/fonts/Poppins-700.woff2") format("woff2");}
+#root{position:relative;width:1920px;height:1080px;overflow:hidden;font-family:"Poppins",sans-serif;font-weight:700}
+.03-chat-x{}
+#c3-bg{position:absolute;left:0;top:0;width:1920px;height:1080px;background:#14C8B4}
+#c3-card{position:absolute;left:110px;top:100px;width:980px;height:742px;border:8px solid #1C1B1B;background:#1C1B1B;box-shadow:20px 20px 0 #1C1B1B;border-radius:36px;overflow:hidden;box-sizing:content-box}
+.c3-row{position:absolute;left:0;width:980px;overflow:hidden}
+.c3-row img{position:absolute;left:-868px;width:2240px;height:1260px;max-width:none}
+#c3-label{position:absolute;left:90px;top:20px;padding:10px 28px;background:#F59E0B;border:5px solid #1C1B1B;font-size:44px;line-height:1.1;color:#1C1B1B;box-shadow:8px 8px 0 #1C1B1B;transform-origin:left bottom}
+.c3-st{position:absolute;padding:18px 40px;border:6px solid #1C1B1B;font-size:70px;line-height:1.1;color:#1C1B1B;box-shadow:12px 12px 0 #1C1B1B;white-space:nowrap}
+#c3-logo{position:absolute;left:1010px;top:50px;width:120px;height:120px}
+</style>
+<div id="root" data-composition-id="03-chat" data-start="0" data-duration="4.725" data-width="1920" data-height="1080">
+  <div id="c3-bg" class="clip" data-start="0" data-duration="4.725" data-track-index="0"></div>
+  <div id="c3-label">AI Chat</div>
+  <div id="c3-card" data-layout-allow-overflow>
+    <div class="c3-row" id="c3-r1" style="top:42px;height:133px"><img src="assets/chat-past-dark.png" style="top:-42px"></div>
+    <div class="c3-row" id="c3-r2" style="top:189px;height:119px"><img src="assets/chat-past-dark.png" style="top:-189px"></div>
+    <div class="c3-row" id="c3-r3" style="top:353px;height:116px"><img src="assets/chat-past-dark.png" style="top:-353px"></div>
+    <div class="c3-row" id="c3-r4" style="top:494px;height:80px"><img src="assets/chat-past-dark.png" style="top:-494px"></div>
+    <div class="c3-row" id="c3-r5" style="top:616px;height:126px"><img src="assets/chat-past-dark.png" style="top:-616px"></div>
+  </div>
+  <img id="c3-logo" src="assets/only-logo-black-border-yellow-bg.svg" alt="">
+  <div class="c3-st" id="c3-s1" style="left:1280px;top:150px;background:#FF5C8A">Travel</div>
+  <div class="c3-st" id="c3-s2" style="left:1380px;top:410px;background:#FFD23F">Work</div>
+  <div class="c3-st" id="c3-s3" style="left:1250px;top:670px;background:#FFF7EC">Football</div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script>
+  (function(){
+    var tl = gsap.timeline({ paused: true });
+    var P = "back.out(1.8)";
+    tl.fromTo("#c3-card",{y:900,rotation:-6,opacity:1},{y:0,rotation:0,duration:0.7,ease:"back.out(1.4)"},0);
+    tl.fromTo("#c3-logo",{scale:0,rotation:-20},{scale:1,rotation:0,duration:0.4,ease:P},0.5);
+    tl.fromTo("#c3-label",{scale:0,rotation:8},{scale:1,rotation:-4,duration:0.4,ease:P},0.35);
+    tl.fromTo("#c3-r1",{scale:0.6,y:30,opacity:0,transformOrigin:"20% 50%"},{scale:1,y:0,opacity:1,duration:0.4,ease:P},0.55);
+    tl.fromTo("#c3-s1",{x:700,rotation:25,opacity:0},{x:0,rotation:-5,opacity:1,duration:0.5,ease:P},0.9);
+    tl.fromTo("#c3-s2",{x:700,y:-200,rotation:-25,opacity:0},{x:0,y:0,rotation:4,opacity:1,duration:0.5,ease:P},1.1);
+    tl.fromTo("#c3-s3",{x:700,y:200,rotation:25,opacity:0},{x:0,y:0,rotation:-3,opacity:1,duration:0.5,ease:P},1.3);
+    tl.fromTo("#c3-r2",{scale:0.6,y:30,opacity:0,transformOrigin:"80% 50%"},{scale:1,y:0,opacity:1,duration:0.4,ease:P},1.75);
+    tl.fromTo("#c3-r3",{scale:0.6,y:30,opacity:0,transformOrigin:"20% 50%"},{scale:1,y:0,opacity:1,duration:0.4,ease:P},2.1);
+    tl.fromTo("#c3-r4",{scale:0.6,y:30,opacity:0,transformOrigin:"80% 50%"},{scale:1,y:0,opacity:1,duration:0.4,ease:P},2.8);
+    tl.fromTo("#c3-r5",{scale:0.6,y:30,opacity:0,transformOrigin:"20% 50%"},{scale:1,y:0,opacity:1,duration:0.4,ease:P},3.3);
+    // wobble (finite, seek-safe)
+    tl.to("#c3-s1",{rotation:3,duration:0.9,ease:"sine.inOut"},1.5);
+    tl.to("#c3-s2",{rotation:-3,duration:0.9,ease:"sine.inOut"},1.7);
+    tl.to("#c3-s3",{rotation:3,duration:0.9,ease:"sine.inOut"},1.9);
+    window.__timelines = window.__timelines || {};
+    window.__timelines["03-chat"] = tl;
+  })();
+  </script>
+</div>
+</template>

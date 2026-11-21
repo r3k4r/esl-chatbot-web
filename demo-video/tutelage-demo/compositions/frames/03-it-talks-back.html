@@ -1,0 +1,193 @@
+<template>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    @font-face { font-family: "Poppins"; font-weight: 700; src: url("assets/fonts/Poppins-700.woff2") format("woff2"); }
+    @font-face { font-family: "IBM Plex Mono"; font-weight: 500; src: url("assets/fonts/IBMPlexMono-500.woff2") format("woff2"); }
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Poppins", sans-serif;
+      color: #F2F2F2;
+    }
+    /* living background: ink ground + drifting orange light + faint parallax dot grid */
+    #f03-bg { position: absolute; inset: 0; background: #1C1B1B; overflow: hidden; }
+    #f03-glow {
+      position: absolute; left: 120px; top: -360px; width: 1400px; height: 1400px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(245, 158, 11, 1) 0%, rgba(245, 158, 11, 0) 62%);
+      opacity: 0.12; filter: blur(40px);
+    }
+    #f03-grid {
+      position: absolute; left: -96px; top: -96px; width: 2112px; height: 1272px;
+      background-image: radial-gradient(rgba(242, 242, 242, 1) 1.3px, transparent 1.8px);
+      background-size: 48px 48px; opacity: 0.05;
+    }
+    #f03-layer { position: absolute; inset: 0; }
+    #f03-cam { position: absolute; inset: 0; transform-origin: 62% 48%; }
+    #f03-mid, #f03-front { position: absolute; inset: 0; }
+    /* label column (left 40%) */
+    #f03-rule { position: absolute; left: 104px; top: 138px; width: 36px; height: 2px; background: #F59E0B; transform-origin: left center; }
+    #f03-label {
+      position: absolute; left: 100px; top: 160px; margin: 0;
+      font-size: 120px; font-weight: 700; line-height: 0.95; letter-spacing: -0.03em;
+      color: #F59E0B; white-space: nowrap;
+    }
+    #f03-label span { display: inline-block; transform-origin: 50% 100%; }
+    /* the giant kinetic keyword, a graphic layer behind the window */
+    #f03-talk {
+      position: absolute; left: 60px; top: 450px; margin: 0;
+      font-size: 300px; font-weight: 700; line-height: 0.9; letter-spacing: -0.04em;
+      color: #F2F2F2; white-space: nowrap; transform-origin: 30% 60%;
+    }
+    #f03-talk-line { position: absolute; left: 76px; top: 728px; width: 560px; height: 10px; background: #F59E0B; transform-origin: left center; }
+    /* floating chips on their spoken words */
+    .f03-chip {
+      position: absolute; display: flex; align-items: center; gap: 12px;
+      padding: 14px 22px; background: #1A1918; border: 1px solid #F59E0B;
+      font-family: "IBM Plex Mono", monospace; font-weight: 500; font-size: 28px;
+      letter-spacing: 0.14em; text-transform: uppercase; color: #F2F2F2; white-space: nowrap;
+      box-shadow: 0 24px 50px -18px rgba(0, 0, 0, 0.8);
+    }
+    .f03-chip b { color: #F59E0B; font-weight: 500; }
+    #f03-c1 { left: 104px; top: 340px; }
+    #f03-c2 { left: 1470px; top: 40px; }
+    #f03-c3 { left: 300px; top: 786px; }
+    /* the real AI Chat window, cropped to the message column (x 1240-2660, y 226-1284 @2x), scaled 0.8 */
+    #f03-window {
+      position: absolute; left: 680px; top: 120px; width: 1136px; height: 740px;
+      background: #141517; border: 1px solid #282726; overflow: hidden;
+      box-shadow: 0 70px 140px -30px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(245, 158, 11, 0.08);
+    }
+    #f03-thread { position: absolute; left: 0; top: 0; width: 1136px; height: 847px; }
+    .f03-msg {
+      position: absolute; left: 0; width: 1136px;
+      background-image: url("assets/chat-past-dark.png");
+      background-size: 2560px 1440px;
+      background-repeat: no-repeat;
+    }
+    .f03-tutor { transform-origin: 6% 30%; }
+    .f03-learner { transform-origin: 94% 50%; }
+    #f03-ts { top: 0; height: 52px; background-position: -992px -180.8px; }
+    #f03-m1 { top: 51.2px; height: 152px; background-position: -992px -232px; }
+    #f03-m2 { top: 203.2px; height: 188px; background-position: -992px -384px; }
+    #f03-m3 { top: 391.2px; height: 160px; background-position: -992px -572px; }
+    #f03-m4 { top: 551.2px; height: 148px; background-position: -992px -732px; }
+    #f03-m5 { top: 699.2px; height: 147.2px; background-position: -992px -880px; }
+    /* ring flash around the Tutelage avatar of the Brilliant bubble */
+    #f03-ring { position: absolute; left: 25px; top: 716px; width: 64px; height: 64px; border-radius: 50%; border: 3px solid #F59E0B; opacity: 0; }
+    /* under "textbook present perfect" in the Brilliant bubble */
+    #f03-underline {
+      position: absolute; left: 391px; top: 766px; width: 545px; height: 4px;
+      background: #F59E0B; transform-origin: left center;
+      box-shadow: 0 0 14px rgba(245, 158, 11, 0.45);
+    }
+  </style>
+
+  <div data-hf-id="hf-vpo2" id="root" data-composition-id="03-it-talks-back" data-width="1920" data-height="1080" data-duration="6.628">
+    <div data-hf-id="hf-5kzh" id="f03-bg" class="clip" data-start="0" data-duration="6.628" data-track-index="0">
+      <div id="f03-grid"></div>
+      <div id="f03-glow"></div>
+    </div>
+    <div data-hf-id="hf-yphk" id="f03-layer" class="clip" data-start="0" data-duration="6.628" data-track-index="1">
+      <div id="f03-cam">
+        <div id="f03-mid">
+          <h2 id="f03-talk" data-layout-allow-overlap data-layout-allow-occlusion>Talk</h2>
+          <div id="f03-talk-line"></div>
+          <div data-hf-id="hf-pcu5" id="f03-rule"></div>
+          <h2 data-hf-id="hf-42gk" id="f03-label"><span data-hf-id="hf-3qfe" id="f03-w1">AI</span> <span data-hf-id="hf-042h" id="f03-w2">Chat</span></h2>
+        </div>
+        <div id="f03-front">
+          <div data-hf-id="hf-8yer" id="f03-window">
+            <div data-hf-id="hf-5c2m" id="f03-thread" data-layout-allow-overflow="">
+              <div data-hf-id="hf-h786" id="f03-ts" class="f03-msg"></div>
+              <div data-hf-id="hf-65et" id="f03-m1" class="f03-msg f03-tutor"></div>
+              <div data-hf-id="hf-s441" id="f03-m2" class="f03-msg f03-learner"></div>
+              <div data-hf-id="hf-g98n" id="f03-m3" class="f03-msg f03-tutor"></div>
+              <div data-hf-id="hf-nec7" id="f03-m4" class="f03-msg f03-learner"></div>
+              <div data-hf-id="hf-kz0h" id="f03-m5" class="f03-msg f03-tutor"></div>
+              <div id="f03-ring"></div>
+              <div data-hf-id="hf-ylix" id="f03-underline"></div>
+            </div>
+          </div>
+          <div id="f03-c1" class="f03-chip"><b>/</b>your day</div>
+          <div id="f03-c2" class="f03-chip"><b>/</b>your work</div>
+          <div id="f03-c3" class="f03-chip"><b>/</b>your plans</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const D = 5.878;
+      const tl = gsap.timeline({ paused: true });
+
+      // Living background — one slow drift of the light, a slower parallax of the grid
+      tl.fromTo("#f03-glow", { x: -260, y: 60, scale: 0.9 }, { x: 520, y: 220, scale: 1.1, duration: D, ease: "sine.inOut" }, 0);
+      tl.fromTo("#f03-grid", { x: 0, y: 0 }, { x: -48, y: -24, duration: D, ease: "none" }, 0);
+
+      // Camera — gentle 3D dolly, then a motivated push on "It replies"
+      tl.fromTo("#f03-cam",
+        { rotationX: -4, rotationY: 7, scale: 1, x: 0, transformPerspective: 1600 },
+        { rotationX: -2, rotationY: 3, scale: 1.02, x: 0, transformPerspective: 1600, duration: 3.8, ease: "sine.inOut" }, 0);
+      tl.to("#f03-cam", { rotationX: 0, rotationY: -1, scale: 1.05, x: -30, transformPerspective: 1600, duration: 0.8, ease: "power3.inOut" }, 3.8);
+      // Depth parallax — mid layer drifts left, front layer right
+      tl.fromTo("#f03-mid", { x: 20 }, { x: -24, duration: D, ease: "sine.inOut" }, 0);
+      tl.fromTo("#f03-front", { x: -16 }, { x: 18, duration: D, ease: "sine.inOut" }, 0);
+
+      // Scene 1 — window flies in from a hard 3D tilt with motion blur, then keeps a slow dolly
+      tl.fromTo("#f03-window",
+        { opacity: 0, x: 280, y: 40, rotationY: -30, rotationX: 8, scale: 0.86, filter: "blur(14px)", transformPerspective: 1800 },
+        { opacity: 1, x: 0, y: 0, rotationY: -6, rotationX: 2, scale: 1, filter: "blur(0px)", transformPerspective: 1800, duration: 0.75, ease: "expo.out" }, 0);
+      tl.to("#f03-window", { rotationY: -2, rotationX: 0, scale: 1.015, transformPerspective: 1800, duration: D - 0.75, ease: "sine.inOut" }, 0.75);
+      tl.fromTo("#f03-ts", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power1.out" }, 0.2);
+
+      // Label — rule draws, words spring up
+      tl.fromTo("#f03-rule", { scaleX: 0 }, { scaleX: 1, duration: 0.45, ease: "expo.out" }, 0.05);
+      tl.fromTo("#f03-w1", { opacity: 0, y: 70, rotation: -8 }, { opacity: 1, y: 0, rotation: 0, duration: 0.55, ease: "back.out(1.7)" }, 0.08);
+      tl.fromTo("#f03-w2", { opacity: 0, y: 70, rotation: 8 }, { opacity: 1, y: 0, rotation: 0, duration: 0.55, ease: "back.out(1.7)" }, 0.2);
+
+      // Giant "talk" slams on "Chat" (0.30), underline swipes, then settles back so the window stays the hero
+      tl.fromTo("#f03-talk", { opacity: 0, scale: 1.4, filter: "blur(10px)" },
+        { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.45, ease: "expo.out" }, 0.30);
+      tl.fromTo("#f03-talk-line", { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "expo.out" }, 0.55);
+      tl.to("#f03-talk", { opacity: 0.1, duration: 0.8, ease: "power2.inOut" }, 1.15);
+      tl.to("#f03-talk-line", { opacity: 0.3, duration: 0.8, ease: "power2.inOut" }, 1.15);
+
+      // Bubbles pop with a springy overshoot and a short motion blur
+      const pop = (sel, at, fromX) =>
+        tl.fromTo(sel, { opacity: 0, scale: 0.7, y: 36, x: fromX || 0, filter: "blur(6px)" },
+          { opacity: 1, scale: 1, y: 0, x: 0, filter: "blur(0px)", duration: 0.5, ease: "back.out(1.8)" }, at);
+      pop("#f03-m1", 0.56, -40);   // "about your day" — tutor note on past simple
+      pop("#f03-m2", 1.58, 90);    // "your work" — learner reply from the right
+      pop("#f03-m3", 2.52, -40);   // "your plans" — tutor's next bubble
+      pop("#f03-m4", 3.30, 90);    // learner's present-perfect answer (context for the payoff)
+
+      // Chips pop around the window on their words, then drift
+      const chip = (sel, at, rot, dx) => {
+        tl.fromTo(sel, { opacity: 0, scale: 0.3, rotation: rot - 18, y: 30, filter: "blur(6px)" },
+          { opacity: 1, scale: 1, rotation: rot, y: 0, filter: "blur(0px)", duration: 0.5, ease: "back.out(1.7)" }, at);
+        tl.to(sel, { x: dx, y: -16, rotation: rot + 2, duration: D - at - 0.5, ease: "sine.inOut" }, at + 0.5);
+      };
+      chip("#f03-c1", 0.90, -4, 10);   // "day,"
+      chip("#f03-c2", 1.75, 3, -12);   // "work,"
+      chip("#f03-c3", 2.65, -2, 14);   // "plans."
+
+      // Scene 3 — thread scrolls with a blur smear, payoff bubble lands with an avatar ring, underline sweeps
+      tl.fromTo("#f03-thread", { y: 0, filter: "blur(0px)" }, { y: -120, filter: "blur(3px)", duration: 0.3, ease: "power2.in" }, 3.80);
+      tl.to("#f03-thread", { filter: "blur(0px)", duration: 0.25, ease: "power2.out" }, 4.10);
+      pop("#f03-m5", 4.05, -40);   // "It replies like a real person"
+      tl.fromTo("#f03-ring", { opacity: 0.9, scale: 0.6 }, { opacity: 0, scale: 1.9, duration: 0.6, ease: "expo.out", immediateRender: false }, 4.12);
+      tl.fromTo("#f03-underline", { scaleX: 0 }, { scaleX: 1, duration: 0.5, ease: "expo.out" }, 4.82);
+
+      // Micro-life on the hold — two finite glow pulses on the underline
+      tl.to("#f03-underline", { boxShadow: "0 0 30px rgba(245, 158, 11, 0.9)", duration: 0.28, ease: "sine.inOut" }, 5.32);
+      tl.to("#f03-underline", { boxShadow: "0 0 14px rgba(245, 158, 11, 0.45)", duration: 0.278, ease: "sine.inOut" }, 5.60);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["03-it-talks-back"] = tl;
+    })();
+  </script>
+</template>

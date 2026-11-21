@@ -10,6 +10,8 @@ export const breadcrumbLabels: Record<string, string> = {
   profile: 'Profile',
   billing: 'Billing',
   users: 'Users',
+  learning: 'Learning',
+  revenue: 'Revenue',
   classes: 'Classes',
   create: 'New class',
   edit: 'Edit',

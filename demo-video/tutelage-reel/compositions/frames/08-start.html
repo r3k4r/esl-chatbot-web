@@ -1,0 +1,51 @@
+<template>
+<style>
+@font-face{font-family:"Poppins";font-weight:700;font-style:normal;font-display:block;src:url("assets/fonts/Poppins-700.woff2") format("woff2");}
+#root{position:absolute;left:0;top:0;width:1920px;height:1080px;overflow:hidden;font-family:"Poppins",sans-serif;font-weight:700}
+#root .s8-bg{position:absolute;left:0;top:0;width:1920px;height:1080px;background:#FFF7EC}
+#root .s8-ring{position:absolute;left:446px;top:400px;width:300px;height:300px;margin:-150px 0 0 -150px;border:10px solid #FF5C8A;border-radius:50%;box-sizing:border-box;opacity:0}
+#root .s8-mark{position:absolute;left:230px;top:170px;width:432px;height:500px;object-fit:contain;opacity:0}
+#root .s8-word{position:absolute;left:760px;top:190px;font-size:150px;line-height:1.1;color:#1C1B1B;letter-spacing:-2px;white-space:nowrap;opacity:0}
+#root .s8-btn{position:absolute;left:770px;top:420px;width:560px;height:140px;box-sizing:border-box;background:#F59E0B;border:7px solid #1C1B1B;box-shadow:14px 14px 0 #1C1B1B;color:#FFF7EC;font-size:68px;line-height:126px;text-align:center;overflow:hidden;opacity:0;text-shadow:3px 3px 0 #1C1B1B}
+#root .s8-shine{position:absolute;left:-120px;top:-20px;width:70px;height:200px;background:#FFF7EC;opacity:.75;transform:skewX(-20deg)}
+#root .s8-arrow{position:absolute;left:1350px;top:380px;width:360px;height:260px;overflow:visible}
+#root .s8-url{position:absolute;left:770px;top:640px;font-size:54px;color:#1C1B1B;white-space:nowrap;opacity:0}
+#root .s8-star{position:absolute;opacity:0;clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%)}
+</style>
+<div id="root" data-composition-id="08-start" data-start="0" data-duration="4.4" data-width="1920" data-height="1080">
+  <div class="clip s8-bg" data-start="0" data-duration="4.4" data-track-index="0"></div>
+  <div class="s8-ring" id="s8-ring"></div>
+  <img class="s8-mark" id="s8-mark" src="assets/only-logo-black-border-yellow-bg.svg" alt="">
+  <div class="s8-word" id="s8-word">TUTELAGE</div>
+  <div class="s8-btn" id="s8-btn">Start free<div class="s8-shine" id="s8-shine"></div></div>
+  <svg class="s8-arrow" viewBox="0 0 360 260" fill="none" stroke="#1C1B1B" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+    <path id="s8-a1" pathLength="1" stroke-dasharray="1" d="M330 230 C 330 110, 250 40, 60 70"/>
+    <path id="s8-a2" pathLength="1" stroke-dasharray="1" d="M120 20 L 40 70 L 110 130"/>
+  </svg>
+  <div class="s8-url" id="s8-url">ai.tutelage.krd</div>
+  <div class="s8-star" style="left:130px;top:110px;width:90px;height:90px;background:#FF5C8A"></div>
+  <div class="s8-star" style="left:1560px;top:150px;width:110px;height:110px;background:#14C8B4"></div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script>
+  (function(){
+    var tl=gsap.timeline({paused:true});
+    tl.fromTo("#s8-mark",{scale:0,opacity:0,transformOrigin:"50% 50%"},{scale:1,opacity:1,duration:0.55,ease:"back.out(2.4)"},0.28);
+    tl.fromTo("#s8-ring",{scale:0.3,opacity:1},{scale:3.6,opacity:0,duration:0.7,ease:"power2.out"},0.5);
+    tl.fromTo("#s8-word",{x:-70,opacity:0},{x:0,opacity:1,duration:0.4,ease:"back.out(2)"},0.8);
+    tl.fromTo("#s8-btn",{scale:0.2,opacity:0,transformOrigin:"50% 50%"},{scale:1,opacity:1,duration:0.5,ease:"back.out(2.6)"},1.8);
+    tl.fromTo("#s8-a1",{strokeDashoffset:1},{strokeDashoffset:0,duration:0.45,ease:"power2.out"},2.1);
+    tl.fromTo("#s8-a2",{strokeDashoffset:1},{strokeDashoffset:0,duration:0.2,ease:"power2.out"},2.5);
+    tl.fromTo("#s8-shine",{x:0},{x:780,duration:0.5,ease:"power1.inOut"},2.3);
+    tl.fromTo("#s8-url",{y:14,opacity:0},{y:0,opacity:1,duration:0.4,ease:"power2.out"},2.7);
+    var st=document.querySelectorAll("#root .s8-star");
+    st.forEach(function(s,i){
+      var t=2.8+i*0.25;
+      tl.fromTo(s,{scale:0,opacity:1,rotation:0},{scale:1,rotation:45,duration:0.35,ease:"back.out(2)"},t);
+    });
+    tl.to({},{duration:0.01},4.39);
+    window.__timelines=window.__timelines||{};
+    window.__timelines["08-start"]=tl;
+  })();
+  </script>
+</div>
+</template>

@@ -1,0 +1,48 @@
+<template>
+  <style>
+    @font-face{font-family:"Poppins";font-weight:700;font-style:normal;font-display:block;src:url("assets/fonts/Poppins-700.woff2") format("woff2");}
+    #root{position:absolute;left:0;top:0;width:1080px;height:1920px;overflow:hidden;font-family:"Poppins",sans-serif;font-weight:700}
+    .f01-bg{position:absolute;left:0;top:0;width:1080px;height:1920px;background:#FF5C8A}
+    .f01-stage{position:absolute;left:0;top:0;width:1080px;height:1920px}
+    .f01-w{position:absolute;left:0;width:1080px;text-align:center;white-space:nowrap;line-height:1}
+    #f01-scared{top:560px;font-size:260px;color:#1C1B1B;text-shadow:12px 12px 0 #FFF7EC;letter-spacing:-4px}
+    #f01-speak{top:860px;font-size:150px;color:#FFF7EC;-webkit-text-stroke:10px #1C1B1B;paint-order:stroke fill;text-shadow:9px 9px 0 #1C1B1B}
+    #f01-sticker{position:absolute;left:130px;top:1090px;width:820px;height:240px;background:#FFD23F;border:10px solid #1C1B1B;box-shadow:16px 16px 0 #1C1B1B;display:flex;align-items:center;justify-content:center}
+    #f01-eng{font-size:150px;line-height:1;color:#1C1B1B;white-space:nowrap}
+    .f01-spark{position:absolute;width:130px;height:130px}
+  </style>
+  <div id="root" data-composition-id="01-scared" data-width="1080" data-height="1920" data-start="0" data-duration="1.974">
+    <div class="clip f01-bg" data-start="0" data-duration="1.974" data-track-index="0"></div>
+    <div class="f01-stage" id="f01-stage">
+      <div class="f01-w" id="f01-scared">Scared</div>
+      <div class="f01-w" id="f01-speak">to speak</div>
+      <div id="f01-sticker"><div id="f01-eng">English?</div></div>
+      <svg class="f01-spark" id="f01-sp1" style="left:70px;top:960px" viewBox="0 0 100 100"><path d="M50 4 L61 39 L96 50 L61 61 L50 96 L39 61 L4 50 L39 39 Z" fill="#14C8B4" stroke="#1C1B1B" stroke-width="6" stroke-linejoin="round"/></svg>
+      <svg class="f01-spark" id="f01-sp2" style="left:860px;top:1330px" viewBox="0 0 100 100"><path d="M50 4 L61 39 L96 50 L61 61 L50 96 L39 61 L4 50 L39 39 Z" fill="#FFF7EC" stroke="#1C1B1B" stroke-width="6" stroke-linejoin="round"/></svg>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (function(){
+        var tl = gsap.timeline({ paused: true });
+        // Scared slams on its word
+        tl.fromTo("#f01-scared",{scale:2.4,opacity:0,transformOrigin:"50% 50%"},{scale:1,opacity:1,duration:0.12,ease:"power4.in"},0.2);
+        // 3-frame camera shake on impact
+        tl.fromTo("#f01-stage",{x:0,y:0},{x:-16,y:12,duration:0.04,ease:"none"},0.32)
+          .fromTo("#f01-stage",{x:-16,y:12},{x:14,y:-10,duration:0.04,ease:"none"},0.36)
+          .fromTo("#f01-stage",{x:14,y:-10},{x:0,y:0,duration:0.06,ease:"power2.out"},0.4);
+        // to speak punches in
+        tl.fromTo("#f01-speak",{scale:0,opacity:1,transformOrigin:"50% 50%"},{scale:1,duration:0.3,ease:"back.out(2.4)"},0.67);
+        // sticker drops with bounce + wobble
+        tl.fromTo("#f01-sticker",{y:-260,scale:0.6,rotation:-6,opacity:0,transformOrigin:"50% 50%"},{y:0,scale:1,rotation:-6,opacity:1,duration:0.38,ease:"bounce.out"},0.99);
+        tl.fromTo("#f01-sticker",{rotation:-6},{rotation:-3,duration:0.45,ease:"elastic.out(1,0.4)"},1.37);
+        // sparkles pop and wiggle
+        tl.fromTo("#f01-sp1",{scale:0,rotation:-40,opacity:1,transformOrigin:"50% 50%"},{scale:1,rotation:0,duration:0.3,ease:"back.out(3)"},1.3);
+        tl.fromTo("#f01-sp2",{scale:0,rotation:40,opacity:1,transformOrigin:"50% 50%"},{scale:1,rotation:0,duration:0.3,ease:"back.out(3)"},1.4);
+        tl.fromTo("#f01-sp1",{rotation:0},{rotation:20,duration:0.3,ease:"sine.inOut"},1.6);
+        tl.fromTo("#f01-sp2",{rotation:0},{rotation:-20,duration:0.3,ease:"sine.inOut"},1.65);
+        window.__timelines["01-scared"] = tl;
+      })();
+    </script>
+  </div>
+</template>

@@ -1,0 +1,208 @@
+<template>
+  <style>
+    @font-face { font-family: "Poppins"; src: url("assets/fonts/Poppins-700.woff2") format("woff2"); font-weight: 700; font-style: normal; }
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      container-type: size;
+      font-family: "Poppins", sans-serif;
+      color: #F2F2F2;
+    }
+    #\30 1-i-just-freeze-bg { position: absolute; inset: 0; overflow: hidden; background: #1C1B1B; }
+    #\30 1-i-just-freeze-grid {
+      position: absolute;
+      inset: -120px;
+      opacity: 0.05;
+      background-image: radial-gradient(circle, #F2F2F2 1.6px, transparent 1.8px);
+      background-size: 48px 48px;
+    }
+    #\30 1-i-just-freeze-light {
+      position: absolute;
+      left: -200px;
+      top: -260px;
+      width: 1300px;
+      height: 1300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #F59E0B 0%, rgba(245, 158, 11, 0) 62%);
+      filter: blur(70px);
+    }
+    #\30 1-i-just-freeze-camera { position: absolute; inset: 0; transform-origin: 50% 45%; }
+    #\30 1-i-just-freeze-giant { position: absolute; left: 34cqw; top: 520px; }
+    #\30 1-i-just-freeze-giantword {
+      display: block;
+      font-weight: 700;
+      font-size: 18cqw;
+      line-height: 0.88;
+      letter-spacing: -0.04em;
+      color: #F2F2F2;
+      white-space: nowrap;
+      transform-origin: 30% 60%;
+    }
+    #\30 1-i-just-freeze-giantline {
+      position: absolute;
+      left: 0.5%;
+      right: 4%;
+      top: 100%;
+      height: 8px;
+      margin-top: 4px;
+      background: #F59E0B;
+      transform-origin: 0% 50%;
+    }
+    #\30 1-i-just-freeze-frost {
+      position: absolute;
+      left: 12cqw;
+      top: 24cqh;
+      width: 70cqw;
+      height: 40cqh;
+      opacity: 0;
+      background: radial-gradient(ellipse at center, rgba(242, 242, 242, 0.9) 0%, rgba(242, 242, 242, 0) 68%);
+      filter: blur(24px);
+    }
+    #\30 1-i-just-freeze-type {
+      position: absolute;
+      left: 18cqw;
+      top: 31cqh;
+      font-weight: 700;
+      font-size: 5.6cqw;
+      line-height: 1.3;
+      letter-spacing: -0.03em;
+    }
+    .\30 1-i-just-freeze-line { display: block; white-space: pre; }
+    .\30 1-i-just-freeze-ch { display: none; transform-origin: 50% 80%; }
+    .\30 1-i-just-freeze-accent { color: #F59E0B; }
+    .\30 1-i-just-freeze-caret {
+      display: inline-block;
+      width: 0.07em;
+      height: 0.92em;
+      margin-left: 0.06em;
+      vertical-align: -0.12em;
+      background: #F59E0B;
+    }
+    #\30 1-i-just-freeze-caret2 { display: none; }
+  </style>
+
+  <div data-hf-id="hf-f5hb" id="root" data-composition-id="01-i-just-freeze" data-width="1920" data-height="1080" data-duration="4.303">
+    <div data-hf-id="hf-s7ai" id="01-i-just-freeze-bg" class="clip" data-start="0" data-duration="4.303" data-track-index="0">
+      <div id="01-i-just-freeze-grid"></div>
+      <div id="01-i-just-freeze-light"></div>
+    </div>
+    <div id="01-i-just-freeze-camera" class="clip" data-start="0" data-duration="4.303" data-track-index="1">
+      <div id="01-i-just-freeze-giant">
+        <span id="01-i-just-freeze-giantword">Freeze</span>
+        <div id="01-i-just-freeze-giantline"></div>
+      </div>
+      <div id="01-i-just-freeze-frost"></div>
+      <div data-hf-id="hf-a4y4" id="01-i-just-freeze-type">
+        <span data-hf-id="hf-s9e6" id="01-i-just-freeze-line1" class="01-i-just-freeze-line"><span data-hf-id="hf-mxww" id="01-i-just-freeze-caret1" class="01-i-just-freeze-caret"></span></span>
+        <span data-hf-id="hf-m3od" id="01-i-just-freeze-line2" class="01-i-just-freeze-line"><span data-hf-id="hf-xtej" id="01-i-just-freeze-caret2" class="01-i-just-freeze-caret"></span></span>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var P = "01-i-just-freeze-";
+      var D = 3.553;
+      var $ = function (id) { return document.getElementById(P + id); };
+      var line1 = $("line1"), line2 = $("line2");
+      var caret1 = $("caret1"), caret2 = $("caret2");
+      var type = $("type"), camera = $("camera"), light = $("light"), frost = $("frost");
+
+      // One hidden span per character, inserted before the line's caret so the caret trails the last visible char.
+      function chars(line, caret, text, accent) {
+        return text.split("").map(function (c) {
+          var s = document.createElement("span");
+          s.className = P + "ch" + (accent ? " " + P + "accent" : "");
+          s.textContent = c;
+          line.insertBefore(s, caret);
+          return s;
+        });
+      }
+      var l1 = chars(line1, caret1, "I know English.");
+      var l2a = chars(line2, caret2, "I just can't ");
+      var l2sp = chars(line2, caret2, "sp");
+      var l2b = chars(line2, caret2, "speak it.", true);
+
+      var tl = gsap.timeline({ paused: true });
+
+      // Type a run evenly between t0 and t1: discrete display flip + a springy per-key pop (seek-safe).
+      function typeOn(list, t0, t1, ease) {
+        var step = list.length > 1 ? (t1 - t0) / (list.length - 1) : 0;
+        list.forEach(function (s, i) {
+          var t = t0 + i * step;
+          tl.set(s, { display: "inline-block" }, t);
+          tl.fromTo(s, { scale: 1.28, yPercent: -14, opacity: 0.35 },
+            { scale: 1, yPercent: 0, opacity: 1, duration: 0.16, ease: ease || "back.out(1.5)" }, t);
+        });
+      }
+      function blink(caret, times) {
+        times.forEach(function (t, i) { tl.set(caret, { opacity: i % 2 ? 1 : 0 }, t); });
+      }
+
+      // Living ground: orange light drifts across the whole frame, dot grid parallaxes slower.
+      tl.fromTo(light, { x: -260, y: 40 }, { x: 980, y: -140, duration: D, ease: "sine.inOut" }, 0);
+      tl.fromTo($("grid"), { x: 0, y: 0 }, { x: -48, y: -24, duration: D, ease: "none" }, 0);
+      tl.set(light, { opacity: 0.11 }, 0);
+      tl.to(light, { opacity: 0.045, duration: 0.3, ease: "power2.out" }, 1.94);  // the freeze cools the room
+      tl.to(light, { opacity: 0.14, duration: 0.6, ease: "sine.out" }, 2.84);     // speaking warms it back
+
+      // Camera: slow 3D push, a punch on "freeze", then keeps creeping in to the cut.
+      tl.fromTo(camera, { transformPerspective: 1600, scale: 1, rotationY: -6, rotationX: 3 },
+        { scale: 1.025, rotationY: -3, rotationX: 2, duration: 1.79, ease: "sine.inOut" }, 0);
+      tl.to(camera, { scale: 1.05, rotationY: 0, rotationX: 5, duration: 0.35, ease: "expo.out" }, 1.79);
+      tl.to(camera, { scale: 1.06, rotationY: 3, rotationX: 4, duration: D - 2.14, ease: "sine.out" }, 2.14);
+
+      // Scene 1 — idle caret, then "I know English." on the voice.
+      blink(caret1, [0.12, 0.24]);
+      typeOn(l1.slice(0, 2), 0.30, 0.40);   // "I "
+      typeOn(l1.slice(2, 7), 0.51, 0.64);   // "know "
+      typeOn(l1.slice(7), 0.68, 1.12);      // "English."
+      blink(caret1, [1.24, 1.36]);
+
+      // Scene 2 — caret drops to line 2, types "I just can't sp" and stalls.
+      tl.set(caret1, { display: "none" }, 1.42);
+      tl.set(caret2, { display: "inline-block" }, 1.42);
+      typeOn(l2a.slice(0, 2), 1.45, 1.50);  // "I "
+      typeOn(l2a.slice(2, 7), 1.58, 1.70);  // "just "
+      typeOn(l2a.slice(7), 1.73, 1.85);     // "can't "
+      typeOn(l2sp, 1.88, 1.93);             // "sp"
+
+      // Keyword: giant "freeze" slams in behind on its word, settles faint and slides.
+      tl.fromTo($("giantword"), { opacity: 0, scale: 1.4, filter: "blur(14px)" },
+        { opacity: 0.16, scale: 1, filter: "blur(0px)", duration: 0.3, ease: "expo.out" }, 1.79);
+      tl.to($("giantword"), { opacity: 0.06, duration: 0.6, ease: "power2.out" }, 2.12);
+      tl.fromTo($("giantline"), { scaleX: 0, opacity: 0.6 }, { scaleX: 1, duration: 0.32, ease: "expo.out" }, 1.85);
+      tl.to($("giantline"), { opacity: 0.22, duration: 0.6, ease: "power2.out" }, 2.2);
+      tl.fromTo($("giant"), { x: 60 }, { x: -90, duration: D - 1.79, ease: "none" }, 1.79);
+
+      // The freeze: the line shivers (motion-blurred jitters) under a cold frost-white wash.
+      tl.set(type, { x: 0, filter: "blur(0px)", textShadow: "0 0 0px rgba(242,242,242,0)" }, 0);
+      [-10, 8, -6, 4, 0].forEach(function (x, i) { tl.to(type, { x: x, duration: 0.03, ease: "none" }, 1.94 + i * 0.03); });
+      tl.to(type, { filter: "blur(2px)", duration: 0.02 }, 1.94);
+      tl.to(type, { filter: "blur(0px)", duration: 0.14, ease: "power2.out" }, 1.96);
+      tl.to(type, { textShadow: "0 0 30px rgba(242,242,242,0.85)", duration: 0.06 }, 1.94);
+      tl.to(type, { textShadow: "0 0 0px rgba(242,242,242,0)", duration: 0.55, ease: "power2.out" }, 2.0);
+      tl.set(frost, { opacity: 0, x: -260 }, 0);
+      tl.to(frost, { opacity: 0.34, duration: 0.08, ease: "power2.out" }, 1.94);
+      tl.to(frost, { x: 260, duration: 0.6, ease: "power2.out" }, 1.94);
+      tl.to(frost, { opacity: 0, duration: 0.5, ease: "power2.in" }, 2.04);
+      blink(caret2, [2.20, 2.32, 2.44, 2.56]); // the caret blinks alone, twice
+
+      // Scene 3 — backspace the stalled "sp", retype "speak it." in orange with a bigger spring.
+      tl.set(l2sp[1], { display: "none" }, 2.66);
+      tl.set(l2sp[0], { display: "none" }, 2.73);
+      typeOn(l2b.slice(0, 6), 2.84, 3.06, "back.out(1.8)");  // "speak "
+      typeOn(l2b.slice(6), 3.12, 3.24, "back.out(1.8)");     // "it."
+
+      // Micro-life on the held read: the caret keeps blinking into the cut.
+      blink(caret2, [3.36, 3.48]);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["01-i-just-freeze"] = tl;
+    })();
+  </script>
+</template>

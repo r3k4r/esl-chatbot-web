@@ -226,6 +226,24 @@ export const adminDashboard: AdminDashboardData = {
   expiringSoon: [{ userId: 'u-student', name: 'Ali Hassan', plan: 'GOLD', endsAt: daysFrom(4), cancelling: false }],
   aiUsage: { FREE: 600, GOLD: 1000, PREMIUM: 540 },
   attention: { unverifiedOver24h: 3, fibPaymentsStuck: 0 },
+  people: {
+    newest: [{ id: 'u-student', name: 'Ali Hassan', username: 'student_ali', role: 'STUDENT', verified: true, plan: 'GOLD', joinedAt: daysFrom(-2) }],
+    mostActive: [{ id: 'u-student', name: 'Ali Hassan', minutes: 95, messages: 40, plan: 'GOLD' }],
+    goneQuiet: [{ id: 'u-student', name: 'Ali Hassan', lastPracticeAt: daysFrom(-9), plan: 'GOLD' }],
+    goneQuietCount: 4,
+  },
+  classes: [{ ...tutorDashboard.classes[0]!, teacher: { id: 'u-tutor', name: 'Sarah Johnson' } }],
+  trend: Array.from({ length: 30 }, (_, i) => ({
+    date: new Date(Date.now() - (29 - i) * DAY).toISOString().slice(0, 10),
+    signUps: i % 5 === 0 ? 2 : 0, activeLearners: 10 + (i % 7), messages: 250 + i * 3,
+  })),
+  learning: {
+    skills: { grammar: 64, vocabulary: 60, fluency: 61, speaking: 57, practisingStudents: 80 },
+    levels: { A1: 10, A2: 25, B1: 30, B2: 12, C1: 3, C2: 0, NONE: 38 },
+    commonMistakes: tutorDashboard.commonMistakes,
+    modes: { chat: 310, voice: 120, voiceMinutes: 540 },
+    heavyUsers: [{ id: 'u-student', name: 'Ali Hassan', messages: 40, plan: 'GOLD' }],
+  },
 }
 
 export const adminUsers: AdminUserItem[] = (Object.keys(USERS) as Persona[]).map((p) => {

@@ -31,7 +31,11 @@ watch(() => route.path, () => {
 
 const primaryNav = computed<DashboardNavItem[]>(() => {
   const adminOnly: DashboardNavItem[] = isAdmin.value
-    ? [{ id: 'users', label: 'Users', icon: 'People', path: '/dashboard/users' }]
+    ? [
+      { id: 'users', label: 'Users', icon: 'People', path: '/dashboard/users' },
+      { id: 'learning', label: 'Learning', icon: 'Teacher', path: '/dashboard/learning' },
+      { id: 'revenue', label: 'Revenue', icon: 'MoneyRecive', path: '/dashboard/revenue' },
+    ]
     : []
   // Billing is a personal-subscription page — irrelevant for staff.
   const billing: DashboardNavItem[] = isStaff.value

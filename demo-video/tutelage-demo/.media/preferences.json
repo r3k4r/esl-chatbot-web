@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "preferences": {
+    "destination": {
+      "value": "website-embed",
+      "confirmed_in": [
+        "tutelage-demo"
+      ],
+      "updated_at": "2026-11-21T07:37:25.100Z"
+    },
+    "aspect": {
+      "value": "1920x1080",
+      "confirmed_in": [
+        "tutelage-demo"
+      ],
+      "updated_at": "2026-11-21T07:37:25.316Z"
+    },
+    "language": {
+      "value": "en",
+      "confirmed_in": [
+        "tutelage-demo"
+      ],
+      "updated_at": "2026-11-21T07:37:25.532Z"
+    },
+    "flow": {
+      "value": "automation",
+      "confirmed_in": [
+        "tutelage-demo"
+      ],
+      "updated_at": "2026-11-21T07:37:25.754Z"
+    },
+    "storyboard": {
+      "value": "yes",
+      "confirmed_in": [
+        "tutelage-demo"
+      ],
+      "updated_at": "2026-11-21T07:37:25.967Z"
+    },
+    "style_preset.product-launch-video": {
+      "value": "broadside",
+      "confirmed_in": [
+        "tutelage-demo"
+      ],
+      "updated_at": "2026-11-21T07:43:12.583Z"
+    },
+    "voice": {
+      "value": "96b762a3f37e44a78f3faf4d3490f96a",
+      "confirmed_in": [
+        "tutelage-demo"
+      ],
+      "updated_at": "2026-11-21T07:53:48.937Z"
+    }
+  },
+  "sightings": {}
+}

@@ -1,0 +1,58 @@
+<template>
+<style>
+@font-face{font-family:"Poppins";font-weight:700;font-style:normal;font-display:block;src:url("assets/fonts/Poppins-700.woff2") format("woff2");}
+#root{position:absolute;left:0;top:0;width:1920px;height:1080px;overflow:hidden;font-family:"Poppins",sans-serif;font-weight:700;color:#1C1B1B}
+#root .c6-bg{position:absolute;left:0;top:0;width:1920px;height:1080px;background:#FF5C8A}
+#root .c6-card{position:absolute;left:200px;width:640px;height:230px}
+#root .c6-face{position:absolute;left:0;top:0;width:640px;height:230px;box-sizing:border-box;border:6px solid #1C1B1B;box-shadow:12px 12px 0 #1C1B1B;display:flex;align-items:center;justify-content:center;font-size:84px;line-height:1.1;backface-visibility:hidden;overflow:hidden}
+#root .c6-back{background:#FFF7EC;font-size:76px}
+#root .c6-glint{position:absolute;left:-200px;top:-40px;width:120px;height:320px;background:#fff;opacity:.9;transform:skewX(-20deg)}
+#root .c6-phone{position:absolute;left:1120px;top:240px;width:560px;height:586px;box-sizing:border-box;background:#FFF7EC;border:6px solid #1C1B1B;box-shadow:14px 14px 0 #1C1B1B;overflow:hidden}
+#root .c6-crop{position:absolute;left:0;top:0;width:548px;height:574px;overflow:hidden}
+#root .c6-crop img{position:absolute;width:2037px;height:1146px;left:-1468px;top:-427px;max-width:none}
+#root .c6-mask{position:absolute;left:0;top:0;width:548px;height:574px;background:#FFF7EC;transform-origin:100% 50%}
+#root .c6-sticker{position:absolute;left:1000px;top:690px;padding:22px 40px;background:#F59E0B;border:6px solid #1C1B1B;box-shadow:10px 10px 0 #1C1B1B;font-size:58px;line-height:1.1;white-space:nowrap}
+</style>
+<div id="root" data-composition-id="06-cards" data-start="0" data-duration="3.55" data-width="1920" data-height="1080">
+  <div class="clip c6-bg" data-start="0" data-duration="3.55" data-track-index="0"></div>
+  <div class="c6-card" id="c6-a" style="top:300px;z-index:1" data-layout-allow-overlap data-layout-allow-occlusion><div class="c6-face" data-layout-allow-overlap data-layout-allow-occlusion style="background:#FFF7EC">bought</div></div>
+  <div class="c6-card" id="c6-b" style="top:410px;z-index:2" data-layout-allow-overlap data-layout-allow-occlusion><div class="c6-face" data-layout-allow-overlap data-layout-allow-occlusion style="background:#FFD23F">market</div></div>
+  <div class="c6-card" id="c6-c" style="top:520px;z-index:3" data-layout-allow-overlap data-layout-allow-occlusion>
+    <div class="c6-flip" id="c6-flip" style="position:absolute;left:0;top:0;width:640px;height:230px;transform-style:preserve-3d">
+      <div class="c6-face" data-layout-allow-overlap data-layout-allow-occlusion style="background:#14C8B4;font-size:64px">perseverance</div>
+      <div class="c6-face c6-back" id="c6-back" style="transform:rotateY(180deg)" data-layout-allow-overlap data-layout-allow-occlusion>perseverance<div class="c6-glint" id="c6-glint"></div></div>
+    </div>
+  </div>
+  <div class="c6-phone" id="c6-phone">
+    <div class="c6-crop" data-layout-allow-overflow><img src="assets/vocab-dark.png" alt=""></div>
+    <div class="c6-mask" id="c6-mask" data-layout-allow-overlap data-layout-allow-occlusion></div>
+  </div>
+  <div class="c6-sticker" id="c6-sticker" data-layout-allow-overlap data-layout-allow-occlusion>17 due today</div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script>
+  (function(){
+    var tl=gsap.timeline({paused:true});
+    gsap.set("#c6-flip",{transformPerspective:1400});
+    var rest={a:-5,b:3,c:-1};
+    [["#c6-a",0.28,rest.a,-14],["#c6-b",0.5,rest.b,12],["#c6-c",0.74,rest.c,-10]].forEach(function(s){
+      tl.fromTo(s[0],{y:-700,rotation:s[3],opacity:1},{y:0,rotation:s[2],duration:0.5,ease:"back.out(1.4)"},s[1]);
+    });
+    // fan out and snap back on "Instant"
+    tl.fromTo("#c6-a",{x:0,rotation:rest.a},{x:-60,rotation:-12,immediateRender:false,duration:0.2,ease:"power2.out"},1.34)
+      .fromTo("#c6-b",{x:0,rotation:rest.b},{x:60,rotation:10,immediateRender:false,duration:0.2,ease:"power2.out"},1.34)
+      .fromTo("#c6-c",{y:0},{y:-40,immediateRender:false,duration:0.2,ease:"power2.out"},1.34)
+      .fromTo("#c6-a",{x:-60,rotation:-12},{x:0,rotation:rest.a,immediateRender:false,duration:0.3,ease:"back.out(2)"},1.56)
+      .fromTo("#c6-b",{x:60,rotation:10},{x:0,rotation:rest.b,immediateRender:false,duration:0.3,ease:"back.out(2)"},1.56)
+      .fromTo("#c6-c",{y:-40},{y:0,immediateRender:false,duration:0.3,ease:"back.out(2)"},1.56)
+      .fromTo("#c6-flip",{rotationY:0},{rotationY:180,duration:0.55,ease:"power3.inOut"},1.4)
+      .fromTo("#c6-glint",{x:0},{x:900,duration:0.45,ease:"power2.inOut"},1.9);
+    // phone card + bars fill on "flashcards"
+    tl.fromTo("#c6-phone",{x:700,opacity:0},{x:0,opacity:1,duration:0.45,ease:"power3.out"},1.85)
+      .fromTo("#c6-mask",{scaleX:1},{scaleX:0,duration:0.6,ease:"power2.out"},2.2)
+      .fromTo("#c6-sticker",{scale:0,rotation:-20,opacity:1},{scale:1,rotation:-6,duration:0.45,ease:"back.out(3)"},2.3);
+    window.__timelines=window.__timelines||{};
+    window.__timelines["06-cards"]=tl;
+  })();
+  </script>
+</div>
+</template>

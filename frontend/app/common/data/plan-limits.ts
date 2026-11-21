@@ -2,6 +2,13 @@ import type { User } from '~/common/model/user'
 
 export type Plan = User['subscription']['plan']
 
+/** A plan's name as people say it, and its badge colours. */
+export const PLAN_BADGE: Record<Plan, { label: string; class: string }> = {
+  FREE: { label: 'Free', class: 'bg-surface-raised text-text-muted' },
+  GOLD: { label: 'Gold', class: 'bg-amber-500/15 text-amber-600 dark:text-amber-400' },
+  PREMIUM: { label: 'Premium', class: 'bg-violet-500/15 text-violet-600 dark:text-violet-400' },
+}
+
 export interface PlanLimits {
   sessionsPerDay: number
   messagesPerSessionSoft: number

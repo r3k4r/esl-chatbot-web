@@ -1,0 +1,899 @@
+{
+  "tts_provider": "heygen",
+  "voice_id": "96b762a3f37e44a78f3faf4d3490f96a",
+  "bgm": {
+    "path": "assets/bgm/track.mp3",
+    "volume": 0.12,
+    "query": "uplifting modern electronic, warm and confident, steady 110–120 bpm pulse, light build into the progress beat, clean ending",
+    "mode": "retrieve",
+    "duration_s": 39
+  },
+  "bgm_pending": false,
+  "bgm_provider": "heygen",
+  "bgm_pid": null,
+  "bgm_log": null,
+  "bgm_mode": "retrieve",
+  "bgm_target_duration_s": null,
+  "bgm_seed_duration_s": null,
+  "bgm_loop_count": null,
+  "voices": [
+    {
+      "id": "01",
+      "path": "assets/voice/01.wav",
+      "duration_s": 3.553,
+      "words": [
+        {
+          "id": "w0",
+          "text": "You",
+          "start": 0.299,
+          "end": 0.469
+        },
+        {
+          "id": "w1",
+          "text": "know",
+          "start": 0.512,
+          "end": 0.597
+        },
+        {
+          "id": "w2",
+          "text": "English.",
+          "start": 0.683,
+          "end": 1.109
+        },
+        {
+          "id": "w3",
+          "text": "You",
+          "start": 1.451,
+          "end": 1.5787
+        },
+        {
+          "id": "w4",
+          "text": "just",
+          "start": 1.621,
+          "end": 1.7067
+        },
+        {
+          "id": "w5",
+          "text": "freeze",
+          "start": 1.792,
+          "end": 2.176
+        },
+        {
+          "id": "w6",
+          "text": "when",
+          "start": 2.347,
+          "end": 2.432
+        },
+        {
+          "id": "w7",
+          "text": "it's",
+          "start": 2.475,
+          "end": 2.6027
+        },
+        {
+          "id": "w8",
+          "text": "time",
+          "start": 2.645,
+          "end": 2.773
+        },
+        {
+          "id": "w9",
+          "text": "to",
+          "start": 2.816,
+          "end": 2.901
+        },
+        {
+          "id": "w10",
+          "text": "speak.",
+          "start": 2.944,
+          "end": 3.318
+        }
+      ]
+    },
+    {
+      "id": "02",
+      "path": "assets/voice/02.wav",
+      "duration_s": 5.46,
+      "words": [
+        {
+          "id": "w0",
+          "text": "Meet",
+          "start": 0.299,
+          "end": 0.512
+        },
+        {
+          "id": "w1",
+          "text": "Tutelage",
+          "start": 0.597,
+          "end": 1.237
+        },
+        {
+          "id": "w2",
+          "text": "AI",
+          "start": 1.323,
+          "end": 1.664
+        },
+        {
+          "id": "w3",
+          "text": "—",
+          "start": 1.82,
+          "end": 1.977
+        },
+        {
+          "id": "w4",
+          "text": "a",
+          "start": 2.133,
+          "end": 2.219
+        },
+        {
+          "id": "w5",
+          "text": "patient",
+          "start": 2.261,
+          "end": 2.475
+        },
+        {
+          "id": "w6",
+          "text": "English",
+          "start": 2.688,
+          "end": 2.816
+        },
+        {
+          "id": "w7",
+          "text": "tutor",
+          "start": 3.072,
+          "end": 3.328
+        },
+        {
+          "id": "w8",
+          "text": "you",
+          "start": 3.413,
+          "end": 3.584
+        },
+        {
+          "id": "w9",
+          "text": "can",
+          "start": 3.627,
+          "end": 3.755
+        },
+        {
+          "id": "w10",
+          "text": "talk",
+          "start": 3.797,
+          "end": 4.011
+        },
+        {
+          "id": "w11",
+          "text": "to,",
+          "start": 4.096,
+          "end": 4.373
+        },
+        {
+          "id": "w12",
+          "text": "any",
+          "start": 4.565,
+          "end": 4.736
+        },
+        {
+          "id": "w13",
+          "text": "time.",
+          "start": 4.864,
+          "end": 5.21891156462585
+        }
+      ]
+    },
+    {
+      "id": "03",
+      "path": "assets/voice/03.wav",
+      "duration_s": 5.878,
+      "words": [
+        {
+          "id": "w0",
+          "text": "Chat",
+          "start": 0.299,
+          "end": 0.512
+        },
+        {
+          "id": "w1",
+          "text": "about",
+          "start": 0.555,
+          "end": 0.6827
+        },
+        {
+          "id": "w2",
+          "text": "your",
+          "start": 0.725,
+          "end": 0.853
+        },
+        {
+          "id": "w3",
+          "text": "day,",
+          "start": 0.896,
+          "end": 1.323
+        },
+        {
+          "id": "w4",
+          "text": "your",
+          "start": 1.579,
+          "end": 1.7067
+        },
+        {
+          "id": "w5",
+          "text": "work,",
+          "start": 1.749,
+          "end": 2.283
+        },
+        {
+          "id": "w6",
+          "text": "your",
+          "start": 2.517,
+          "end": 2.6027
+        },
+        {
+          "id": "w7",
+          "text": "plans.",
+          "start": 2.645,
+          "end": 3.349
+        },
+        {
+          "id": "w8",
+          "text": "It",
+          "start": 3.797,
+          "end": 4.0107
+        },
+        {
+          "id": "w9",
+          "text": "replies",
+          "start": 4.053,
+          "end": 4.437
+        },
+        {
+          "id": "w10",
+          "text": "like",
+          "start": 4.565,
+          "end": 4.693
+        },
+        {
+          "id": "w11",
+          "text": "a",
+          "start": 4.736,
+          "end": 4.7787
+        },
+        {
+          "id": "w12",
+          "text": "real",
+          "start": 4.821,
+          "end": 5.12
+        },
+        {
+          "id": "w13",
+          "text": "person.",
+          "start": 5.248,
+          "end": 5.648
+        }
+      ]
+    },
+    {
+      "id": "04",
+      "path": "assets/voice/04.wav",
+      "duration_s": 5.198,
+      "words": [
+        {
+          "id": "w0",
+          "text": "Slip",
+          "start": 0.299,
+          "end": 0.5547
+        },
+        {
+          "id": "w1",
+          "text": "up?",
+          "start": 0.64,
+          "end": 0.96
+        },
+        {
+          "id": "w2",
+          "text": "It",
+          "start": 1.195,
+          "end": 1.365
+        },
+        {
+          "id": "w3",
+          "text": "shows",
+          "start": 1.408,
+          "end": 1.621
+        },
+        {
+          "id": "w4",
+          "text": "you",
+          "start": 1.707,
+          "end": 1.792
+        },
+        {
+          "id": "w5",
+          "text": "the",
+          "start": 1.835,
+          "end": 1.877
+        },
+        {
+          "id": "w6",
+          "text": "better",
+          "start": 1.92,
+          "end": 2.048
+        },
+        {
+          "id": "w7",
+          "text": "way",
+          "start": 2.133,
+          "end": 2.304
+        },
+        {
+          "id": "w8",
+          "text": "—",
+          "start": 2.432,
+          "end": 2.56
+        },
+        {
+          "id": "w9",
+          "text": "kindly",
+          "start": 2.688,
+          "end": 3.072
+        },
+        {
+          "id": "w10",
+          "text": "—",
+          "start": 3.157,
+          "end": 3.243
+        },
+        {
+          "id": "w11",
+          "text": "and",
+          "start": 3.328,
+          "end": 3.584
+        },
+        {
+          "id": "w12",
+          "text": "keeps",
+          "start": 3.627,
+          "end": 3.84
+        },
+        {
+          "id": "w13",
+          "text": "the",
+          "start": 3.925,
+          "end": 4.011
+        },
+        {
+          "id": "w14",
+          "text": "conversation",
+          "start": 4.053,
+          "end": 4.437
+        },
+        {
+          "id": "w15",
+          "text": "going.",
+          "start": 4.651,
+          "end": 4.963
+        }
+      ]
+    },
+    {
+      "id": "05",
+      "path": "assets/voice/05.wav",
+      "duration_s": 7.236,
+      "words": [
+        {
+          "id": "w0",
+          "text": "Ready",
+          "start": 0.299,
+          "end": 0.469
+        },
+        {
+          "id": "w1",
+          "text": "to",
+          "start": 0.555,
+          "end": 0.64
+        },
+        {
+          "id": "w2",
+          "text": "speak?",
+          "start": 0.683,
+          "end": 1.131
+        },
+        {
+          "id": "w3",
+          "text": "Call",
+          "start": 1.365,
+          "end": 1.621
+        },
+        {
+          "id": "w4",
+          "text": "your",
+          "start": 1.664,
+          "end": 1.792
+        },
+        {
+          "id": "w5",
+          "text": "tutor",
+          "start": 1.835,
+          "end": 2.133
+        },
+        {
+          "id": "w6",
+          "text": "in",
+          "start": 2.219,
+          "end": 2.304
+        },
+        {
+          "id": "w7",
+          "text": "the",
+          "start": 2.347,
+          "end": 2.389
+        },
+        {
+          "id": "w8",
+          "text": "Voice",
+          "start": 2.432,
+          "end": 2.645
+        },
+        {
+          "id": "w9",
+          "text": "Lab.",
+          "start": 2.731,
+          "end": 3.115
+        },
+        {
+          "id": "w10",
+          "text": "It",
+          "start": 3.285,
+          "end": 3.413
+        },
+        {
+          "id": "w11",
+          "text": "listens,",
+          "start": 3.456,
+          "end": 4.011
+        },
+        {
+          "id": "w12",
+          "text": "answers",
+          "start": 4.224,
+          "end": 4.565
+        },
+        {
+          "id": "w13",
+          "text": "in",
+          "start": 4.651,
+          "end": 4.693
+        },
+        {
+          "id": "w14",
+          "text": "a",
+          "start": 4.736,
+          "end": 4.7787
+        },
+        {
+          "id": "w15",
+          "text": "real",
+          "start": 4.821,
+          "end": 4.992
+        },
+        {
+          "id": "w16",
+          "text": "voice,",
+          "start": 5.077,
+          "end": 5.44
+        },
+        {
+          "id": "w17",
+          "text": "and",
+          "start": 5.589,
+          "end": 5.76
+        },
+        {
+          "id": "w18",
+          "text": "scores",
+          "start": 5.803,
+          "end": 6.101
+        },
+        {
+          "id": "w19",
+          "text": "every",
+          "start": 6.229,
+          "end": 6.485
+        },
+        {
+          "id": "w20",
+          "text": "answer.",
+          "start": 6.656,
+          "end": 7.0068480725623585
+        }
+      ]
+    },
+    {
+      "id": "06",
+      "path": "assets/voice/06.wav",
+      "duration_s": 4.859,
+      "words": [
+        {
+          "id": "w0",
+          "text": "New",
+          "start": 0.299,
+          "end": 0.469
+        },
+        {
+          "id": "w1",
+          "text": "words",
+          "start": 0.555,
+          "end": 0.768
+        },
+        {
+          "id": "w2",
+          "text": "from",
+          "start": 0.896,
+          "end": 1.024
+        },
+        {
+          "id": "w3",
+          "text": "every",
+          "start": 1.067,
+          "end": 1.237
+        },
+        {
+          "id": "w4",
+          "text": "chat",
+          "start": 1.408,
+          "end": 1.664
+        },
+        {
+          "id": "w5",
+          "text": "become",
+          "start": 1.792,
+          "end": 1.877
+        },
+        {
+          "id": "w6",
+          "text": "flashcards",
+          "start": 2.048,
+          "end": 2.645
+        },
+        {
+          "id": "w7",
+          "text": "that",
+          "start": 2.816,
+          "end": 2.901
+        },
+        {
+          "id": "w8",
+          "text": "come",
+          "start": 2.944,
+          "end": 3.1147
+        },
+        {
+          "id": "w9",
+          "text": "back",
+          "start": 3.157,
+          "end": 3.328
+        },
+        {
+          "id": "w10",
+          "text": "right",
+          "start": 3.413,
+          "end": 3.712
+        },
+        {
+          "id": "w11",
+          "text": "before",
+          "start": 3.797,
+          "end": 3.8827
+        },
+        {
+          "id": "w12",
+          "text": "you",
+          "start": 4.053,
+          "end": 4.1387
+        },
+        {
+          "id": "w13",
+          "text": "forget",
+          "start": 4.181,
+          "end": 4.309
+        },
+        {
+          "id": "w14",
+          "text": "them.",
+          "start": 4.437,
+          "end": 4.615
+        }
+      ]
+    },
+    {
+      "id": "07",
+      "path": "assets/voice/07.wav",
+      "duration_s": 5.146,
+      "words": [
+        {
+          "id": "w0",
+          "text": "And",
+          "start": 0.299,
+          "end": 0.4267
+        },
+        {
+          "id": "w1",
+          "text": "every",
+          "start": 0.469,
+          "end": 0.725
+        },
+        {
+          "id": "w2",
+          "text": "session",
+          "start": 0.853,
+          "end": 1.0667
+        },
+        {
+          "id": "w3",
+          "text": "counts",
+          "start": 1.237,
+          "end": 1.579
+        },
+        {
+          "id": "w4",
+          "text": "—",
+          "start": 1.678,
+          "end": 1.778
+        },
+        {
+          "id": "w5",
+          "text": "watch",
+          "start": 1.877,
+          "end": 2.219
+        },
+        {
+          "id": "w6",
+          "text": "your",
+          "start": 2.347,
+          "end": 2.432
+        },
+        {
+          "id": "w7",
+          "text": "grammar,",
+          "start": 2.475,
+          "end": 2.965
+        },
+        {
+          "id": "w8",
+          "text": "fluency",
+          "start": 3.115,
+          "end": 3.499
+        },
+        {
+          "id": "w9",
+          "text": "and",
+          "start": 3.797,
+          "end": 3.925
+        },
+        {
+          "id": "w10",
+          "text": "speaking",
+          "start": 4.011,
+          "end": 4.309
+        },
+        {
+          "id": "w11",
+          "text": "climb.",
+          "start": 4.48,
+          "end": 4.917
+        }
+      ]
+    },
+    {
+      "id": "08",
+      "path": "assets/voice/08.wav",
+      "duration_s": 5.538,
+      "words": [
+        {
+          "id": "w0",
+          "text": "Tutelage",
+          "start": 0.299,
+          "end": 0.768
+        },
+        {
+          "id": "w1",
+          "text": "AI.",
+          "start": 0.853,
+          "end": 1.515
+        },
+        {
+          "id": "w2",
+          "text": "Talk,",
+          "start": 1.792,
+          "end": 2.347
+        },
+        {
+          "id": "w3",
+          "text": "improve,",
+          "start": 2.603,
+          "end": 3.2
+        },
+        {
+          "id": "w4",
+          "text": "repeat.",
+          "start": 3.456,
+          "end": 4.032
+        },
+        {
+          "id": "w5",
+          "text": "Start",
+          "start": 4.309,
+          "end": 4.565
+        },
+        {
+          "id": "w6",
+          "text": "free",
+          "start": 4.651,
+          "end": 4.864
+        },
+        {
+          "id": "w7",
+          "text": "today.",
+          "start": 4.949,
+          "end": 5.3
+        }
+      ]
+    }
+  ],
+  "sfx": [
+    {
+      "id": "01",
+      "name": "soft keyboard typing",
+      "file": "assets/sfx/soft-keyboard-typing.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 44.382,
+      "volume": 0.35
+    },
+    {
+      "id": "01",
+      "name": "gentle backspace click",
+      "file": "assets/sfx/gentle-backspace-click.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 0.264,
+      "volume": 0.35
+    },
+    {
+      "id": "02",
+      "name": "warm soft whoosh",
+      "file": "assets/sfx/warm-soft-whoosh.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 1.423,
+      "volume": 0.35
+    },
+    {
+      "id": "02",
+      "name": "gentle shimmer",
+      "file": "assets/sfx/gentle-shimmer.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 3.329,
+      "volume": 0.35
+    },
+    {
+      "id": "03",
+      "name": "soft message pop",
+      "file": "assets/sfx/soft-message-pop.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 2.811,
+      "volume": 0.35
+    },
+    {
+      "id": "04",
+      "name": "soft whoosh push-in",
+      "file": "assets/sfx/soft-whoosh-push-in.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 1.834,
+      "volume": 0.35
+    },
+    {
+      "id": "04",
+      "name": "gentle chime",
+      "file": "assets/sfx/gentle-chime.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 4.362,
+      "volume": 0.35
+    },
+    {
+      "id": "04",
+      "name": "soft message pop",
+      "file": "assets/sfx/soft-message-pop.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 2.811,
+      "volume": 0.35
+    },
+    {
+      "id": "05",
+      "name": "soft call ring",
+      "file": "assets/sfx/soft-call-ring.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 1.152,
+      "volume": 0.35
+    },
+    {
+      "id": "05",
+      "name": "gentle soundwave swell",
+      "file": "assets/sfx/gentle-soundwave-swell.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 7.263,
+      "volume": 0.35
+    },
+    {
+      "id": "05",
+      "name": "soft score tick",
+      "file": "assets/sfx/soft-score-tick.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 0.264,
+      "volume": 0.35
+    },
+    {
+      "id": "06",
+      "name": "soft card flips",
+      "file": "assets/sfx/soft-card-flips.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 1.104,
+      "volume": 0.35
+    },
+    {
+      "id": "06",
+      "name": "light whoosh",
+      "file": "assets/sfx/light-whoosh.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 1.056,
+      "volume": 0.35
+    },
+    {
+      "id": "07",
+      "name": "soft rising tick",
+      "file": "assets/sfx/soft-rising-tick.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 1.967,
+      "volume": 0.35
+    },
+    {
+      "id": "07",
+      "name": "gentle riser into the last bar",
+      "file": "assets/sfx/gentle-riser-into-the-last-bar.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 3.405,
+      "volume": 0.35
+    },
+    {
+      "id": "08",
+      "name": "warm logo sting",
+      "file": "assets/sfx/warm-logo-sting.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 7.315,
+      "volume": 0.35
+    },
+    {
+      "id": "08",
+      "name": "soft button click",
+      "file": "assets/sfx/soft-button-click.mp3",
+      "source": "heygen",
+      "offset_s": 0,
+      "duration_s": 0.264,
+      "volume": 0.35
+    }
+  ],
+  "total_duration_s": 42.868
+}

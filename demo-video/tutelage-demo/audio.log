@@ -1,0 +1,16 @@
+· tts: heygen · voice 96b762a3f37e44a78f3faf4d3490f96a · 8 line(s)
+  voice 01: assets/voice/01.wav (3.553s, 11 words)
+  voice 02: assets/voice/02.wav (5.46s, 14 words)
+  voice 03: assets/voice/03.wav (5.878s, 14 words)
+  voice 04: assets/voice/04.wav (5.198s, 16 words)
+  voice 05: assets/voice/05.wav (7.236s, 21 words)
+  voice 06: assets/voice/06.wav (4.859s, 15 words)
+  voice 07: assets/voice/07.wav (5.146s, 12 words)
+  voice 08: assets/voice/08.wav (5.538s, 8 words)
+  bgm: assets/bgm/track.mp3 (retrieve "uplifting modern electronic, warm and confident, steady 110–120 bpm pulse, light build into the progress beat, clean ending")
+✓ audio engine → C:\Users\User_DEV\Desktop\esl-chatbot-web\demo-video\tutelage-demo\audio_engine_meta.json
+  heygen: yes  ·  ran: tts,bgm
+  voices: 8  ·  bgm: heygen  ·  sfx: 0
+  total voice duration: 42.868s
+✓ audio generate: 8 voice + 1 bgm → C:\Users\User_DEV\Desktop\esl-chatbot-web\demo-video\tutelage-demo\audio_meta.json
+exit=0

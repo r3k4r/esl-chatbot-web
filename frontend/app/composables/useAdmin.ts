@@ -109,7 +109,7 @@ export function useAdmin() {
       url: `/admin/users/${id}/profile`,
       body: input,
       requireAuth: true,
-      showToast: true,
+      showToast: false, // the edit page shows one toast for the whole save
     })
   }
 
@@ -121,7 +121,7 @@ export function useAdmin() {
       url: `/admin/users/${id}/avatar`,
       body: form,
       requireAuth: true,
-      showToast: true,
+      showToast: false, // the edit page shows one toast for the whole save
     })
   }
 
@@ -131,7 +131,7 @@ export function useAdmin() {
       url: `/admin/users/${id}/learner-profile`,
       body: input,
       requireAuth: true,
-      showToast: true,
+      showToast: false, // the edit page shows one toast for the whole save
     })
   }
 

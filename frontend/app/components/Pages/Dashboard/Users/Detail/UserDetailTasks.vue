@@ -45,7 +45,7 @@ function preview(text: string | null) {
               <p class="text-[14px] font-poppins" :style="`color:var(--text-body)`">{{ sub.task.class.className }}</p>
             </td>
             <td class="px-4 py-3 hidden md:table-cell">
-              <p class="text-[14px] font-mono" :style="`color:var(--text-subtle)`">{{ fmt(sub.createdAt) }}</p>
+              <p class="text-[14px] font-poppins tabular-nums" :style="`color:var(--text-subtle)`">{{ fmt(sub.createdAt) }}</p>
             </td>
             <td class="px-4 py-3">
               <span class="text-[14px] font-semibold px-2.5 py-0.5 rounded-md font-poppins"

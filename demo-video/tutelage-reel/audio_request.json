@@ -1,0 +1,68 @@
+{
+  "lines": [
+    {
+      "id": "01",
+      "sfx": [
+        "impact hit",
+        "pop"
+      ]
+    },
+    {
+      "id": "02",
+      "sfx": [
+        "whoosh",
+        "shimmer sparkle"
+      ]
+    },
+    {
+      "id": "03",
+      "sfx": [
+        "swoosh",
+        "message pop",
+        "message pop"
+      ]
+    },
+    {
+      "id": "04",
+      "sfx": [
+        "boing pop",
+        "pen swipe",
+        "success chime"
+      ]
+    },
+    {
+      "id": "05",
+      "sfx": [
+        "whoosh",
+        "soundwave swell",
+        "pop"
+      ]
+    },
+    {
+      "id": "06",
+      "sfx": [
+        "card flips",
+        "pop"
+      ]
+    },
+    {
+      "id": "07",
+      "sfx": [
+        "riser",
+        "impact hit",
+        "confetti pop"
+      ]
+    },
+    {
+      "id": "08",
+      "sfx": [
+        "whoosh",
+        "logo sting",
+        "button click"
+      ]
+    }
+  ],
+  "bgm": {
+    "mode": "none"
+  }
+}

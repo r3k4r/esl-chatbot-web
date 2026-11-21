@@ -78,12 +78,12 @@ function fmt(d: string | null | undefined) {
               </span>
             </td>
             <td class="px-4 py-3 hidden lg:table-cell">
-              <p class="text-[14px] font-mono" :style="`color:var(--text-subtle)`">
+              <p class="text-[14px] font-poppins tabular-nums" :style="`color:var(--text-subtle)`">
                 {{ v.correctCount }}/{{ v.reviewCount }}
               </p>
             </td>
             <td class="px-4 py-3 hidden xl:table-cell">
-              <p class="text-[14px] font-mono" :style="`color:var(--text-subtle)`">{{ fmt(v.lastPracticed) }}</p>
+              <p class="text-[14px] font-poppins tabular-nums" :style="`color:var(--text-subtle)`">{{ fmt(v.lastPracticed) }}</p>
             </td>
           </tr>
         </tbody>

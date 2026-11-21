@@ -1,0 +1,56 @@
+<template>
+<style>
+@font-face{font-family:"Poppins";font-weight:700;font-style:normal;font-display:block;src:url("assets/fonts/Poppins-700.woff2") format("woff2");}
+#root{position:relative;width:1920px;height:1080px;overflow:hidden;font-family:"Poppins",sans-serif;font-weight:700;color:#1C1B1B}
+.f4-bg{position:absolute;left:0;top:0;width:1920px;height:1080px;background:#FFD23F}
+#f4-stage{position:absolute;left:0;top:0;width:1920px;height:1080px}
+.f4-abs{position:absolute}
+.f4-card{background:#FFF7EC;border:8px solid #1C1B1B;box-shadow:16px 16px 0 #1C1B1B}
+#f4-oops{left:110px;top:70px;width:700px;height:250px;background:#FF5C8A;border:8px solid #1C1B1B;box-shadow:14px 14px 0 #1C1B1B;display:flex;align-items:center;justify-content:center;font-size:190px;line-height:1;color:#FFF7EC;-webkit-text-stroke:8px #1C1B1B;paint-order:stroke fill}
+#f4-c1{left:160px;top:370px;width:1600px;height:220px;display:flex;align-items:center;justify-content:center;font-size:86px;white-space:nowrap}
+#f4-c2{left:160px;top:670px;width:1600px;height:190px;display:flex;align-items:center;justify-content:center;font-size:86px;white-space:nowrap}
+#f4-bad{position:relative;display:inline-block}
+#f4-strike{position:absolute;left:-10px;top:50%;width:calc(100% + 20px);height:16px;margin-top:-4px;background:#FF5C8A;border:4px solid #1C1B1B;transform-origin:0 50%}
+#f4-went{position:relative;display:inline-block;color:#1C1B1B;background:#F59E0B;padding:0 14px;border:5px solid #1C1B1B}
+#f4-label{left:1180px;top:318px;padding:6px 28px;background:#FFD23F;border:6px solid #1C1B1B;font-size:44px;white-space:nowrap}
+#f4-nicely{left:1010px;top:110px;font-size:150px;line-height:1;color:#1C1B1B;display:flex;align-items:center;gap:30px;white-space:nowrap}
+#f4-nicely .t{background:#FFF7EC;border:8px solid #1C1B1B;box-shadow:12px 12px 0 #1C1B1B;padding:10px 40px}
+.f4-sp{position:absolute;left:50%;top:50%;width:70px;height:70px;margin:-35px 0 0 -35px}
+</style>
+<div id="root" data-composition-id="04-fixed" data-width="1920" data-height="1080" data-start="0" data-duration="4.25">
+  <div class="clip f4-bg" data-start="0" data-duration="4.25" data-track-index="0"></div>
+  <div id="f4-stage">
+    <div id="f4-oops" class="f4-abs">Oops!</div>
+    <div id="f4-c1" class="f4-abs f4-card"><span>yesterday <span id="f4-bad">i go<span id="f4-strike"></span></span> to the market</span></div>
+    <div id="f4-label" class="f4-abs">Better phrasing</div>
+    <div id="f4-c2" class="f4-abs f4-card"><span>yesterday I <span id="f4-went">went<svg class="f4-sp" viewBox="0 0 24 24"><path d="M12 0 L15 9 L24 12 L15 15 L12 24 L9 15 L0 12 L9 9Z" fill="#FF5C8A" stroke="#1C1B1B" stroke-width="1.2"/></svg><svg class="f4-sp" viewBox="0 0 24 24"><path d="M12 0 L15 9 L24 12 L15 15 L12 24 L9 15 L0 12 L9 9Z" fill="#FFD23F" stroke="#1C1B1B" stroke-width="1.2"/></svg><svg class="f4-sp" viewBox="0 0 24 24"><path d="M12 0 L15 9 L24 12 L15 15 L12 24 L9 15 L0 12 L9 9Z" fill="#FF5C8A" stroke="#1C1B1B" stroke-width="1.2"/></svg><svg class="f4-sp" viewBox="0 0 24 24"><path d="M12 0 L15 9 L24 12 L15 15 L12 24 L9 15 L0 12 L9 9Z" fill="#FFD23F" stroke="#1C1B1B" stroke-width="1.2"/></svg><svg class="f4-sp" viewBox="0 0 24 24"><path d="M12 0 L15 9 L24 12 L15 15 L12 24 L9 15 L0 12 L9 9Z" fill="#FF5C8A" stroke="#1C1B1B" stroke-width="1.2"/></svg><svg class="f4-sp" viewBox="0 0 24 24"><path d="M12 0 L15 9 L24 12 L15 15 L12 24 L9 15 L0 12 L9 9Z" fill="#FFD23F" stroke="#1C1B1B" stroke-width="1.2"/></svg></span> to the market</span></div>
+    <div id="f4-nicely" class="f4-abs"><span class="t">nicely</span><svg id="f4-heart" width="120" height="110" viewBox="0 0 24 22"><path d="M12 21 C-6 9 4 -3 12 5 C20 -3 30 9 12 21Z" fill="#FF5C8A" stroke="#1C1B1B" stroke-width="1.5" stroke-linejoin="round"/></svg></div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script>
+  (function(){
+    var tl=gsap.timeline({paused:true});
+    var pop="back.out(2.4)";
+    function shake(t,a){tl.fromTo("#f4-stage",{x:0,y:0},{x:a,y:-a*0.6,duration:0.05,ease:"none"},t).to("#f4-stage",{x:-a*0.7,y:a*0.5,duration:0.05,ease:"none"},t+0.05).to("#f4-stage",{x:a*0.4,y:0,duration:0.05,ease:"none"},t+0.1).to("#f4-stage",{x:0,y:0,duration:0.06,ease:"none"},t+0.15);}
+    tl.fromTo("#f4-oops",{scale:0.1,rotation:-200,opacity:1},{scale:1,rotation:-6,duration:0.45,ease:pop},0.25);
+    shake(0.28,14);
+    tl.fromTo("#f4-c1",{scale:0.6,y:60,opacity:0},{scale:1,y:0,opacity:1,duration:0.4,ease:pop},0.55);
+    tl.fromTo("#f4-strike",{scaleX:0},{scaleX:1,duration:0.18,ease:"power3.out"},1.88);
+    shake(1.9,8);
+    tl.fromTo("#f4-label",{scale:0,rotation:-20},{scale:1,rotation:4,duration:0.35,ease:pop},2.0);
+    tl.fromTo("#f4-c2",{scale:0.6,y:60,opacity:0},{scale:1,y:0,opacity:1,duration:0.4,ease:pop},2.05);
+    tl.fromTo("#f4-went",{scale:2.2,opacity:0},{scale:1,opacity:1,duration:0.25,ease:"power4.out"},2.3);
+    var a=[0,60,120,180,240,300];
+    document.querySelectorAll("#f4-went .f4-sp").forEach(function(s,i){
+      var r=a[i]*Math.PI/180,d=110+(i%2)*40;
+      tl.fromTo(s,{x:0,y:0,scale:0,rotation:0,opacity:1},{x:Math.cos(r)*d*1.2,y:Math.sin(r)*d*0.9-10,scale:1,rotation:90,duration:0.4,ease:"power2.out"},2.4);
+    });
+    shake(2.3,10);
+    tl.fromTo("#f4-nicely",{scale:0.2,y:50,opacity:0},{scale:1,y:0,opacity:1,duration:0.45,ease:"back.out(3)"},2.72);
+    tl.fromTo("#f4-heart",{scale:0},{scale:1,rotation:12,duration:0.4,ease:pop},2.95);
+    tl.to("#f4-stage",{rotation:0.8,duration:0.12,ease:"sine.inOut",transformOrigin:"50% 50%"},3.2).to("#f4-stage",{rotation:-0.8,duration:0.12,ease:"sine.inOut"},3.32).to("#f4-stage",{rotation:0,duration:0.12,ease:"sine.inOut"},3.44);
+    window.__timelines=window.__timelines||{};window.__timelines["04-fixed"]=tl;
+  })();
+  </script>
+</div>
+</template>

@@ -1,0 +1,298 @@
+<template>
+  <style>
+    @font-face { font-family: "Poppins"; font-weight: 400; src: url("assets/fonts/Poppins-400.woff2") format("woff2"); }
+    @font-face { font-family: "Poppins"; font-weight: 500; src: url("assets/fonts/Poppins-500.woff2") format("woff2"); }
+    @font-face { font-family: "Poppins"; font-weight: 600; src: url("assets/fonts/Poppins-600.woff2") format("woff2"); }
+    @font-face { font-family: "Poppins"; font-weight: 700; src: url("assets/fonts/Poppins-700.woff2") format("woff2"); }
+
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Poppins", sans-serif;
+      color: #F2F2F2;
+    }
+
+    /* depth layer 1 — living background */
+    [data-composition-id="04-corrected-kindly"] .ck-bg {
+      position: absolute; inset: 0; overflow: hidden; background: #1C1B1B;
+    }
+    [data-composition-id="04-corrected-kindly"] .ck-glow {
+      position: absolute; left: -260px; top: -560px; width: 1500px; height: 1500px;
+      background: radial-gradient(circle at 50% 50%, rgba(245,158,11,0.14) 0%, rgba(245,158,11,0.06) 34%, rgba(245,158,11,0) 66%);
+    }
+    [data-composition-id="04-corrected-kindly"] .ck-grid {
+      position: absolute; left: -120px; top: -120px; right: -120px; bottom: -120px;
+      background-image: radial-gradient(rgba(242,242,242,0.06) 1.6px, rgba(242,242,242,0) 2.2px);
+      background-size: 44px 44px;
+    }
+
+    /* camera rig */
+    [data-composition-id="04-corrected-kindly"] .ck-stage {
+      position: absolute; inset: 0; perspective: 1600px; perspective-origin: 960px 454px;
+    }
+    [data-composition-id="04-corrected-kindly"] .ck-cam {
+      position: absolute; inset: 0; transform-style: preserve-3d; transform-origin: 960px 454px;
+    }
+
+    /* depth layer 2 — floating app window; bottom edge 824px, stays above 900 at max dolly */
+    [data-composition-id="04-corrected-kindly"] .ck-window {
+      position: absolute; left: 160px; top: 84px; width: 1600px; height: 740px;
+      overflow: hidden; background: #141517; border: 1px solid #282726;
+      box-shadow: 0 50px 110px rgba(0,0,0,0.55), 0 18px 40px rgba(0,0,0,0.35);
+    }
+    [data-composition-id="04-corrected-kindly"] .ck-zoom-outer {
+      position: absolute; inset: 0; transform-origin: 50% 50%; will-change: transform;
+    }
+    /* 0x0 anchor at viewport centre: world point (x,y) lands on centre when inner = (-x,-y) */
+    [data-composition-id="04-corrected-kindly"] .ck-zoom-inner {
+      position: absolute; left: 800px; top: 370px; width: 0; height: 0; will-change: transform;
+    }
+    /* world units = screenshot pixels (2x capture shown at 1:1 at final zoom — never upscaled) */
+    [data-composition-id="04-corrected-kindly"] .ck-world {
+      position: absolute; left: 0; top: 0; width: 2488px; height: 1400px; background: #141517;
+    }
+    [data-composition-id="04-corrected-kindly"] .ck-crop { position: absolute; overflow: hidden; }
+    [data-composition-id="04-corrected-kindly"] .ck-crop img {
+      position: absolute; width: 3200px; height: 1800px; max-width: none; display: block;
+    }
+    [data-composition-id="04-corrected-kindly"] .ck-patch { position: absolute; background: #141517; }
+
+    [data-composition-id="04-corrected-kindly"] .ck-bubble {
+      position: absolute; right: 573px; top: 259px; height: 88px;
+      padding: 0 30px; border-radius: 28px; background: #26282B;
+      color: #F3F3F5; font-size: 28px; font-weight: 400; line-height: 88px; white-space: nowrap;
+    }
+
+    [data-composition-id="04-corrected-kindly"] .ck-card {
+      position: absolute; right: 573px; top: 364px; white-space: nowrap;
+    }
+    [data-composition-id="04-corrected-kindly"] .ck-card-bg {
+      position: absolute; inset: 0; background: #141517;
+      border: 2px solid #252629; border-radius: 24px; transform-origin: 50% 0%;
+    }
+    [data-composition-id="04-corrected-kindly"] .ck-card-body {
+      position: relative; padding: 30px 32px 28px 30px;
+    }
+    [data-composition-id="04-corrected-kindly"] .ck-label {
+      display: flex; align-items: center; gap: 12px; height: 40px;
+      color: #F59E0B; font-size: 25px; font-weight: 500;
+    }
+    [data-composition-id="04-corrected-kindly"] .ck-label svg { width: 30px; height: 30px; flex: none; }
+    [data-composition-id="04-corrected-kindly"] .ck-struck-row { margin-top: 6px; height: 44px; line-height: 44px; }
+    [data-composition-id="04-corrected-kindly"] .ck-struck {
+      position: relative; display: inline-block; color: #9B9FA3; font-size: 25px; font-weight: 400;
+    }
+    [data-composition-id="04-corrected-kindly"] .ck-strike-line {
+      position: absolute; left: -2px; right: -2px; top: 53%; height: 2px;
+      background: #9B9FA3; transform-origin: 0% 50%;
+    }
+    [data-composition-id="04-corrected-kindly"] .ck-bold {
+      height: 46px; line-height: 46px; color: #F3F3F5; font-size: 28px; font-weight: 600;
+    }
+    [data-composition-id="04-corrected-kindly"] .ck-bold .ck-ch { display: inline-block; white-space: pre; }
+    [data-composition-id="04-corrected-kindly"] .ck-went { position: relative; display: inline-block; color: #F59E0B; }
+    [data-composition-id="04-corrected-kindly"] .ck-spark {
+      position: absolute; left: 50%; top: 50%; width: 8px; height: 8px; margin: -4px 0 0 -4px;
+      border-radius: 50%; background: #F59E0B;
+    }
+    [data-composition-id="04-corrected-kindly"] .ck-rule {
+      height: 44px; line-height: 44px; color: #9B9FA3; font-size: 25px; font-weight: 400;
+    }
+    [data-composition-id="04-corrected-kindly"] .ck-time {
+      position: absolute; right: 573px; top: 616px; color: #9B9FA3; font-size: 22px; line-height: 28px;
+    }
+
+    /* depth layer 3 — giant kinetic keyword, floats in front of the window's empty left side */
+    [data-composition-id="04-corrected-kindly"] .ck-fg {
+      position: absolute; left: 200px; top: 196px; transform-style: preserve-3d;
+    }
+    [data-composition-id="04-corrected-kindly"] .ck-kw {
+      font-size: 190px; font-weight: 700; line-height: 1; letter-spacing: -0.04em;
+      color: #F59E0B; white-space: nowrap;
+    }
+    [data-composition-id="04-corrected-kindly"] .ck-kw-line {
+      margin-top: 4px; width: 100%; height: 10px; background: #F59E0B; transform-origin: 0% 50%;
+    }
+  </style>
+
+  <div data-hf-id="hf-l14a" id="root" data-composition-id="04-corrected-kindly" data-width="1920" data-height="1080" data-duration="6.148">
+    <div data-hf-id="hf-bxct" class="ck-bg clip" id="04-corrected-kindly-ground" data-start="0" data-duration="6.148" data-track-index="0">
+      <div class="ck-glow" id="04-corrected-kindly-glow"></div>
+      <div class="ck-grid" id="04-corrected-kindly-grid"></div>
+    </div>
+
+    <div class="ck-stage">
+      <div class="ck-cam" id="04-corrected-kindly-cam">
+        <div data-hf-id="hf-94as" class="ck-window" id="04-corrected-kindly-window">
+          <div data-hf-id="hf-7hms" class="ck-zoom-outer" id="04-corrected-kindly-zoom-outer">
+            <div data-hf-id="hf-kduw" class="ck-zoom-inner" id="04-corrected-kindly-zoom-inner">
+              <div data-hf-id="hf-1geg" class="ck-world" data-layout-allow-overflow="">
+                <!-- real UI: top bar + "Market Trip" header (image y 0–223) -->
+                <div data-hf-id="hf-wczs" class="ck-crop" style="left:0;top:0;width:2488px;height:224px;">
+                  <img data-hf-id="hf-di2y" src="assets/chat-voice-dark.png" alt="" style="left:-712px;top:0;">
+                </div>
+                <!-- real UI: thread from the Better phrasing card down to the tutor reply (image y 262–720) -->
+                <div data-hf-id="hf-xmgo" class="ck-crop" style="left:0;top:348px;width:2488px;height:458px;">
+                  <img data-hf-id="hf-3a8r" src="assets/chat-voice-dark.png" alt="" style="left:-712px;top:-262px;">
+                </div>
+                <!-- hide the real card + its timestamp and the tutor reply until they are performed -->
+                <div data-hf-id="hf-stm8" class="ck-patch" style="left:1010px;top:356px;width:915px;height:290px;"></div>
+                <div data-hf-id="hf-9byb" class="ck-patch" style="left:565px;top:690px;width:480px;height:110px;"></div>
+
+                <!-- learner bubble (cut off in the capture, rebuilt in the UI's bubble style) -->
+                <div data-hf-id="hf-8i6h" class="ck-bubble" id="04-corrected-kindly-bubble">yesterday i go to the market with my brother</div>
+
+                <!-- Better phrasing card, rebuilt over the real card -->
+                <div data-hf-id="hf-fg38" class="ck-card" id="04-corrected-kindly-card">
+                  <div data-hf-id="hf-uqoy" class="ck-card-bg" id="04-corrected-kindly-card-bg"></div>
+                  <div data-hf-id="hf-44ze" class="ck-card-body">
+                    <div data-hf-id="hf-2wdu" class="ck-label" id="04-corrected-kindly-label">
+                      <svg data-hf-id="hf-54m5" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path data-hf-id="hf-njyk" d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72" />
+                        <path data-hf-id="hf-43d7" d="m14 7 3 3" /><path data-hf-id="hf-g0vw" d="M5 6v4" /><path data-hf-id="hf-t3wa" d="M19 14v4" /><path data-hf-id="hf-ob2y" d="M10 2v2" /><path data-hf-id="hf-r1h9" d="M7 8H3" /><path data-hf-id="hf-ep24" d="M21 16h-4" /><path data-hf-id="hf-hdsb" d="M11 3H9" />
+                      </svg>
+                      <span data-hf-id="hf-43kf">Better phrasing</span>
+                    </div>
+                    <div data-hf-id="hf-3agg" class="ck-struck-row">
+                      <span data-hf-id="hf-iasq" class="ck-struck" id="04-corrected-kindly-struck">yesterday i go to the market<span data-hf-id="hf-eh74" class="ck-strike-line" id="04-corrected-kindly-strike"></span></span>
+                    </div>
+                    <div data-hf-id="hf-0ic4" class="ck-bold" id="04-corrected-kindly-bold"></div>
+                    <div data-hf-id="hf-10pa" class="ck-rule" id="04-corrected-kindly-rule">Use the past simple form went for actions that happened yesterday.</div>
+                  </div>
+                </div>
+                <div data-hf-id="hf-r9re" class="ck-time" id="04-corrected-kindly-time">03:51 PM</div>
+
+                <!-- real tutor reply (avatar + "Nice! What else did you buy?" + time), image x 1277–1757, y 604–714 -->
+                <div data-hf-id="hf-f2yo" class="ck-crop" id="04-corrected-kindly-reply" style="left:565px;top:690px;width:480px;height:110px;">
+                  <img data-hf-id="hf-de3s" src="assets/chat-voice-dark.png" alt="" style="left:-1277px;top:-604px;">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ck-fg" id="04-corrected-kindly-fg">
+          <div class="ck-kw-wrap" id="04-corrected-kindly-kw-wrap">
+            <div class="ck-kw" id="04-corrected-kindly-kw">Kindly</div>
+            <div class="ck-kw-line" id="04-corrected-kindly-kw-line"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      const ID = "04-corrected-kindly";
+      const DUR = 5.198;
+      const root = document.querySelector('[data-composition-id="' + ID + '"]');
+      const $ = (s) => root.querySelector('[id="' + ID + "-" + s + '"]');
+
+      // split the rewrite into chars; "went" (index 12–15) wrapped in an orange span that also holds the sparkles
+      const TEXT = "yesterday I went to the market";
+      const SPARKS = [[-34, -46], [30, -52], [74, -18], [70, 30], [-62, 28], [-78, -14]];
+      const ch = (c) => '<span class="ck-ch">' + c + "</span>";
+      const bold = $("bold");
+      bold.innerHTML =
+        TEXT.slice(0, 12).split("").map(ch).join("") +
+        '<span class="ck-went" id="' + ID + '-went">' + TEXT.slice(12, 16).split("").map(ch).join("") +
+        SPARKS.map(() => '<span class="ck-spark"></span>').join("") + "</span>" +
+        TEXT.slice(16).split("").map(ch).join("");
+      const chars = bold.querySelectorAll(".ck-ch");
+      const sparks = bold.querySelectorAll(".ck-spark");
+      const went = $("went");
+
+      const cam = $("cam"), outer = $("zoom-outer"), inner = $("zoom-inner");
+      const tl = gsap.timeline({ paused: true });
+
+      // background: orange light sweeps across, dot grid parallaxes the other way (full duration)
+      tl.fromTo($("glow"), { x: 0, y: 0 }, { x: 760, y: 200, duration: DUR, ease: "sine.inOut" }, 0);
+      tl.fromTo($("glow"), { opacity: 0.75 }, { opacity: 1, duration: 0.6, ease: "power2.out" }, 2.69);
+      tl.fromTo($("grid"), { x: 0, y: 0 }, { x: 66, y: -30, duration: DUR, ease: "none" }, 0);
+
+      // keyword layer sits forward in z so it parallaxes against the window as the camera turns
+      gsap.set($("fg"), { z: 120 });
+
+      // camera: tilted 3D hold → punch on "Slip up?" → swing round on "kindly" → slow drift to the end
+      tl.fromTo(cam, { rotationY: -8, rotationX: 7, scale: 1 },
+        { rotationY: -4, rotationX: 4, scale: 1.035, duration: 0.8, ease: "expo.out" }, 0.3);
+      tl.fromTo(cam, { rotationY: -4, rotationX: 4, scale: 1.035 },
+        { rotationY: 3, rotationX: 2.5, scale: 1.06, duration: 1.2, ease: "power3.inOut", immediateRender: false }, 2.69);
+      tl.fromTo(cam, { rotationY: 3 },
+        { rotationY: 4.5, duration: DUR - 3.89, ease: "power1.inOut", immediateRender: false }, 3.89);
+
+      // Scene 1 — push-in on the bubble (coordinate-target-zoom: outer scales, inner counter-translates,
+      // same position/duration/ease), with a short motion blur on the fast part
+      tl.fromTo(outer, { scale: 0.74 }, { scale: 1, duration: 0.9, ease: "expo.out" }, 0.3);
+      tl.fromTo(inner, { x: -1300, y: -560 }, { x: -1241, y: -527, duration: 0.9, ease: "expo.out" }, 0.3);
+      tl.fromTo(outer, { filter: "blur(0px)" }, { filter: "blur(5px)", duration: 0.1, ease: "power1.in" }, 0.3);
+      tl.fromTo(outer, { filter: "blur(5px)" }, { filter: "blur(0px)", duration: 0.4, ease: "power2.out", immediateRender: false }, 0.4);
+      tl.fromTo(inner, { y: -527 }, { y: -537, duration: DUR - 1.2, ease: "sine.inOut", immediateRender: false }, 1.2);
+      // the slip: bubble wobbles on "up?"
+      tl.fromTo($("bubble"), { rotation: 0, transformOrigin: "100% 100%" }, { rotation: -2, duration: 0.08, ease: "power2.out" }, 0.64);
+      tl.fromTo($("bubble"), { rotation: -2 }, { rotation: 1.4, duration: 0.1, ease: "power2.inOut", immediateRender: false }, 0.72);
+      tl.fromTo($("bubble"), { rotation: 1.4 }, { rotation: 0, duration: 0.3, ease: "back.out(2)", immediateRender: false }, 0.82);
+
+      // Scene 2 — card unfolds with a 3D tilt-settle ("It shows"), label pops first, then the slip
+      tl.fromTo($("card"), { rotationX: -40, rotationY: 10, transformPerspective: 900, transformOrigin: "50% 0%" },
+        { rotationX: 0, rotationY: 0, duration: 0.8, ease: "back.out(1.6)" }, 1.2);
+      tl.fromTo($("card-bg"), { scaleY: 0.05, opacity: 0 }, { scaleY: 1, opacity: 1, duration: 0.45, ease: "expo.out" }, 1.2);
+      tl.fromTo($("label"), { opacity: 0, scale: 0.6, x: -20, transformOrigin: "0% 50%" },
+        { opacity: 1, scale: 1, x: 0, duration: 0.4, ease: "back.out(1.8)" }, 1.41);
+      tl.fromTo($("struck"), { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.32, ease: "back.out(1.6)" }, 1.62);
+      // strike draws on "better" with a red → orange flash, then cools to the UI grey; the slip shudders
+      tl.fromTo($("strike"),
+        { scaleX: 0, backgroundColor: "#EF4444", boxShadow: "0 0 10px rgba(239,68,68,0.9)" },
+        { scaleX: 1, backgroundColor: "#F59E0B", boxShadow: "0 0 14px rgba(245,158,11,0.9)", duration: 0.42, ease: "power2.inOut" }, 1.92);
+      tl.fromTo($("strike"),
+        { backgroundColor: "#F59E0B", boxShadow: "0 0 14px rgba(245,158,11,0.9)" },
+        { backgroundColor: "#9B9FA3", boxShadow: "0 0 0px rgba(245,158,11,0)", duration: 0.5, ease: "power1.out", immediateRender: false }, 2.45);
+      tl.fromTo($("struck"), { x: -6 }, { x: 0, duration: 0.4, ease: "elastic.out(1.2,0.3)", immediateRender: false }, 1.96);
+
+      // "kindly": rewrite cascades in with springy chars; giant keyword slams in beside the card
+      tl.fromTo(chars, { opacity: 0, y: 22, scale: 0.5 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.32, ease: "back.out(1.8)", stagger: 0.018 }, 2.69);
+      tl.fromTo($("kw"), { opacity: 0, scale: 1.45, filter: "blur(14px)", transformOrigin: "30% 60%" },
+        { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.42, ease: "expo.out" }, 2.69);
+      tl.fromTo($("kw-line"), { scaleX: 0 }, { scaleX: 1, duration: 0.35, ease: "expo.out" }, 2.86);
+      tl.fromTo($("kw-wrap"), { x: 0 }, { x: -28, duration: DUR - 2.69, ease: "none" }, 2.69);
+      tl.fromTo($("kw-wrap"), { opacity: 1 }, { opacity: 0.3, duration: 0.7, ease: "power2.inOut" }, 3.45);
+
+      // "went" lands with a pop, an orange glow and a sparkle burst
+      tl.fromTo(went, { scale: 1 }, { scale: 1.28, duration: 0.14, ease: "power2.out" }, 2.98);
+      tl.fromTo(went, { scale: 1.28 }, { scale: 1, duration: 0.4, ease: "back.out(3)", immediateRender: false }, 3.12);
+      tl.fromTo(went, { textShadow: "0 0 0px rgba(245,158,11,0)" },
+        { textShadow: "0 0 22px rgba(245,158,11,0.9)", duration: 0.2, ease: "power2.out" }, 2.98);
+      tl.fromTo(went, { textShadow: "0 0 22px rgba(245,158,11,0.9)" },
+        { textShadow: "0 0 0px rgba(245,158,11,0)", duration: 0.5, ease: "power2.in", immediateRender: false }, 3.18);
+      sparks.forEach((s, i) => {
+        const [dx, dy] = SPARKS[i];
+        tl.fromTo(s, { x: 0, y: 0, scale: 0 }, { x: dx, y: dy, scale: i % 2 ? 0.7 : 1, duration: 0.6, ease: "expo.out" }, 3.0);
+        tl.fromTo(s, { opacity: 1 }, { opacity: 0, duration: 0.6, ease: "power2.in", immediateRender: false }, 3.0);
+      });
+
+      // rule fades up, timestamp follows
+      tl.fromTo($("rule"), { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.45, ease: "expo.out" }, 3.22);
+      tl.fromTo($("time"), { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power1.out" }, 3.35);
+
+      // Scene 3 — tutor reply pops in on "keeps" with a short motion blur
+      tl.fromTo($("reply"),
+        { opacity: 0, scale: 0.7, x: -40, y: 16, transformOrigin: "0% 50%" },
+        { opacity: 1, scale: 1, x: 0, y: 0, duration: 0.55, ease: "back.out(1.7)" }, 3.63);
+      tl.fromTo($("reply"), { filter: "blur(8px)" }, { filter: "blur(0px)", duration: 0.35, ease: "expo.out" }, 3.63);
+
+      // micro-life on the hold: one finite glow pulse on "went" (ends 5.0s)
+      tl.fromTo(went, { textShadow: "0 0 0px rgba(245,158,11,0)" },
+        { textShadow: "0 0 18px rgba(245,158,11,0.75)", duration: 0.4, ease: "sine.inOut", immediateRender: false }, 4.15);
+      tl.fromTo(went, { textShadow: "0 0 18px rgba(245,158,11,0.75)" },
+        { textShadow: "0 0 0px rgba(245,158,11,0)", duration: 0.45, ease: "sine.inOut", immediateRender: false }, 4.55);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[ID] = tl;
+    })();
+  </script>
+</template>

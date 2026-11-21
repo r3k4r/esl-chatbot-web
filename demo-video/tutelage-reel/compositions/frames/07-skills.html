@@ -1,0 +1,68 @@
+<template>
+<style>
+@font-face{font-family:"Poppins";font-weight:700;font-style:normal;font-display:block;src:url("assets/fonts/Poppins-700.woff2") format("woff2");}
+#root{position:absolute;left:0;top:0;width:1920px;height:1080px;overflow:hidden;font-family:"Poppins",sans-serif;font-weight:700}
+#root .s7-bg{position:absolute;left:0;top:0;width:1920px;height:1080px;background:#14C8B4}
+#root .s7-title{position:absolute;left:0;top:40px;width:1920px;text-align:center;font-size:132px;line-height:1.1;color:#FFF7EC;-webkit-text-stroke:8px #1C1B1B;paint-order:stroke fill;text-shadow:8px 8px 0 #1C1B1B;opacity:0}
+#root .s7-col{position:absolute;top:250px;width:220px;height:600px}
+#root .s7-track{position:absolute;left:0;top:0;width:220px;height:520px;background:#0E9384;border:8px solid #1C1B1B;box-sizing:border-box;opacity:0}
+#root .s7-fill{position:absolute;left:0;bottom:0;width:204px;border:6px solid #1C1B1B;box-sizing:border-box;transform-origin:50% 100%;opacity:0}
+#root .s7-num{position:absolute;left:0;width:220px;text-align:center;font-size:76px;line-height:1;color:#1C1B1B;opacity:0}
+#root .s7-lab{position:absolute;left:-40px;top:540px;width:300px;text-align:center;font-size:40px;line-height:1.1;color:#FFF7EC;-webkit-text-stroke:5px #1C1B1B;paint-order:stroke fill;opacity:0}
+#root .s7-arrow{position:absolute;left:0;top:0;width:1920px;height:1080px;overflow:visible}
+#root .s7-sticker{position:absolute;left:1440px;top:470px;width:380px;padding:30px 0;text-align:center;background:#FFD23F;color:#1C1B1B;border:8px solid #1C1B1B;box-sizing:border-box;box-shadow:14px 14px 0 #1C1B1B;font-size:84px;line-height:1.05;white-space:nowrap;opacity:0}
+#root .s7-c{position:absolute;left:1380px;top:300px;width:26px;height:26px;border:4px solid #1C1B1B;box-sizing:border-box;opacity:0}
+</style>
+<div id="root" data-composition-id="07-skills" data-start="0" data-duration="3.576" data-width="1920" data-height="1080">
+  <div class="clip s7-bg" data-start="0" data-duration="3.576" data-track-index="0"></div>
+  <div class="s7-title" id="s7-title">Your skills</div>
+  <div id="s7-cols"></div>
+  <svg class="s7-arrow" viewBox="0 0 1920 1080">
+    <path id="s7-path" d="M 1430 840 C 1570 820, 1690 640, 1770 270" pathLength="1" fill="none" stroke="#1C1B1B" stroke-width="40" stroke-linecap="round" stroke-dasharray="1" stroke-dashoffset="1" opacity="0"/>
+    <g transform="translate(1770 270) rotate(-77.5)"><polygon id="s7-head" points="-20,-70 110,0 -20,70" fill="#1C1B1B" opacity="0"/></g>
+  </svg>
+  <div class="s7-sticker" id="s7-sticker">B1 &rarr; B2</div>
+  <div id="s7-conf"></div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script>
+  (function(){
+    var D=[["Grammar",87,"#F59E0B"],["Vocabulary",75,"#FF5C8A"],["Fluency",82,"#FFD23F"],["Speaking",82,"#FFF7EC"]];
+    var cols=document.getElementById("s7-cols"),h="";
+    D.forEach(function(d,i){
+      var fh=Math.round(520*d[1]/100);
+      h+='<div class="s7-col" style="left:'+(200+i*300)+'px">'+
+        '<div class="s7-track" id="s7-t'+i+'"></div>'+
+        '<div class="s7-fill" id="s7-f'+i+'" style="height:'+fh+'px;background:'+d[2]+';left:8px;bottom:'+(600-520+8)+'px"></div>'+
+        '<div class="s7-num" id="s7-n'+i+'" style="top:'+(520-fh+14)+'px">0</div>'+
+        '<div class="s7-lab" id="s7-l'+i+'">'+d[0]+'</div></div>';
+    });
+    cols.innerHTML=h;
+    var cf=document.getElementById("s7-conf"),C=["#F59E0B","#FF5C8A","#FFD23F","#FFF7EC"],ch="";
+    for(var k=0;k<20;k++)ch+='<div class="s7-c" id="s7-c'+k+'" style="background:'+C[k%4]+';'+(k%3==0?'border-radius:50%;':'')+'"></div>';
+    cf.innerHTML=ch;
+
+    var tl=gsap.timeline({paused:true});
+    tl.fromTo("#s7-title",{scale:2.2,y:-60,opacity:0,transformOrigin:"50% 50%"},{scale:1,y:0,opacity:1,duration:0.32,ease:"back.out(2.4)"},0.1);
+    D.forEach(function(d,i){
+      var t0=1.0+i*0.2;
+      tl.fromTo("#s7-t"+i,{y:40,opacity:0},{y:0,opacity:1,duration:0.25,ease:"back.out(2)"},0.35+i*0.1);
+      tl.fromTo("#s7-l"+i,{y:20,opacity:0},{y:0,opacity:1,duration:0.25,ease:"back.out(2)"},0.5+i*0.1);
+      tl.fromTo("#s7-f"+i,{scaleY:0,opacity:1},{scaleY:1,duration:0.7,ease:"back.out(1.6)"},t0);
+      tl.fromTo("#s7-n"+i,{scale:0.5,opacity:0,transformOrigin:"50% 50%"},{scale:1,opacity:1,duration:0.3,ease:"back.out(2)"},t0+0.2);
+      var o={v:0},el=document.getElementById("s7-n"+i);
+      tl.to(o,{v:d[1],duration:0.8,ease:"power2.out",onUpdate:function(){el.textContent=Math.round(o.v);}},t0);
+    });
+    tl.fromTo("#s7-path",{attr:{"stroke-dashoffset":1,opacity:1}},{attr:{"stroke-dashoffset":0,opacity:1},duration:0.4,ease:"power2.out"},2.3);
+    tl.fromTo("#s7-head",{scale:0,opacity:1,svgOrigin:"0 0"},{scale:1,opacity:1,duration:0.2,ease:"back.out(2.5)"},2.62);
+    for(var k=0;k<20;k++){
+      var a=(k*18+9)*Math.PI/180,r=170+(k%5)*55,dx=Math.cos(a)*r,dy=Math.sin(a)*r*0.8-60;
+      tl.fromTo("#s7-c"+k,{x:0,y:0,scale:0.4,rotation:0,opacity:0},{x:dx,y:dy,scale:1,opacity:1,rotation:(k%2?1:-1)*(180+k*20),duration:0.35,ease:"power3.out"},2.62);
+      tl.to("#s7-c"+k,{x:dx*1.15,y:dy+260+(k%4)*30,rotation:(k%2?1:-1)*(420+k*30),duration:0.17+0.0,ease:"power1.in"},2.97);
+    }
+    tl.fromTo("#s7-sticker",{scale:0,rotation:-20,opacity:0,transformOrigin:"50% 50%"},{scale:1,rotation:-4,opacity:1,duration:0.35,ease:"back.out(2.4)"},2.66);
+    window.__timelines=window.__timelines||{};
+    window.__timelines["07-skills"]=tl;
+  })();
+  </script>
+</div>
+</template>

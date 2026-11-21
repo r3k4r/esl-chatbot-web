@@ -1,0 +1,190 @@
+<template>
+  <style>
+    @font-face { font-family: "Poppins"; src: url("assets/fonts/Poppins-400.woff2") format("woff2"); font-weight: 400; font-style: normal; }
+    @font-face { font-family: "Poppins"; src: url("assets/fonts/Poppins-500.woff2") format("woff2"); font-weight: 500; font-style: normal; }
+    @font-face { font-family: "Poppins"; src: url("assets/fonts/Poppins-600.woff2") format("woff2"); font-weight: 600; font-style: normal; }
+    @font-face { font-family: "Poppins"; src: url("assets/fonts/Poppins-700.woff2") format("woff2"); font-weight: 700; font-style: normal; }
+    @font-face { font-family: "IBM Plex Mono"; src: url("assets/fonts/IBMPlexMono-500.woff2") format("woff2"); font-weight: 500; font-style: normal; }
+
+    #root { position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden; font-family: "Poppins", sans-serif; color: #F2F2F2; }
+
+    /* layer 1: living background (ink + drifting orange light + parallax dot grid + giant keyword) */
+    .f06-bg { position: absolute; inset: 0; background: #1C1B1B; overflow: hidden; }
+    .f06-light { position: absolute; left: 0; top: 0; width: 1600px; height: 1600px; margin-left: -800px; margin-top: -800px;
+      background: radial-gradient(closest-side, rgba(245,158,11,0.13), rgba(245,158,11,0.05) 55%, rgba(245,158,11,0) 100%); }
+    .f06-grid { position: absolute; left: -96px; top: -96px; right: -96px; bottom: -96px; opacity: 0.05;
+      background-image: radial-gradient(circle, #F2F2F2 1.5px, rgba(242,242,242,0) 2px); background-size: 48px 48px; }
+    /* giant keyword: baseline ~875px (no descenders in the word), box ends at 887 — above the caption keep-out */
+    .f06-kw { position: absolute; left: 80px; top: 687px; height: 200px; font-weight: 700; font-size: 250px; line-height: 0.8; letter-spacing: -0.04em; text-transform: none; color: #F59E0B; white-space: nowrap; }
+    .f06-kl { display: inline-block; }
+
+    /* layers 2+3: 3D camera over the window (mid) and the card stack (fore) */
+    .f06-stage { position: absolute; inset: 0; perspective: 1600px; perspective-origin: 960px 450px; }
+    .f06-cam { position: absolute; inset: 0; transform-origin: 960px 450px; }
+    .f06-fg { position: absolute; inset: 0; }
+
+    /* real Vocabulary window: crop of assets/vocab-dark.png, orig x 480–3200, y 120–1530 at s = 1180/2720 */
+    .f06-window { position: absolute; left: 640px; top: 144px; width: 1180px; height: 612px; overflow: hidden; background: rgb(20,21,23); border: 1px solid rgba(80,77,72,0.7);
+      box-shadow: 0 60px 120px -20px rgba(0,0,0,0.7), 0 18px 40px rgba(0,0,0,0.35); }
+    .f06-world { position: absolute; left: -208.24px; top: -52.06px; width: 3200px; height: 1800px; transform: scale(0.433824); transform-origin: 0 0; }
+    .f06-world img { position: absolute; left: 0; top: 0; width: 3200px; height: 1800px; display: block; }
+    /* mastery bars, measured in the 3200x1800 source: mask hides the captured fill, fill re-grows it */
+    .f06-mask { position: absolute; left: 2346px; width: 133px; height: 16px; background: rgb(29,30,32); border-radius: 8px 0 0 8px; }
+    .f06-fill { position: absolute; left: 2346px; height: 16px; border-radius: 8px; transform-origin: 0 50%; }
+
+    .f06-stack { position: absolute; left: 150px; top: 288px; width: 520px; height: 325px; }
+    .f06-card { position: absolute; inset: 0; }
+    .f06-top { perspective: 1400px; }
+    .f06-flipper { position: absolute; inset: 0; transform-style: preserve-3d; }
+    .f06-face { position: absolute; inset: 0; box-sizing: border-box; background: #1A1918; border: 1px solid #504D48; backface-visibility: hidden; -webkit-backface-visibility: hidden; overflow: hidden;
+      box-shadow: 0 34px 60px -10px rgba(0,0,0,0.55); }
+    .f06-back { transform: rotateY(180deg); background: rgb(20,21,23); }
+    /* real flashcard crop (orig x 944–1838, y 696–1254) scaled 0.5817 — carries the IPA from the capture */
+    .f06-back img { position: absolute; left: -549.1px; top: -404.9px; width: 1861.4px; height: 1047.1px; display: block; }
+    .f06-glint { position: absolute; left: 0; top: 0; width: 520px; height: 100%;
+      background: linear-gradient(105deg, rgba(255,255,255,0) 35%, rgba(255,255,255,0.26) 50%, rgba(255,255,255,0) 65%); }
+    .f06-kicker { position: absolute; left: 28px; top: 26px; font-family: "IBM Plex Mono", monospace; font-weight: 500; font-size: 14px; letter-spacing: 0.14em; text-transform: uppercase; color: #F59E0B; }
+    .f06-rule { position: absolute; left: 28px; top: 56px; width: 36px; height: 2px; background: #F59E0B; }
+    .f06-word { position: absolute; left: 0; right: 0; top: 0; bottom: 0; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 64px; letter-spacing: -0.02em; text-transform: lowercase; color: #F2F2F2; }
+
+    .f06-chip { position: absolute; left: 410px; top: 450px; padding: 14px 28px; background: #1C1B1B; border: 1px solid #F59E0B; font-weight: 600; font-size: 34px; letter-spacing: -0.01em; text-transform: lowercase; white-space: nowrap; color: #F2F2F2;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.45); }
+    .f06-due { position: absolute; left: 650px; top: 290px; padding: 10px 20px; background: #F59E0B; color: #1C1B1B; font-weight: 600; font-size: 26px; white-space: nowrap;
+      box-shadow: 0 16px 34px rgba(0,0,0,0.5); }
+  </style>
+
+  <div data-hf-id="hf-pkgc" id="root" data-composition-id="06-words-that-stick" data-width="1920" data-height="1080" data-duration="5.709">
+    <div data-hf-id="hf-rj1s" class="f06-bg clip" data-start="0" data-duration="5.709" data-track-index="0">
+      <div class="f06-grid" id="f06-grid" data-layout-allow-overflow=""></div>
+      <div class="f06-light" id="f06-light" data-layout-allow-overflow=""></div>
+      <div class="f06-kw" id="f06-kw" data-layout-allow-overlap="" data-layout-allow-occlusion=""><span class="f06-kl">R</span><span class="f06-kl">e</span><span class="f06-kl">m</span><span class="f06-kl">e</span><span class="f06-kl">m</span><span class="f06-kl">b</span><span class="f06-kl">e</span><span class="f06-kl">r</span></div>
+    </div>
+
+    <div data-hf-id="hf-dh7u" class="f06-stage clip" data-start="0" data-duration="5.709" data-track-index="1">
+      <div class="f06-cam" id="f06-cam">
+        <div data-hf-id="hf-n5w6" class="f06-window" id="f06-window">
+          <div data-hf-id="hf-vbvy" class="f06-world" data-layout-allow-overflow="">
+            <img data-hf-id="hf-fljx" src="assets/vocab-dark.png" alt="">
+            <div data-hf-id="hf-62ut" class="f06-mask" style="top:836px"></div>
+            <div data-hf-id="hf-iwke" class="f06-mask" style="top:934px"></div>
+            <div data-hf-id="hf-udxi" class="f06-mask" style="top:1032px"></div>
+            <div data-hf-id="hf-7k5x" class="f06-mask" style="top:1130px"></div>
+            <div data-hf-id="hf-at0l" class="f06-mask" style="top:1228px"></div>
+            <div data-hf-id="hf-ohnp" class="f06-fill" id="f06-bar1" style="top:836px;width:86px;background:#00A6F4"></div>
+            <div data-hf-id="hf-odq3" class="f06-fill" id="f06-bar2" style="top:934px;width:86px;background:#FE9A00"></div>
+            <div data-hf-id="hf-ytgq" class="f06-fill" id="f06-bar3" style="top:1032px;width:132px;background:#8E51FF"></div>
+            <div data-hf-id="hf-3x09" class="f06-fill" id="f06-bar4" style="top:1130px;width:46px;background:#00BC7D"></div>
+            <div data-hf-id="hf-8nhh" class="f06-fill" id="f06-bar5" style="top:1228px;width:86px;background:#F59E0B"></div>
+          </div>
+        </div>
+
+        <div class="f06-fg" id="f06-fg">
+          <div data-hf-id="hf-x0sj" class="f06-stack">
+            <div data-hf-id="hf-wn9h" class="f06-card" id="f06-card1" data-layout-allow-overlap="" data-layout-allow-occlusion="">
+              <div data-hf-id="hf-geju" class="f06-face"><div data-hf-id="hf-pzst" class="f06-kicker" data-layout-allow-overlap="" data-layout-allow-occlusion="">Card 01</div><div data-hf-id="hf-xkjf" class="f06-rule"></div><div data-hf-id="hf-m518" class="f06-word" data-layout-allow-overlap="" data-layout-allow-occlusion="">bought</div></div>
+            </div>
+            <div data-hf-id="hf-0ldi" class="f06-card" id="f06-card2" data-layout-allow-overlap="" data-layout-allow-occlusion="">
+              <div data-hf-id="hf-45ta" class="f06-face"><div data-hf-id="hf-r6pw" class="f06-kicker" data-layout-allow-overlap="" data-layout-allow-occlusion="">Card 02</div><div data-hf-id="hf-p1x7" class="f06-rule"></div><div data-hf-id="hf-rioj" class="f06-word" data-layout-allow-overlap="" data-layout-allow-occlusion="">market</div></div>
+            </div>
+            <div data-hf-id="hf-mhn1" class="f06-card f06-top" id="f06-card3" data-layout-allow-overlap="" data-layout-allow-occlusion="">
+              <div data-hf-id="hf-rt28" class="f06-flipper" id="f06-flipper">
+                <div data-hf-id="hf-4k4b" class="f06-face"><div data-hf-id="hf-qsev" class="f06-kicker" data-layout-allow-overlap="" data-layout-allow-occlusion="">Card 03</div><div data-hf-id="hf-onm6" class="f06-rule"></div><div data-hf-id="hf-izuw" class="f06-word" data-layout-allow-overlap="" data-layout-allow-occlusion="">perseverance</div></div>
+                <div data-hf-id="hf-50qq" class="f06-face f06-back"><img data-hf-id="hf-jxm9" src="assets/vocab-dark.png" alt=""><div class="f06-glint" id="f06-glint" data-layout-allow-overlap="" data-layout-allow-occlusion=""></div></div>
+              </div>
+            </div>
+          </div>
+
+          <div data-hf-id="hf-2c3s" class="f06-chip" id="f06-chip1" data-layout-allow-overlap="" data-layout-allow-occlusion="">bought</div>
+          <div data-hf-id="hf-vdow" class="f06-chip" id="f06-chip2" data-layout-allow-overlap="" data-layout-allow-occlusion="">market</div>
+          <div data-hf-id="hf-v2je" class="f06-chip" id="f06-chip3" data-layout-allow-overlap="" data-layout-allow-occlusion="">perseverance</div>
+
+          <div data-hf-id="hf-hfbn" class="f06-due" id="f06-due" data-layout-allow-overlap="" data-layout-allow-occlusion="">17 due today</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      const D = 4.859;
+      const tl = gsap.timeline({ paused: true });
+      const q = (id) => document.getElementById(id);
+
+      // background: one slow light sweep + grid parallax + keyword drift, full frame
+      tl.fromTo(q("f06-light"), { x: 300, y: 720 }, { x: 1500, y: 260, duration: D, ease: "sine.inOut" }, 0);
+      tl.fromTo(q("f06-grid"), { x: 0, y: 0 }, { x: -48, y: -24, duration: D, ease: "none" }, 0);
+      tl.fromTo(q("f06-kw"), { x: 0 }, { x: -50, duration: D, ease: "none" }, 0);
+
+      // camera: 3D dolly that turns on each cue
+      tl.fromTo(q("f06-cam"), { rotationY: 8, rotationX: -5, scale: 1 },
+        { rotationY: 4, rotationX: -3, scale: 1.02, duration: 1.79, ease: "sine.out" }, 0);
+      tl.fromTo(q("f06-cam"), { rotationY: 4, rotationX: -3, scale: 1.02 },
+        { rotationY: 0, rotationX: -2, scale: 1.035, duration: 1.15, ease: "power2.inOut", immediateRender: false }, 1.79);
+      tl.fromTo(q("f06-cam"), { rotationY: 0, rotationX: -2, scale: 1.035 },
+        { rotationY: -4, rotationX: -1, scale: 1.06, duration: D - 2.94, ease: "power3.out", immediateRender: false }, 2.94);
+      // foreground parallax against the window
+      tl.fromTo(q("f06-fg"), { x: 0 }, { x: -24, duration: D, ease: "sine.inOut" }, 0);
+
+      // window: ghosted from t=0, swings in from a 3D tilt on "become", then drifts
+      tl.fromTo(q("f06-window"),
+        { opacity: 0.3, x: 90, rotationY: -20, scale: 0.93, filter: "blur(10px)", transformPerspective: 1600 },
+        { opacity: 1, x: 0, rotationY: -6, scale: 1, filter: "blur(0px)", transformPerspective: 1600, duration: 0.8, ease: "expo.out" }, 1.79);
+      tl.fromTo(q("f06-window"), { x: 0, rotationY: -6 },
+        { x: -14, rotationY: -3, duration: D - 2.6, ease: "sine.inOut", immediateRender: false }, 2.6);
+
+      // Scene 1: chips arc in spinning with motion blur, drop into the stack, deck fans then restacks
+      const cards = [
+        { chip: "f06-chip1", card: "f06-card1", start: 0.05, rot: -7, x: -22, y: 16, spin: -40, fan: { x: -120, y: 26, rotation: -17 } },
+        { chip: "f06-chip2", card: "f06-card2", start: 0.47, rot: -3.5, x: -10, y: 8, spin: -28, fan: { x: 96, y: 18, rotation: 12 } },
+        { chip: "f06-chip3", card: "f06-card3", start: 0.88, rot: 0, x: 0, y: 0, spin: -34 },
+      ];
+      cards.forEach((c) => {
+        const chip = q(c.chip);
+        const card = q(c.card);
+        const land = c.start + 0.6;
+        tl.fromTo(chip, { xPercent: -50, yPercent: -50, x: -900, rotation: c.spin, opacity: 0 },
+          { xPercent: -50, yPercent: -50, x: 0, rotation: 0, opacity: 1, duration: 0.6, ease: "expo.out" }, c.start);
+        tl.fromTo(chip, { filter: "blur(14px)" }, { filter: "blur(0px)", duration: 0.4, ease: "power2.out" }, c.start);
+        tl.fromTo(chip, { y: 260 }, { y: -110, duration: 0.34, ease: "power2.out" }, c.start);
+        tl.fromTo(chip, { y: -110 }, { y: 0, duration: 0.26, ease: "power2.in", immediateRender: false }, c.start + 0.34);
+        // handoff: chip melts into its card as the card slams onto the stack
+        tl.fromTo(chip, { opacity: 1, scale: 1 }, { opacity: 0, scale: 0.8, duration: 0.14, ease: "power1.in", immediateRender: false }, land);
+        tl.fromTo(card,
+          { opacity: 0, x: c.x, y: c.y - 60, rotation: c.rot * 2.5 - 6, scale: 1.15 },
+          { opacity: 1, x: c.x, y: c.y, rotation: c.rot, scale: 1, duration: 0.42, ease: "back.out(1.7)" }, land - 0.02);
+        if (c.fan) {
+          tl.fromTo(card, { x: c.x, y: c.y, rotation: c.rot },
+            { x: c.fan.x, y: c.fan.y, rotation: c.fan.rotation, duration: 0.24, ease: "expo.out", immediateRender: false }, 1.56);
+          tl.fromTo(card, { x: c.fan.x, y: c.fan.y, rotation: c.fan.rotation },
+            { x: c.x, y: c.y, rotation: c.rot, duration: 0.36, ease: "back.out(1.6)", immediateRender: false }, 1.84);
+        }
+      });
+
+      // Scene 2: top card lifts and does a big 3D flip to the real flashcard on "flashcards", then a glint
+      tl.fromTo(q("f06-card3"), { scale: 1 }, { scale: 1.1, duration: 0.3, ease: "power2.out", immediateRender: false }, 2.05);
+      tl.fromTo(q("f06-card3"), { scale: 1.1 }, { scale: 1, duration: 0.4, ease: "back.out(1.6)", immediateRender: false }, 2.4);
+      tl.fromTo(q("f06-flipper"), { rotationY: 0 }, { rotationY: 180, duration: 0.75, ease: "back.out(1.3)" }, 2.05);
+      tl.fromTo(q("f06-glint"), { x: -520 }, { x: 520, duration: 0.55, ease: "power2.inOut" }, 2.72);
+      // micro-life on the hold: the top card floats up a touch
+      tl.fromTo(q("f06-card3"), { y: 0 }, { y: -10, duration: 1.95, ease: "sine.inOut", immediateRender: false }, 2.9);
+
+      // giant keyword cascades in on "come back", then settles low behind the product
+      tl.fromTo("#f06-kw .f06-kl",
+        { y: -160, scale: 1.5, rotation: -10, opacity: 0 },
+        { y: 0, scale: 1, rotation: 0, opacity: 1, duration: 0.5, ease: "back.out(1.6)", stagger: 0.04 }, 2.94);
+      tl.fromTo(q("f06-kw"), { opacity: 1 }, { opacity: 0.22, duration: 0.7, ease: "power2.inOut" }, 3.75);
+
+      // Scene 3: mastery bars fill with a bouncy stagger, then the due chip pops
+      [2.94, 3.16, 3.41, 3.80, 4.05].forEach((t, i) => {
+        tl.fromTo(q("f06-bar" + (i + 1)), { scaleX: 0 }, { scaleX: 1, duration: 0.5, ease: "back.out(1.7)" }, t);
+      });
+      tl.fromTo(q("f06-due"),
+        { xPercent: -50, yPercent: -50, scale: 0.2, rotation: -14, opacity: 0 },
+        { xPercent: -50, yPercent: -50, scale: 1, rotation: 0, opacity: 1, duration: 0.45, ease: "back.out(2.2)" }, 4.18);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["06-words-that-stick"] = tl;
+    })();
+  </script>
+</template>

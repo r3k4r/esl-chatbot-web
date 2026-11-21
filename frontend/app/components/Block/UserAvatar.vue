@@ -92,10 +92,10 @@ async function handleSignOut() {
 
         <!-- Name + plan (lg+) -->
         <div class="hidden lg:block leading-tight text-left">
-          <AppText size="16" weight="medium" color="brand-ink">
+          <AppText size="14" weight="medium" color="brand-ink">
             {{ user?.username ?? 'User' }}
           </AppText>
-          <AppText size="14" color="neutral-400">{{ isStaff ? roleLabel : plan }}</AppText>
+          <AppText size="13" color="neutral-400">{{ isStaff ? roleLabel : plan }}</AppText>
         </div>
       </button>
     </UiDropdownMenuTrigger>

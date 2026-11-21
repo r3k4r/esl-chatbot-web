@@ -1,230 +1,92 @@
 <script setup lang="ts">
 import type { AdminUserItem } from '~/common/types/admin-types'
+import type { KeyFigure, SkillRow } from '~/common/types/dashboard-types'
+import { AI_PERSONALITIES, CEFR_LEVELS, optionLabel } from '~/common/data/profile-options'
+import { dailyGoalOf } from '~/common/data/practice-goals'
+import { DEFAULT_TUTOR_VOICE, tutorVoiceLabel } from '~/common/data/tutor-voice'
+import { daysAgo, formatMinutes, toneStyle } from '~/lib/progress'
+import ProfileSection from '~/components/Pages/Dashboard/Profile/ProfileSection.vue'
+import ProfileRow from '~/components/Pages/Dashboard/Profile/ProfileRow.vue'
 
+// A student at a glance: how much they practise, how their skills stand, what they set up
+// for their AI tutor, and their classes. Staff accounts only have the classes part.
 const props = defineProps<{ user: AdminUserItem }>()
 
-const PLAN_COLOR: Record<string, string> = {
-  FREE:    'bg-surface-raised text-text-muted',
-  GOLD:    'bg-amber-500/15 text-amber-500',
-  PREMIUM: 'bg-violet-500/15 text-violet-500',
-}
+const isStudent = computed(() => props.user.role === 'STUDENT')
+const m = computed(() => props.user.metrics)
+const lp = computed(() => props.user.learnerProfile)
 
-function fmt(d: string | null | undefined) {
-  if (!d) return '—'
-  return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-}
+const figures = computed<KeyFigure[]>(() => {
+  if (!m.value) return []
+  const days = (n: number) => `${n} ${n === 1 ? 'day' : 'days'}`
+  return [
+    { label: 'Streak', value: days(m.value.currentStreak), hint: `Best ${days(m.value.longestStreak)}` },
+    { label: 'Practice time', value: formatMinutes(m.value.totalStudyTimeMinutes), hint: `${m.value.totalWordsTyped.toLocaleString()} words written` },
+    { label: 'Last practised', value: daysAgo(m.value.lastStudyDate), hint: 'Chat or Voice Lab' },
+    { label: 'Level the AI hears', value: m.value.estimatedLevel ?? '–', hint: 'From their conversations' },
+  ]
+})
 
-function skillPct(val: number | undefined) {
-  return Math.round((val ?? 0) * 100) / 100
-}
+const skills = computed<SkillRow[]>(() => [
+  { key: 'Grammar', value: m.value?.grammarSkill ?? null },
+  { key: 'Vocabulary', value: m.value?.vocabularySkill ?? null },
+  { key: 'Fluency', value: m.value?.fluencySkill ?? null },
+  { key: 'Speaking', value: m.value?.speakingSkill ?? null },
+])
+
+const voice = computed(() => tutorVoiceLabel({
+  accent: lp.value?.tutorAccent ?? DEFAULT_TUTOR_VOICE.accent,
+  gender: lp.value?.tutorVoice ?? DEFAULT_TUTOR_VOICE.gender,
+}))
+const cap = (s: string) => s.charAt(0) + s.slice(1).toLowerCase()
 </script>
 
 <template>
   <div class="space-y-5">
+    <PagesDashboardSharedKeyFigures v-if="isStudent && figures.length" :items="figures" />
 
-    <!-- Identity card -->
-    <div class="dash-card p-6">
-      <div class="flex flex-col sm:flex-row items-start sm:items-center gap-5">
-        <!-- Avatar -->
-        <UiAvatar class="w-20 h-20 rounded-2xl shrink-0">
-          <UiAvatarImage v-if="user.avatarUrl" :src="user.avatarUrl" :alt="user.displayName" class="object-cover" />
-          <UiAvatarFallback class="w-full h-full rounded-2xl text-[28px] font-semibold font-poppins text-white"
-            style="background:linear-gradient(135deg,var(--color-brand-primary),#b45309)">
-            {{ (user.displayName || user.username).charAt(0).toUpperCase() }}
-          </UiAvatarFallback>
-        </UiAvatar>
+    <div class="grid gap-5 md-lg:grid-cols-2">
+      <div class="flex flex-col gap-5">
+        <section v-if="isStudent" class="dash-card p-5">
+          <h2 class="font-poppins text-[16px] font-semibold text-text-heading">Skills</h2>
+          <AppText size="14" color="neutral-400" class-list="mt-0.5 mb-4">Scored by the AI from their chats, out of 100.</AppText>
+          <PagesDashboardSharedSkillBars :rows="skills" />
+        </section>
 
-        <!-- Info -->
-        <div class="flex-1 min-w-0">
-          <p class="text-[22px] font-semibold font-poppins truncate" :style="`color:var(--text-heading)`">
-            {{ user.displayName || user.username }}
-          </p>
-          <p class="text-[15px] font-poppins mt-0.5 truncate" :style="`color:var(--text-muted)`">{{ user.email }}</p>
-
-          <!-- Badges -->
-          <div class="flex flex-wrap gap-2 mt-3">
-            <!-- Role -->
-            <span class="text-[14px] font-semibold px-2.5 py-0.5 rounded-md font-poppins"
-              style="background:var(--surface-raised);color:var(--text-heading)">
-              {{ user.role.charAt(0) + user.role.slice(1).toLowerCase() }}
-            </span>
-            <!-- Plan -->
-            <span :class="['text-[14px] font-semibold px-2.5 py-0.5 rounded-md font-poppins', PLAN_COLOR[user.subscription?.plan ?? 'FREE']]">
-              {{ user.subscription?.plan ?? 'FREE' }}
-            </span>
-            <!-- Account status -->
-            <span class="text-[14px] font-semibold px-2.5 py-0.5 rounded-md font-poppins"
-              :style="user.isActive
-                ? 'background:var(--status-active-bg);color:var(--status-active-text)'
-                : 'background:var(--status-expired-bg);color:var(--status-expired-text)'">
-              {{ user.isActive ? 'Active' : 'Banned' }}
-            </span>
-            <!-- Auth provider -->
-            <span v-if="user.authProvider" class="text-[14px] font-semibold px-2.5 py-0.5 rounded-md font-poppins"
-              style="background:var(--surface-raised);color:var(--text-muted)">
-              {{ user.authProvider }}
-            </span>
-            <!-- Email verified -->
-            <span class="text-[14px] font-semibold px-2.5 py-0.5 rounded-md font-poppins"
-              :style="user.emailVerified
-                ? 'background:var(--status-active-bg);color:var(--status-active-text)'
-                : 'background:var(--status-blocked-bg);color:var(--status-blocked-text)'">
-              {{ user.emailVerified ? 'Email verified' : 'Email unverified' }}
-            </span>
+        <section class="dash-card flex-1 p-5">
+          <h2 class="font-poppins text-[16px] font-semibold text-text-heading">Classes</h2>
+          <div v-if="user.classUsers?.length" class="mt-3 divide-y divide-border-inner">
+            <AppLink v-for="cu in user.classUsers" :key="cu.id" :to="`/dashboard/classes/${cu.class.id}`"
+              class="group flex items-center justify-between gap-3 py-3 outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/50 rounded-sm">
+              <div class="min-w-0">
+                <AppText size="15" weight="medium" class-list="truncate group-hover:text-brand-primary">{{ cu.class.className }}</AppText>
+                <AppText size="14" color="neutral-400">{{ cap(cu.role) }} · Code {{ cu.class.classCode }}</AppText>
+              </div>
+              <span v-if="cu.class.classStatus !== 'ACTIVE'" class="shrink-0 rounded-md px-2 py-0.5 font-poppins text-[14px] font-medium"
+                :style="toneStyle('inactive')">{{ cap(cu.class.classStatus) }}</span>
+            </AppLink>
           </div>
-        </div>
-
-        <!-- Dates -->
-        <div class="text-right shrink-0 hidden sm:block">
-          <p class="text-[14px] font-poppins" :style="`color:var(--text-muted)`">Joined</p>
-          <p class="text-[14px] font-mono mt-0.5" :style="`color:var(--text-subtle)`">{{ fmt(user.createdAt) }}</p>
-          <p class="text-[14px] font-poppins mt-3" :style="`color:var(--text-muted)`">Last updated</p>
-          <p class="text-[14px] font-mono mt-0.5" :style="`color:var(--text-subtle)`">{{ fmt(user.updatedAt) }}</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Metrics -->
-    <div v-if="user.metrics" class="dash-card p-6 space-y-4">
-      <p class="text-[18px] font-semibold font-poppins" :style="`color:var(--text-heading)`">Learning metrics</p>
-
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div class="p-4 rounded-xl" style="background:var(--surface-raised)">
-          <p class="text-[14px] font-poppins" :style="`color:var(--text-muted)`">Streak</p>
-          <p class="text-[22px] font-semibold font-poppins mt-1" :style="`color:var(--text-heading)`">
-            {{ user.metrics.currentStreak }}d
-          </p>
-          <p class="text-[14px] font-poppins" :style="`color:var(--text-subtle)`">best {{ user.metrics.longestStreak }}d</p>
-        </div>
-        <div class="p-4 rounded-xl" style="background:var(--surface-raised)">
-          <p class="text-[14px] font-poppins" :style="`color:var(--text-muted)`">Study time</p>
-          <p class="text-[22px] font-semibold font-poppins mt-1" :style="`color:var(--text-heading)`">
-            {{ user.metrics.totalStudyTimeMinutes }}m
-          </p>
-          <p class="text-[14px] font-poppins" :style="`color:var(--text-subtle)`">total</p>
-        </div>
-        <div class="p-4 rounded-xl" style="background:var(--surface-raised)">
-          <p class="text-[14px] font-poppins" :style="`color:var(--text-muted)`">Words typed</p>
-          <p class="text-[22px] font-semibold font-poppins mt-1" :style="`color:var(--text-heading)`">
-            {{ user.metrics.totalWordsTyped.toLocaleString() }}
-          </p>
-          <p class="text-[14px] font-poppins" :style="`color:var(--text-subtle)`">total</p>
-        </div>
-        <div class="p-4 rounded-xl" style="background:var(--surface-raised)">
-          <p class="text-[14px] font-poppins" :style="`color:var(--text-muted)`">Est. CEFR</p>
-          <p class="text-[22px] font-semibold font-poppins mt-1" :style="`color:var(--text-heading)`">
-            {{ user.metrics.estimatedLevel ?? '—' }}
-          </p>
-          <p class="text-[14px] font-poppins" :style="`color:var(--text-subtle)`">AI detected</p>
-        </div>
+          <AppText v-else size="14" color="neutral-400" class-list="mt-2">Not in any class yet.</AppText>
+        </section>
       </div>
 
-      <!-- Skill bars -->
-      <div class="space-y-3">
-        <div v-for="skill in [
-          { label: 'Grammar', value: user.metrics.grammarSkill },
-          { label: 'Vocabulary', value: user.metrics.vocabularySkill },
-          { label: 'Fluency', value: user.metrics.fluencySkill },
-          { label: 'Speaking', value: user.metrics.speakingSkill },
-        ]" :key="skill.label" class="flex items-center gap-3">
-          <p class="text-[14px] font-poppins w-24 shrink-0" :style="`color:var(--text-muted)`">{{ skill.label }}</p>
-          <div class="flex-1 h-2 rounded-md overflow-hidden" style="background:var(--surface-raised)">
-            <div class="h-full rounded-md transition-all" style="background:var(--color-brand-primary)"
-              :style="`width:${skillPct(skill.value)}%`" />
+      <ProfileSection v-if="isStudent" title="Learning" description="What they set up for their AI tutor.">
+        <ProfileRow label="Level now">{{ optionLabel(CEFR_LEVELS, lp?.currentLevel) ?? 'Not set' }}</ProfileRow>
+        <ProfileRow label="Level wanted">{{ optionLabel(CEFR_LEVELS, lp?.targetLevel) ?? 'Not set' }}</ProfileRow>
+        <ProfileRow label="Why they learn">
+          <span :class="!lp?.learningPurpose && 'text-text-muted'">{{ lp?.learningPurpose || 'Not given' }}</span>
+        </ProfileRow>
+        <ProfileRow label="Topics">
+          <div v-if="lp?.topicsOfInterest?.length" class="flex flex-wrap gap-1.5">
+            <span v-for="t in lp.topicsOfInterest" :key="t" class="rounded-md bg-surface-raised px-2 py-0.5 text-[14px]">{{ t }}</span>
           </div>
-          <p class="text-[14px] font-mono w-10 text-right shrink-0" :style="`color:var(--text-subtle)`">
-            {{ skillPct(skill.value) }}
-          </p>
-        </div>
-      </div>
+          <span v-else class="text-text-muted">None</span>
+        </ProfileRow>
+        <ProfileRow label="Tutor style">{{ optionLabel(AI_PERSONALITIES, lp?.aiPersonality) ?? 'Default' }}</ProfileRow>
+        <ProfileRow label="Tutor voice">{{ voice }}</ProfileRow>
+        <ProfileRow label="Daily goal">{{ dailyGoalOf(lp?.weeklyGoalMinutes) }} min a day</ProfileRow>
+        <ProfileRow label="Weekly email">{{ lp?.emailDigestEnabled === false ? 'Off' : 'On' }}</ProfileRow>
+      </ProfileSection>
     </div>
-
-    <!-- Learner settings -->
-    <div v-if="user.learnerProfile" class="dash-card p-6 space-y-4">
-      <p class="text-[18px] font-semibold font-poppins" :style="`color:var(--text-heading)`">Learning settings</p>
-
-      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        <div class="p-3.5 rounded-xl" style="background:var(--surface-raised)">
-          <p class="text-[14px] font-poppins" :style="`color:var(--text-muted)`">Current level</p>
-          <p class="text-[15px] font-semibold font-poppins mt-0.5" :style="`color:var(--text-heading)`">
-            {{ user.learnerProfile.currentLevel ?? '—' }}
-          </p>
-        </div>
-        <div class="p-3.5 rounded-xl" style="background:var(--surface-raised)">
-          <p class="text-[14px] font-poppins" :style="`color:var(--text-muted)`">Target level</p>
-          <p class="text-[15px] font-semibold font-poppins mt-0.5" :style="`color:var(--text-heading)`">
-            {{ user.learnerProfile.targetLevel ?? '—' }}
-          </p>
-        </div>
-        <div class="p-3.5 rounded-xl" style="background:var(--surface-raised)">
-          <p class="text-[14px] font-poppins" :style="`color:var(--text-muted)`">AI personality</p>
-          <p class="text-[15px] font-semibold font-poppins mt-0.5" :style="`color:var(--text-heading)`">
-            {{ user.learnerProfile.aiPersonality ?? 'Default' }}
-          </p>
-        </div>
-        <div class="p-3.5 rounded-xl" style="background:var(--surface-raised)">
-          <p class="text-[14px] font-poppins" :style="`color:var(--text-muted)`">Voice speed</p>
-          <p class="text-[15px] font-semibold font-poppins mt-0.5" :style="`color:var(--text-heading)`">
-            {{ user.learnerProfile.voiceSpeed }}×
-          </p>
-        </div>
-        <div class="p-3.5 rounded-xl" style="background:var(--surface-raised)">
-          <p class="text-[14px] font-poppins" :style="`color:var(--text-muted)`">Weekly goal</p>
-          <p class="text-[15px] font-semibold font-poppins mt-0.5" :style="`color:var(--text-heading)`">
-            {{ user.learnerProfile.weeklyGoalMinutes }} min/wk
-          </p>
-        </div>
-        <div class="p-3.5 rounded-xl" style="background:var(--surface-raised)">
-          <p class="text-[14px] font-poppins" :style="`color:var(--text-muted)`">Timezone</p>
-          <p class="text-[15px] font-semibold font-poppins mt-0.5 truncate" :style="`color:var(--text-heading)`">
-            {{ user.learnerProfile.timezone }}
-          </p>
-        </div>
-      </div>
-
-      <!-- Topics -->
-      <div v-if="Array.isArray(user.learnerProfile.topicsOfInterest) && user.learnerProfile.topicsOfInterest.length">
-        <p class="text-[14px] font-poppins mb-2" :style="`color:var(--text-muted)`">Topics of interest</p>
-        <div class="flex flex-wrap gap-2">
-          <span v-for="t in (user.learnerProfile.topicsOfInterest as string[])" :key="t"
-            class="text-[14px] font-medium font-poppins px-3 py-1 rounded-lg"
-            style="background:var(--surface-raised);color:var(--text-heading)">
-            {{ t }}
-          </span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Classes -->
-    <div v-if="user.classUsers && user.classUsers.length" class="dash-card p-6 space-y-3">
-      <p class="text-[18px] font-semibold font-poppins" :style="`color:var(--text-heading)`">Classes</p>
-      <div class="space-y-2">
-        <div v-for="cu in user.classUsers" :key="cu.id"
-          class="flex items-center justify-between p-3.5 rounded-xl"
-          style="background:var(--surface-raised)">
-          <div>
-            <p class="text-[14px] font-semibold font-poppins" :style="`color:var(--text-heading)`">
-              {{ cu.class.className }}
-            </p>
-            <p class="text-[14px] font-poppins mt-0.5" :style="`color:var(--text-muted)`">
-              Code: {{ cu.class.classCode }}
-            </p>
-          </div>
-          <div class="flex items-center gap-2">
-            <span class="text-[14px] font-semibold px-2.5 py-0.5 rounded-md font-poppins"
-              :style="cu.class.classStatus === 'ACTIVE'
-                ? 'background:var(--status-active-bg);color:var(--status-active-text)'
-                : 'background:var(--status-inactive-bg);color:var(--status-inactive-text)'">
-              {{ cu.class.classStatus.charAt(0) + cu.class.classStatus.slice(1).toLowerCase() }}
-            </span>
-            <span class="text-[14px] font-semibold px-2.5 py-0.5 rounded-md font-poppins"
-              style="background:var(--surface-raised);color:var(--text-muted)">
-              {{ cu.role.charAt(0) + cu.role.slice(1).toLowerCase() }}
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
-
   </div>
 </template>

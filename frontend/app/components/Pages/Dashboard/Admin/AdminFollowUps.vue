@@ -19,12 +19,12 @@ const issues = computed(() => [
 </script>
 
 <template>
-  <section aria-labelledby="admin-follow" class="dash-card p-5 md:p-6">
+  <section aria-labelledby="admin-follow" class="dash-card p-5">
     <AppText id="admin-follow" size="16" weight="semibold">Follow up</AppText>
 
     <AppText size="14" weight="medium" class-list="mt-4">Plans ending in the next 7 days</AppText>
     <ul v-if="expiring.length" class="mt-1 divide-y divide-border-inner">
-      <li v-for="e in expiring" :key="e.userId">
+      <li v-for="e in expiring.slice(0, 3)" :key="e.userId">
         <AppLink :to="`/dashboard/users/${e.userId}`" class="-mx-2 flex items-center gap-3 rounded-lg px-2 py-2.5 hover:bg-surface-raised">
           <div class="min-w-0 flex-1">
             <AppText size="14" weight="medium" class-list="truncate">{{ e.name }}</AppText>
@@ -34,9 +34,10 @@ const issues = computed(() => [
         </AppLink>
       </li>
     </ul>
-    <AppText v-else size="14" color="neutral-400" class-list="mt-1">None this week.</AppText>
+    <AppLink v-if="expiring.length > 3" to="/dashboard/users" class="mt-1 block text-[14px] text-text-muted hover:text-text-heading">{{ expiring.length - 3 }} more in Users</AppLink>
+    <AppText v-else-if="!expiring.length" size="14" color="neutral-400" class-list="mt-1">None this week.</AppText>
 
-    <div class="mt-5 border-t border-border-inner pt-4">
+    <div class="mt-4 border-t border-border-inner pt-4">
       <AppText size="14" weight="medium">Needs attention</AppText>
       <ul v-if="issues.length" class="mt-2 space-y-2">
         <li v-for="i in issues" :key="i.text">

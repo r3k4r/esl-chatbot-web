@@ -16,13 +16,16 @@
     "titleTrail": " with AI.",
     "subtitle": "AI-powered conversations, voice practice, and intelligent progress tracking — all in one platform built for serious learners.",
     "ctaPrimary": "Get Started",
-    "ctaSecondary": "See Pricing",
+    "ctaSecondary": "Watch a demo",
     "checks": [
       "Free to start",
       "No credit card",
       "40+ topics"
     ],
-    "trustedBy": "Trusted by 2,000+ learners worldwide"
+    "trustedBy": "Trusted by 2,000+ learners worldwide",
+    "demoTitle": "Tutelage AI demo",
+    "demoDescription": "A 47-second tour: chat with the AI tutor, gentle corrections, the Voice Lab, flashcards and your progress.",
+    "demoClose": "Close the video"
   },
   "features": {
     "eyebrow": "Features",
@@ -146,7 +149,7 @@
     "titleTrail": "your English learning?",
     "subtitle": "Your AI tutor, your voice lab, your progress — all in one place. Start your first session in under a minute.",
     "ctaPrimary": "Get Started Free",
-    "ctaSecondary": "Watch 30s demo"
+    "ctaSecondary": "Watch the demo"
   },
   "footer": {
     "tagline": "An AI-powered English learning platform — conversations, voice, vocabulary and real progress in one place.",

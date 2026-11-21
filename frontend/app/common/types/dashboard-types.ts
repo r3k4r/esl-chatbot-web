@@ -5,6 +5,8 @@ import type { SvgBasedIconName } from "./iconsax-types"
 export type DashboardNavId =
   | 'dashboard'
   | 'users'
+  | 'learning'
+  | 'revenue'
   | 'chat'
   | 'voice'
   | 'vocab'

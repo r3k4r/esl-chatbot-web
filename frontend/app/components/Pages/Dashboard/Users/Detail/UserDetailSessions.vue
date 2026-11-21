@@ -32,7 +32,7 @@ function formatDuration(secs: number | null | undefined) {
             <th class="px-4 py-3 text-left text-[14px] font-semibold font-poppins hidden md:table-cell" :style="`color:var(--text-muted)`">Duration</th>
             <th class="px-4 py-3 text-left text-[14px] font-semibold font-poppins hidden md:table-cell" :style="`color:var(--text-muted)`">Messages</th>
             <th class="px-4 py-3 text-left text-[14px] font-semibold font-poppins hidden lg:table-cell" :style="`color:var(--text-muted)`">Overall</th>
-            <th class="px-4 py-3 text-left text-[14px] font-semibold font-poppins hidden lg:table-cell" :style="`color:var(--text-muted)`">CEFR</th>
+            <th class="px-4 py-3 text-left text-[14px] font-semibold font-poppins hidden lg:table-cell" :style="`color:var(--text-muted)`">Level</th>
           </tr>
         </thead>
         <tbody>
@@ -53,16 +53,16 @@ function formatDuration(secs: number | null | undefined) {
               </p>
             </td>
             <td class="px-4 py-3 hidden sm:table-cell">
-              <p class="text-[14px] font-mono" :style="`color:var(--text-subtle)`">{{ fmt(s.startedAt) }}</p>
+              <p class="text-[14px] font-poppins tabular-nums" :style="`color:var(--text-subtle)`">{{ fmt(s.startedAt) }}</p>
             </td>
             <td class="px-4 py-3 hidden md:table-cell">
-              <p class="text-[14px] font-mono" :style="`color:var(--text-subtle)`">{{ formatDuration(s.durationSeconds) }}</p>
+              <p class="text-[14px] font-poppins tabular-nums" :style="`color:var(--text-subtle)`">{{ formatDuration(s.durationSeconds) }}</p>
             </td>
             <td class="px-4 py-3 hidden md:table-cell">
               <p class="text-[14px] font-poppins" :style="`color:var(--text-heading)`">{{ s.messageCount }}</p>
             </td>
             <td class="px-4 py-3 hidden lg:table-cell">
-              <p class="text-[14px] font-semibold font-mono" style="color:var(--color-brand-primary)">
+              <p class="text-[14px] font-semibold font-poppins tabular-nums" :style="`color:var(--text-heading)`">
                 {{ s.evaluation ? s.evaluation.avgOverallScore.toFixed(0) : '—' }}
               </p>
             </td>

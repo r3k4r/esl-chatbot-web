@@ -17,16 +17,17 @@
       </AppText>
 
       <div class="mt-9 flex items-center justify-center gap-3 flex-wrap">
-        <AppButton :to="signedIn ? '/dashboard' : '/signin'" variant="brand" size="56" radius="12" class-list="gap-2 px-6 text-[15px]">
+        <AppButton :to="signedIn ? '/dashboard' : '/signin'" variant="brand" size="56" radius="12" class-list="gap-2 px-6 text-[15px] w-full sm:w-auto">
           <span>{{ signedIn ? t('nav.goToDashboard') : t('finalCta.ctaPrimary') }}</span>
           <Icon icon="lucide:arrow-right" width="14" class="rtl:rotate-180" />
         </AppButton>
-        <AppButton to="#" variant="dark-ghost" size="56" radius="12" class-list="gap-2 px-6 text-[15px]">
+        <AppButton variant="dark-ghost" @click="demoOpen = true" size="56" radius="12" class-list="gap-2 px-6 text-[15px] w-full sm:w-auto">
           <Icon icon="lucide:play" width="12" class="rtl:rotate-180" />
           <span>{{ t('finalCta.ctaSecondary') }}</span>
         </AppButton>
       </div>
     </div>
+    <PagesHomeDemoVideoDialog v-model:open="demoOpen" />
   </section>
 </template>
 
@@ -35,4 +36,5 @@ import { Icon } from '@iconify/vue'
 
 const { t } = useLocale()
 const signedIn = useSignedIn() // signed-in visitors go to their dashboard
+const demoOpen = ref(false) // the Watch a demo player (DemoVideoDialog)
 </script>
