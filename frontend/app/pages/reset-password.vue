@@ -9,6 +9,7 @@ definePageMeta({
 
 const authStore = useAuthStore()
 const router = useRouter()
+const { t } = useLocale()
 
 const formData = reactive<ResetPasswordSchema>({
     email: '',
@@ -50,29 +51,29 @@ const handleSubmit = async () => {
             router.push('/signin')
         }, 3000)
     } else {
-        serverError.value = response.message || 'Invalid or expired code. Please try again.'
+        serverError.value = response.message || t('auth.verifyEmail.invalidCode')
     }
 }
 </script>
 
 <template>
-    <FormAllDone v-if="isDone" button-text="Back to sign in" to="/signin" />
+    <FormAllDone v-if="isDone" :button-text="t('auth.common.backToSignIn')" to="/signin" />
 
     <LayoutsAuthFormLayout
         v-else
-        title="Set a new password"
-        subtitle="Choose a strong password you haven't used before."
-        footer-text="Changed your mind?"
-        footer-link-text="Back to sign in"
+        :title="t('auth.reset.title')"
+        :subtitle="t('auth.reset.subtitle')"
+        :footer-text="t('auth.common.changedMind')"
+        :footer-link-text="t('auth.common.backToSignIn')"
         footer-link-to="/signin"
     >
-        <Form :schema="resetPasswordSchema" :form-data="formData" @submit="handleSubmit" class="flex flex-col gap-5">
+        <Form :schema="resetPasswordSchema" :form-data="formData" @submit="handleSubmit" class="flex flex-col gap-5" novalidate>
             <template #default="{ errors }">
                 <FormInput
                     id="newPassword"
                     type="password"
-                    label="New password"
-                    placeholder="At least 8 characters"
+                    :label="t('auth.fields.newPassword')"
+                    :placeholder="t('auth.fields.passwordNewPh')"
                     v-model="formData.newPassword"
                     :error="errors.newPassword"
                     required
@@ -81,8 +82,8 @@ const handleSubmit = async () => {
                 <FormInput
                     id="confirmPassword"
                     type="password"
-                    label="Confirm password"
-                    placeholder="Repeat your new password"
+                    :label="t('auth.fields.confirmPassword')"
+                    :placeholder="t('auth.fields.confirmNewPasswordPh')"
                     v-model="formData.confirmPassword"
                     :error="errors.confirmPassword"
                     required
@@ -97,9 +98,9 @@ const handleSubmit = async () => {
                     radius="full"
                     :loading="authStore.isLoading"
                     class-list="w-full mt-2"
-                    aria-label="Reset password"
+                    :aria-label="t('auth.reset.submit')"
                 >
-                    Reset password
+                    {{ t('auth.reset.submit') }}
                 </AppButton>
             </template>
         </Form>

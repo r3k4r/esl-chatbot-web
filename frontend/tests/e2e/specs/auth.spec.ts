@@ -214,6 +214,17 @@ test.describe('Route guards', () => {
     })
   }
 
+  // ISS-028: AI chat, Voice Lab, vocabulary, goals, billing and lessons are for learners only.
+  for (const persona of ['tutor', 'admin'] as const) {
+    for (const path of ['/dashboard/chat', '/dashboard/voice', '/dashboard/vocab', '/dashboard/goals', '/dashboard/billing', '/dashboard/lessons']) {
+      test(`${persona} is sent from ${path} to the dashboard`, async ({ page, loginAs }) => {
+        await loginAs(persona)
+        await page.goto(path)
+        await expect(page).toHaveURL(/\/dashboard$/)
+      })
+    }
+  }
+
   test('admin can open user management', async ({ page, loginAs }) => {
     await loginAs('admin')
     await page.goto('/dashboard/users')

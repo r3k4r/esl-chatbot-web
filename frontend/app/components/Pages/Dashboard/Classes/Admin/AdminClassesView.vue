@@ -2,7 +2,7 @@
 import { toast } from 'vue-sonner'
 import type { AdminClassItem, ClassPaginationMeta } from '~/common/types/class-types'
 
-const { listAllClasses } = useClasses()
+const { listAllClasses, deleteClass } = useClasses()
 const router = useRouter()
 
 // ─── State ────────────────────────────────────────────────────────────────────
@@ -72,9 +72,14 @@ function openDelete(id: string) {
 }
 
 async function handleConfirmDelete() {
-  // No DELETE endpoint exists yet — show informative message
+  if (!deletingId.value) return
+  deleteLoading.value = true
+  const res = await deleteClass(deletingId.value)
+  deleteLoading.value = false
+  if (!res.success) { toast.error(res.message || 'Could not delete the class'); return }
   deleteDialogOpen.value = false
-  toast.error('Delete class is not yet available in the API.')
+  toast.success(`"${deletingName.value}" deleted`)
+  await load(meta.value.page)
 }
 </script>
 
@@ -82,12 +87,13 @@ async function handleConfirmDelete() {
   <div class="h-full overflow-y-auto page-padding space-y-6" :style="`background:var(--surface-page)`">
 
     <!-- Header -->
-    <div class="flex items-center justify-between gap-4 animate-card-enter" style="--delay:0ms">
-      <div>
+    <!-- Wraps on phones so the buttons sit under the title instead of running off-screen -->
+    <div class="flex flex-wrap items-center justify-between gap-4 animate-card-enter" style="--delay:0ms">
+      <div class="min-w-0">
         <AppText size="22" weight="semibold" color="black" class-list="tracking-[-0.02em] block" :style="`color:var(--text-heading)`">All Classes</AppText>
         <AppText size="13" color="neutral-400" class-list="mt-0.5 block" :style="`color:var(--text-muted)`">Admin overview · {{ meta.total }} total</AppText>
       </div>
-      <div class="flex items-center gap-1.5">
+      <div class="flex flex-wrap items-center gap-1.5">
         <AppButton
           variant="secondary"
           size="36"

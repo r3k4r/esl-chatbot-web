@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { calendarDays } from '~/lib/progress'
 import { toast } from 'vue-sonner'
 import type { TaskSubmissionItem } from '~/common/types/task-types'
 
@@ -27,8 +28,8 @@ function relativeDate(iso: string) {
   if (mins < 60) return `${mins}m ago`
   const hrs = Math.round(diff / 3_600_000)
   if (hrs < 24) return `${hrs}h ago`
-  const days = Math.round(diff / 86_400_000)
-  return days === 1 ? 'yesterday' : `${days}d ago`
+  const days = calendarDays(iso)
+  return days <= 1 ? 'yesterday' : `${days}d ago`
 }
 
 function startEditing() {

@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
 
+// `light` is for light backgrounds (auth pages); the default suits the dark navbar.
+const props = withDefaults(defineProps<{ tone?: 'dark' | 'light' }>(), { tone: 'dark' })
+
 const { locale, locales, setLocale } = useLocale()
 
 const open = ref(false)
@@ -34,7 +37,10 @@ function onOutside(e: PointerEvent) {
 
     <!-- Trigger -->
     <button type="button" :aria-expanded="open" aria-haspopup="listbox" aria-label="Select language"
-      class="group flex items-center gap-2 rounded-lg border border-neutral-50/12 bg-neutral-50/6 px-2.5 py-1.5 h-10 transition-all duration-200 hover:border-neutral-50/25 hover:bg-neutral-50/10"
+      class="group flex items-center gap-2 rounded-lg border px-2.5 py-1.5 h-10 transition-all duration-200"
+      :class="props.tone === 'light'
+        ? 'border-black/10 bg-white/80 backdrop-blur-sm shadow-soft hover:border-black/20 hover:bg-white'
+        : 'border-neutral-50/12 bg-neutral-50/6 hover:border-neutral-50/25 hover:bg-neutral-50/10'"
       @click="toggle">
       <!-- Kurdish flag inline SVG -->
       <!-- <span v-if="activeMeta.kurdish"
@@ -47,12 +53,13 @@ function onOutside(e: PointerEvent) {
         class="rounded-full shrink-0 ring-1 ring-neutral-50/15" /> -->
 
       <span
-        class="text-[12px] font-semibold tracking-wide text-neutral-50/80 group-hover:text-neutral-50 transition-colors">
+        class="text-[12px] font-semibold tracking-wide transition-colors"
+        :class="props.tone === 'light' ? 'text-brand-ink' : 'text-neutral-50/80 group-hover:text-neutral-50'">
         {{ activeMeta.label }}
       </span>
       <Icon icon="lucide:chevron-down" width="12"
-        class="text-neutral-50/40 group-hover:text-neutral-50/70 transition-all duration-300"
-        :class="open ? 'rotate-180' : 'rotate-0'" />
+        class="transition-all duration-300"
+        :class="[open ? 'rotate-180' : 'rotate-0', props.tone === 'light' ? 'text-brand-ink/50' : 'text-neutral-50/40 group-hover:text-neutral-50/70']" />
     </button>
 
     <!-- Dropdown -->

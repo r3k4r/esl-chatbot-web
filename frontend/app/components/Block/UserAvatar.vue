@@ -21,7 +21,11 @@ const plan = computed(() => planLabel[user.value?.subscription?.plan ?? 'FREE'] 
 const isFree = computed(() => (user.value?.subscription?.plan ?? 'FREE') === 'FREE')
 // Staff = admins + tutors. Subscription/learner items are hidden for them.
 const { isAdmin, isStaff } = useRole()
-const roleLabel = computed(() => (isAdmin.value ? 'Admin' : 'Tutor'))
+const roleLabel = computed(() => (isAdmin.value ? 'Admin' : 'Teacher'))
+
+// Opened after the menu has closed, so the menu handing focus back doesn't close the dialog.
+const passwordOpen = ref(false)
+const openChangePassword = () => requestAnimationFrame(() => { passwordOpen.value = true })
 
 // Local state for email digest toggle
 const emailDigestEnabled = ref(true)
@@ -152,6 +156,12 @@ async function handleSignOut() {
         </NuxtLink>
       </UiDropdownMenuItem>
 
+      <!-- Change password, any role -->
+      <UiDropdownMenuItem class="group flex items-center gap-2.5 cursor-pointer" @select="openChangePassword">
+        <AppIconsax name="Lock" color="currentColor" :size="16" class="text-text-muted group-focus:text-text-heading" />
+        <span class="text-[14px]">Change password</span>
+      </UiDropdownMenuItem>
+
       <!-- Replays the dashboard guide (useDashboardGuide), any role -->
       <UiDropdownMenuItem as-child class="group">
         <NuxtLink :to="{ path: '/dashboard', query: { tour: '1' } }" class="flex items-center gap-2.5 cursor-pointer">
@@ -170,4 +180,6 @@ async function handleSignOut() {
       </UiDropdownMenuItem>
     </UiDropdownMenuContent>
   </UiDropdownMenu>
+
+  <BlockChangePasswordDialog v-model:open="passwordOpen" />
 </template>

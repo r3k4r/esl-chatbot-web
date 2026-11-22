@@ -18,12 +18,12 @@ const t = computed(() => props.s.tasks)
 </script>
 
 <template>
-  <!-- Phone: one quiet line under the name -->
-  <AppText size="13" color="neutral-400" class-list="ms-auto shrink-0 text-end md:hidden">
+  <!-- Phone + tablet: one quiet line (the 4-column grid only fits from 1024px) -->
+  <AppText size="13" color="neutral-400" class-list="ms-auto shrink-0 text-end md-lg:hidden">
     {{ t.handedIn }}/{{ t.total }} tasks<template v-if="t.missing"> · <span :style="{ color: 'var(--destructive)' }">{{ t.missing }} missing</span></template>
   </AppText>
 
-  <div class="hidden min-w-0 flex-1 grid-cols-[3.5rem_minmax(0,1fr)_minmax(0,1fr)_8rem] items-center gap-4 md:grid">
+  <div class="hidden min-w-0 flex-1 grid-cols-[3.5rem_minmax(0,1fr)_minmax(0,1fr)_8rem] items-center gap-4 md-lg:grid">
     <AppText size="14" weight="semibold" :color="level ? 'black' : 'neutral-400'" :title="s.estimatedLevel ? 'Level estimated by the AI tutor' : 'Level the student chose'">
       {{ level ?? '–' }}
     </AppText>

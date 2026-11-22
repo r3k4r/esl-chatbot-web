@@ -156,6 +156,18 @@ export function useLiveCall() {
     raf = requestAnimationFrame(tick)
   }
 
+  // ─── Microphone permission ─────────────────────────────────────────────────
+  const MIC_BLOCKED = 'Microphone access is blocked. Click the lock icon next to the address, allow the microphone, then try again.'
+
+  /** 'granted' | 'denied' | 'prompt', or 'prompt' when the browser can't tell (e.g. older Safari). */
+  async function micPermission(): Promise<PermissionState> {
+    try {
+      return (await navigator.permissions.query({ name: 'microphone' as PermissionName })).state
+    } catch {
+      return 'prompt'
+    }
+  }
+
   // ─── Controls ──────────────────────────────────────────────────────────────
   async function startCall() {
     if (inCall.value || lock.value) return
@@ -169,15 +181,28 @@ export function useLiveCall() {
     turns.value = []
     seconds.value = 0
 
+    // Ask for the mic first, and tell the learner why the browser is about to ask.
+    const permission = await micPermission()
+    if (permission === 'denied') {
+      phase.value = 'idle'
+      audio.close()
+      toast.error(MIC_BLOCKED, { duration: 10_000 })
+      return
+    }
+    if (permission === 'prompt') toast.message('Allow the microphone when your browser asks, so the tutor can hear you.')
+
     let stream: MediaStream
     try {
       stream = await navigator.mediaDevices.getUserMedia({
         audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true, channelCount: 1 },
       })
-    } catch {
+    } catch (err) {
       phase.value = 'idle'
       audio.close()
-      toast.error('Allow microphone access to call Tutelage AI.')
+      const name = (err as DOMException)?.name
+      if (name === 'NotFoundError' || name === 'OverconstrainedError') toast.error('No microphone found. Connect one and try again.')
+      else if (name === 'NotReadableError') toast.error('Your microphone is busy in another app. Close it there and try again.')
+      else toast.error(MIC_BLOCKED, { duration: 10_000 })
       return
     }
 

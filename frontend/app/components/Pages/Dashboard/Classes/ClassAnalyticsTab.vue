@@ -73,7 +73,7 @@ const basis = computed(() => {
       <ol v-else class="mt-4 divide-y divide-border-inner">
         <li v-for="item in analytics.mostCommonGrammarErrors" :key="item.error" class="flex items-baseline justify-between gap-4 py-3">
           <AppText size="14" weight="medium" class-list="min-w-0">{{ item.error }}</AppText>
-          <AppText size="13" color="neutral-400" class-list="shrink-0">{{ item.count }} times</AppText>
+          <AppText size="13" color="neutral-400" class-list="shrink-0">{{ item.count === 1 ? 'once' : `${item.count} times` }}</AppText>
         </li>
       </ol>
     </section>

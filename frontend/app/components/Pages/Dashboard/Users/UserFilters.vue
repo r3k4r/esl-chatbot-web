@@ -114,7 +114,7 @@ const hasActiveFilters = computed(() =>
               <UiSelectContent>
                 <UiSelectItem value="ALL">All roles</UiSelectItem>
                 <UiSelectItem value="STUDENT">Student</UiSelectItem>
-                <UiSelectItem value="TUTOR">Tutor</UiSelectItem>
+                <UiSelectItem value="TUTOR">Teacher</UiSelectItem>
                 <UiSelectItem value="ADMIN">Admin</UiSelectItem>
               </UiSelectContent>
             </UiSelect>

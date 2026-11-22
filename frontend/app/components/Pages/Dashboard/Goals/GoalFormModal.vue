@@ -80,9 +80,17 @@ const TARGET_UNIT = computed(() => {
   return map[form.type]
 })
 
+// Realistic ceilings per goal type (the API caps every target at 10,000).
+const TARGET_MAX: Record<GoalType, number> = {
+  VOCABULARY: 5000, SPEAKING: 10000, GRAMMAR: 1000, CONVERSATION: 1000, STUDY_TIME: 10000,
+}
+
 function validate(): boolean {
+  const max = TARGET_MAX[form.type]
   errors.description = form.description.trim().length < 3 ? 'At least 3 characters required.' : ''
-  errors.target = form.target < 1 ? 'Must be at least 1.' : ''
+  errors.target = form.target < 1
+    ? 'Must be at least 1.'
+    : form.target > max ? `Must be at most ${max.toLocaleString()} ${TARGET_UNIT.value}.` : ''
   return !errors.description && !errors.target
 }
 

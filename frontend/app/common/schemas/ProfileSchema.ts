@@ -28,3 +28,14 @@ export const adminUserFormSchema = profileFormSchema.extend({
 })
 
 export type AdminUserFormValues = z.infer<typeof adminUserFormSchema>
+
+// Change password (avatar menu → "Change password"). Same rules as POST /auth/change-password.
+export const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1, 'Enter your current password'),
+  newPassword: z.string().min(8, 'Use at least 8 characters'),
+  confirmPassword: z.string().min(1, 'Repeat the new password'),
+})
+  .refine((d) => d.newPassword === d.confirmPassword, { message: "Passwords don't match", path: ['confirmPassword'] })
+  .refine((d) => d.newPassword !== d.currentPassword, { message: 'Choose a password different from the current one', path: ['newPassword'] })
+
+export type ChangePasswordValues = z.infer<typeof changePasswordSchema>

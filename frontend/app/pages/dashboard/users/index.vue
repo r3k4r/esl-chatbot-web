@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { useAdmin } from '~/composables/useAdmin'
+import { useAuthStore } from '~~/stores/auth'
 import type { AdminUserItem, AssignSubscriptionInput, UserRole, SubStatus, PlanId } from '~/common/types/admin-types'
 
 definePageMeta({ layout: 'dashboard', requiresAuth: true, requiresAdmin: true })
 
 const { listUsers, patchUser, assignSubscription, cancelSubscription } = useAdmin()
 const route = useRoute()
+const authStore = useAuthStore()
 
 // ── State ──────────────────────────────────────────────────────────────────
 const users = ref<AdminUserItem[]>([])
@@ -53,7 +55,7 @@ async function load() {
   const res = await listUsers({
     page: page.value,
     limit: limit.value,
-    search: search.value,
+    search: search.value.trim(),
     role: roleFilter.value,
     subscriptionStatus: statusFilter.value,
     plan: planFilter.value,
@@ -101,7 +103,7 @@ watch([roleFilter, statusFilter, planFilter, createdAfter, createdBefore, page, 
 // ── Actions ────────────────────────────────────────────────────────────────
 const togglingId = ref<string | null>(null)
 
-async function onToggleStatus(userId: string, isActive: boolean) {
+async function setUserActive(userId: string, isActive: boolean) {
   togglingId.value = userId
   const res = await patchUser(userId, { isActive })
   if (res.success && res.data?.data) {
@@ -109,6 +111,18 @@ async function onToggleStatus(userId: string, isActive: boolean) {
     if (idx !== -1) users.value[idx] = res.data.data
   }
   togglingId.value = null
+}
+
+// Turning sign-in off asks first (it signs the user out); turning it back on doesn't.
+const deactivateTarget = ref<AdminUserItem | null>(null)
+function onToggleStatus(userId: string, isActive: boolean) {
+  if (isActive) return setUserActive(userId, true)
+  deactivateTarget.value = users.value.find(u => u.id === userId) ?? null
+}
+async function confirmDeactivate() {
+  if (!deactivateTarget.value) return
+  await setUserActive(deactivateTarget.value.id, false)
+  deactivateTarget.value = null
 }
 
 function onChangeRole(user: AdminUserItem) {
@@ -247,6 +261,7 @@ async function confirmCancel() {
               :key="u.id"
               :user="u"
               :toggling="togglingId === u.id"
+              :is-self="u.id === authStore.getUser?.id"
               @toggle-status="onToggleStatus"
               @change-role="onChangeRole"
               @assign-subscription="onAssignSubscription"
@@ -287,13 +302,21 @@ async function confirmCancel() {
       @save="onSaveSubscription"
     />
 
+    <PagesDashboardUsersDeactivateUserDialog
+      :open="!!deactivateTarget"
+      :name="deactivateTarget?.displayName || deactivateTarget?.username || ''"
+      :saving="!!deactivateTarget && togglingId === deactivateTarget.id"
+      @update:open="(v: boolean) => { if (!v) deactivateTarget = null }"
+      @confirm="confirmDeactivate"
+    />
+
     <!-- Cancel subscription confirm -->
     <UiAlertDialog :open="cancelOpen" @update:open="cancelOpen = $event">
       <UiAlertDialogContent>
         <UiAlertDialogHeader>
           <UiAlertDialogTitle>Cancel subscription?</UiAlertDialogTitle>
           <UiAlertDialogDescription>
-            {{ cancelTarget?.displayName || cancelTarget?.username }} will be downgraded to Free ACTIVE. They keep AI access at Free tier limits.
+            {{ cancelTarget?.displayName || cancelTarget?.username }} will move to the Free plan. They keep the AI tutor at Free limits (once their email is verified).
           </UiAlertDialogDescription>
         </UiAlertDialogHeader>
         <UiAlertDialogFooter>

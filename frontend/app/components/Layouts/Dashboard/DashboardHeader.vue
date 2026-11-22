@@ -34,7 +34,7 @@ const { crumbs } = useBreadcrumbs()
       </UiBreadcrumb>
     </div>
 
-    <!-- Global search / command palette (md+) -->
+    <!-- Global search / command palette (bar from 1024px, icon below) -->
     <LayoutsDashboardCommandPalette />
 
     <div class="flex shrink-0 items-center gap-2">

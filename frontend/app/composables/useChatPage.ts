@@ -462,7 +462,7 @@ export function useChatPage() {
       if (e) activeSession.value.evaluation = e
     }
     if (e) {
-      toast.success(`Session ended · ${Math.round(e.avgOverallScore ?? 0)}/100 · CEFR ${e.detectedCefrLevel}`, { duration: 6000 })
+      toast.success(`Session ended · ${Math.round(e.avgOverallScore ?? 0)}/100${e.detectedCefrLevel ? ` · CEFR ${e.detectedCefrLevel}` : ''}`, { duration: 6000 })
     } else {
       toast.success('Session ended')
     }

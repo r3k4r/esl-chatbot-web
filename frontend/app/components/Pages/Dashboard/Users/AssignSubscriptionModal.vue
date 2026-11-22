@@ -24,6 +24,8 @@ const durationMode = ref<'months' | 'date'>('months')
 const durationMonths = ref<string>('3')
 const endDate = ref<string>('')
 const paymentProvider = ref<PaymentProvider>('CASH')
+const endDateError = ref('')
+watch([endDate, durationMode], () => { endDateError.value = '' })
 
 watch(() => props.open, async (v) => {
   if (!v || !props.userId) return
@@ -62,7 +64,10 @@ function submit() {
     paymentProvider: paymentProvider.value,
   }
   if (isPaid.value) {
-    if (durationMode.value === 'date' && endDate.value) {
+    if (durationMode.value === 'date') {
+      // "End date" chosen: it must be set and in the future — never fall back to months silently.
+      if (!endDate.value) { endDateError.value = 'Pick an end date.'; return }
+      if (new Date(endDate.value) <= new Date()) { endDateError.value = 'The end date must be in the future.'; return }
       input.endDate = new Date(endDate.value).toISOString()
     } else {
       input.durationMonths = Number(durationMonths.value) as IntervalMonths
@@ -183,6 +188,7 @@ function submit() {
             v-model="endDate"
             placeholder="End date"
             :min-date="new Date()"
+            :error="endDateError"
           />
         </div>
 

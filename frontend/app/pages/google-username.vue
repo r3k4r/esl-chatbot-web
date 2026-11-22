@@ -16,6 +16,7 @@ type GoogleProfile = {
 
 const authStore = useAuthStore()
 const router = useRouter()
+const { t } = useLocale()
 
 const formData = reactive<GoogleUsernameSchema>({
     username: '',
@@ -26,6 +27,10 @@ const serverError = ref<string>('')
 const idToken = ref<string>('')
 const profile = ref<GoogleProfile>({})
 const showTerms = ref(false)
+
+// Live username check (ISS-009), same as sign-up.
+const { status: usernameStatus } = useUsernameAvailability(toRef(formData, 'username'))
+const usernameTaken = computed(() => usernameStatus.value === 'taken' ? 'auth.signup.usernameTaken' : undefined)
 
 onMounted(() => {
     const savedToken = sessionStorage.getItem('googleIdToken')
@@ -43,37 +48,39 @@ onMounted(() => {
 
 const handleSubmit = async () => {
     serverError.value = ''
+    if (usernameStatus.value === 'taken') return
     const response = await authStore.googleAuth(idToken.value, formData.username, formData.acceptAgreement === true)
 
     if (response.success) {
         sessionStorage.removeItem('googleIdToken')
         sessionStorage.removeItem('googleProfile')
-        toast.success('Welcome!')
+        toast.success(t('auth.googleUsername.welcome'))
         router.push('/dashboard')
     } else {
-        serverError.value = response.message || 'Could not complete sign-up. Please try again.'
+        serverError.value = response.message || t('auth.googleUsername.failed')
     }
 }
 </script>
 
 <template>
     <LayoutsAuthFormLayout
-        title="Pick a username"
-        :subtitle="profile.email
-            ? `You're signing in as ${profile.email}. Choose a username to finish creating your account.`
-            : 'Choose a username to finish creating your account.'"
-        footer-text="Changed your mind?"
-        footer-link-text="Back to sign in"
+        :title="t('auth.googleUsername.title')"
+        :subtitle="profile.email ? t('auth.googleUsername.subtitle', { email: profile.email }) : t('auth.googleUsername.subtitleNoEmail')"
+        :footer-text="t('auth.common.changedMind')"
+        :footer-link-text="t('auth.common.backToSignIn')"
         footer-link-to="/signin"
     >
-        <Form :schema="googleUsernameSchema" :form-data="formData" @submit="handleSubmit" class="flex flex-col gap-5">
+        <Form :schema="googleUsernameSchema" :form-data="formData" @submit="handleSubmit" class="flex flex-col gap-5" novalidate>
             <template #default="{ errors }">
                 <FormInput
                     id="username"
-                    label="Username"
-                    placeholder="e.g. student_ali"
+                    :label="t('auth.fields.username')"
+                    :placeholder="t('auth.fields.usernameExamplePh')"
                     v-model="formData.username"
-                    :error="errors.username"
+                    :error="errors.username || usernameTaken"
+                    :icon="usernameStatus === 'available' && !errors.username ? 'TickCircle' : undefined"
+                    icon-position="end"
+                    :icon-config="{ color: '#16a34a', size: 20, type: 'bold' }"
                     required
                 />
 
@@ -86,19 +93,17 @@ const handleSubmit = async () => {
                             @update:model-value="(v: boolean | 'indeterminate') => (formData.acceptAgreement = v === true ? true : (undefined as unknown as true))"
                         />
                         <label for="acceptAgreement" class="text-sm text-brand-ink leading-snug cursor-pointer select-none">
-                            I accept the
+                            {{ t('auth.terms.accept') }}
                             <button
                                 type="button"
                                 class="font-medium text-brand-primary hover:underline"
                                 @click.prevent="showTerms = true"
                             >
-                                Terms of Service
+                                {{ t('auth.terms.link') }}
                             </button>
                         </label>
                     </div>
-                    <p v-if="errors.acceptAgreement" class="text-xs text-red-500 pl-7">
-                        {{ errors.acceptAgreement }}
-                    </p>
+                    <FormError :error="errors.acceptAgreement" class="ps-7" />
                 </div>
 
                 <FormServerError :error="serverError" />
@@ -110,9 +115,9 @@ const handleSubmit = async () => {
                     radius="full"
                     :loading="authStore.isLoading"
                     class-list="w-full mt-2"
-                    aria-label="Finish sign up"
+                    :aria-label="t('auth.googleUsername.submit')"
                 >
-                    Finish sign up
+                    {{ t('auth.googleUsername.submit') }}
                 </AppButton>
             </template>
         </Form>

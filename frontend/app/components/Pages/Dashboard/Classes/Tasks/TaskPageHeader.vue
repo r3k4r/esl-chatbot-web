@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { calendarDays } from '~/lib/progress'
 import type { TaskItem } from '~/common/types/task-types'
 
 const props = defineProps<{
@@ -19,7 +20,7 @@ const posted = computed(() => new Date(props.task.createdAt).toLocaleDateString(
 const due = computed(() => {
   if (!props.task.deadline) return null
   const d = new Date(props.task.deadline)
-  const days = Math.ceil((d.getTime() - Date.now()) / 86_400_000)
+  const days = calendarDays(new Date(), d)
   const when = d.toLocaleString([], { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
   const overdue = days < 0 && props.task.status === 'OPEN'
   const rel = days < 0 ? `${-days} day${days === -1 ? '' : 's'} late` : days === 0 ? 'today' : days === 1 ? 'tomorrow' : `in ${days} days`

@@ -15,7 +15,7 @@ defineEmits<{ join: [] }>()
       <UiEmptyDescription>
         {{ message
           ? 'Try a different search term.'
-          : 'Ask your tutor for a class code, then join to access lessons, sessions, and more.' }}
+          : 'Ask your teacher for a class code, then join to access lessons, sessions, and more.' }}
       </UiEmptyDescription>
       <AppButton
         v-if="!message"

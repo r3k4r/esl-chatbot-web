@@ -21,6 +21,8 @@ export interface PlanLimits {
 // automatic sync — when they drift, the UI promises a budget the server refuses,
 // which reads to the user as being blocked for no reason. FREE was 50/60 here while
 // the backend enforced 20/30 (fixed 2026-07-31).
+// TODO(ISS-006): the marketing copy describes the FREE limit two ways (pricing card vs FAQ);
+// once decided, make both texts match these numbers.
 export const PLAN_LIMITS: Record<Plan, PlanLimits> = {
   FREE: {
     sessionsPerDay: 3,

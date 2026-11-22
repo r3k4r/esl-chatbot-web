@@ -174,7 +174,8 @@ onMounted(load)
   <div class="flex h-full flex-col overflow-y-auto page-padding">
 
     <!-- Back + header -->
-    <div class="flex items-center gap-3 mb-6 animate-card-enter" style="--delay:0ms">
+    <!-- Wraps on phones: the actions drop to their own row so the name never collapses to one letter -->
+    <div class="flex flex-wrap items-center gap-3 mb-6 animate-card-enter" style="--delay:0ms">
       <AppButton aria-label="Go back" variant="secondary" size="36" radius="8" icon="ArrowLeft"
         :icon-config="{ color: 'currentColor', size: 14 }" @click="router.push('/dashboard/classes')" />
       <div class="flex-1 min-w-0">
@@ -189,7 +190,7 @@ onMounted(load)
             cls.classCategory }}</AppText>
         </template>
       </div>
-      <template v-if="cls">
+      <div v-if="cls" class="flex flex-wrap items-center gap-2 max-md:basis-full max-md:ps-12">
         <!-- Edit only when not archived (archived = read-only) -->
         <AppButton v-if="isTutorOrAdmin && !isArchived" variant="secondary" size="36" radius="8" icon="Edit2"
           :icon-config="{ color: 'currentColor', size: 14 }" text="Edit" class="shrink-0"
@@ -209,10 +210,10 @@ onMounted(load)
           : 'background:var(--status-expired-bg);color:var(--status-expired-text)'">{{ cls.classStatus }}</UiBadge>
         <UiBadge v-if="cls.myRole && !isStudentInClass" size="lg" :class="['uppercase', roleColorClass[cls.myRole] || '']"
           :style="!roleColorClass[cls.myRole] ? 'background:var(--surface-well);color:var(--text-muted)' : ''">{{
-            cls.myRole }}</UiBadge>
+            cls.myRole === 'TUTOR' ? 'Teacher' : cls.myRole }}</UiBadge>
         <PagesDashboardClassesLeaveClassButton v-if="isStudentInClass" :class-id="cls.id" :class-name="cls.className"
           :user-id="currentUserId" />
-      </template>
+      </div>
     </div>
 
     <!-- Loading -->
@@ -267,7 +268,7 @@ onMounted(load)
           <div class="flex items-center gap-2 mb-1">
             <AppIconsax name="Teacher" color="var(--color-text-subtle)" :size="13" />
             <AppText size="10" weight="semibold" :uppercase="true" class-list="tracking-[0.12em]"
-              :style="`color:var(--text-subtle)`">Tutors</AppText>
+              :style="`color:var(--text-subtle)`">Teachers</AppText>
           </div>
           <AppText size="22" weight="semibold" :style="`color:var(--text-heading)`">{{ tutors.length }}</AppText>
         </div>
@@ -297,9 +298,10 @@ onMounted(load)
             <AppText size="11" :style="statusConfig.style">{{ statusConfig.label }}</AppText>
           </div>
         </div>
-        <div class="p-5 flex items-center gap-4">
+        <!-- On narrow screens the buttons wrap under the code instead of covering it -->
+        <div class="p-5 flex flex-wrap items-center gap-4">
           <!-- A new code slides in when rotated; only this line changes. -->
-          <div class="relative flex-1 overflow-hidden">
+          <div class="relative flex-auto overflow-hidden">
             <Transition name="code-swap" mode="out-in">
               <AppText :key="cls.classCode" size="22" weight="bold" font-family="mono"
                 class-list="tracking-[0.4em] select-all" :style="`color:var(--text-heading)`">

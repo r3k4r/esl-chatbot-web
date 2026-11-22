@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { calendarDays } from '~/lib/progress'
 import type { Notification, NotificationType } from '~/common/model/notification'
 
 const props = defineProps<{
@@ -44,8 +45,8 @@ function relativeTime(iso: string): string {
   if (mins < 60) return `${mins}m ago`
   const hrs = Math.round(diff / 3_600_000)
   if (hrs < 24) return `${hrs}h ago`
-  const days = Math.round(diff / 86_400_000)
-  return days === 1 ? 'Yesterday' : `${days}d ago`
+  const days = calendarDays(iso)
+  return days <= 1 ? 'Yesterday' : `${days}d ago`
 }
 </script>
 

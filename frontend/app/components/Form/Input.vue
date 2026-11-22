@@ -14,7 +14,7 @@
         :value="modelValue as (string | number | undefined)" />
       <div role="button" class="absolute end-3 top-1/2 -translate-y-1/2" type="button"
         @click.stop="showPassword = !showPassword" v-if="type === 'password'" aria-label="Toggle Password Visibility">
-        <AppIconsax :name="showPassword ? 'Eye' : 'EyeSlash'" class="text-black dark:icon-white" size="20" />
+        <AppIconsax :name="showPassword ? 'Eye' : 'EyeSlash'" class="text-black dark:text-white" size="20" />
       </div>
     </div>
     <FormError :error="error" />

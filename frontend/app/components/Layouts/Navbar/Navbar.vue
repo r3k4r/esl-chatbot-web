@@ -31,14 +31,14 @@
                 <!-- From 1200px: below that, it lives in the menu so the links keep their room -->
                 <SiteSwitcher class="me-3 hidden lg:flex" />
                 <LayoutsNavbarLanguageSwitcher />
-                <AppButton :to="signedIn ? '/dashboard' : '/signin'" variant="brand" size="38" class-list="px-3.5 text-[14px] gap-1.5">
+                <AppButton :to="signedIn ? '/dashboard' : '/signup'" variant="brand" size="38" class-list="px-3.5 text-[14px] gap-1.5">
                     <span>{{ signedIn ? t('nav.goToDashboard') : t('nav.getStarted') }}</span>
                     <Icon icon="lucide:arrow-right" width="16" class="rtl:rotate-180" />
                 </AppButton>
             </div>
 
             <div class="md-lg:hidden flex items-center gap-2">
-                <AppButton :to="signedIn ? '/dashboard' : '/#cta'" variant="brand" size="38" class-list="px-3 sm:px-3.5 text-[14px] gap-1.5">
+                <AppButton :to="signedIn ? '/dashboard' : '/signup'" variant="brand" size="38" class-list="px-3 sm:px-3.5 text-[14px] gap-1.5">
                     <span>{{ signedIn ? t('nav.goToDashboard') : t('nav.getStarted') }}</span>
                     <Icon icon="lucide:arrow-right" width="16" class="rtl:rotate-180" />
                 </AppButton>

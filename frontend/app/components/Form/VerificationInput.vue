@@ -12,9 +12,7 @@
                 ]" />
         </div>
             
-            <p v-if="error?.length" class="text-red-500 text-xs mt-1">
-                {{ error }}
-            </p>
+            <FormError :error="error" />
     </div>
 </template>
 

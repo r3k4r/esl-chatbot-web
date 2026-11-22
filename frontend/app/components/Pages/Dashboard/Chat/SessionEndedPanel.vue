@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { SessionEvaluation } from '~/common/types/chat-types'
+import { plural } from '~/lib/progress'
 
 // Replaces the composer once a session ends. Previously this state was just a
 // greyed-out text box with a placeholder, which read as "broken" rather than
@@ -43,8 +44,10 @@ const highlights = computed(() => {
           <AppText size="15" weight="semibold">Session complete</AppText>
           <AppText size="13" color="neutral-400" class-list="mt-0.5">
             <template v-if="evaluation">
-              You scored {{ score }}/100 · CEFR {{ evaluation.detectedCefrLevel }} ·
-              {{ evaluation.totalUserMessages }} messages
+              <!-- No level for very short chats: two sentences can't place someone on the CEFR scale -->
+              You scored {{ score }}/100 ·
+              {{ evaluation.detectedCefrLevel ? `CEFR ${evaluation.detectedCefrLevel}` : 'Too short to estimate a level' }} ·
+              {{ plural(evaluation.totalUserMessages, 'message') }}
             </template>
             <template v-else>
               Your progress has been saved. Start a new session to keep practising.

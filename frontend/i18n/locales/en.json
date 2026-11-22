@@ -22,10 +22,11 @@
       "No credit card",
       "40+ topics"
     ],
-    "trustedBy": "Trusted by 2,000+ learners worldwide",
+    "trustedBy": "Trusted by {count} learners worldwide",
     "demoTitle": "Tutelage AI demo",
     "demoDescription": "A 47-second tour: chat with the AI tutor, gentle corrections, the Voice Lab, flashcards and your progress.",
-    "demoClose": "Close the video"
+    "demoClose": "Close the video",
+    "trustedByNoCount": "Trusted by learners worldwide"
   },
   "features": {
     "eyebrow": "Features",
@@ -144,49 +145,24 @@
     }
   },
   "finalCta": {
-    "badge": "Join 2,000+ learners",
+    "badge": "Join {count} learners",
     "titleLead": "Ready to transform ",
     "titleTrail": "your English learning?",
     "subtitle": "Your AI tutor, your voice lab, your progress — all in one place. Start your first session in under a minute.",
     "ctaPrimary": "Get Started Free",
-    "ctaSecondary": "Watch the demo"
+    "ctaSecondary": "Watch the demo",
+    "badgeNoCount": "Join our learners"
   },
   "footer": {
     "tagline": "An AI-powered English learning platform — conversations, voice, vocabulary and real progress in one place.",
     "columns": {
-      "product": {
-        "heading": "Product",
-        "links": [
-          "Features",
-          "AI Chat",
-          "Voice Lab",
-          "Vocabulary",
-          "Pricing"
-        ]
-      },
-      "resources": {
-        "heading": "Resources",
-        "links": [
-          "Blog",
-          "Guides",
-          "Placement Test",
-          "Changelog",
-          "Status"
-        ]
-      },
-      "company": {
-        "heading": "Company",
-        "links": [
-          "About",
-          "Careers",
-          "Press",
-          "Partners",
-          "Contact"
-        ]
-      }
+      "product": "Product",
+      "learn": "Learn",
+      "account": "Account"
     },
-    "rights": "© 2026 Tutelage AI. All rights reserved.",
-    "status": "All systems normal"
+    "rights": "© {year} Tutelage AI. All rights reserved.",
+    "poweredBy": "Powered by",
+    "resetPassword": "Reset password"
   },
   "featurePages": {
     "allFeatures": "All features",
@@ -702,5 +678,134 @@
     "listening": "Listening…",
     "placeholder": "Ask anything in English, or just say hi.",
     "better": "Better:"
+  },
+  "auth": {
+    "back": "Back",
+    "or": "or",
+    "language": "Language",
+    "panel": {
+      "badge": "Smarter English, one conversation at a time",
+      "titleLead": "Learn English the way",
+      "titleAccent": "you actually speak it.",
+      "learners": "Learners",
+      "satisfaction": "Satisfaction",
+      "aiTutor": "AI tutor",
+      "rights": "© {year} Tutelage AI. All rights reserved."
+    },
+    "fields": {
+      "username": "Username",
+      "usernamePh": "Enter your username",
+      "usernameExamplePh": "e.g. student_ali",
+      "password": "Password",
+      "passwordPh": "Enter your password",
+      "passwordNewPh": "At least 8 characters",
+      "confirmPassword": "Confirm password",
+      "confirmPasswordPh": "Repeat your password",
+      "newPassword": "New password",
+      "confirmNewPasswordPh": "Repeat your new password",
+      "email": "Email",
+      "emailPh": "you{'@'}example.com",
+      "displayName": "Display name",
+      "displayNamePh": "e.g. Ali Hassan"
+    },
+    "terms": {
+      "accept": "I accept the",
+      "link": "Terms of Service"
+    },
+    "common": {
+      "tryAgainIn": "Try again in {time}",
+      "didntGetCode": "Didn't get a code?",
+      "resend": "Resend",
+      "resendIn": "Resend in {seconds}s",
+      "pleaseWait": "Please wait…",
+      "allDone": "All done",
+      "signIn": "Sign in",
+      "backToSignIn": "Back to sign in",
+      "changedMind": "Changed your mind?"
+    },
+    "signin": {
+      "title": "Welcome back",
+      "subtitle": "Sign in to continue your English learning journey.",
+      "forgot": "Forgot password?",
+      "noAccount": "Don't have an account?",
+      "createOne": "Create one",
+      "google": "Continue with Google",
+      "invalid": "Invalid username or password",
+      "verifyFirst": "Please verify your email to continue.",
+      "termsRequired": "You must accept the updated Terms of Service to continue.",
+      "termsFailed": "Could not accept the Terms. Please try again."
+    },
+    "signup": {
+      "title": "Create your account",
+      "subtitle": "Start practicing English with an AI tutor built for serious learners.",
+      "submit": "Create account",
+      "haveAccount": "Already have an account?",
+      "google": "Sign up with Google",
+      "created": "Account created! Check your email for a verification code.",
+      "failed": "Registration failed. Please try again.",
+      "usernameAvailable": "Username is available",
+      "usernameTaken": "Username is already taken"
+    },
+    "forgot": {
+      "title": "Forgot password?",
+      "subtitle": "Enter your email and we'll send you a 6-digit code to reset your password.",
+      "submit": "Send reset code",
+      "remembered": "Remembered it?",
+      "sent": "If that email is registered, a reset code has been sent.",
+      "failed": "Something went wrong. Please try again."
+    },
+    "resetCode": {
+      "title": "Enter your reset code",
+      "subtitle": "We sent a 6-digit code to {email}. Enter it below to reset your password.",
+      "submit": "Verify code",
+      "wrongEmail": "Wrong email?",
+      "startOver": "Start over",
+      "resent": "A new code has been sent to your email.",
+      "resendFailed": "Could not resend the code."
+    },
+    "verifyEmail": {
+      "title": "Verify your email",
+      "subtitle": "We sent a 6-digit code to {email}. Enter it below to activate your account.",
+      "subtitleNoEmail": "Enter your email and the 6-digit code we sent you to activate your account.",
+      "submit": "Verify email",
+      "alreadyVerified": "Already verified?",
+      "needEmail": "Please enter the email address you registered with.",
+      "needCode": "Please enter the full 6-digit code.",
+      "invalidCode": "Invalid or expired code. Please try again.",
+      "emailFirst": "Enter your email first, then request a new code.",
+      "resent": "A new verification code has been sent.",
+      "resendFailed": "Could not resend the code. Please try again.",
+      "done": "Email verified — your free plan is now active.",
+      "redirecting": "Taking you to your dashboard…"
+    },
+    "reset": {
+      "title": "Set a new password",
+      "subtitle": "Choose a strong password you haven't used before.",
+      "submit": "Reset password"
+    },
+    "googleUsername": {
+      "title": "Pick a username",
+      "subtitle": "You're signing in as {email}. Choose a username to finish creating your account.",
+      "subtitleNoEmail": "Choose a username to finish creating your account.",
+      "submit": "Finish sign up",
+      "welcome": "Welcome!",
+      "failed": "Could not complete sign-up. Please try again."
+    },
+    "validation": {
+      "usernameRequired": "Username is required",
+      "usernameMin": "Username must be at least 3 characters",
+      "usernameMax": "Username must be at most 30 characters",
+      "usernameChars": "Username can only contain letters, numbers, and underscores",
+      "passwordRequired": "Password is required",
+      "passwordMin": "Password must be at least 8 characters long",
+      "passwordsMatch": "Passwords do not match",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Invalid email address",
+      "displayNameRequired": "Display name is required",
+      "displayNameMax": "Display name must be at most 100 characters",
+      "termsRequired": "You must accept the Terms of Service to create an account",
+      "otpLength": "The code must be 6 digits",
+      "otpNumeric": "The code must contain numbers only"
+    }
   }
 }

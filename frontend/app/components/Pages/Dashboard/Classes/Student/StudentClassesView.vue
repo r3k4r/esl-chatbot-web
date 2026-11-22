@@ -38,10 +38,11 @@ async function handleJoin(code: string) {
   const res = await joinClass(code)
   joining.value = false
   if (!res.success) {
-    if (res.status === 403) toast.error('This class code is blocked by the tutor.')
+    if (res.status === 403) toast.error('This class code is blocked by the teacher.')
     else if (res.status === 404) toast.error('No class found with that code.')
-    else if (res.status === 409) toast.error('You are already a member of this class.')
-    else if (res.status === 410) toast.error('This code has expired — ask your tutor for the new one.')
+    // 409 covers already-a-member, inactive and archived classes — the server says which.
+    else if (res.status === 409) toast.error(res.message || "You can't join this class right now.")
+    else if (res.status === 410) toast.error('This code has expired — ask your teacher for the new one.')
     else toast.error(res.message || 'Could not join class')
     return
   }

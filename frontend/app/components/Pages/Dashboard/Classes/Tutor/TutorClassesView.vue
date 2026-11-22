@@ -62,12 +62,13 @@ async function handleRefresh(id: string) {
   <div class="h-full overflow-y-auto page-padding space-y-6">
 
     <!-- Page header -->
-    <div class="flex items-center justify-between gap-4 animate-card-enter" style="--delay:0ms">
-      <div>
+    <!-- Wraps on phones so the buttons sit under the title instead of running off-screen -->
+    <div class="flex flex-wrap items-center justify-between gap-4 animate-card-enter" style="--delay:0ms">
+      <div class="min-w-0">
         <AppText size="22" weight="semibold" color="black" class-list="tracking-[-0.02em] block">My Classes</AppText>
         <AppText size="13" color="neutral-400" class-list="mt-0.5 block">Classes you teach and manage</AppText>
       </div>
-      <div class="flex items-center gap-2">
+      <div class="flex flex-wrap items-center gap-2">
         <div class="flex items-center gap-1.5">
           <AppButton :variant="view === 'active' ? 'primary' : 'secondary'" size="38" radius="8" text="Active" :icon-config="{ color: view === 'active' ? 'white' : 'currentColor' }" @click="view = 'active'" />
           <AppButton :variant="view === 'archived' ? 'primary' : 'secondary'" size="38" radius="8" icon="Archive" text="Archived" :icon-config="{ color: view === 'archived' ? 'white' : 'currentColor', size: 15 }" @click="view = 'archived'" />

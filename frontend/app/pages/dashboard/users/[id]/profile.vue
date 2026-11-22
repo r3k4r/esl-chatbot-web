@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useAdminUserEditPage } from '~/composables/useAdminUserEditPage'
+import { useAuthStore } from '~~/stores/auth'
 import ProfileSection from '~/components/Pages/Dashboard/Profile/ProfileSection.vue'
 import PracticeFields from '~/components/Pages/Dashboard/Profile/PracticeFields.vue'
 
@@ -12,6 +13,18 @@ const {
   toggling, roleOpen, roleSaving,
   pickAvatar, save, setActive, saveRole,
 } = useAdminUserEditPage(userId)
+
+const authStore = useAuthStore()
+// Sign-in off asks first; back on applies at once.
+const confirmDeactivate = ref(false)
+function onSetActive(active: boolean) {
+  if (active) setActive(true)
+  else confirmDeactivate.value = true
+}
+async function deactivate() {
+  await setActive(false)
+  confirmDeactivate.value = false
+}
 </script>
 
 <template>
@@ -38,7 +51,7 @@ const {
               <PagesDashboardUsersEditUserEditAccount v-model:form="form" :user="user" :errors="errors" />
             </ProfileSection>
             <ProfileSection title="Access" description="Changes here apply right away." class="flex-1">
-              <PagesDashboardUsersEditUserEditAccess :user="user" :toggling="toggling" @change-role="roleOpen = true" @set-active="setActive" />
+              <PagesDashboardUsersEditUserEditAccess :user="user" :toggling="toggling" :is-self="user.id === authStore.getUser?.id" @change-role="roleOpen = true" @set-active="onSetActive" />
             </ProfileSection>
           </div>
 
@@ -66,6 +79,10 @@ const {
     <PagesDashboardUsersChangeRoleDialog
       v-if="user" :open="roleOpen" :user="user" :saving="roleSaving"
       @update:open="roleOpen = $event" @save="saveRole"
+    />
+    <PagesDashboardUsersDeactivateUserDialog
+      v-if="user" :open="confirmDeactivate" :name="user.displayName || user.username" :saving="toggling"
+      @update:open="confirmDeactivate = $event" @confirm="deactivate"
     />
   </div>
 </template>

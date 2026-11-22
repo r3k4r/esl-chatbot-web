@@ -6,7 +6,7 @@ const props = defineProps<{ stats: VocabularyStats | null }>()
 const forecast = computed(() => [
   { label: 'New',     value: props.stats?.byMasteryLevel.new ?? 0, cls: 'text-emerald-500' },
   { label: 'Due',     value: props.stats?.dueToday ?? 0,           cls: 'text-brand-primary' },
-  { label: 'Learned', value: props.stats?.total ?? 0,              cls: 'text-text-heading' },
+  { label: 'Saved',   value: props.stats?.total ?? 0,              cls: 'text-text-heading' },
 ])
 
 const masteryRows = computed(() => {

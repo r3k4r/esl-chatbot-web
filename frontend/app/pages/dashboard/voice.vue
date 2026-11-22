@@ -4,7 +4,7 @@ import CallAllowance from '~/components/Pages/Dashboard/Voice/CallAllowance.vue'
 import CallLocked from '~/components/Pages/Dashboard/Voice/CallLocked.vue'
 import CallTranscript from '~/components/Pages/Dashboard/Voice/CallTranscript.vue'
 
-definePageMeta({ layout: 'dashboard', requiresAuth: true })
+definePageMeta({ layout: 'dashboard', requiresAuth: true, learnerOnly: true })
 
 const {
   usage, lock, pronunciationAvailable,

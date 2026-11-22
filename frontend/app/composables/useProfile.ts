@@ -42,6 +42,17 @@ export function useProfile() {
     return res
   }
 
+  /** POST /auth/change-password — 400 wrong current password, 409 Google-only account (no password yet). */
+  async function changePassword(input: { currentPassword: string; newPassword: string }) {
+    return await useHttp({
+      method: 'POST',
+      url: '/auth/change-password',
+      body: input,
+      requireAuth: true,
+      showToast: false,
+    })
+  }
+
   async function updateLearnerProfile(input: UpdateLearnerProfileInput) {
     const res = await useHttp<ApiResponse<MyLearnerProfile>>({
       method: 'PATCH',
@@ -102,6 +113,7 @@ export function useProfile() {
     fetchProfile,
     updateProfile,
     updateLearnerProfile,
+    changePassword,
     uploadAvatar,
     memberSince,
     planLabel,

@@ -10,6 +10,7 @@ definePageMeta({
 
 const authStore = useAuthStore()
 const router = useRouter()
+const { t } = useLocale()
 
 const formData = reactive<ForgotPasswordSchema>({
     email: '',
@@ -18,7 +19,7 @@ const formData = reactive<ForgotPasswordSchema>({
 const serverError = ref<string>('')
 // Too many reset requests: lock the button until the backend's Retry-After lifts.
 const cooldown = useCooldown()
-const submitLabel = computed(() => cooldown.active.value ? `Try again in ${cooldown.label.value}` : 'Send reset code')
+const submitLabel = computed(() => cooldown.active.value ? t('auth.common.tryAgainIn', { time: cooldown.label.value }) : t('auth.forgot.submit'))
 
 const handleSubmit = async () => {
     serverError.value = ''
@@ -26,30 +27,31 @@ const handleSubmit = async () => {
 
     if (response.success) {
         sessionStorage.setItem('resetEmail', formData.email)
-        toast.success('If that email is registered, a reset code has been sent.')
+        toast.success(t('auth.forgot.sent'))
         router.push('/verify-otp')
     } else {
         if (response.status === 429 && response.retryAfter) cooldown.start(response.retryAfter)
-        serverError.value = response.message || 'Something went wrong. Please try again.'
+        serverError.value = response.message || t('auth.forgot.failed')
     }
 }
 </script>
 
 <template>
     <LayoutsAuthFormLayout
-        title="Forgot password?"
-        subtitle="Enter your email and we'll send you a 6-digit code to reset your password."
-        footer-text="Remembered it?"
-        footer-link-text="Sign in"
+        :title="t('auth.forgot.title')"
+        :subtitle="t('auth.forgot.subtitle')"
+        :footer-text="t('auth.forgot.remembered')"
+        :footer-link-text="t('auth.common.signIn')"
         footer-link-to="/signin"
     >
-        <Form :schema="forgotPasswordSchema" :form-data="formData" @submit="handleSubmit" class="flex flex-col gap-5">
+        <!-- novalidate: our own (translated) message instead of the browser's email popup -->
+        <Form :schema="forgotPasswordSchema" :form-data="formData" @submit="handleSubmit" class="flex flex-col gap-5" novalidate>
             <template #default="{ errors }">
                 <FormInput
                     id="email"
                     type="email"
-                    label="Email"
-                    placeholder="you@example.com"
+                    :label="t('auth.fields.email')"
+                    :placeholder="t('auth.fields.emailPh')"
                     v-model="formData.email"
                     :error="errors.email"
                     required

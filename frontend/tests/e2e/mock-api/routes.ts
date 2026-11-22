@@ -73,6 +73,10 @@ export const routes: Record<string, Handler> = {
   'POST /auth/logout': () => ok(null, 'Logged out'),
   'POST /auth/google': () => fail(401, 'Google sign-in is not available in tests'),
   'POST /auth/accept-agreement': () => fail(400, 'Not needed in tests'),
+  'GET /auth/username-available': ({ query }) => ok({ available: !personaByUsername(query.get('username') ?? '') }),
+  'POST /auth/change-password': auth(({ body }) =>
+    body?.currentPassword === F.PASSWORD ? ok(null, 'Password changed') : fail(400, 'Current password is incorrect')),
+  'GET /public/stats': () => ok({ learners: 2140 }),
   'GET /auth/agreement': () => ok(F.agreement),
   'GET /auth/me': auth(({ persona }) => ok(F.USERS[persona!])),
 

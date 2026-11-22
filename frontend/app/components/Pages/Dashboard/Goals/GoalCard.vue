@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { calendarDays } from '~/lib/progress'
 import type { Goal, GoalStatus, GoalDifficulty } from '~/common/model/goal'
 
 const props = defineProps<{
@@ -48,8 +49,7 @@ const hasActions = computed(() => canEdit.value || canDelete.value || !isComplet
 
 const dueDateLabel = computed(() => {
   if (!props.goal.targetDate || isCompleted.value) return null
-  const diff = new Date(props.goal.targetDate).getTime() - Date.now()
-  const days = Math.round(diff / 86_400_000)
+  const days = calendarDays(new Date(), props.goal.targetDate)
   if (days < 0) return { text: `${Math.abs(days)}d overdue`, urgent: true }
   if (days === 0) return { text: 'Due today', urgent: true }
   if (days === 1) return { text: 'Due tomorrow', urgent: false }

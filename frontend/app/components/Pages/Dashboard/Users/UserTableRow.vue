@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { AdminUserItem } from '~/common/types/admin-types'
 
-defineProps<{ user: AdminUserItem; toggling?: boolean }>()
+defineProps<{ user: AdminUserItem; toggling?: boolean; isSelf?: boolean }>()
 
 const emit = defineEmits<{
   toggleStatus: [userId: string, isActive: boolean]
@@ -12,7 +12,7 @@ const emit = defineEmits<{
 
 const ROLE_LABEL: Record<string, string> = {
   STUDENT: 'Student',
-  TUTOR: 'Tutor',
+  TUTOR: 'Teacher',
   ADMIN: 'Admin',
 }
 
@@ -99,16 +99,18 @@ const STATUS_TEXT: Record<string, string> = {
     <!-- isActive switch — the real ban control -->
     <td class="px-4 py-3 hidden md-lg:table-cell">
       <div class="flex items-center gap-2">
+        <!-- Your own account can't be switched off (the API refuses it too) -->
         <UiSwitch
           :model-value="user.isActive"
-          :disabled="toggling"
+          :disabled="toggling || isSelf"
+          :title="isSelf ? 'You can\'t deactivate your own account' : undefined"
           @update:model-value="emit('toggleStatus', user.id, $event)"
         />
         <span
           class="text-[14px] font-poppins"
           :style="user.isActive ? 'color:var(--status-active-text)' : 'color:var(--status-expired-text)'"
         >
-          {{ user.isActive ? 'Active' : 'Banned' }}
+          {{ user.isActive ? 'Active' : 'Deactivated' }}
         </span>
       </div>
     </td>

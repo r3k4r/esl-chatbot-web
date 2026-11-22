@@ -18,7 +18,7 @@ const authStore = useAuthStore()
 
 const ROLES: { id: UserRole; label: string; icon: SvgBasedIconName; description: string }[] = [
   { id: 'STUDENT', label: 'Student', icon: 'Book1', description: 'Learner access — AI chat, voice lab, vocabulary and goals.' },
-  { id: 'TUTOR', label: 'Tutor', icon: 'Teacher', description: 'Creates classes, assigns tasks and reviews student progress.' },
+  { id: 'TUTOR', label: 'Teacher', icon: 'Teacher', description: 'Creates classes, assigns tasks and reviews student progress.' },
   { id: 'ADMIN', label: 'Admin', icon: 'Lock1', description: 'Full platform control — manages every user, class and subscription.' },
 ]
 

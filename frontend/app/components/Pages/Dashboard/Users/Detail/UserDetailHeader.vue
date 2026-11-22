@@ -4,7 +4,7 @@ import { PLAN_BADGE } from '~/common/data/plan-limits'
 import { toneStyle } from '~/lib/progress'
 
 // Who this account is, above every tab (same shape as the learner's own profile header).
-// Badges only for what an admin acts on: role, plan, and a problem (banned, email not verified).
+// Badges only for what an admin acts on: role, plan, and a problem (deactivated, email not verified).
 const props = defineProps<{ user: AdminUserItem }>()
 
 const ROLE_LABEL = { STUDENT: 'Student', TUTOR: 'Teacher', ADMIN: 'Admin' } as const
@@ -29,7 +29,7 @@ const joined = computed(() => new Date(props.user.createdAt).toLocaleDateString(
         </h1>
         <span class="rounded-md bg-surface-raised px-2 py-0.5 font-poppins text-[14px] font-medium text-text-heading">{{ ROLE_LABEL[user.role] }}</span>
         <span v-if="user.role === 'STUDENT'" :class="['rounded-md px-2 py-0.5 font-poppins text-[14px] font-medium', plan.class]">{{ plan.label }} plan</span>
-        <span v-if="!user.isActive" class="rounded-md px-2 py-0.5 font-poppins text-[14px] font-medium" :style="toneStyle('expired')">Banned</span>
+        <span v-if="!user.isActive" class="rounded-md px-2 py-0.5 font-poppins text-[14px] font-medium" :style="toneStyle('expired')">Deactivated</span>
         <span v-if="user.emailVerified === false" class="rounded-md px-2 py-0.5 font-poppins text-[14px] font-medium" :style="toneStyle('blocked')">Email not verified</span>
       </div>
       <AppText size="14" color="neutral-400" class-list="mt-0.5 break-words">

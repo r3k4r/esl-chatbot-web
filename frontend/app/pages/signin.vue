@@ -10,6 +10,7 @@ definePageMeta({
 
 const authStore = useAuthStore()
 const router = useRouter()
+const { t } = useLocale()
 
 const formData = reactive<SignInSchema>({
     username: '',
@@ -19,7 +20,7 @@ const formData = reactive<SignInSchema>({
 const serverError = ref<string>('')
 // Too many sign-in attempts: lock the button until the backend's Retry-After lifts.
 const cooldown = useCooldown()
-const submitLabel = computed(() => cooldown.active.value ? `Try again in ${cooldown.label.value}` : 'Sign in')
+const submitLabel = computed(() => cooldown.active.value ? t('auth.common.tryAgainIn', { time: cooldown.label.value }) : t('auth.common.signIn'))
 const reacceptOpen = ref(false)
 let reacceptCancelled = false
 
@@ -41,7 +42,7 @@ const handleSubmit = async () => {
 
     // 403 without needsAgreement: unverified email — send to verify step.
     if (response.status === 403 && /verify your email/i.test(response.message ?? '')) {
-        toast.info('Please verify your email to continue.')
+        toast.info(t('auth.signin.verifyFirst'))
         if (formData.username.includes('@')) {
             sessionStorage.setItem('pendingEmail', formData.username)
         }
@@ -50,7 +51,7 @@ const handleSubmit = async () => {
     }
 
     if (response.status === 429 && response.retryAfter) cooldown.start(response.retryAfter)
-    serverError.value = response.message || 'Invalid username or password'
+    serverError.value = response.message || t('auth.signin.invalid')
 }
 
 const handleReaccept = async () => {
@@ -68,30 +69,30 @@ const handleReaccept = async () => {
         return
     }
 
-    toast.error(response.message || 'Could not accept the Terms. Please try again.')
+    toast.error(response.message || t('auth.signin.termsFailed'))
 }
 
 const handleReacceptClose = () => {
     reacceptCancelled = true
     reacceptOpen.value = false
-    serverError.value = 'You must accept the updated Terms of Service to continue.'
+    serverError.value = t('auth.signin.termsRequired')
 }
 </script>
 
 <template>
     <LayoutsAuthFormLayout
-        title="Welcome back"
-        subtitle="Sign in to continue your English learning journey."
-        footer-text="Don't have an account?"
-        footer-link-text="Create one"
+        :title="t('auth.signin.title')"
+        :subtitle="t('auth.signin.subtitle')"
+        :footer-text="t('auth.signin.noAccount')"
+        :footer-link-text="t('auth.signin.createOne')"
         footer-link-to="/signup"
     >
-        <Form :schema="signInSchema" :form-data="formData" @submit="handleSubmit" class="flex flex-col gap-5">
+        <Form :schema="signInSchema" :form-data="formData" @submit="handleSubmit" class="flex flex-col gap-5" novalidate>
             <template #default="{ errors }">
                 <FormInput
                     id="username"
-                    label="Username"
-                    placeholder="Enter your username"
+                    :label="t('auth.fields.username')"
+                    :placeholder="t('auth.fields.usernamePh')"
                     v-model="formData.username"
                     :error="errors.username"
                     required
@@ -100,8 +101,8 @@ const handleReacceptClose = () => {
                 <FormInput
                     id="password"
                     type="password"
-                    label="Password"
-                    placeholder="Enter your password"
+                    :label="t('auth.fields.password')"
+                    :placeholder="t('auth.fields.passwordPh')"
                     v-model="formData.password"
                     :error="errors.password"
                     required
@@ -109,7 +110,7 @@ const handleReacceptClose = () => {
 
                 <div class="flex justify-end -mt-1">
                     <NuxtLink to="/forgot-password" class="text-sm font-medium text-brand-ink hover:text-brand-primary transition-colors">
-                        Forgot password?
+                        {{ t('auth.signin.forgot') }}
                     </NuxtLink>
                 </div>
 
@@ -131,7 +132,7 @@ const handleReacceptClose = () => {
         </Form>
 
         <template #alt>
-            <FormGoogleButton label="Continue with Google" />
+            <FormGoogleButton :label="t('auth.signin.google')" />
         </template>
     </LayoutsAuthFormLayout>
 

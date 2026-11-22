@@ -37,6 +37,9 @@ const classCategory = ref(props.initial?.classCategory ?? '')
 const intervalSeconds = ref<number | null>(props.initial?.intervalSeconds ?? null)
 const classStatus = ref<'ACTIVE' | 'INACTIVE'>(props.initial?.classStatus ?? 'ACTIVE')
 const classNameError = ref('')
+const classCategoryError = ref('')
+// Same limits as the API (POST/PATCH /classes) — caught here so the user sees a plain message.
+const NAME_MAX = 100
 
 // Keep fields in sync if `initial` arrives after mount (edit page loads async)
 watch(() => props.initial, (val) => {
@@ -62,10 +65,11 @@ const INTERVAL_OPTIONS: { label: string; description: string; value: number | nu
 
 function handleSubmit() {
   classNameError.value = ''
-  if (!className.value.trim()) {
-    classNameError.value = 'Class name is required.'
-    return
-  }
+  classCategoryError.value = ''
+  if (!className.value.trim()) classNameError.value = 'Class name is required.'
+  else if (className.value.trim().length > NAME_MAX) classNameError.value = `Class name can be at most ${NAME_MAX} characters.`
+  if (classCategory.value.trim().length > NAME_MAX) classCategoryError.value = `Category can be at most ${NAME_MAX} characters.`
+  if (classNameError.value || classCategoryError.value) return
   const payload: ClassFormPayload = {
     className: className.value.trim(),
     classCategory: classCategory.value.trim() || null,
@@ -85,7 +89,8 @@ function handleSubmit() {
         placeholder="e.g. Intermediate B2 — Morning Group" :error="classNameError"
         @update:model-value="classNameError = ''" />
       <FormInput id="class-category" v-model="classCategory" label="Category"
-        placeholder="e.g. Grammar, Speaking, IELTS Prep… (optional)" />
+        placeholder="e.g. Grammar, Speaking, IELTS Prep… (optional)" :error="classCategoryError"
+        @update:model-value="classCategoryError = ''" />
     </div>
 
     <!-- Status — edit only -->

@@ -50,7 +50,7 @@
           </AppText>
 
           <div class="mt-9 flex flex-col sm:flex-row items-center gap-3 justify-center lg:justify-start">
-            <AppButton :to="signedIn ? '/dashboard' : '/signin'" variant="brand" size="52" radius="12"
+            <AppButton :to="signedIn ? '/dashboard' : '/signup'" variant="brand" size="52" radius="12"
               class-list="text-[14px] gap-2 px-5 w-full sm:w-auto">
               <span>{{ signedIn ? t('nav.goToDashboard') : t('hero.ctaPrimary') }}</span>
               <Icon icon="lucide:arrow-right" width="14" class="rtl:rotate-180" />
@@ -78,7 +78,7 @@
 
       <div class="mt-24 sm:mt-28">
         <AppText size="11" color="white" class-list="text-center uppercase tracking-[0.2em] text-neutral-50/35 mb-6">
-          {{ t('hero.trustedBy') }}
+          {{ learners ? t('hero.trustedBy', { count: learners }) : t('hero.trustedByNoCount') }}
         </AppText>
         <div class="relative overflow-hidden mask-[linear-gradient(90deg,transparent,black_10%,black_90%,transparent)]">
           <NuxtMarquee :auto-fill="true" :pause-on-hover="false" :speed="36" class="py-1">
@@ -99,6 +99,7 @@
 import { Icon } from '@iconify/vue'
 
 const { t, ta } = useLocale()
+const { learners } = usePublicStats()
 const signedIn = useSignedIn() // signed-in visitors go to their dashboard
 const demoOpen = ref(false) // the Watch a demo player (DemoVideoDialog)
 

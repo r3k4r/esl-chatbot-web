@@ -34,7 +34,7 @@ function submit() {
         <div class="flex items-start justify-between gap-3">
           <div class="space-y-1">
             <UiDialogTitle>Join a class</UiDialogTitle>
-            <UiDialogDescription>Enter the code your tutor shared with you.</UiDialogDescription>
+            <UiDialogDescription>Enter the code your teacher shared with you.</UiDialogDescription>
           </div>
         </div>
       </UiDialogHeader>

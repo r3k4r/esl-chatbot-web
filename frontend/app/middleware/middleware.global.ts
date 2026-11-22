@@ -29,8 +29,14 @@ export default defineNuxtRouteMiddleware(async (to) => {
         }
 
         // Admin-only routes: non-admins get bounced to the dashboard.
-        const { isAdmin } = useRole();
+        const { isAdmin, isStaff } = useRole();
         if (requiresAdmin && !isAdmin.value) {
+            return navigateTo('/dashboard');
+        }
+
+        // Learner-only routes (AI chat, Voice Lab, vocabulary, goals, billing, lessons):
+        // teachers and admins aren't learners — the API refuses their AI use too.
+        if (to.meta.learnerOnly && isStaff.value) {
             return navigateTo('/dashboard');
         }
     });

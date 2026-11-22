@@ -84,7 +84,7 @@ function confirmDelete() {
           <UiSelectContent>
             <UiSelectItem value="ALL">All sources</UiSelectItem>
             <UiSelectItem value="SESSION">From chat AI</UiSelectItem>
-            <UiSelectItem value="ASSIGNED">From my tutor</UiSelectItem>
+            <UiSelectItem value="ASSIGNED">From my teacher</UiSelectItem>
           </UiSelectContent>
         </UiSelect>
       </div>

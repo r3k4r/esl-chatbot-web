@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { UserSubscriptionDetail } from '~/common/types/subscription-types'
 
-definePageMeta({ layout: 'dashboard', requiresAuth: true })
+definePageMeta({ layout: 'dashboard', requiresAuth: true, learnerOnly: true })
 
 const { getMySubscription } = useSubscription()
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-definePageMeta({ layout: 'dashboard', requiresAuth: true })
+definePageMeta({ layout: 'dashboard', requiresAuth: true, learnerOnly: true })
 
 const {
   loading,

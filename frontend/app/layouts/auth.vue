@@ -3,6 +3,12 @@ import { ArrowLeft } from 'lucide-vue-next'
 
 const router = useRouter()
 const route = useRoute()
+// Auth pages follow the chosen language and its direction, like the public site.
+const { t, dir, htmlLang } = useLocale()
+const { learners } = usePublicStats()
+const year = new Date().getFullYear()
+
+useHead({ htmlAttrs: { lang: htmlLang, dir: dir as ComputedRef<'ltr' | 'rtl'> } })
 
 // if we ion the sign in push '/' if we in sign up push back
 const goBack = () => {
@@ -17,26 +23,30 @@ const goBack = () => {
 </script>
 
 <template>
-    <div class="min-h-dvh relative flex bg-neutral-50 overflow-hidden">
+    <div :dir="dir" :lang="htmlLang" class="min-h-dvh relative flex bg-neutral-50 overflow-hidden">
         <!-- Back button (floats over the form side) -->
         <button
             type="button"
-            aria-label="Go back"
+            :aria-label="t('auth.back')"
             @click="goBack"
-            class="absolute top-6 left-6 z-30 inline-flex items-center gap-2 rounded-full bg-white/80 backdrop-blur-sm border border-black/10 px-4 h-10 text-sm font-medium text-brand-ink shadow-soft hover:bg-white hover:border-black/20 transition-all"
+            class="absolute top-6 start-6 z-30 inline-flex items-center gap-2 rounded-full bg-white/80 backdrop-blur-sm border border-black/10 px-4 h-10 text-sm font-medium text-brand-ink shadow-soft hover:bg-white hover:border-black/20 transition-all"
         >
-            <ArrowLeft class="w-4 h-4" />
-            <span>Back</span>
+            <ArrowLeft class="w-4 h-4 rtl:rotate-180" />
+            <span>{{ t('auth.back') }}</span>
         </button>
 
         <!-- Form side -->
         <main class="relative w-full lg:w-1/2 flex items-center justify-center px-6 sm:px-10 py-24 lg:py-16">
+            <!-- Language, in the top corner of the form side (mirrors in Kurdish) -->
+            <div class="absolute top-6 end-6 z-30">
+                <LayoutsNavbarLanguageSwitcher tone="light" />
+            </div>
             <!-- Subtle background orbs for the form side -->
             <div class="absolute -top-24 -left-24 size-72 rounded-full bg-primary-200/30 blur-3xl pointer-events-none" />
             <div class="absolute -bottom-32 -right-20 size-80 rounded-full bg-ternary-200/20 blur-3xl pointer-events-none" />
 
             <div class="relative w-full max-w-md">
-                <NuxtLink to="/" class="flex items-center gap-2 mb-10" aria-label="Tutelage home">
+                <NuxtLink to="/" class="flex items-center gap-2 mb-10" aria-label="Tutelage home" dir="ltr">
                     <AppImage src="/only-logo-black-border-yellow-bg.svg" alt="Tutelage AI Logo" class="size-9" />
                     <AppText tag="span" size="18" weight="semibold" color="brand-ink" class-list="tracking-tight">
                         Tutelage <span class="text-brand-primary">AI</span>
@@ -54,39 +64,40 @@ const goBack = () => {
             <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 size-120 rounded-full pointer-events-none [box-shadow:inset_0_0_0_1px_rgba(255,255,255,0.04),0_0_120px_0_rgba(245,158,11,0.10)] [background:conic-gradient(from_210deg,transparent_0deg,rgba(245,158,11,0.08)_60deg,rgba(254,192,22,0.18)_90deg,rgba(245,158,11,0.08)_120deg,transparent_180deg)] [mask:radial-gradient(closest-side,transparent_58%,black_60%,black_62%,transparent_64%)]" />
 
             <div class="relative z-10 flex flex-col justify-between p-12 xl:p-16 w-full">
-                <div class="inline-flex items-center gap-2 rounded-full bg-neutral-50/4 border border-neutral-50/10 pl-2 pr-3.5 py-1 w-fit">
+                <div class="inline-flex items-center gap-2 rounded-full bg-neutral-50/4 border border-neutral-50/10 ps-2 pe-3.5 py-1 w-fit">
                     <div class="inline-flex items-center gap-1 bg-brand-primary/15 text-brand-primary px-2 py-0.5 rounded-full text-[10.5px] font-semibold tracking-wider uppercase">
                         AI
                     </div>
-                    <AppText size="12" color="white" class-list="text-neutral-50/80">Smarter English, one conversation at a time</AppText>
+                    <AppText size="12" color="white" class-list="text-neutral-50/80">{{ t('auth.panel.badge') }}</AppText>
                 </div>
 
                 <div class="flex flex-col gap-6 max-w-lg">
                     <AppText size="40" weight="semibold" color="white" class-list="tracking-[-0.02em] leading-[1.05]">
-                        Learn English the way
-                        <span class="text-brand-primary">you actually speak it.</span>
+                        {{ t('auth.panel.titleLead') }}
+                        <span class="text-brand-primary">{{ t('auth.panel.titleAccent') }}</span>
                     </AppText>
                     <AppText size="16" color="white-70" class-list="leading-relaxed">
-                        AI-powered conversations, voice practice, and intelligent progress tracking — all in one platform built for serious learners.
+                        {{ t('hero.subtitle') }}
                     </AppText>
 
                     <div class="grid grid-cols-3 gap-4 mt-4">
-                        <div class="rounded-2xl bg-neutral-50/4 border border-neutral-50/10 p-4">
-                            <AppText size="24" weight="semibold" color="white">10k+</AppText>
-                            <AppText size="12" color="white-60">Active learners</AppText>
+                        <!-- Live learner count (ISS-005); hidden until the API answers -->
+                        <div v-if="learners" class="rounded-2xl bg-neutral-50/4 border border-neutral-50/10 p-4">
+                            <AppText size="24" weight="semibold" color="white">{{ learners }}</AppText>
+                            <AppText size="12" color="white-60">{{ t('auth.panel.learners') }}</AppText>
                         </div>
                         <div class="rounded-2xl bg-neutral-50/4 border border-neutral-50/10 p-4">
                             <AppText size="24" weight="semibold" color="white">98%</AppText>
-                            <AppText size="12" color="white-60">Satisfaction</AppText>
+                            <AppText size="12" color="white-60">{{ t('auth.panel.satisfaction') }}</AppText>
                         </div>
                         <div class="rounded-2xl bg-neutral-50/4 border border-neutral-50/10 p-4">
                             <AppText size="24" weight="semibold" color="white">24/7</AppText>
-                            <AppText size="12" color="white-60">AI tutor</AppText>
+                            <AppText size="12" color="white-60">{{ t('auth.panel.aiTutor') }}</AppText>
                         </div>
                     </div>
                 </div>
 
-                <AppText size="12" color="white-50">© {{ new Date().getFullYear() }} Tutelage AI. All rights reserved.</AppText>
+                <AppText size="12" color="white-50">{{ t('auth.panel.rights', { year }) }}</AppText>
             </div>
         </aside>
     </div>

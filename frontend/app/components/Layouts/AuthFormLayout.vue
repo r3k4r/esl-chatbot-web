@@ -27,7 +27,7 @@ withDefaults(defineProps<{
             <div class="flex items-center gap-4">
                 <span class="h-px flex-1 bg-black/10" />
                 <AppText size="12" color="brand-sub" class-list="uppercase tracking-wider">
-                    <slot name="divider">or</slot>
+                    <slot name="divider">{{ $t('auth.or') }}</slot>
                 </AppText>
                 <span class="h-px flex-1 bg-black/10" />
             </div>

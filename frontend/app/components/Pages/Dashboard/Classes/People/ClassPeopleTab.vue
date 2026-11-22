@@ -98,7 +98,7 @@ const rowProps = (m: ClassMember) => ({
         </AppText>
         <!-- Column labels line up with StudentProgressCells -->
         <div v-if="canSeeProgress && students.length"
-          class="hidden flex-1 grid-cols-[3.5rem_minmax(0,1fr)_minmax(0,1fr)_8rem] gap-4 pe-10 md:grid">
+          class="hidden flex-1 grid-cols-[3.5rem_minmax(0,1fr)_minmax(0,1fr)_8rem] gap-4 pe-10 md-lg:grid">
           <AppText v-for="h in ['Level', 'Tasks', 'AI practice', 'Skills']" :key="h" size="13" color="neutral-400">{{ h }}</AppText>
         </div>
       </div>
@@ -111,7 +111,7 @@ const rowProps = (m: ClassMember) => ({
         @change-role="(role) => setRole(m, role)" @remove="askRemove(m.user.id)">
         <template v-if="canSeeProgress">
           <PagesDashboardClassesPeopleStudentProgressCells v-if="progress.get(m.user.id)" :s="progress.get(m.user.id)!" />
-          <UiSkeleton v-else-if="loadingProgress" class="hidden h-5 flex-1 md:block" />
+          <UiSkeleton v-else-if="loadingProgress" class="hidden h-5 flex-1 md-lg:block" />
         </template>
       </PagesDashboardClassesClassMemberRow>
     </section>

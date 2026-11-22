@@ -9,6 +9,7 @@ definePageMeta({
 
 const authStore = useAuthStore()
 const router = useRouter()
+const { t } = useLocale()
 
 const email = ref('')
 const otp = ref('')
@@ -51,12 +52,12 @@ const handleSubmit = async () => {
     otpError.value = ''
 
     if (!isValidEmail.value) {
-        serverError.value = 'Please enter the email address you registered with.'
+        serverError.value = t('auth.verifyEmail.needEmail')
         return
     }
 
     if (!isOtpComplete.value) {
-        otpError.value = 'Please enter the full 6-digit code.'
+        otpError.value = t('auth.verifyEmail.needCode')
         return
     }
 
@@ -68,7 +69,7 @@ const handleSubmit = async () => {
         isDone.value = true
         redirectTimer = setTimeout(() => router.push('/dashboard'), 2500)
     } else {
-        otpError.value = response.message || 'Invalid or expired code. Please try again.'
+        otpError.value = response.message || t('auth.verifyEmail.invalidCode')
     }
 }
 
@@ -90,15 +91,15 @@ const startCooldown = () => {
 const handleResend = async () => {
     serverError.value = ''
     if (!isValidEmail.value) {
-        serverError.value = 'Enter your email first, then request a new code.'
+        serverError.value = t('auth.verifyEmail.emailFirst')
         return
     }
     const response = await authStore.resendVerification(email.value)
     if (response.success) {
-        toast.success('A new verification code has been sent.')
+        toast.success(t('auth.verifyEmail.resent'))
         startCooldown()
     } else {
-        serverError.value = response.message || 'Could not resend the code. Please try again.'
+        serverError.value = response.message || t('auth.verifyEmail.resendFailed')
     }
 }
 </script>
@@ -111,11 +112,11 @@ const handleResend = async () => {
         </div>
         <div class="w-full flex flex-col items-center justify-center gap-14">
             <div class="flex flex-col items-center justify-start gap-2">
-                <AppText tag="div" color="black" weight="semibold" size="32">All Done</AppText>
-                <AppText tag="div" color="black" weight="medium">Email verified — your free plan is now active.</AppText>
+                <AppText tag="div" color="black" weight="semibold" size="32">{{ t('auth.common.allDone') }}</AppText>
+                <AppText tag="div" color="black" weight="medium">{{ t('auth.verifyEmail.done') }}</AppText>
             </div>
             <AppText tag="div" size="13" color="brand-sub" class-list="text-center">
-                Taking you to your dashboard…
+                {{ t('auth.verifyEmail.redirecting') }}
             </AppText>
         </div>
     </div>
@@ -123,12 +124,10 @@ const handleResend = async () => {
     <!-- Verification form -->
     <LayoutsAuthFormLayout
         v-else
-        title="Verify your email"
-        :subtitle="needsEmail
-            ? 'Enter your email and the 6-digit code we sent you to activate your account.'
-            : `We sent a 6-digit code to ${maskedEmail}. Enter it below to activate your account.`"
-        footer-text="Already verified?"
-        footer-link-text="Sign in"
+        :title="t('auth.verifyEmail.title')"
+        :subtitle="needsEmail ? t('auth.verifyEmail.subtitleNoEmail') : t('auth.verifyEmail.subtitle', { email: maskedEmail })"
+        :footer-text="t('auth.verifyEmail.alreadyVerified')"
+        :footer-link-text="t('auth.common.signIn')"
         footer-link-to="/signin"
     >
         <div class="flex flex-col gap-5">
@@ -136,8 +135,8 @@ const handleResend = async () => {
                 v-if="needsEmail"
                 id="email"
                 type="email"
-                label="Email"
-                placeholder="you@example.com"
+                :label="t('auth.fields.email')"
+                :placeholder="t('auth.fields.emailPh')"
                 v-model="email"
                 required
             />
@@ -154,23 +153,23 @@ const handleResend = async () => {
                 :loading="authStore.isLoading"
                 :disabled="!isOtpComplete || !isValidEmail"
                 class-list="w-full mt-2"
-                aria-label="Verify email"
+                :aria-label="t('auth.verifyEmail.submit')"
                 @click="handleSubmit"
             >
-                Verify email
+                {{ t('auth.verifyEmail.submit') }}
             </AppButton>
 
             <p class="text-sm text-brand-sub text-center">
-                Didn't get a code?
+                {{ t('auth.common.didntGetCode') }}
                 <button
                     type="button"
                     @click="handleResend"
                     :disabled="resendCooldown > 0"
                     class="font-semibold transition-colors cursor-pointer"
                     :class="resendCooldown > 0 ? 'text-brand-sub cursor-not-allowed' : 'text-brand-ink hover:text-brand-primary'"
-                    aria-label="Resend verification code"
+                    :aria-label="t('auth.common.resend')"
                 >
-                    {{ resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend' }}
+                    {{ resendCooldown > 0 ? t('auth.common.resendIn', { seconds: resendCooldown }) : t('auth.common.resend') }}
                 </button>
             </p>
         </div>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { calendarDays } from '~/lib/progress'
 import type { ClassItem } from '~/common/types/class-types'
 
 const props = defineProps<{
@@ -21,9 +22,9 @@ const expiryLabel = computed(() => {
   if (!props.cls.classCodeExpiresAt) return 'No expiry'
   if (isExpired.value) return 'Code expired'
   const diff = Math.floor((new Date(props.cls.classCodeExpiresAt).getTime() - Date.now()) / 1000 / 60)
-  if (diff < 60) return `Expires in ${diff}m`
-  if (diff < 1440) return `Expires in ${Math.floor(diff / 60)}h`
-  return `Expires in ${Math.floor(diff / 1440)}d`
+  if (diff < 60) return `Code changes in ${diff}m`
+  if (diff < 1440) return `Code changes in ${Math.floor(diff / 60)}h`
+  return `Code changes in ${calendarDays(new Date(), props.cls.classCodeExpiresAt)}d`
 })
 
 // Archived classes are read-only — hide the code actions and show a badge instead.
@@ -37,7 +38,7 @@ const roleStyle = computed(() => {
 })
 
 const roleLabel = computed(() => {
-  if (props.cls.myRole === 'TUTOR') return 'Tutor'
+  if (props.cls.myRole === 'TUTOR') return 'Teacher'
   if (props.cls.myRole === 'ADMIN') return 'Admin'
   return 'Student'
 })
@@ -96,7 +97,8 @@ const codeStatusIcon = computed(() => {
           {{ new Date(cls.joinedAt).toLocaleDateString([], { month: 'short', day: 'numeric' }) }}
         </AppText>
       </div>
-      <div class="flex items-center gap-1.5 ml-auto">
+      <!-- The join code's lifetime only matters to whoever shares it -->
+      <div v-if="isTutorOrAdmin" class="flex items-center gap-1.5 ml-auto">
         <AppIconsax :name="codeStatusIcon" :size="12" :style="codeStatusStyle" />
         <AppText size="12" color="neutral-400" :style="codeStatusStyle">
           {{ cls.classCodeBlocked ? 'Blocked' : expiryLabel }}

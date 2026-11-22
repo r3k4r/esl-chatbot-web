@@ -1,3 +1,9 @@
+<!--
+  TODO(ISS-006): the Free card says "20 msgs/session" (i18n pricing.plans…features) but the
+  AI Conversation FAQ says "20 messages a day" (featurePages…faq). The real FREE rule is
+  20 messages per session AND a 20-message daily cap (see PLAN_LIMITS in common/data/plan-limits.ts).
+  Pick one wording for both places in en.json + ku.json.
+-->
 <template>
   <section id="pricing" class="bg-brand-muted/60 py-28 sm:py-36 border-y border-neutral-200/70">
     <div class="container-lg layout-padding-lg">

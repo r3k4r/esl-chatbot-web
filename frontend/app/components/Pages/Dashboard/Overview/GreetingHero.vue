@@ -26,7 +26,7 @@ const goalLine = computed(() => {
 const quick = computed(() => ([
   { text: 'Start a chat', to: '/dashboard/chat', icon: 'Messages' },
   { text: 'Practise speaking', to: '/dashboard/voice', icon: 'Microphone2' },
-  ...(props.vocabDue ? [{ text: `Review ${props.vocabDue} words`, to: '/dashboard/vocab', icon: 'Book1' }] : []),
+  ...(props.vocabDue ? [{ text: `Review ${props.vocabDue} ${props.vocabDue === 1 ? 'word' : 'words'}`, to: '/dashboard/vocab', icon: 'Book1' }] : []),
 ] as { text: string; to: string; icon: SvgBasedIconName }[]).filter(a => a.to !== props.next.to).slice(0, 2))
 
 const R = 48

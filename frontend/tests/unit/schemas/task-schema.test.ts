@@ -10,7 +10,7 @@ describe('taskFormSchema', () => {
   it('trims before checking required fields', () => {
     const r = taskFormSchema.safeParse({ title: '   ', description: '   ' })
     expect(r.success).toBe(false)
-    expect(r.error?.issues.map((i) => i.message)).toEqual(['Title is required', 'Description is required'])
+    expect(r.error?.issues.map((i) => i.message)).toEqual(['Title is required', 'Instructions are required'])
   })
 
   it('caps title at 200 and description at 5000 characters', () => {

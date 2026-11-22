@@ -135,13 +135,25 @@ function onKeydown(e: KeyboardEvent) {
   if (e.key === 'Escape' && open.value) closePalette()
 }
 
+// Ctrl on Windows/Linux, ⌘ on Apple devices. Read after mount (the server can't know the OS).
+const shortcut = ref('Ctrl K')
+onMounted(() => {
+  if (/Mac|iPhone|iPad|iPod/i.test(navigator.platform || navigator.userAgent)) shortcut.value = '⌘K'
+})
+
 onMounted(() => window.addEventListener('keydown', onKeydown))
 onUnmounted(() => window.removeEventListener('keydown', onKeydown))
 </script>
 
 <template>
-  <!-- Trigger (search bar, md+) -->
-  <div class="hidden md:flex items-center gap-2 flex-1 max-w-md mx-8" data-guide="search">
+  <!-- Trigger: full search bar from 1024px; below that an icon that opens the same palette
+       (a squeezed bar wrapped its placeholder over several lines on tablets). -->
+  <AppButton
+    variant="ghost" size="36" radius="8" aspect="square" icon="SearchNormal"
+    :icon-config="{ color: 'var(--color-text-body)', size: 20 }"
+    class-list="ml-auto md-lg:hidden shrink-0 hover:bg-surface-raised dark:hover:bg-surface-raised"
+    aria-label="Search" @click="openPalette" />
+  <div class="hidden md-lg:flex items-center gap-2 flex-1 max-w-md mx-8" data-guide="search">
     <button
       class="w-full flex items-center gap-2 px-3 py-1.5 rounded-lg text-[13px] bg-zinc-100 dark:bg-white/4 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-200/60 dark:hover:bg-white/7 transition"
       @click="openPalette">
@@ -149,7 +161,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
       <span>Search users, classes, words…</span>
       <kbd
         class="ml-auto font-mono text-[11px] px-1.5 py-0.5 rounded bg-white dark:bg-black/30 border border-black/5 dark:border-white/10">
-        ⌘K
+        {{ shortcut }}
       </kbd>
     </button>
   </div>
@@ -230,7 +242,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
           <div class="px-4 py-2.5 border-t border-black/6 dark:border-white/6 flex items-center gap-3 text-[11px] text-zinc-400">
             <span><kbd class="font-mono px-1 py-0.5 rounded bg-zinc-100 dark:bg-white/6 border border-black/5 dark:border-white/10">↵</kbd> select</span>
             <span><kbd class="font-mono px-1 py-0.5 rounded bg-zinc-100 dark:bg-white/6 border border-black/5 dark:border-white/10">Esc</kbd> close</span>
-            <span class="ml-auto"><kbd class="font-mono px-1 py-0.5 rounded bg-zinc-100 dark:bg-white/6 border border-black/5 dark:border-white/10">⌘K</kbd> toggle</span>
+            <span class="ml-auto"><kbd class="font-mono px-1 py-0.5 rounded bg-zinc-100 dark:bg-white/6 border border-black/5 dark:border-white/10">{{ shortcut }}</kbd> toggle</span>
           </div>
         </div>
       </div>

@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import type { FeaturePage } from '~/common/types/feature-page-types'
 
+// TODO(ISS-006): the AI Conversation FAQ says Free is "20 messages a day" while the pricing card
+// says "20 msgs/session" — align both texts in i18n/locales/{en,ku}.json (see Home/Pricing.vue).
+
 // Questions set as reading text: each question runs straight into its answer, in two columns,
 // so everything is answered at a glance. No toggles.
 const props = defineProps<{ feature: FeaturePage }>()

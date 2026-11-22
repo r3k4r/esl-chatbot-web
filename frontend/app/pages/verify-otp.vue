@@ -10,6 +10,7 @@ definePageMeta({
 
 const authStore = useAuthStore()
 const router = useRouter()
+const { t } = useLocale()
 
 const formData = reactive<VerifyOtpSchema>({
     email: '',
@@ -63,23 +64,23 @@ const handleSubmit = () => {
 const handleResend = async () => {
     const response = await authStore.forgotPassword({ email: formData.email })
     if (response.success) {
-        toast.success('A new code has been sent to your email.')
+        toast.success(t('auth.resetCode.resent'))
         startCooldown()
     } else {
-        serverError.value = response.message || 'Could not resend the code.'
+        serverError.value = response.message || t('auth.resetCode.resendFailed')
     }
 }
 </script>
 
 <template>
     <LayoutsAuthFormLayout
-        title="Verify your email"
-        :subtitle="`We sent a 6-digit code to ${maskedEmail}. Enter it below to continue.`"
-        footer-text="Wrong email?"
-        footer-link-text="Start over"
+        :title="t('auth.resetCode.title')"
+        :subtitle="t('auth.resetCode.subtitle', { email: maskedEmail })"
+        :footer-text="t('auth.resetCode.wrongEmail')"
+        :footer-link-text="t('auth.resetCode.startOver')"
         footer-link-to="/forgot-password"
     >
-        <Form :schema="verifyOtpSchema" :form-data="formData" @submit="handleSubmit" class="flex flex-col gap-5">
+        <Form :schema="verifyOtpSchema" :form-data="formData" @submit="handleSubmit" class="flex flex-col gap-5" novalidate>
             <template #default="{ errors }">
                 <FormVerificationInput v-model="formData.otp" :error="errors.otp || otpError" />
 
@@ -92,22 +93,22 @@ const handleResend = async () => {
                     radius="full"
                     :loading="authStore.isLoading"
                     class-list="w-full mt-2"
-                    aria-label="Verify code"
+                    :aria-label="t('auth.resetCode.submit')"
                 >
-                    Verify code
+                    {{ t('auth.resetCode.submit') }}
                 </AppButton>
 
                 <p class="text-sm text-brand-sub text-center">
-                    Didn't get a code?
+                    {{ t('auth.common.didntGetCode') }}
                     <button
                         type="button"
                         @click="handleResend"
                         :disabled="resendCooldown > 0"
                         class="font-semibold transition-colors cursor-pointer"
                         :class="resendCooldown > 0 ? 'text-brand-sub cursor-not-allowed' : 'text-brand-ink hover:text-brand-primary'"
-                        aria-label="Resend code"
+                        :aria-label="t('auth.common.resend')"
                     >
-                        {{ resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend' }}
+                        {{ resendCooldown > 0 ? t('auth.common.resendIn', { seconds: resendCooldown }) : t('auth.common.resend') }}
                     </button>
                 </p>
             </template>

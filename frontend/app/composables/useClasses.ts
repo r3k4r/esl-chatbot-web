@@ -115,6 +115,14 @@ export function useClasses() {
     })
   }
 
+  async function deleteClass(id: string) {
+    return await useHttp({
+      method: 'DELETE',
+      url: `/classes/${id}`,
+      requireAuth: true,
+    })
+  }
+
   async function getClassStudents(classId: string) {
     return await useHttp<SingleResponse<ClassStudentSummary[]>>({
       method: 'GET',
@@ -174,6 +182,7 @@ export function useClasses() {
     updateCodeSettings,
     toggleBlock,
     archiveClass,
+    deleteClass,
     getClassStudents,
     getClassStudentDetail,
     getClassAnalytics,

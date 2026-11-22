@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { KeyFigure } from '~/common/types/dashboard-types'
 import { newestRows, quietRows } from '~/lib/admin-people'
+import { plural } from '~/lib/progress'
 
 // Admin home, one screen: this week against the week before, the last 30 days as three charts,
 // then what needs a look (follow-ups, newest accounts, who went quiet). Classes, skills and
@@ -59,7 +60,7 @@ const charts = computed(() => {
       <header>
         <AppText size="24" weight="semibold" font-family="poppins" class-list="tracking-tight">This week</AppText>
         <AppText size="14" color="neutral-400" class-list="mt-0.5">
-          {{ today }}<template v-if="data"> · {{ data.users.total.toLocaleString() }} accounts ({{ data.users.students }} students, {{ data.users.tutors }} teachers)</template>
+          {{ today }}<template v-if="data"> · {{ data.users.total.toLocaleString() }} accounts ({{ plural(data.users.students, 'student') }}, {{ plural(data.users.tutors, 'teacher') }})</template>
         </AppText>
       </header>
 

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { calendarDays } from '~/lib/progress'
 import type { TaskItem } from '~/common/types/task-types'
 
 const props = defineProps<{
@@ -20,11 +21,11 @@ function fmtDeadline(iso: string): { label: string; overdue: boolean } {
     const over = -diff
     if (over < 60) return { label: 'Just overdue', overdue: true }
     if (over < 1440) return { label: `Overdue by ${Math.floor(over / 60)}h`, overdue: true }
-    return { label: `Overdue by ${Math.floor(over / 1440)}d`, overdue: true }
+    return { label: `Overdue by ${calendarDays(iso)}d`, overdue: true }
   }
   if (diff < 60) return { label: 'Due soon', overdue: false }
   if (diff < 1440) return { label: `Due in ${Math.floor(diff / 60)}h`, overdue: false }
-  const days = Math.floor(diff / 1440)
+  const days = calendarDays(new Date(), iso)
   if (days === 0) return { label: 'Due today', overdue: false }
   return { label: `Due in ${days}d`, overdue: false }
 }

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-definePageMeta({ layout: 'dashboard', requiresAuth: true, collapseSidebar: true })
+definePageMeta({ layout: 'dashboard', requiresAuth: true, learnerOnly: true, collapseSidebar: true })
 
 const {
   threadRef,

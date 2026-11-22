@@ -13,10 +13,21 @@ export function skillBand(score: number | null | undefined): { label: string; to
   return { label: 'Needs work', tone: 'expired' }
 }
 
+/**
+ * Whole calendar days from `from` to `to` in the viewer's local time — counted the way
+ * people do (Thu → Sat is 2 days, whatever the hours). Every "x days ago / in x days"
+ * label uses this so two screens never disagree by one.
+ */
+export function calendarDays(from: Date | string, to: Date | string = new Date()): number {
+  const a = new Date(from); a.setHours(0, 0, 0, 0)
+  const b = new Date(to); b.setHours(0, 0, 0, 0)
+  return Math.round((b.getTime() - a.getTime()) / 86_400_000) // round: DST days are 23/25 h
+}
+
 /** "today", "yesterday", "3 days ago", "5 weeks ago" */
 export function daysAgo(iso: string | null | undefined): string {
   if (!iso) return 'never'
-  const days = Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000)
+  const days = calendarDays(iso)
   if (days <= 0) return 'today'
   if (days === 1) return 'yesterday'
   if (days < 14) return `${days} days ago`
@@ -38,6 +49,9 @@ export const taskStateLabel: Record<StudentTaskState, { label: string; tone: Ton
 }
 
 export const toneStyle = (tone: Tone) => `background:var(--status-${tone}-bg);color:var(--status-${tone}-text)`
+
+/** "1 teacher", "3 teachers" — never "1 teachers". */
+export const plural = (n: number, word: string, many = `${word}s`) => `${n.toLocaleString()} ${n === 1 ? word : many}`
 
 export function formatMinutes(mins: number): string {
   if (mins < 60) return `${mins} min`
