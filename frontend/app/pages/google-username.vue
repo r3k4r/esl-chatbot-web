@@ -81,8 +81,15 @@ const handleSubmit = async () => {
                     :icon="usernameStatus === 'available' && !errors.username ? 'TickCircle' : undefined"
                     icon-position="end"
                     :icon-config="{ color: '#16a34a', size: 20, type: 'bold' }"
+                    class-list="pe-12"
                     required
-                />
+                >
+                    <!-- Checking the name: same ring spinner as the search palette -->
+                    <template #prefix>
+                        <span v-if="usernameStatus === 'checking'" role="status" :aria-label="t('auth.signup.usernameChecking')"
+                            class="absolute end-4 top-1/2 -translate-y-1/2 size-5 rounded-full border-2 border-neutral-200 border-t-brand-primary animate-spin motion-reduce:animate-none" />
+                    </template>
+                </FormInput>
 
                 <div class="flex flex-col gap-1">
                     <div class="flex items-start gap-2.5">

@@ -79,8 +79,15 @@ const handleSubmit = async () => {
                         icon-position="end"
                         :icon-config="{ color: '#16a34a', size: 20, type: 'bold' }"
                         :aria-describedby="usernameStatus === 'available' ? 'username-ok' : undefined"
+                        class-list="pe-12"
                         required
-                    />
+                    >
+                        <!-- Checking the name: same ring spinner as the search palette -->
+                        <template #prefix>
+                            <span v-if="usernameStatus === 'checking'" role="status" :aria-label="t('auth.signup.usernameChecking')"
+                                class="absolute end-4 top-1/2 -translate-y-1/2 size-5 rounded-full border-2 border-neutral-200 border-t-brand-primary animate-spin motion-reduce:animate-none" />
+                        </template>
+                    </FormInput>
                 </div>
                 <span v-if="usernameStatus === 'available'" id="username-ok" class="sr-only">{{ t('auth.signup.usernameAvailable') }}</span>
 

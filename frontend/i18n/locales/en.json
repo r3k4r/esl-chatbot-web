@@ -695,7 +695,7 @@
     "fields": {
       "username": "Username",
       "usernamePh": "Enter your username",
-      "usernameExamplePh": "e.g. student_ali",
+      "usernameExamplePh": "e.g. ali_hassan",
       "password": "Password",
       "passwordPh": "Enter your password",
       "passwordNewPh": "At least 8 characters",
@@ -744,7 +744,8 @@
       "created": "Account created! Check your email for a verification code.",
       "failed": "Registration failed. Please try again.",
       "usernameAvailable": "Username is available",
-      "usernameTaken": "Username is already taken"
+      "usernameTaken": "Username is already taken",
+      "usernameChecking": "Checking the username…"
     },
     "forgot": {
       "title": "Forgot password?",
