@@ -34,7 +34,9 @@ const {
          depends on server-rendered markup matching. -->
     <ClientOnly>
     <div class="voice-grid mt-5">
-      <div class="relative md-lg:h-[calc(100dvh-11rem)] md-lg:min-h-[540px]">
+      <!-- min-height, not height: on short screens the card grows and the page scrolls
+           instead of the centred intro spilling over the header. Grid stretches the card. -->
+      <div class="relative md-lg:grid md-lg:min-h-[max(540px,calc(100dvh-11rem))]">
         <PagesDashboardVoiceCallStage
           v-if="inCall"
           :phase="phase"
