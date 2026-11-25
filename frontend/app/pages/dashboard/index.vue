@@ -3,6 +3,7 @@ definePageMeta({
   layout: 'dashboard',
   requiresAuth: true,
 })
+useSeo({ title: 'Dashboard', noindex: true })
 
 const { isAdmin, isTutor } = useRole()
 </script>

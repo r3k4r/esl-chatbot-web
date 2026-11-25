@@ -7,6 +7,7 @@ definePageMeta({
     layout: 'auth',
     guestOnly: true,
 })
+useSeo({ title: 'Forgot password', noindex: true })
 
 const authStore = useAuthStore()
 const router = useRouter()

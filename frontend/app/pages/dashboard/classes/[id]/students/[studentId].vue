@@ -3,6 +3,7 @@ import type { AddVocabularyInput } from '~/common/types/vocabulary-types'
 import type { CreateGoalInput } from '~/composables/useGoals'
 
 definePageMeta({ layout: 'dashboard', requiresAuth: true })
+useSeo({ title: 'Student progress', noindex: true })
 
 const route = useRoute()
 const classId = computed(() => String(route.params.id))

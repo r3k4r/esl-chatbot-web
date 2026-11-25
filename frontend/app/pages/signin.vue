@@ -7,6 +7,7 @@ definePageMeta({
     layout: 'auth',
     guestOnly: true,
 })
+useSeo({ title: 'Sign in', description: 'Sign in to Tutelage AI and keep practising English with your AI tutor.' })
 
 const authStore = useAuthStore()
 const router = useRouter()

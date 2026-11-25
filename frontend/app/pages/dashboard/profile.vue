@@ -9,6 +9,7 @@ import PracticeFields from '~/components/Pages/Dashboard/Profile/PracticeFields.
 import EmailFields from '~/components/Pages/Dashboard/Profile/EmailFields.vue'
 
 definePageMeta({ layout: 'dashboard', requiresAuth: true })
+useSeo({ title: 'Profile', noindex: true })
 
 const {
   profile, loading, isStaff, memberSince, planLabel, planColor, initials,

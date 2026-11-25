@@ -2,6 +2,7 @@
 // Admin: money and what it costs. Where students drop off before paying, who is on which plan,
 // FIB money this month, and how much the AI (the main running cost) is used.
 definePageMeta({ layout: 'dashboard', requiresAuth: true, requiresAdmin: true })
+useSeo({ title: 'Revenue', noindex: true })
 
 const { data, loading, error, fetchAdminDashboard } = useAdminDashboard()
 onMounted(fetchAdminDashboard)

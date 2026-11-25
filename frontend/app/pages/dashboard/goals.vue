@@ -3,6 +3,7 @@ import type { Goal, GoalStatus, GoalType } from '~/common/model/goal'
 import type { CreateGoalInput, UpdateGoalInput } from '~/composables/useGoals'
 
 definePageMeta({ layout: 'dashboard', requiresAuth: true, learnerOnly: true })
+useSeo({ title: 'Goals', noindex: true })
 
 const {
   goals, loading, submitting,

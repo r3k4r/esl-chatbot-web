@@ -2,6 +2,7 @@
 import type { UserSubscriptionDetail } from '~/common/types/subscription-types'
 
 definePageMeta({ layout: 'dashboard', requiresAuth: true, learnerOnly: true })
+useSeo({ title: 'Billing', noindex: true })
 
 const { getMySubscription } = useSubscription()
 

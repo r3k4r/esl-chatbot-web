@@ -2,6 +2,7 @@
 import WordListForm from '~/components/Pages/Dashboard/Classes/Vocabulary/WordListForm.vue'
 
 definePageMeta({ layout: 'dashboard', requiresAuth: true })
+useSeo({ title: 'Assign words', noindex: true })
 const route = useRoute()
 </script>
 

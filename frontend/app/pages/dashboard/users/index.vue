@@ -4,6 +4,7 @@ import { useAuthStore } from '~~/stores/auth'
 import type { AdminUserItem, AssignSubscriptionInput, UserRole, SubStatus, PlanId } from '~/common/types/admin-types'
 
 definePageMeta({ layout: 'dashboard', requiresAuth: true, requiresAdmin: true })
+useSeo({ title: 'Users', noindex: true })
 
 const { listUsers, patchUser, assignSubscription, cancelSubscription } = useAdmin()
 const route = useRoute()

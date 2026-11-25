@@ -7,6 +7,7 @@ definePageMeta({
     layout: 'auth',
     guestOnly: true,
 })
+useSeo({ title: 'Choose a username', noindex: true })
 
 type GoogleProfile = {
     email?: string

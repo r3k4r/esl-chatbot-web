@@ -5,6 +5,7 @@ import ProfileSection from '~/components/Pages/Dashboard/Profile/ProfileSection.
 import PracticeFields from '~/components/Pages/Dashboard/Profile/PracticeFields.vue'
 
 definePageMeta({ layout: 'dashboard', requiresAuth: true, requiresAdmin: true })
+useSeo({ title: 'Edit user', noindex: true })
 
 const route = useRoute()
 const userId = computed(() => route.params.id as string)

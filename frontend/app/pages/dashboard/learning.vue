@@ -4,6 +4,7 @@ import { activeRows } from '~/lib/admin-people'
 // Admin: how learning is going across the platform. Every class with its teacher, the students
 // practising most this week, average skills and levels, and the most common mistakes.
 definePageMeta({ layout: 'dashboard', requiresAuth: true, requiresAdmin: true })
+useSeo({ title: 'Learning', noindex: true })
 
 const { data, loading, error, fetchAdminDashboard } = useAdminDashboard()
 onMounted(fetchAdminDashboard)

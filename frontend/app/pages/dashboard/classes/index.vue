@@ -1,5 +1,6 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'dashboard', requiresAuth: true })
+useSeo({ title: 'Classes', noindex: true })
 
 const { isAdmin, isTutor } = useRole()
 </script>

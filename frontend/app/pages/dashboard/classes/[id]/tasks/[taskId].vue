@@ -1,5 +1,6 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'dashboard', requiresAuth: true })
+useSeo({ title: 'Task', noindex: true })
 
 const route = useRoute()
 const classId = computed(() => String(route.params.id))

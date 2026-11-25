@@ -2,6 +2,7 @@
 import type { Lesson, LessonCategory } from '~/common/types/dashboard-types'
 
 definePageMeta({ layout: 'dashboard', requiresAuth: true, learnerOnly: true })
+useSeo({ title: 'Lessons', noindex: true })
 
 const allLessons: Lesson[] = [
   { title: 'Job interview: strengths & weaknesses',  category: 'Business',     minutes: 20, level: 'B2', popular: true },

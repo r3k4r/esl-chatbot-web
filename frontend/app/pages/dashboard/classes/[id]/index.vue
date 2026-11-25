@@ -6,6 +6,7 @@ import type { SvgBasedIconName } from '~/common/types/iconsax-types'
 import ClassVocabularyTab from '~/components/Pages/Dashboard/Classes/Vocabulary/ClassVocabularyTab.vue'
 
 definePageMeta({ layout: 'dashboard', requiresAuth: true })
+useSeo({ title: 'Class', noindex: true })
 
 const route = useRoute()
 const router = useRouter()

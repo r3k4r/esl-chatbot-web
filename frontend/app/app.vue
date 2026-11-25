@@ -14,7 +14,6 @@ import 'vue-sonner/style.css'
 import { Toaster } from '@/components/ui/sonner'
 
 useHead({
-  title: 'Esl Chat Bot',
   htmlAttrs: {
     lang: 'en',
   },

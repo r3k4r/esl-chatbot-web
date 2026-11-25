@@ -2,6 +2,7 @@
 import { toast } from 'vue-sonner'
 
 definePageMeta({ layout: 'dashboard', requiresAuth: true })
+useSeo({ title: 'New class', noindex: true })
 
 const router = useRouter()
 const { isStaff } = useRole()

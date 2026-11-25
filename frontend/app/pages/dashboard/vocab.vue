@@ -1,5 +1,6 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'dashboard', requiresAuth: true, learnerOnly: true })
+useSeo({ title: 'Vocabulary', noindex: true })
 
 const {
   loading,

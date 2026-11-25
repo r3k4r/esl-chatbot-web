@@ -62,6 +62,7 @@
 <script setup lang="ts">
 // Disable SSR for this page — it's a dev-only client-side tool
 definePageMeta({ ssr: false })
+useSeo({ title: 'Google token test', noindex: true })
 
 const config = useRuntimeConfig()
 const clientId = config.public.googleClientId as string

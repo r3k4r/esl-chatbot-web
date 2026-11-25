@@ -10,10 +10,10 @@ const feature = computed(() => featurePageBySlug(String(route.params.slug)))
 if (!feature.value) throw createError({ statusCode: 404, statusMessage: 'Feature not found', fatal: true })
 
 const k = computed(() => `featurePages.items.${feature.value!.key}`)
-useSeoMeta({
-  title: () => `${t(`${k.value}.seoTitle`)} · Tutelage AI`,
+useSeo({
+  title: () => t(`${k.value}.seoTitle`),
   description: () => t(`${k.value}.standfirst`),
-  ogImage: () => feature.value!.hero,
+  ogImage: () => `/og/${feature.value?.slug}.jpg`, // drawn by scripts/generate-og-images.cjs
 })
 </script>
 

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 
 definePageMeta({ layout: 'dashboard', requiresAuth: true, learnerOnly: true, collapseSidebar: true })
+useSeo({ title: 'AI Chat', noindex: true })
 
 const {
   threadRef,

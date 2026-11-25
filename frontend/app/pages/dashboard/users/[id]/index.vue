@@ -3,6 +3,7 @@ import { useAdmin } from '~/composables/useAdmin'
 import type { AdminUserItem } from '~/common/types/admin-types'
 
 definePageMeta({ layout: 'dashboard', requiresAuth: true, requiresAdmin: true })
+useSeo({ title: 'User', noindex: true })
 
 const route = useRoute()
 const { getUser } = useAdmin()

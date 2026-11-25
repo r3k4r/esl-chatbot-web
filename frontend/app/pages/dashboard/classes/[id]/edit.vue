@@ -4,6 +4,7 @@ import { useAuthStore } from '~~/stores/auth'
 import type { ClassDetail } from '~/common/types/class-types'
 
 definePageMeta({ layout: 'dashboard', requiresAuth: true })
+useSeo({ title: 'Edit class', noindex: true })
 
 const route = useRoute()
 const router = useRouter()

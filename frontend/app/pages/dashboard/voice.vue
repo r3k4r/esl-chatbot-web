@@ -5,6 +5,7 @@ import CallLocked from '~/components/Pages/Dashboard/Voice/CallLocked.vue'
 import CallTranscript from '~/components/Pages/Dashboard/Voice/CallTranscript.vue'
 
 definePageMeta({ layout: 'dashboard', requiresAuth: true, learnerOnly: true })
+useSeo({ title: 'Voice Lab', noindex: true })
 
 const {
   usage, lock, pronunciationAvailable,
